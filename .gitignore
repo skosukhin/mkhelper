@@ -1,4 +1,5 @@
 mkhelper/.idea
+mkhelper/*.pyc
 configure
 Makefile
 aclocal.m4
