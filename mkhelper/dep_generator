@@ -20,11 +20,20 @@ def get_args():
                         metavar='OUTPUT',
                         help='output makefile with detected dependencies')
     parser.add_argument('--compile-target',
-                        help='path to the object file that is supposed to be '
-                             'generated as a result of compilation (by '
-                             'default, equals to name of the INPUT without '
-                             'directory prefix and with extention replaced '
-                             'with ".o" by default)')
+                        help='target of the compilation rule as it will '
+                             'appear in the generated makefile; normally '
+                             'equals to the path to the object file that is '
+                             'supposed to be generated as a result of '
+                             'compilation (by default, equals to name of the '
+                             'INPUT without directory prefix and with '
+                             'extension replaced with ".o" by default)')
+    parser.add_argument('--compile-src-prereq',
+                        help='source file prerequisite of the compilation '
+                             'rule as it will appear in the generated '
+                             'makefile; normally (and by default) equals to '
+                             'INPUT but, for example, can be set to all but '
+                             'the directory-part of the INPUT if vpath '
+                             'feature is used')
     parser.add_argument('--mod-file-ext',
                         default='mod',
                         help='filename extension (without leading dot) of '
@@ -120,6 +129,9 @@ def get_args():
     if args.compile_target is None:
         args.compile_target = os.path.splitext(
             os.path.basename(args.input))[0] + '.o'
+
+    if args.compile_src_prereq is None:
+        args.compile_src_prereq = args.input
 
     args.mod_file_upper = args.mod_file_upper == 'yes'
 
@@ -564,8 +576,9 @@ def main():
     if args.debug:
         with open(args.output + '_debug', 'w') as debug:
             debug.writelines([
+                '# Python version: ', sys.version.replace('\n', ' '), '\n',
                 '# Command:\n',
-                '  ', '\n    '.join(sys.argv) + '\n',
+                '  ', '\n    '.join(sys.argv), '\n',
                 '# Parsed arguments:\n',
                 ' ', '\n '.join(
                     [k + '=' + str(v) for k, v in vars(args).items()])])
@@ -590,7 +603,7 @@ def main():
     parser.parse()
 
     rule_dep_on_src = (args.compile_target + ' ' + args.output +
-                       ' : ' + args.input)
+                       ' : ' + args.compile_src_prereq)
     included_files = pp.included_files | parser.included_files
     if included_files:
         rule_dep_on_src += ' ' + ' '.join(included_files)

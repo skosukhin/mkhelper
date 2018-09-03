@@ -7,10 +7,11 @@ LIBS=@LIBS@
 FCFLAGS+=@FC_DEFINE@PRINT_MOD_STRINGS
 
 src_dir=@srcdir@/src
-src_f90_files=$(shell find $(src_dir) -name '*.f90')
+src_f90_files=$(notdir $(shell find $(src_dir) -name '*.f90'))
+vpath %.f90 $(shell find $(src_dir) -type d)
 
 dep_dir=dep
-dep_f90_files=$(patsubst $(src_dir)/%.f90, $(dep_dir)/%.d, $(src_f90_files))
+dep_f90_files=$(patsubst %.f90, %.d, $(src_f90_files))
 
 obj_dir=obj
 mod_dir=mod
@@ -28,7 +29,7 @@ dep_gen_flags=--mod-file-ext=@FORTDEP_MODULE_FILE_EXT@ --mod-file-upper=@FORTDEP
 # Dependency collector
 dep_collector=python -S @srcdir@/mkhelper/dep_collector
 # Function that collects all *.o prerequisites of a given target.
-required_objs=$(shell $(dep_collector) -p '*.o' $(1) $(shell find $(2) -name '*.d'))
+required_objs=$(shell $(dep_collector) -p '*.o' $(1) $(dep_dir)/* 2> /dev/null)
 
 # Disable suffix rules
 .SUFFIXES:
@@ -36,23 +37,22 @@ required_objs=$(shell $(dep_collector) -p '*.o' $(1) $(shell find $(2) -name '*.
 .PHONY: all clean distclean
 # Keep created directories
 .PRECIOUS: %/.sentinel
-.SECONDEXPANSION:
 
 FCFLAGS:=@FC_MODINC@$(mod_dir) -I$(src_dir)/include $(FCFLAGS) @FC_MODOUT@$(mod_dir)
 
 all: main;
 
 main : $(obj_dir)/main.o
-	$(FC) -o $@ $(LDFLAGS) $< $(call required_objs, $<, $(dep_dir)) $(LIBS)
+	$(FC) -o $@ $(LDFLAGS) $< $(call required_objs, $(<F)) $(LIBS)
 
 %.@FORTDEP_MODULE_FILE_EXT@:
 	@if test -f $@; then :; else rm -f $<; $(MAKE) $<; fi
 
-$(obj_dir)/%.o : $(src_dir)/%.f90 $(mod_dir)/.sentinel $$(@D)/.sentinel
+$(obj_dir)/%.o : %.f90 $(mod_dir)/.sentinel $(obj_dir)/.sentinel
 	$(FC) $(FCFLAGS) @FCFLAGS_f90@ -c $< -o $@
 
-$(dep_dir)/%.d : $(src_dir)/%.f90 $$(@D)/.sentinel
-	@$(dep_gen) $< $@ --compile-target $(patsubst $(dep_dir)/%.d, $(obj_dir)/%.o, $@) $(dep_gen_flags) -- $(FCFLAGS) 2> /dev/null
+$(dep_dir)/%.d : %.f90 $(dep_dir)/.sentinel
+	@$(dep_gen) $< $@ --compile-target $(obj_dir)/$(@F:.d=.o) --compile-src-prereq $(<F) $(dep_gen_flags) -- $(FCFLAGS) 2> /dev/null
 
 %/.sentinel:
 	@echo Creating directory $(@D); mkdir -p $(@D); touch $@
@@ -63,10 +63,9 @@ depclean:
 clean:
 	rm -rf $(mod_dir) $(obj_dir)
 
-distclean:
-	@$(MAKE) clean depclean
+distclean: depclean clean
 	rm -f config.log config.status Makefile
 
 ifeq (,$(filter $(MAKECMDGOALS), clean depclean distclean))
--include $(dep_f90_files)
+-include $(addprefix $(dep_dir)/, $(dep_f90_files))
 endif
