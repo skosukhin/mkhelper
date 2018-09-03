@@ -1,0 +1,434 @@
+#!/usr/bin/env python
+import os
+import argparse
+import re
+import sys
+
+
+def get_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('input_file', help='input file')
+    parser.add_argument('-I', '--include', help='directory',
+                        action='append', default=[])
+    parser.add_argument('-D', '--define', help='defined macro',
+                        action='append', default=[])
+    parser.add_argument('--inc-root',
+                        help='track include files only inside this directory',
+                        default='')
+    parser.add_argument('-o', '--output', default=None)
+
+    args = parser.parse_args()
+
+    args.input_file = os.path.abspath(args.input_file)
+
+    if not os.path.isfile(args.input_file):
+        return None
+
+    if args.inc_root:
+        args.inc_root = os.path.abspath(args.root)
+
+    args.include = [os.path.abspath(d)
+                    for d in args.include if os.path.isdir(d)]
+
+    return args
+
+
+def find_file(file_path, dir_list):
+    if os.path.isabs(file_path):
+        if os.path.isfile(file_path):
+            return os.path.abspath(file_path)
+    else:
+        for d in dir_list:
+            result = os.path.join(d, file_path)
+            if os.path.isfile(result):
+                return os.path.abspath(result)
+    return None
+
+
+class ContiguousIncludeReader:
+    def __init__(self, stream, close_when_finished=True):
+        # Stack tuples of file-like objects and flags that indicate whether
+        # the stream must be closed when it's exhausted. File-like objects
+        # must have readline() and close() methods.
+        self._file_stack = [(stream, close_when_finished)]
+
+    def readline(self):
+        while self._file_stack:
+            stream, close_when_finished = self._file_stack[-1]
+            line = stream.readline()
+            if line:
+                return line
+            else:
+                if close_when_finished:
+                    stream.close()
+                self._file_stack.pop()
+
+    def close(self):
+        for stream, close_when_finished in self._file_stack:
+            if close_when_finished:
+                stream.close()
+
+    def include(self, stream, close_when_finished=True):
+        self._file_stack.append((stream, close_when_finished))
+
+
+class Preprocessor:
+    _re_ifdef = re.compile(r'^#\s*if(n)?def\s+([a-zA-Z_]\w*)')
+    _re_if_expr = re.compile(r'^#\s*if((?:\s|\().*)')
+
+    _re_elif = re.compile(r'^#\s*elif((?:\s|\().*)')
+    _re_else = re.compile(r'^#\s*else(?:\s.*)')
+    _re_endif = re.compile(r'^#\s*endif(?:\s.*)')
+
+    _re_include = re.compile(r'^#\s*include\s+(?:"(.*?)"|<(.*?)>)')
+    _re_define = re.compile(r'^#\s*define\s+([a-zA-Z_]\w*)(\(.*\))?\s+(.*)$')
+    _re_undef = re.compile(r'^#\s*undef\s+([a-zA-Z_]\w*)')
+
+    # matches "defined MACRO_NAME" and "defined (MACRO_NAME)"
+    _re_defined_call = re.compile(
+        r'(defined\s*(\(\s*)?([a-zA-Z_]\w*)(?(2)\s*\)))')
+
+    _re_identifier = re.compile(
+        r'(([a-zA-Z_]\w*)(\s*\(\s*(\w+(?:\s*,\s*\w+)*)?\s*\))?)')
+
+    def __init__(self, stream, close_when_finished=True):
+        self.include_dirs = []
+        self.current_file_dir = None
+        self.include_history = []
+
+        self._include_reader = ContiguousIncludeReader(stream,
+                                                       close_when_finished)
+
+        self._defined_macros = {}
+
+        # Stack of #if-#else blocks holds one of the following:
+        # 1 - keep current branch and ignore another
+        # -1 - ignore current branch and keep another
+        # 0 - keep both branches (if failed to evaluate expression)
+        self._if_state_stack = []
+
+        # Each #elif is interpreted as a combination of #else and #if.
+        # Thus, each #elif increments the number of #if blocks that are
+        # closed with #endif statement. This numbers are stored in a separate
+        # stack:
+        self._states_per_endif_stack = []
+
+    def readline(self):
+        while True:
+            line = self._include_reader.readline()
+            if line:
+
+                if line.startswith('#'):
+                    # line continuation
+                    while line.endswith('\\\n'):
+                        suffix = self._include_reader.readline()
+                        line = line[:-2] + suffix
+
+                    # delete comments
+                    line = re.sub(r'/\*.*?\*/', '', line)
+
+                # if(n)def statement
+                match = Preprocessor._re_ifdef.match(line)
+                if match:
+                    state = 0
+                    if not self._check_ignore_branch():
+                        expr_result = (
+                            # macro defined
+                            bool(match.group(2) in
+                                 self._defined_macros) ^
+                            # it's #ifndef statement
+                            bool(match.group(1)))
+                        state = (1 if expr_result else -1)
+
+                    self._if_state_stack.append(state)
+                    self._states_per_endif_stack.append(1)
+                    continue
+
+                # if statement
+                match = Preprocessor._re_if_expr.match(line)
+                if match:
+                    state = 0
+                    if not self._check_ignore_branch():
+                        state = self._evaluate_to_state(match.group(1))
+
+                    self._if_state_stack.append(state)
+                    self._states_per_endif_stack.append(1)
+                    continue
+
+                # elif statement
+                match = Preprocessor._re_elif.match(line)
+                if match:
+                    self._else()
+
+                    state = 0
+                    if not self._check_ignore_branch():
+                        state = self._evaluate_to_state(match.group(1))
+
+                    self._if_state_stack.append(state)
+                    self._states_per_endif_stack[-1] += 1
+                    continue
+
+                # else statement
+                match = Preprocessor._re_else.match(line)
+                if match:
+                    self._else()
+                    continue
+
+                # endif statement
+                match = Preprocessor._re_endif.match(line)
+                if match:
+                    if self._if_state_stack:
+                        pop_count = self._states_per_endif_stack.pop()
+                        for _ in xrange(pop_count):
+                            self._if_state_stack.pop()
+                    continue
+
+                if self._check_ignore_branch():
+                    continue
+
+                # include statement
+                match = Preprocessor._re_include.match(line)
+                if match:
+                    self._include(match.group(match.lastindex))
+                    continue
+
+                # define statement
+                match = Preprocessor._re_define.match(line)
+                if match:
+                    self.define(*match.group(1, 2, 3))
+                    continue
+
+                # undef statement
+                match = Preprocessor._re_undef.match(line)
+                if match:
+                    self.undef(match.group(1))
+                    continue
+
+            return line
+
+    def close(self):
+        self._include_reader.close()
+
+    def define(self, name, args=None, body=None):
+        if name != 'defined':
+            self._defined_macros[name] = (args, '' if body is None else body)
+
+    def undef(self, name):
+        self._defined_macros.pop(name, None)
+
+    def _include(self, file_path):
+        inc_dirs = self.include_dirs
+        if self.current_file_dir:
+            inc_dirs = [self.current_file_dir] + self.include_dirs
+
+        inc_file = find_file(file_path, inc_dirs)
+
+        if inc_file:
+            self.current_file_dir = os.path.dirname(inc_file)
+            self._include_reader.include(open(inc_file, 'r'))
+            self.include_history.append(inc_file)
+
+    def _else(self):
+        if self._if_state_stack:
+            self._if_state_stack[-1] = -self._if_state_stack[-1]
+
+    def _check_ignore_branch(self):
+        return any(state < 0 for state in self._if_state_stack)
+
+    def _evaluate_to_state(self, expr):
+        orig_expr = prev_expr = expr
+        while True:
+            # replace calls to function "defined"
+            defined_calls = re.findall(Preprocessor._re_defined_call, expr)
+            for call in defined_calls:
+                expr = expr.replace(
+                    call[0], '1' if call[2] in self._defined_macros else '0')
+
+            identifiers = re.findall(Preprocessor._re_identifier, expr)
+
+            for ident in identifiers:
+                if ident[1] == 'defined':
+                    return 0
+
+                macro = self._defined_macros.get(ident[1], None)
+                if ident[2]:
+                    # potential call to a function
+                    if macro is None:
+                        # call to undefined function
+                        return 0
+                    elif macro[0] is not None:
+                        # we can't evaluate function-like macros
+                        return 0
+                    else:
+                        # identifier is defined as object-like macro
+                        expr = expr.replace(ident[0], macro[1] + ident[2])
+                else:
+                    # no function call
+                    if macro is None or macro[0] is not None:
+                        # macro is not defined or
+                        # defined as function-like macro
+                        expr = expr.replace(ident[0], '0')
+                    else:
+                        # identifier is defined as object-like macro
+                        expr = expr.replace(ident[0], macro[1])
+
+            if prev_expr == expr:
+                break
+            else:
+                prev_expr = expr
+
+        expr = expr.replace('||', ' or ')
+        expr = expr.replace('&&', ' and ')
+        expr = expr.replace('!', 'not ')
+
+        try:
+            result = bool(eval(expr, {}))
+            return 1 if result else -1
+        except:
+            return 0
+
+
+class DependencyBuilder:
+    _re_include = re.compile(r'^\s*include\s+(\'|")(.*?)\1', re.I)
+    _re_line_continue_start = re.compile(r'^(.*)&\s*$')
+    _re_line_continue_end = re.compile(r'^\s*&')
+
+    intrinsic_mods = {'iso_c_binding', 'iso_fortran_env', 'ieee_exceptions',
+                      'ieee_arithmetic', 'ieee_features', 'omp_lib',
+                      'omp_lib_kinds', 'openacc'}
+
+    def __init__(self, stream, close_when_finished=True):
+        self.include_dirs = []
+        self.current_file_dir = None
+        self.include_history = []
+        self.provided_modules = set()
+        self.required_modules = set()
+
+        self._include_reader = ContiguousIncludeReader(stream,
+                                                       close_when_finished)
+
+        self._line_buf = None
+
+    def readline(self):
+        while True:
+
+            line = self._next_line()
+
+            if line:
+
+                # delete comments
+                line = re.sub(r'!.*', '', line, 1)
+                if line.isspace():
+                    continue
+
+                # line continuation
+                match = DependencyBuilder._re_line_continue_start.match(line)
+                while match:
+                    next_line = self._next_line()
+                    if not next_line:
+                        break
+                    line = (match.group(1) +
+                            re.sub(DependencyBuilder._re_line_continue_end,
+                                   '', next_line))
+                    match = DependencyBuilder._re_line_continue_start.match(
+                        line)
+
+                # replace non-quoted semicolons (;) with new lines (\n)
+                match = re.match(r'^((?:[^\'";]|(?:(\'|").*?(?<!\\)\2))*);(.*)$', line)
+                if match:
+                    self._line_buf = match.group(3) + '\n'
+                    if match.group(1):
+                        line = match.group(1) + '\n'
+                    else:
+                        continue
+
+                match = re.match(r'^\s*interface', line, re.I)
+                if match:
+                    while True:
+                        line = self._next_line()
+                        if not line:
+                            break
+                        end_match = re.match(r'^\s*end interface', line, re.I)
+                        if end_match:
+                            break
+                    continue
+
+                match = re.match(r'^\s*module\s+(\w+)', line, re.I)
+                if match:
+                    self.provided_modules.add(match.group(1).lower())
+                    continue
+
+                match = re.match(r'^\s*use(?:\s+(?:::)?|\s*(?:,\s*\w+\s*)?::)\s*(\w+)', line, re.I)
+                if match:
+                    self.required_modules.add(match.group(1).lower())
+                    continue
+
+                # include statement
+                match = DependencyBuilder._re_include.match(line)
+                if match:
+                    self._add_required_mod(match.group(2))
+                    continue
+            return line
+
+    def close(self):
+        self._include_reader.close()
+
+    def _next_line(self):
+        if self._line_buf is None:
+            line = self._include_reader.readline()
+        else:
+            line = self._line_buf
+            self._line_buf = None
+        return line
+
+    def _add_required_mod(self, mod_name):
+        mod_name = mod_name.lower()
+        if mod_name not in DependencyBuilder.intrinsic_mods:
+            self.required_modules.add(mod_name)
+
+    def _include(self, file_path):
+        inc_dirs = self.include_dirs
+        if self.current_file_dir:
+            inc_dirs = [self.current_file_dir] + self.include_dirs
+
+        inc_file = find_file(file_path, inc_dirs)
+
+        if inc_file:
+            self.current_file_dir = os.path.dirname(inc_file)
+            self._include_reader.include(open(inc_file, 'r'))
+            self.include_history.append(inc_file)
+
+
+def main():
+    args = get_args()
+
+    if args is None:
+        return
+
+    fpp = Preprocessor(open(args.input_file, 'r'))
+
+    fpp.include_dirs = args.include
+    fpp.current_file_dir = os.path.dirname(args.input_file)
+
+    for d in args.define:
+        splt = d.split('=', 1)
+        # TODO: account for foo definition on the command line
+        fpp.define(splt[0], '1' if len(splt) == 1 else splt[1])
+
+    builder = DependencyBuilder(fpp)
+
+    builder.include_dirs = args.include + [os.getcwd()]
+    builder.current_file_dir = os.path.dirname(args.input_file)
+
+    output = open(args.output, 'w') if args.output else sys.stdout
+
+    line = builder.readline()
+    while line:
+        output.write(line)
+        line = builder.readline()
+
+    output.close()
+
+
+if __name__ == "__main__":
+    main()
