@@ -17,7 +17,7 @@ obj_dir=obj
 mod_dir=mod
 
 # Dependency generator
-dep_gen=@FORTDEP_GEN_COMMAND@
+dep_gen=@PYTHON@ @srcdir@/mkhelper/fortdep/generator
 # The dependency generator ignores these modules as dependencies
 dep_external_mods="iso_c_binding,iso_fortran_env,ieee_exceptions,ieee_arithmetic,ieee_features,omp_lib,omp_lib_kinds,openacc,mpi"
 dep_gen_flags=--mod-file-ext=@FORTDEP_MODULE_FILE_EXT@ --mod-file-upper=@FORTDEP_MODULE_FILE_UPPER@\
@@ -27,7 +27,7 @@ dep_gen_flags=--mod-file-ext=@FORTDEP_MODULE_FILE_EXT@ --mod-file-upper=@FORTDEP
               --inc-root=$(src_dir) --try-eval-pp-expr --debug
 
 # Dependency collector
-dep_collector=@FORTDEP_COLLECT_COMMAND@
+dep_collector=@PYTHON@ @srcdir@/mkhelper/fortdep/collector
 # Function that collects all *.o prerequisites of a given target.
 required_objs=$(shell $(dep_collector) -s -p '*.o' $(1) $(dep_dir)/*.d)
 

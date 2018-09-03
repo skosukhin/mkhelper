@@ -588,8 +588,6 @@ ac_default_prefix=$(pwd)/bin
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
 FC_DEFINITIONS
-FORTDEP_COLLECT_COMMAND
-FORTDEP_GEN_COMMAND
 PYTHON
 AR
 FORTDEP_INC_PP_ORDER
@@ -2892,7 +2890,7 @@ $as_echo "$acx_cv_prog_AR" >&6; }
 AR=$acx_cv_prog_AR
 
 if test "x$AR" = xunknown; then :
-  as_fn_error $? "unable to the archiver command" "$LINENO" 5
+  as_fn_error $? "unable to find the archiver command" "$LINENO" 5
 fi
 
 
@@ -2909,7 +2907,7 @@ fi
 shift
 acx_cv_prog_PYTHON=unknown
 for acx_prog_candidate in "$@"; do
-acx_fortdep_try='$acx_prog_candidate $srcdir/mkhelper/fortdep/generator --help >/dev/null && $acx_prog_candidate $srcdir/mkhelper/fortdep/collector --help >/dev/null'
+acx_fortdep_try='$acx_prog_candidate $srcdir/mkhelper/fortdep/generator --help > /dev/null && $acx_prog_candidate $srcdir/mkhelper/fortdep/collector --help > /dev/null'
   { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$acx_fortdep_try\""; } >&5
   (eval $acx_fortdep_try) 2>&5
   ac_status=$?
@@ -2926,12 +2924,8 @@ PYTHON=$acx_cv_prog_PYTHON
 
 if test "x$PYTHON" = xunknown; then :
   as_fn_error $? "unable to find Python interpreter" "$LINENO" 5
-else
-  FORTDEP_GEN_COMMAND="$PYTHON $srcdir/mkhelper/fortdep/generator"
-
-  FORTDEP_COLLECT_COMMAND="$PYTHON $srcdir/mkhelper/fortdep/collector"
-
 fi
+
 
 
 # Check whether --enable-additional-mods was given.
