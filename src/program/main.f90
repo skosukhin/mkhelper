@@ -45,4 +45,6 @@ program main
   print *, "Support for NetCDF is disabled."
 #endif
 
+  call implicit_external()
+
 end program main

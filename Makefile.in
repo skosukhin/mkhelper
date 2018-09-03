@@ -29,7 +29,7 @@ dep_gen_flags=--mod-file-ext=@FORTDEP_MODULE_FILE_EXT@ --mod-file-upper=@FORTDEP
 # Dependency collector
 dep_collector=@PYTHON@ @srcdir@/mkhelper/fortdep/collector
 # Function that collects all *.o prerequisites of a given target.
-required_objs=$(shell $(dep_collector) -p '*.o' $(1) $(dep_dir)/* 2> /dev/null)
+required_objs=$(shell $(dep_collector) -p '*.o' $(1) $(dep_dir)/*.d 2> /dev/null)
 
 # Disable suffix rules
 .SUFFIXES:
@@ -43,7 +43,7 @@ FCFLAGS:=@FC_MODINC@$(mod_dir) -I$(src_dir)/include $(FCFLAGS) @FC_MODOUT@$(mod_
 all: main;
 
 main : $(obj_dir)/main.o
-	$(FC) -o $@ $(LDFLAGS) $< $(call required_objs, $(<F)) $(LIBS)
+	$(FC) -o $@ $(LDFLAGS) $< $(call required_objs, $<) $(LIBS)
 
 $(mod_dir)/%.@FORTDEP_MODULE_FILE_EXT@:
 	@if test -f $@; then :; else rm -f $<; $(MAKE) $<; fi
@@ -53,6 +53,10 @@ $(obj_dir)/%.o: %.f90 $(mod_dir)/.sentinel $(obj_dir)/.sentinel
 
 $(dep_dir)/%.d: %.f90 $(dep_dir)/.sentinel
 	@$(dep_gen) $< $@ --compile-target $(obj_dir)/$(@F:.d=.o) --compile-src-prereq $(<F) $(dep_gen_flags) -- $(FCFLAGS) 2> /dev/null
+
+$(dep_dir)/main.d: main.f90 $(dep_dir)/.sentinel
+	@$(dep_gen) $< $@ --compile-target $(obj_dir)/$(@F:.d=.o) --compile-src-prereq $(<F) $(dep_gen_flags) -- $(FCFLAGS) 2> /dev/null && \
+	echo $(obj_dir)/main.o: $(obj_dir)/implicit_external.o >> $@
 
 %/.sentinel:
 	@echo Creating directory $(@D); mkdir -p $(@D); touch $@
