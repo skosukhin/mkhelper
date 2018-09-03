@@ -49,14 +49,15 @@ $(mod_dir)/%.@FORTDEP_MODULE_FILE_EXT@:
 	@if test -f $@; then :; else rm -f $<; $(MAKE) $<; fi
 
 $(obj_dir)/%.o: %.f90 $(mod_dir)/.sentinel $(obj_dir)/.sentinel
-	$(FC) $(FCFLAGS) -o $@ -c @FCFLAGS_f90@ -c $<
+	$(FC) -c $(FCFLAGS) -o $@ -c @FCFLAGS_f90@ $<
 
 $(dep_dir)/%.d: %.f90 $(dep_dir)/.sentinel
 	@$(dep_gen) $< $@ --compile-target $(obj_dir)/$(@F:.d=.o) --compile-src-prereq $(<F) $(dep_gen_flags) -- $(FCFLAGS) 2> /dev/null
 
+# Append undetectable dependencies
 $(dep_dir)/main.d: main.f90 $(dep_dir)/.sentinel
 	@$(dep_gen) $< $@ --compile-target $(obj_dir)/$(@F:.d=.o) --compile-src-prereq $(<F) $(dep_gen_flags) -- $(FCFLAGS) 2> /dev/null && \
-	echo $(obj_dir)/main.o: $(obj_dir)/implicit_external.o >> $@
+	echo $(obj_dir)/$(@F:.d=.o): $(obj_dir)/implicit_external.o >> $@
 
 %/.sentinel:
 	@echo Creating directory $(@D); mkdir $(@D); touch $@
