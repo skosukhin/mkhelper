@@ -13,7 +13,7 @@ MOD_DIR=$(BLD_DIR)/mod
 OBJ_DIR=$(BLD_DIR)/obj
 
 # Fortran dependency generator
-FORTDEP=@srcdir@/mkhelper/fortdep
+FORTDEP=@srcdir@/mkhelper/dep_generator
 
 # The dependency generator ignores these modules as dependencies
 FORTDEP_EXTERNAL_MODS="iso_c_binding,iso_fortran_env,ieee_exceptions,ieee_arithmetic,ieee_features,omp_lib,omp_lib_kinds,openacc,mpi"
@@ -51,7 +51,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.f90
 
 $(OBJ_DIR)/%.d: $(SRC_DIR)/%.f90
 	@@MKDIR_P@ $(@D); \
-	$(FORTDEP) $< $@ --obj-file-path=$(@:.d=.o) $(FORTDEP_FLAGS) -- $(FCFLAGS) 2> /dev/null
+	$(FORTDEP) $< $@ --compile-target=$(@:.d=.o) $(FORTDEP_FLAGS) -- $(FCFLAGS) 2> /dev/null
 
 clean:
 	rm -rf $(MOD_DIR) $(OBJ_DIR)

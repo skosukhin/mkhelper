@@ -19,11 +19,12 @@ def get_args():
     parser.add_argument('output',
                         metavar='OUTPUT',
                         help='output makefile with detected dependencies')
-    parser.add_argument('--obj-file-path',
+    parser.add_argument('--compile-target',
                         help='path to the object file that is supposed to be '
-                             'generated as a result of compilation (equals to '
-                             'basename of INPUT with extention replaced with '
-                             '".o" by default)')
+                             'generated as a result of compilation (by '
+                             'default, equals to name of the INPUT without '
+                             'directory prefix and with extention replaced '
+                             'with ".o" by default)')
     parser.add_argument('--mod-file-ext',
                         default='mod',
                         help='filename extension (without leading dot) of '
@@ -81,9 +82,11 @@ def get_args():
                              'where module files are saved; only flags '
                              'starting with a single dash (-) are currently '
                              'supported (default: %(default)s)')
-    parser.add_argument('--debug', action='store_true',
+    parser.add_argument('--debug',
+                        action='store_true',
                         help='dump debug information to file OUTPUT_debug')
-    parser.add_argument('--', dest=argparse.SUPPRESS, metavar='$(FCFLAGS)',
+    parser.add_argument('sep',
+                        metavar='-- $(FCFLAGS)',
                         help='actual flags to be used in compilation, i.e. '
                              '$(FFLAGS) or $(FCFLAGS), must be given at the '
                              'end of the command line following the double '
@@ -110,10 +113,12 @@ def get_args():
         fortdep_arg_list = arg_list
         compiler_arg_list = []
 
-    args = parser.parse_args(fortdep_arg_list)
+    # append empty argument to keep argparse happy
+    # about the positional argument sep
+    args = parser.parse_args(fortdep_arg_list + [''])
 
-    if args.obj_file_path is None:
-        args.obj_file_path = os.path.splitext(
+    if args.compile_target is None:
+        args.compile_target = os.path.splitext(
             os.path.basename(args.input))[0] + '.o'
 
     args.mod_file_upper = args.mod_file_upper == 'yes'
@@ -143,7 +148,7 @@ def get_args():
     compiler_parser = argparse.ArgumentParser()
     compiler_parser.add_argument('-I', default=[],
                                  action='append', dest='inc_dirs')
-    compiler_parser.add_argument(args.fc_mod_out_flag, default=None,
+    compiler_parser.add_argument(args.fc_mod_out_flag, default='.',
                                  action='store', dest='mod_out_dir')
     compiler_parser.add_argument(args.fc_def_flag, default=[],
                                  action='append', dest='macro_defs')
@@ -584,7 +589,7 @@ def main():
 
     parser.parse()
 
-    rule_dep_on_src = (args.obj_file_path + ' ' + args.output +
+    rule_dep_on_src = (args.compile_target + ' ' + args.output +
                        ' : ' + args.input)
     included_files = pp.included_files | parser.included_files
     if included_files:
@@ -598,7 +603,7 @@ def main():
                                 args.mod_out_dir,
                                 args.mod_file_ext,
                                 args.mod_file_upper))
-        rules.append(provided_mod_files + ' : ' + args.obj_file_path + '\n')
+        rules.append(provided_mod_files + ' : ' + args.compile_target + '\n')
 
     if parser.required_modules:
         required_mod_files = ' '.join(
@@ -606,7 +611,7 @@ def main():
                                 args.mod_out_dir,
                                 args.mod_file_ext,
                                 args.mod_file_upper))
-        rules.append(args.obj_file_path + ' : ' + required_mod_files + '\n')
+        rules.append(args.compile_target + ' : ' + required_mod_files + '\n')
 
     with open(args.output, 'w') as out:
         out.writelines(rules)
