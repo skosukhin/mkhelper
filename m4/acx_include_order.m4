@@ -106,6 +106,7 @@ FCFLAGS=$_acx_fc_inc_order_FCFLAGS_save
 cd ..
 cd ..
 rm -rf conftest.dir
+AC_LANG_POP([Fortran])
 ])
 AS_IF([test x"$_acx_fc_inc_order" != x],
   [_acx_fc_inc_order=`echo $_acx_fc_inc_order | tr ' ' ','`],
