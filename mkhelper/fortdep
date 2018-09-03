@@ -3,7 +3,6 @@ import os
 import argparse
 import re
 import sys
-from itertools import imap
 
 
 def get_args():
@@ -131,7 +130,7 @@ def get_args():
     # Split multichar fc-flags from their value
     # (e.g. '-Wp,DMACRO' -> ['-Wp,D', 'MACRO']),
     # so argparse would understand them.
-    known_flags = {args.fc_mod_out_flag, args.fc_def_flag}
+    known_flags = set([args.fc_mod_out_flag, args.fc_def_flag])
     compiler_arg_list_buf = []
     for arg in compiler_arg_list:
         for flag in known_flags:
@@ -325,7 +324,7 @@ class Preprocessor:
             if match:
                 if self._if_state_stack:
                     pop_count = self._states_per_endif_stack.pop()
-                    for _ in xrange(pop_count):
+                    for _ in range(pop_count):
                         self._if_state_stack.pop()
                 continue
 
@@ -448,8 +447,6 @@ class DependencyParser:
     _re_line_split = re.compile(
         r'^((?:[^\'";]|(?:\'(?:\\\'|[^\'\\])*\')|(?:"(?:\\"|[^"\\])*"))*);'
         r'(.*)$')
-    # _re_interface_start = re.compile(r'^\s*interface', re.I)
-    # _re_interface_end = re.compile(r'^\s*end interface', re.I)
     _re_module_provide = re.compile(r'^\s*module\s+(?!procedure\s)(\w+)', re.I)
     _re_module_require = re.compile(
         r'^\s*use(?:\s+(?:::)?|\s*(?:,\s*\w+\s*)?::)\s*(\w+)', re.I)
@@ -505,21 +502,6 @@ class DependencyParser:
                 else:
                     continue
 
-            # TODO: Wrong! see mo_ocean_gmres.f90
-            # and mo_operator_ocean_coeff_3d
-            # skip interface declaration
-            # match = DependencyParser._re_interface_start.match(line)
-            # if match:
-            #     while True:
-            #         line = self._next_line()
-            #         if not line:
-            #             break
-            #         end_match = DependencyParser._re_interface_end.match(
-            #             line)
-            #         if end_match:
-            #             break
-            #     continue
-
             # module provided
             match = DependencyParser._re_module_provide.match(line)
             if match:
@@ -564,9 +546,9 @@ class DependencyParser:
 
 
 def form_mod_file_names(mods, mod_dir, mod_ext, to_upper):
-    base_names = (imap(lambda s: s.upper(), mods)
+    base_names = (map(lambda s: s.upper(), mods)
                   if to_upper else mods.__iter__())
-    return imap(lambda s: os.path.join(mod_dir, s + '.' + mod_ext), base_names)
+    return map(lambda s: os.path.join(mod_dir, s + '.' + mod_ext), base_names)
 
 
 def main():
@@ -628,6 +610,7 @@ def main():
 
     with open(args.output, 'w') as out:
         out.writelines(rules)
+
 
 if __name__ == "__main__":
     main()
