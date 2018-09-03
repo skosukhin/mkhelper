@@ -5,5 +5,4 @@ aclocal.m4
 autom4te.cache
 config.log
 config.status
-obj/*
-mod/*
+build/*

@@ -1,13 +1,16 @@
 FC=@FC@
-FCFLAGS=@FCFLAGS@
+FCFLAGS=-I$(SRC_DIR)/include @FCFLAGS@
+LDFLAGS=@LDFLAGS@
+LIBS=@LIBS@
 
 # Add definitions
 FCFLAGS+=@FC_DEFINE@PRINT_MOD_STRINGS
 
 # Build directories
 SRC_DIR=@srcdir@/src
-MOD_DIR=@builddir@/mod
-OBJ_DIR=@builddir@/obj
+BLD_DIR=build
+MOD_DIR=$(BLD_DIR)/mod
+OBJ_DIR=$(BLD_DIR)/obj
 
 # Fortran dependency generator
 FORTDEP=@srcdir@/mkhelper/fortdep
@@ -30,20 +33,23 @@ FORTDEP_FLAGS="--mod-file-ext=@FORTDEP_MODULE_FILE_EXT@"\
 # Create directories for module and object files
 $(shell @MKDIR_P@ $(MOD_DIR) $(OBJ_DIR))
 
-FCFLAGS:=@FC_MODINC@$(MOD_DIR) -I$(SRC_DIR)/include $(FCFLAGS) @FC_MODOUT@$(MOD_DIR)
+FCFLAGS:=@FC_MODINC@$(MOD_DIR) $(FCFLAGS) @FC_MODOUT@$(MOD_DIR)
 
 .SUFFIXES:
 .PHONY: all clean distclean
 
-all: $(OBJ_DIR)/main.o;
+all: $(BLD_DIR)/main;
 
-%.@FORTDEP_MODULE_FILE_EXT@ :
+$(BLD_DIR)/main: $(OBJ_DIR)/main.o
+	$(FC) -o $@ $(LDFLAGS) $(shell find $(OBJ_DIR) -name '*.o') $(LIBS)
+
+%.@FORTDEP_MODULE_FILE_EXT@:
 	@if test -f $@; then :; else rm -f $<; $(MAKE) $<; fi
 
-$(OBJ_DIR)/%.o : $(SRC_DIR)/%.f90
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.f90
 	$(FC) $(FCFLAGS) @FCFLAGS_f90@ -c $< -o $@
 
-$(OBJ_DIR)/%.d : $(SRC_DIR)/%.f90
+$(OBJ_DIR)/%.d: $(SRC_DIR)/%.f90
 	@@MKDIR_P@ $(@D); \
 	$(FORTDEP) $< $@ --obj-file-path=$(@:.d=.o) $(FORTDEP_FLAGS) -- $(FCFLAGS) 2> /dev/null
 
