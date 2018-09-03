@@ -3,73 +3,209 @@ import os
 import argparse
 import re
 import sys
+from itertools import imap
 
 
 def get_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('input_file', help='input file')
-    parser.add_argument('-I', '--include', help='directory',
-                        action='append', default=[])
-    parser.add_argument('-D', '--define', help='defined macro',
-                        action='append', default=[])
+    parser = argparse.ArgumentParser(
+        description='Generates OUTPUT makefile containing dependencies of the '
+                    'INPUT Fortran source file. Recognizes Fortran "include", '
+                    '"use" and "module" statements, as well as preprocessor '
+                    '"#include", "#if" and associated directives. Optionally '
+                    'evaluates simple expressions used in "#if" and "#elif" '
+                    'directives.')
+    parser.add_argument('input',
+                        metavar='INPUT',
+                        help='input Fortran source file')
+    parser.add_argument('output',
+                        metavar='OUTPUT',
+                        help='output makefile with detected dependencies')
+    parser.add_argument('--obj-file-path',
+                        help='path to the object file that is supposed to be '
+                             'generated as a result of compilation (equals to '
+                             'basename of INPUT with extention replaced with '
+                             '".o" by default)')
+    parser.add_argument('--mod-file-ext',
+                        default='mod',
+                        help='filename extension (without leading dot) of '
+                             'compiler-generated Fortran module files '
+                             '(default: %(default)s)')
+    parser.add_argument('--mod-file-upper',
+                        choices=['yes', 'no'], default='no',
+                        help='whether Fortran compiler-generated module files '
+                             'have uppercase names (default: %(default)s)')
+    parser.add_argument('--inc-order',
+                        default='src,flg', metavar='ORDER_LIST',
+                        help='directory search order of files included using '
+                             'the Fortran "include" statement; ORDER_LIST is '
+                             'an ordered comma-separated list of keywords, '
+                             'the corresponding search paths of which are to '
+                             'be searched in the given order. The recognized '
+                             'keywords are: "cwd" (for the current working '
+                             'directory), "flg" (for directories '
+                             'specified with -I compiler flag), "src" (for '
+                             'the directory containing the INPUT source '
+                             'file), and "inc" (for the directory containing '
+                             'the file with the Fortran "include" statement. '
+                             '(default: %(default)s)')
+    parser.add_argument('--inc-pp-order',
+                        default='inc,flg', metavar='ORDER_LIST',
+                        help='equivalent to the "--inc-order" option, '
+                             'only for the preprocessor "#include" directive. '
+                             '(default: %(default)s)')
     parser.add_argument('--inc-root',
-                        help='track include files only inside this directory',
-                        default='')
-    parser.add_argument('-o', '--output', default=None)
+                        default='', metavar='INC_ROOT',
+                        help='add to OUTPUT only "include"/"#include" '
+                             'dependencies found inside INC_ROOT and its '
+                             'subdirectories; does not affect Fortran '
+                             '"module"/"use" dependencies')
+    parser.add_argument('--try-eval-pp-expr',
+                        action='store_true',
+                        help='enable evaluation of expressions that appear in '
+                             'preprocessor directives "#if" and "#elif"; if '
+                             'disabled (default) or evaluation fails, both '
+                             'branches of the directives are included by the '
+                             'preprocessing stage.')
+    parser.add_argument('--external-mods',
+                        default='',
+                        help='comma-separated list of modules to be'
+                             'ignored when creating a dependency file')
+    parser.add_argument('--fc-def-flag',
+                        metavar='FC_DEF_FLAG', default='-D',
+                        help='compiler flag used for preprocessor macro '
+                             'definition; only flags starting with a single '
+                             'dash (-) are currently supported (default: '
+                             '%(default)s)')
+    parser.add_argument('--fc-mod-out-flag',
+                        metavar='FC_MOD_OUT_FLAG', default='-J',
+                        help='compiler flag used to specify the directory '
+                             'where module files are saved; only flags '
+                             'starting with a single dash (-) are currently '
+                             'supported (default: %(default)s)')
+    parser.add_argument('--debug', action='store_true',
+                        help='dump debug information to file OUTPUT_debug')
+    parser.add_argument('--', dest=argparse.SUPPRESS, metavar='$(FCFLAGS)',
+                        help='actual flags to be used in compilation, i.e. '
+                             '$(FFLAGS) or $(FCFLAGS), must be given at the '
+                             'end of the command line following the double '
+                             'dash separator (--); the program searches these '
+                             'flags for (possibly multiple instances of) '
+                             'FC_DEF_FLAG, FC_MOD_OUT_FLAG and -I; any values '
+                             'found are used in the generation of OUTPUT (in '
+                             'the case of FC_MOD_OUT_FLAG, only the last '
+                             'value found is used.')
 
-    args = parser.parse_args()
+    if len(sys.argv) == 1:
+        parser.print_help()
+        sys.exit(1)
 
-    args.input_file = os.path.abspath(args.input_file)
+    arg_list = sys.argv[1:]
 
-    if not os.path.isfile(args.input_file):
-        return None
+    # Separate arguments of this program and Fortran compiler flags
+    sep = '--'
+    if sep in arg_list:
+        s = arg_list.index(sep)
+        fortdep_arg_list = arg_list[:s]
+        compiler_arg_list = arg_list[s + 1:]
+    else:
+        fortdep_arg_list = arg_list
+        compiler_arg_list = []
+
+    args = parser.parse_args(fortdep_arg_list)
+
+    if args.obj_file_path is None:
+        args.obj_file_path = os.path.splitext(
+            os.path.basename(args.input))[0] + '.o'
+
+    args.mod_file_upper = args.mod_file_upper == 'yes'
+
+    args.inc_order = [c for c in args.inc_order.lower().split(',') if c]
+    args.inc_pp_order = [c for c in args.inc_pp_order.lower().split(',') if c]
 
     if args.inc_root:
-        args.inc_root = os.path.abspath(args.root)
+        args.inc_root = os.path.abspath(args.inc_root)
 
-    args.include = [os.path.abspath(d)
-                    for d in args.include if os.path.isdir(d)]
+    args.external_mods = set(
+        [c for c in args.external_mods.lower().split(',') if c])
+
+    # Split multichar fc-flags from their value
+    # (e.g. '-Wp,DMACRO' -> ['-Wp,D', 'MACRO']),
+    # so argparse would understand them.
+    known_flags = {args.fc_mod_out_flag, args.fc_def_flag}
+    compiler_arg_list_buf = []
+    for arg in compiler_arg_list:
+        for flag in known_flags:
+            if arg.startswith(flag) and arg != flag:
+                compiler_arg_list_buf.append(flag)
+                arg = arg[len(flag):]
+                break
+        compiler_arg_list_buf.append(arg)
+
+    compiler_parser = argparse.ArgumentParser()
+    compiler_parser.add_argument('-I', default=[],
+                                 action='append', dest='inc_dirs')
+    compiler_parser.add_argument(args.fc_mod_out_flag, default=None,
+                                 action='store', dest='mod_out_dir')
+    compiler_parser.add_argument(args.fc_def_flag, default=[],
+                                 action='append', dest='macro_defs')
+
+    compiler_parser.parse_known_args(compiler_arg_list_buf, namespace=args)
 
     return args
 
 
-def find_file(file_path, dir_list):
-    if os.path.isabs(file_path):
-        if os.path.isfile(file_path):
-            return os.path.abspath(file_path)
+def find_included_file(filename, inc_order, src_dir, inc_dir, flag_dirs):
+    if os.path.isabs(filename):
+        if os.path.isfile(filename):
+            return os.path.normpath(filename)
     else:
+        dir_list = []
+        for inc_id in inc_order:
+            if inc_id == 'cwd':
+                dir_list.append('.')
+            elif inc_id == 'flg':
+                dir_list.extend(flag_dirs)
+            elif inc_id == 'src':
+                dir_list.append(src_dir)
+            elif inc_id == 'inc':
+                dir_list.append(inc_dir)
+            else:
+                continue
+
         for d in dir_list:
-            result = os.path.join(d, file_path)
+            result = os.path.join(d, filename)
             if os.path.isfile(result):
-                return os.path.abspath(result)
+                return os.path.normpath(result)
     return None
 
 
 class ContiguousIncludeReader:
-    def __init__(self, stream, close_when_finished=True):
-        # Stack tuples of file-like objects and flags that indicate whether
-        # the stream must be closed when it's exhausted. File-like objects
-        # must have readline() and close() methods.
-        self._file_stack = [(stream, close_when_finished)]
+    def __init__(self):
+        # Stack of tuples of file-like objects and paths to the directories
+        # where they reside. File-like objects must have readline() and
+        # close() methods.
+        self._file_stack = []
+
+        # output property
+        self.current_file_dir = None
 
     def readline(self):
         while self._file_stack:
-            stream, close_when_finished = self._file_stack[-1]
+            stream, self.current_file_dir = self._file_stack[-1]
             line = stream.readline()
             if line:
                 return line
             else:
-                if close_when_finished:
-                    stream.close()
-                self._file_stack.pop()
+                self._file_stack.pop()[0].close()
+        return ''
 
     def close(self):
-        for stream, close_when_finished in self._file_stack:
-            if close_when_finished:
-                stream.close()
+        for stream, _ in self._file_stack:
+            stream.close()
+        self._file_stack = []
 
-    def include(self, stream, close_when_finished=True):
-        self._file_stack.append((stream, close_when_finished))
+    def include(self, stream, file_dir):
+        self._file_stack.append((stream, file_dir))
 
 
 class Preprocessor:
@@ -84,6 +220,8 @@ class Preprocessor:
     _re_define = re.compile(r'^#\s*define\s+([a-zA-Z_]\w*)(\(.*\))?\s+(.*)$')
     _re_undef = re.compile(r'^#\s*undef\s+([a-zA-Z_]\w*)')
 
+    _re_cmd_line_define = re.compile(r'^=*([a-zA-Z_]\w*)(\(.*\))?(?:=(.+))?$')
+
     # matches "defined MACRO_NAME" and "defined (MACRO_NAME)"
     _re_defined_call = re.compile(
         r'(defined\s*(\(\s*)?([a-zA-Z_]\w*)(?(2)\s*\)))')
@@ -91,13 +229,20 @@ class Preprocessor:
     _re_identifier = re.compile(
         r'(([a-zA-Z_]\w*)(\s*\(\s*(\w+(?:\s*,\s*\w+)*)?\s*\))?)')
 
-    def __init__(self, stream, close_when_finished=True):
-        self.include_dirs = []
-        self.current_file_dir = None
-        self.include_history = []
+    def __init__(self, stream, processed_file_dir):
+        # input properties
+        self.inc_order = []
+        self.inc_root = ''
+        self.inc_flag_dirs = []
+        self.try_eval_expr = False
 
-        self._include_reader = ContiguousIncludeReader(stream,
-                                                       close_when_finished)
+        # output properties
+        self.included_files = set()
+
+        # private members
+        self._processed_file_dir = processed_file_dir
+        self._include_reader = ContiguousIncludeReader()
+        self._include_reader.include(stream, processed_file_dir)
 
         self._defined_macros = {}
 
@@ -116,100 +261,108 @@ class Preprocessor:
     def readline(self):
         while True:
             line = self._include_reader.readline()
-            if line:
+            if not line:
+                return line
 
-                if line.startswith('#'):
-                    # line continuation
-                    while line.endswith('\\\n'):
-                        suffix = self._include_reader.readline()
-                        line = line[:-2] + suffix
+            if line.startswith('#'):
+                # line continuation
+                while line.endswith('\\\n'):
+                    suffix = self._include_reader.readline()
+                    line = line[:-2] + suffix
 
-                    # delete comments
-                    line = re.sub(r'/\*.*?\*/', '', line)
+                # delete comments inside macro strings
+                line = re.sub(r'/\*.*?\*/', '', line)
 
-                # if(n)def statement
-                match = Preprocessor._re_ifdef.match(line)
-                if match:
-                    state = 0
-                    if not self._check_ignore_branch():
-                        expr_result = (
+            # if(n)def statement
+            match = Preprocessor._re_ifdef.match(line)
+            if match:
+                state = 0
+                if not self._check_ignore_branch():
+                    expr_result = (
                             # macro defined
                             bool(match.group(2) in
                                  self._defined_macros) ^
                             # it's #ifndef statement
                             bool(match.group(1)))
-                        state = (1 if expr_result else -1)
+                    state = (1 if expr_result else -1)
 
-                    self._if_state_stack.append(state)
-                    self._states_per_endif_stack.append(1)
-                    continue
+                self._if_state_stack.append(state)
+                self._states_per_endif_stack.append(1)
+                continue
 
-                # if statement
-                match = Preprocessor._re_if_expr.match(line)
-                if match:
-                    state = 0
-                    if not self._check_ignore_branch():
-                        state = self._evaluate_to_state(match.group(1))
+            # if statement
+            match = Preprocessor._re_if_expr.match(line)
+            if match:
+                state = 0
+                if not self._check_ignore_branch() and self.try_eval_expr:
+                    state = self._evaluate_to_state(match.group(1))
 
-                    self._if_state_stack.append(state)
-                    self._states_per_endif_stack.append(1)
-                    continue
+                self._if_state_stack.append(state)
+                self._states_per_endif_stack.append(1)
+                continue
 
-                # elif statement
-                match = Preprocessor._re_elif.match(line)
-                if match:
-                    self._else()
+            # elif statement
+            match = Preprocessor._re_elif.match(line)
+            if match:
+                self._else()
 
-                    state = 0
-                    if not self._check_ignore_branch():
-                        state = self._evaluate_to_state(match.group(1))
+                state = 0
+                if not self._check_ignore_branch():
+                    state = self._evaluate_to_state(match.group(1))
 
-                    self._if_state_stack.append(state)
-                    self._states_per_endif_stack[-1] += 1
-                    continue
+                self._if_state_stack.append(state)
+                self._states_per_endif_stack[-1] += 1
+                continue
 
-                # else statement
-                match = Preprocessor._re_else.match(line)
-                if match:
-                    self._else()
-                    continue
+            # else statement
+            match = Preprocessor._re_else.match(line)
+            if match:
+                self._else()
+                continue
 
-                # endif statement
-                match = Preprocessor._re_endif.match(line)
-                if match:
-                    if self._if_state_stack:
-                        pop_count = self._states_per_endif_stack.pop()
-                        for _ in xrange(pop_count):
-                            self._if_state_stack.pop()
-                    continue
+            # endif statement
+            match = Preprocessor._re_endif.match(line)
+            if match:
+                if self._if_state_stack:
+                    pop_count = self._states_per_endif_stack.pop()
+                    for _ in xrange(pop_count):
+                        self._if_state_stack.pop()
+                continue
 
-                if self._check_ignore_branch():
-                    continue
+            if self._check_ignore_branch():
+                continue
 
-                # include statement
-                match = Preprocessor._re_include.match(line)
-                if match:
-                    self._include(match.group(match.lastindex))
-                    continue
+            # include statement
+            match = Preprocessor._re_include.match(line)
+            if match:
+                self._include(match.group(match.lastindex))
+                continue
 
-                # define statement
-                match = Preprocessor._re_define.match(line)
-                if match:
-                    self.define(*match.group(1, 2, 3))
-                    continue
+            # define statement
+            match = Preprocessor._re_define.match(line)
+            if match:
+                self._define(*match.group(1, 2, 3))
+                continue
 
-                # undef statement
-                match = Preprocessor._re_undef.match(line)
-                if match:
-                    self.undef(match.group(1))
-                    continue
+            # undef statement
+            match = Preprocessor._re_undef.match(line)
+            if match:
+                self.undef(match.group(1))
+                continue
 
             return line
 
     def close(self):
         self._include_reader.close()
 
-    def define(self, name, args=None, body=None):
+    def define_from_cmd_line(self, macro_def):
+        match = Preprocessor._re_cmd_line_define.match(macro_def)
+        if match:
+            name, args = match.group(1, 2)
+            body = match.group(3) if match.group(3) else '1'
+            self._define(name, args, body)
+
+    def _define(self, name, args=None, body=None):
         if name != 'defined':
             self._defined_macros[name] = (args, '' if body is None else body)
 
@@ -217,16 +370,16 @@ class Preprocessor:
         self._defined_macros.pop(name, None)
 
     def _include(self, file_path):
-        inc_dirs = self.include_dirs
-        if self.current_file_dir:
-            inc_dirs = [self.current_file_dir] + self.include_dirs
+        inc_file = find_included_file(file_path,
+                                      self.inc_order,
+                                      self._processed_file_dir,
+                                      self._include_reader.current_file_dir,
+                                      self.inc_flag_dirs)
 
-        inc_file = find_file(file_path, inc_dirs)
-
-        if inc_file:
-            self.current_file_dir = os.path.dirname(inc_file)
-            self._include_reader.include(open(inc_file, 'r'))
-            self.include_history.append(inc_file)
+        if inc_file and os.path.abspath(inc_file).startswith(self.inc_root):
+            self._include_reader.include(open(inc_file, 'r'),
+                                         os.path.dirname(inc_file))
+            self.included_files.add(inc_file)
 
     def _else(self):
         if self._if_state_stack:
@@ -236,7 +389,7 @@ class Preprocessor:
         return any(state < 0 for state in self._if_state_stack)
 
     def _evaluate_to_state(self, expr):
-        orig_expr = prev_expr = expr
+        prev_expr = expr
         while True:
             # replace calls to function "defined"
             defined_calls = re.findall(Preprocessor._re_defined_call, expr)
@@ -288,90 +441,106 @@ class Preprocessor:
             return 0
 
 
-class DependencyBuilder:
+class DependencyParser:
     _re_include = re.compile(r'^\s*include\s+(\'|")(.*?)\1', re.I)
     _re_line_continue_start = re.compile(r'^(.*)&\s*$')
     _re_line_continue_end = re.compile(r'^\s*&')
+    _re_line_split = re.compile(
+        r'^((?:[^\'";]|(?:\'(?:\\\'|[^\'\\])*\')|(?:"(?:\\"|[^"\\])*"))*);'
+        r'(.*)$')
+    # _re_interface_start = re.compile(r'^\s*interface', re.I)
+    # _re_interface_end = re.compile(r'^\s*end interface', re.I)
+    _re_module_provide = re.compile(r'^\s*module\s+(?!procedure)(\w+)', re.I)
+    _re_module_require = re.compile(
+        r'^\s*use(?:\s+(?:::)?|\s*(?:,\s*\w+\s*)?::)\s*(\w+)', re.I)
 
-    intrinsic_mods = {'iso_c_binding', 'iso_fortran_env', 'ieee_exceptions',
-                      'ieee_arithmetic', 'ieee_features', 'omp_lib',
-                      'omp_lib_kinds', 'openacc'}
+    def __init__(self, stream, parsed_file_dir):
+        # input properties
+        self.inc_order = []
+        self.inc_root = ''
+        self.inc_flag_dirs = []
+        self.external_mods = set()
 
-    def __init__(self, stream, close_when_finished=True):
-        self.include_dirs = []
-        self.current_file_dir = None
-        self.include_history = []
+        # output properties
         self.provided_modules = set()
         self.required_modules = set()
+        self.included_files = set()
 
-        self._include_reader = ContiguousIncludeReader(stream,
-                                                       close_when_finished)
+        # private members
+        self._parsed_file_dir = parsed_file_dir
+        self._include_reader = ContiguousIncludeReader()
+        self._include_reader.include(stream, parsed_file_dir)
 
         self._line_buf = None
 
-    def readline(self):
+    def parse(self):
         while True:
-
             line = self._next_line()
 
-            if line:
+            if not line:
+                break
 
-                # delete comments
-                line = re.sub(r'!.*', '', line, 1)
-                if line.isspace():
+            # delete comments
+            line = re.sub(r'!.*', '', line, 1)
+            if line.isspace():
+                continue
+
+            # line continuation
+            match = DependencyParser._re_line_continue_start.match(line)
+            while match:
+                next_line = self._next_line()
+                if not next_line:
+                    break
+                line = match.group(1) + re.sub(
+                    DependencyParser._re_line_continue_end, '', next_line)
+
+                match = DependencyParser._re_line_continue_start.match(line)
+
+            # replace non-quoted semicolons (;) with new lines (\n)
+            match = DependencyParser._re_line_split.match(line)
+            if match:
+                self._line_buf = match.group(2) + '\n'
+                if match.group(1):
+                    line = match.group(1) + '\n'
+                else:
                     continue
 
-                # line continuation
-                match = DependencyBuilder._re_line_continue_start.match(line)
-                while match:
-                    next_line = self._next_line()
-                    if not next_line:
-                        break
-                    line = (match.group(1) +
-                            re.sub(DependencyBuilder._re_line_continue_end,
-                                   '', next_line))
-                    match = DependencyBuilder._re_line_continue_start.match(
-                        line)
+            # TODO: Wrong! see mo_ocean_gmres.f90
+            # and mo_operator_ocean_coeff_3d
+            # skip interface declaration
+            # match = DependencyParser._re_interface_start.match(line)
+            # if match:
+            #     while True:
+            #         line = self._next_line()
+            #         if not line:
+            #             break
+            #         end_match = DependencyParser._re_interface_end.match(
+            #             line)
+            #         if end_match:
+            #             break
+            #     continue
 
-                # replace non-quoted semicolons (;) with new lines (\n)
-                match = re.match(r'^((?:[^\'";]|(?:(\'|").*?(?<!\\)\2))*);(.*)$', line)
-                if match:
-                    self._line_buf = match.group(3) + '\n'
-                    if match.group(1):
-                        line = match.group(1) + '\n'
-                    else:
-                        continue
+            # module provided
+            match = DependencyParser._re_module_provide.match(line)
+            if match:
+                module_name = match.group(1).lower()
+                if module_name not in self.external_mods:
+                    self.provided_modules.add(module_name)
+                continue
 
-                match = re.match(r'^\s*interface', line, re.I)
-                if match:
-                    while True:
-                        line = self._next_line()
-                        if not line:
-                            break
-                        end_match = re.match(r'^\s*end interface', line, re.I)
-                        if end_match:
-                            break
-                    continue
+            # module required
+            match = DependencyParser._re_module_require.match(line)
+            if match:
+                module_name = match.group(1).lower()
+                if module_name not in self.external_mods:
+                    self.required_modules.add(module_name)
+                continue
 
-                match = re.match(r'^\s*module\s+(\w+)', line, re.I)
-                if match:
-                    self.provided_modules.add(match.group(1).lower())
-                    continue
-
-                match = re.match(r'^\s*use(?:\s+(?:::)?|\s*(?:,\s*\w+\s*)?::)\s*(\w+)', line, re.I)
-                if match:
-                    self.required_modules.add(match.group(1).lower())
-                    continue
-
-                # include statement
-                match = DependencyBuilder._re_include.match(line)
-                if match:
-                    self._add_required_mod(match.group(2))
-                    continue
-            return line
-
-    def close(self):
-        self._include_reader.close()
+            # include statement
+            match = DependencyParser._re_include.match(line)
+            if match:
+                self._include(match.group(2))
+                continue
 
     def _next_line(self):
         if self._line_buf is None:
@@ -381,54 +550,84 @@ class DependencyBuilder:
             self._line_buf = None
         return line
 
-    def _add_required_mod(self, mod_name):
-        mod_name = mod_name.lower()
-        if mod_name not in DependencyBuilder.intrinsic_mods:
-            self.required_modules.add(mod_name)
-
     def _include(self, file_path):
-        inc_dirs = self.include_dirs
-        if self.current_file_dir:
-            inc_dirs = [self.current_file_dir] + self.include_dirs
+        inc_file = find_included_file(file_path,
+                                      self.inc_order,
+                                      self._parsed_file_dir,
+                                      self._include_reader.current_file_dir,
+                                      self.inc_flag_dirs)
 
-        inc_file = find_file(file_path, inc_dirs)
+        if inc_file and os.path.abspath(inc_file).startswith(self.inc_root):
+            self._include_reader.include(open(inc_file, 'r'),
+                                         os.path.dirname(inc_file))
+            self.included_files.add(inc_file)
 
-        if inc_file:
-            self.current_file_dir = os.path.dirname(inc_file)
-            self._include_reader.include(open(inc_file, 'r'))
-            self.include_history.append(inc_file)
+
+def form_mod_file_names(mods, mod_dir, mod_ext, to_upper):
+    base_names = (imap(lambda s: s.upper(), mods)
+                  if to_upper else mods.__iter__())
+    return imap(lambda s: os.path.join(mod_dir, s + '.' + mod_ext), base_names)
 
 
 def main():
     args = get_args()
 
-    if args is None:
-        return
+    print('Generating %s...' % args.output)
 
-    fpp = Preprocessor(open(args.input_file, 'r'))
+    if args.debug:
+        with open(args.output + '_debug', 'w') as debug:
+            debug.writelines([
+                '# Command:\n',
+                '  ', '\n    '.join(sys.argv) + '\n',
+                '# Parsed arguments:\n',
+                ' ', '\n '.join(
+                    [k + '=' + str(v) for k, v in vars(args).items()])])
 
-    fpp.include_dirs = args.include
-    fpp.current_file_dir = os.path.dirname(args.input_file)
+    input_file_dir = os.path.dirname(args.input)
 
-    for d in args.define:
-        splt = d.split('=', 1)
-        # TODO: account for foo definition on the command line
-        fpp.define(splt[0], '1' if len(splt) == 1 else splt[1])
+    pp = Preprocessor(open(args.input, 'r'), input_file_dir)
+    pp.inc_order = args.inc_pp_order
+    pp.inc_root = args.inc_root
+    pp.inc_flag_dirs = args.inc_dirs
+    pp.try_eval_expr = args.try_eval_pp_expr
 
-    builder = DependencyBuilder(fpp)
+    for macro_def in args.macro_defs:
+        pp.define_from_cmd_line(macro_def)
 
-    builder.include_dirs = args.include + [os.getcwd()]
-    builder.current_file_dir = os.path.dirname(args.input_file)
+    parser = DependencyParser(pp, input_file_dir)
+    parser.inc_order = args.inc_order
+    parser.inc_root = args.inc_root
+    parser.inc_flag_dirs = args.inc_dirs
+    parser.external_mods = args.external_mods
 
-    output = open(args.output, 'w') if args.output else sys.stdout
+    parser.parse()
 
-    line = builder.readline()
-    while line:
-        output.write(line)
-        line = builder.readline()
+    rule_dep_on_src = (args.obj_file_path + ' ' + args.output +
+                       ' : ' + args.input)
+    included_files = pp.included_files | parser.included_files
+    if included_files:
+        rule_dep_on_src += ' ' + ' '.join(included_files)
 
-    output.close()
+    rules = [rule_dep_on_src + '\n']
 
+    if parser.provided_modules:
+        provided_mod_files = ' '.join(
+            form_mod_file_names(parser.provided_modules,
+                                args.mod_out_dir,
+                                args.mod_file_ext,
+                                args.mod_file_upper))
+        rules.append(provided_mod_files + ' : ' + args.obj_file_path + '\n')
+
+    if parser.required_modules:
+        required_mod_files = ' '.join(
+            form_mod_file_names(parser.required_modules,
+                                args.mod_out_dir,
+                                args.mod_file_ext,
+                                args.mod_file_upper))
+        rules.append(args.obj_file_path + ' : ' + required_mod_files + '\n')
+
+    with open(args.output, 'w') as out:
+        out.writelines(rules)
 
 if __name__ == "__main__":
     main()
