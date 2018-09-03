@@ -93,7 +93,7 @@ def get_args():
                              'supported (default: %(default)s)')
     parser.add_argument('--debug',
                         action='store_true',
-                        help='dump debug information to file OUTPUT_debug')
+                        help='dump debug information to file OUTPUT.debug')
     parser.add_argument('sep',
                         metavar='-- $(FCFLAGS)',
                         help='actual flags to be used in compilation, i.e. '
@@ -245,7 +245,7 @@ class Preprocessor:
     _re_identifier = re.compile(
         r'(([a-zA-Z_]\w*)(\s*\(\s*(\w+(?:\s*,\s*\w+)*)?\s*\))?)')
 
-    def __init__(self, stream, processed_file_dir):
+    def __init__(self, stream, processed_file_dir, keep_debug_info=False):
         # input properties
         self.inc_order = []
         self.inc_root = ''
@@ -254,8 +254,10 @@ class Preprocessor:
 
         # output properties
         self.included_files = set()
+        self.if_expressions = []
 
         # private members
+        self._keep_debug_info = keep_debug_info
         self._processed_file_dir = processed_file_dir
         self._include_reader = ContiguousIncludeReader()
         self._include_reader.include(stream, processed_file_dir)
@@ -293,28 +295,30 @@ class Preprocessor:
             match = Preprocessor._re_ifdef.match(line)
             if match:
                 state = 0
-                if not self._check_ignore_branch():
-                    expr_result = (
-                            # macro defined
-                            bool(match.group(2) in
-                                 self._defined_macros) ^
-                            # it's #ifndef statement
-                            bool(match.group(1)))
-                    state = (1 if expr_result else -1)
+                eval_expr = not self._check_ignore_branch()
+                if eval_expr:
+                    state = self._evaluate_def_to_state(match.group(2),
+                                                        bool(match.group(1)))
 
                 self._if_state_stack.append(state)
                 self._states_per_endif_stack.append(1)
+
+                self._log_result_for_debug(line, state, eval_expr)
                 continue
 
             # if statement
             match = Preprocessor._re_if_expr.match(line)
             if match:
                 state = 0
-                if not self._check_ignore_branch() and self.try_eval_expr:
-                    state = self._evaluate_to_state(match.group(1))
+                eval_expr = (not self._check_ignore_branch() and
+                             self.try_eval_expr)
+                if eval_expr:
+                    state = self._evaluate_expr_to_state(match.group(1))
 
                 self._if_state_stack.append(state)
                 self._states_per_endif_stack.append(1)
+
+                self._log_result_for_debug(line, state, eval_expr)
                 continue
 
             # elif statement
@@ -323,11 +327,15 @@ class Preprocessor:
                 self._else()
 
                 state = 0
-                if not self._check_ignore_branch():
-                    state = self._evaluate_to_state(match.group(1))
+                eval_expr = (not self._check_ignore_branch() and
+                             self.try_eval_expr)
+                if eval_expr:
+                    state = self._evaluate_expr_to_state(match.group(1))
 
                 self._if_state_stack.append(state)
                 self._states_per_endif_stack[-1] += 1
+
+                self._log_result_for_debug(line, state, eval_expr)
                 continue
 
             # else statement
@@ -404,7 +412,21 @@ class Preprocessor:
     def _check_ignore_branch(self):
         return any(state < 0 for state in self._if_state_stack)
 
-    def _evaluate_to_state(self, expr):
+    def _log_result_for_debug(self, line, state, if_evaluated):
+        if self._keep_debug_info:
+            result = 'unknown'
+            if not if_evaluated:
+                result = 'suppressed'
+            elif state == 1:
+                result = 'true'
+            elif state == -1:
+                result = 'false'
+            self.if_expressions.append((line, result))
+
+    def _evaluate_def_to_state(self, macro, negate):
+        return 1 if bool(macro in self._defined_macros) ^ negate else -1
+
+    def _evaluate_expr_to_state(self, expr):
         prev_expr = expr
         while True:
             # replace calls to function "defined"
@@ -573,19 +595,20 @@ def main():
 
     print('Generating %s...' % args.output)
 
-    if args.debug:
-        with open(args.output + '_debug', 'w') as debug:
-            debug.writelines([
-                '# Python version: ', sys.version.replace('\n', ' '), '\n',
-                '# Command:\n',
-                '  ', '\n    '.join(sys.argv), '\n',
-                '# Parsed arguments:\n',
-                ' ', '\n '.join(
-                    [k + '=' + str(v) for k, v in vars(args).items()])])
+    debug_file = open(args.output + '.debug', 'w') if args.debug else None
+
+    if debug_file:
+        debug_file.writelines([
+            '# Python version: ', sys.version.replace('\n', ' '), '\n',
+            '# Command:\n',
+            '  ', '\n    '.join(sys.argv), '\n',
+            '# Parsed arguments:\n ',
+            '\n '.join(
+                [k + '=' + str(v) for k, v in vars(args).items()]), '\n'])
 
     input_file_dir = os.path.dirname(args.input)
 
-    pp = Preprocessor(open(args.input, 'r'), input_file_dir)
+    pp = Preprocessor(open(args.input, 'r'), input_file_dir, args.debug)
     pp.inc_order = args.inc_pp_order
     pp.inc_root = args.inc_root
     pp.inc_flag_dirs = args.inc_dirs
@@ -601,6 +624,14 @@ def main():
     parser.external_mods = args.external_mods
 
     parser.parse()
+
+    if debug_file:
+        debug_file.writelines([
+            '# Conditional preprocessor statements:\n ',
+            '\n '.join([expr[:-1] + ' = ' + result
+                        for expr, result in pp.if_expressions]), '\n'])
+
+    debug_file.close()
 
     rule_dep_on_src = (args.compile_target + ' ' + args.output +
                        ' : ' + args.compile_src_prereq)
