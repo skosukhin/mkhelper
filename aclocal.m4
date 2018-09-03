@@ -12,8 +12,9 @@
 # PARTICULAR PURPOSE.
 
 m4_ifndef([AC_CONFIG_MACRO_DIRS], [m4_defun([_AM_CONFIG_MACRO_DIRS], [])m4_defun([AC_CONFIG_MACRO_DIRS], [_AM_CONFIG_MACRO_DIRS($@)])])
+m4_include([m4/acx_check_progs.m4])
+m4_include([m4/acx_fc_include_order.m4])
 m4_include([m4/acx_fc_module_file_naming.m4])
 m4_include([m4/acx_fc_module_inc_flag.m4])
 m4_include([m4/acx_fc_module_out_flag.m4])
 m4_include([m4/acx_fc_pp_define.m4])
-m4_include([m4/acx_include_order.m4])

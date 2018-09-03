@@ -6,6 +6,7 @@ AC_CONFIG_MACRO_DIR([m4])
 AC_PREFIX_DEFAULT([$(pwd)/bin])
 
 AC_PROG_FC
+AC_LANG([Fortran])
 AC_FC_PP_SRCEXT(f90)
 AC_FC_FREEFORM
 
@@ -31,11 +32,22 @@ ACX_FC_HASH_INCLUDE_ORDER(
 [FORTDEP_INC_PP_ORDER=inc,flg])
 AC_SUBST([FORTDEP_INC_PP_ORDER])
 
-AC_ARG_VAR([PYTHON], [Python interpreter command (used for Fortran dependency generation)])
-AC_CHECK_PROGS([PYTHON], [python python3], [unknown])
-AS_IF([test x"$ac_cv_prog_PYTHON" = xunknown],
-  [AC_MSG_ERROR([unable to find Python interpreter command])])
+AC_ARG_VAR([AR], [the archiver command (used to create convenience libraries)])
+ACX_CHECK_AR([AR], [ar], [unknown])
+AS_IF([test "x$AR" = xunknown],
+  [AC_MSG_ERROR([unable to the archiver command])])
 
+AC_ARG_VAR([PYTHON], [Python interpreter command (used for Fortran dependency generation)])
+ACX_CHECK_PROGS([PYTHON], [python python3], [for Python interpreter command],
+  [acx_fortdep_try='$acx_prog_candidate $srcdir/mkhelper/fortdep/generator --help >/dev/null && $acx_prog_candidate $srcdir/mkhelper/fortdep/collector --help >/dev/null'
+  AC_TRY_EVAL([acx_fortdep_try])],
+  [unknown])
+AS_IF([test "x$PYTHON" = xunknown],
+  [AC_MSG_ERROR([unable to find Python interpreter])],
+  [AC_SUBST([FORTDEP_GEN_COMMAND],
+    ["$PYTHON $srcdir/mkhelper/fortdep/generator"])
+  AC_SUBST([FORTDEP_COLLECT_COMMAND],
+    ["$PYTHON $srcdir/mkhelper/fortdep/collector"])])
 AC_SUBST([FC_DEFINITIONS])
 
 AC_ARG_ENABLE([additional-mods],

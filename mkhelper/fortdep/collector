@@ -71,13 +71,17 @@ def main():
                              'dependencies (no recipes)')
     parser.parse_known_args(rest_args, namespace=args)
 
-    dep_graph = dict()
-    for makefile in args.makefile:
-        parse_dep_file_to_dict(makefile, dep_graph)
+    try:
+        dep_graph = dict()
+        for makefile in args.makefile:
+            parse_dep_file_to_dict(makefile, dep_graph)
 
-    prerequisites = pick_prerequisites(dep_graph, args.target)
+        prerequisites = pick_prerequisites(dep_graph, args.target)
 
-    print('\n'.join(fnmatch.filter(prerequisites, args.p)))
+        print('\n'.join(fnmatch.filter(prerequisites, args.p)))
+    except:
+        if not args.s:
+            raise
 
 
 if __name__ == "__main__":

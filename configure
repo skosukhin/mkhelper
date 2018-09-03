@@ -588,7 +588,10 @@ ac_default_prefix=$(pwd)/bin
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
 FC_DEFINITIONS
+FORTDEP_COLLECT_COMMAND
+FORTDEP_GEN_COMMAND
 PYTHON
+AR
 FORTDEP_INC_PP_ORDER
 FORTDEP_INC_ORDER
 FORTDEP_MODULE_FILE_EXT
@@ -653,6 +656,7 @@ FC
 FCFLAGS
 LDFLAGS
 LIBS
+AR
 PYTHON'
 
 
@@ -1273,6 +1277,7 @@ Some influential environment variables:
   LDFLAGS     linker flags, e.g. -L<lib dir> if you have libraries in a
               nonstandard directory <lib dir>
   LIBS        libraries to pass to the linker, e.g. -l<library>
+  AR          the archiver command (used to create convenience libraries)
   PYTHON      Python interpreter command (used for Fortran dependency
               generation)
 
@@ -2240,6 +2245,11 @@ ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
+ac_ext=${ac_fc_srcext-f}
+ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
+ac_link='$FC -o conftest$ac_exeext $FCFLAGS $LDFLAGS $ac_fcflags_srcext conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_fc_compiler_gnu
+
 
 ac_ext=${ac_fc_srcext-f}
 ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
@@ -2309,11 +2319,10 @@ else
 
 
 fi
-ac_ext=c
-ac_cpp='$CPP $CPPFLAGS'
-ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_c_compiler_gnu
+ac_ext=${ac_fc_srcext-f}
+ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
+ac_link='$FC -o conftest$ac_exeext $FCFLAGS $LDFLAGS $ac_fcflags_srcext conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_fc_compiler_gnu
 
 ac_ext=${ac_fc_srcext-f}
 ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
@@ -2357,11 +2366,10 @@ else
   fi
 
 fi
-ac_ext=c
-ac_cpp='$CPP $CPPFLAGS'
-ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_c_compiler_gnu
+ac_ext=${ac_fc_srcext-f}
+ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
+ac_link='$FC -o conftest$ac_exeext $FCFLAGS $LDFLAGS $ac_fcflags_srcext conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_fc_compiler_gnu
 
 
 
@@ -2397,11 +2405,10 @@ fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 done
 FCFLAGS=$acx_fc_pp_define_FCFLAGS_save
-ac_ext=c
-ac_cpp='$CPP $CPPFLAGS'
-ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_c_compiler_gnu
+ac_ext=${ac_fc_srcext-f}
+ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
+ac_link='$FC -o conftest$ac_exeext $FCFLAGS $LDFLAGS $ac_fcflags_srcext conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_fc_compiler_gnu
 
 
 fi
@@ -2466,11 +2473,10 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 rm -rf conftest.dir
-ac_ext=c
-ac_cpp='$CPP $CPPFLAGS'
-ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_c_compiler_gnu
+ac_ext=${ac_fc_srcext-f}
+ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
+ac_link='$FC -o conftest$ac_exeext $FCFLAGS $LDFLAGS $ac_fcflags_srcext conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_fc_compiler_gnu
 
 
 fi
@@ -2537,11 +2543,10 @@ done
 FCFLAGS=$acx_fc_module_out_flag_FCFLAGS_save
 cd ..
 rm -rf conftest.dir
-ac_ext=c
-ac_cpp='$CPP $CPPFLAGS'
-ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_c_compiler_gnu
+ac_ext=${ac_fc_srcext-f}
+ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
+ac_link='$FC -o conftest$ac_exeext $FCFLAGS $LDFLAGS $ac_fcflags_srcext conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_fc_compiler_gnu
 
 
 fi
@@ -2597,11 +2602,10 @@ fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 cd ..
 rm -rf conftest.dir
-ac_ext=c
-ac_cpp='$CPP $CPPFLAGS'
-ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_c_compiler_gnu
+ac_ext=${ac_fc_srcext-f}
+ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
+ac_link='$FC -o conftest$ac_exeext $FCFLAGS $LDFLAGS $ac_fcflags_srcext conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_fc_compiler_gnu
 
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: uppercase=$acx_cv_fc_module_file_naming_upper extension=$acx_cv_fc_module_file_naming_ext" >&5
@@ -2627,9 +2631,7 @@ if ${acx_cv_fc_include_order+:} false; then :
 else
 
 _acx_fc_inc_order=
-if test "$cross_compiling" = yes; then :
-
-else
+if test x"$cross_compiling" = xno; then :
 
 ac_ext=${ac_fc_srcext-f}
 ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
@@ -2709,11 +2711,10 @@ FCFLAGS=$_acx_fc_inc_order_FCFLAGS_save
 cd ..
 cd ..
 rm -rf conftest.dir
-ac_ext=c
-ac_cpp='$CPP $CPPFLAGS'
-ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_c_compiler_gnu
+ac_ext=${ac_fc_srcext-f}
+ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
+ac_link='$FC -o conftest$ac_exeext $FCFLAGS $LDFLAGS $ac_fcflags_srcext conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_fc_compiler_gnu
 
 
 fi
@@ -2745,9 +2746,7 @@ if ${acx_cv_fc_hash_include_order+:} false; then :
 else
 
 _acx_fc_inc_order=
-if test "$cross_compiling" = yes; then :
-
-else
+if test x"$cross_compiling" = xno; then :
 
 ac_ext=${ac_fc_srcext-f}
 ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
@@ -2827,11 +2826,10 @@ FCFLAGS=$_acx_fc_inc_order_FCFLAGS_save
 cd ..
 cd ..
 rm -rf conftest.dir
-ac_ext=c
-ac_cpp='$CPP $CPPFLAGS'
-ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_c_compiler_gnu
+ac_ext=${ac_fc_srcext-f}
+ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
+ac_link='$FC -o conftest$ac_exeext $FCFLAGS $LDFLAGS $ac_fcflags_srcext conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_fc_compiler_gnu
 
 
 fi
@@ -2855,53 +2853,85 @@ fi
 
 
 
-for ac_prog in python python3
-do
-  # Extract the first word of "$ac_prog", so it can be a program name with args.
-set dummy $ac_prog; ac_word=$2
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
-$as_echo_n "checking for $ac_word... " >&6; }
-if ${ac_cv_prog_PYTHON+:} false; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for the archiver command" >&5
+$as_echo_n "checking for the archiver command... " >&6; }
+if ${acx_cv_prog_AR+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  if test -n "$PYTHON"; then
-  ac_cv_prog_PYTHON="$PYTHON" # Let the user override the test.
+  if test -n "$AR"; then :
+  set dummy "$AR"
 else
-as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $PATH
-do
-  IFS=$as_save_IFS
-  test -z "$as_dir" && as_dir=.
-    for ac_exec_ext in '' $ac_executable_extensions; do
-  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
-    ac_cv_prog_PYTHON="$ac_prog"
-    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-  done
-IFS=$as_save_IFS
+  set dummy ar
+fi
+shift
+acx_cv_prog_AR=unknown
+for acx_prog_candidate in "$@"; do
+cat > conftest.$ac_ext <<_ACEOF
+      program main
 
+      end
+_ACEOF
+if ac_fn_fc_try_compile "$LINENO"; then :
+  acx_ar_try='$acx_prog_candidate cru libconftest.a conftest.$ac_objext >&5'
+    { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$acx_ar_try\""; } >&5
+  (eval $acx_ar_try) 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+    rm -f libconftest.a
 fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+  test "$ac_status" -eq 0
+if test $? -eq 0; then :
+  acx_cv_prog_AR="$acx_prog_candidate"; break
 fi
-PYTHON=$ac_cv_prog_PYTHON
-if test -n "$PYTHON"; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $PYTHON" >&5
-$as_echo "$PYTHON" >&6; }
+done
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_prog_AR" >&5
+$as_echo "$acx_cv_prog_AR" >&6; }
+AR=$acx_cv_prog_AR
+
+if test "x$AR" = xunknown; then :
+  as_fn_error $? "unable to the archiver command" "$LINENO" 5
+fi
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for Python interpreter command" >&5
+$as_echo_n "checking for Python interpreter command... " >&6; }
+if ${acx_cv_prog_PYTHON+:} false; then :
+  $as_echo_n "(cached) " >&6
 else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
+  if test -n "$PYTHON"; then :
+  set dummy "$PYTHON"
+else
+  set dummy python python3
 fi
-
-
-  test -n "$PYTHON" && break
+shift
+acx_cv_prog_PYTHON=unknown
+for acx_prog_candidate in "$@"; do
+acx_fortdep_try='$acx_prog_candidate $srcdir/mkhelper/fortdep/generator --help >/dev/null && $acx_prog_candidate $srcdir/mkhelper/fortdep/collector --help >/dev/null'
+  { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$acx_fortdep_try\""; } >&5
+  (eval $acx_fortdep_try) 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+if test $? -eq 0; then :
+  acx_cv_prog_PYTHON="$acx_prog_candidate"; break
+fi
 done
-test -n "$PYTHON" || PYTHON="unknown"
-
-if test x"$ac_cv_prog_PYTHON" = xunknown; then :
-  as_fn_error $? "unable to find Python interpreter command" "$LINENO" 5
 fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_prog_PYTHON" >&5
+$as_echo "$acx_cv_prog_PYTHON" >&6; }
+PYTHON=$acx_cv_prog_PYTHON
 
+if test "x$PYTHON" = xunknown; then :
+  as_fn_error $? "unable to find Python interpreter" "$LINENO" 5
+else
+  FORTDEP_GEN_COMMAND="$PYTHON $srcdir/mkhelper/fortdep/generator"
+
+  FORTDEP_COLLECT_COMMAND="$PYTHON $srcdir/mkhelper/fortdep/collector"
+
+fi
 
 
 # Check whether --enable-additional-mods was given.
@@ -2941,11 +2971,10 @@ $as_echo "no" >&6; }
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
-ac_ext=c
-ac_cpp='$CPP $CPPFLAGS'
-ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_c_compiler_gnu
+ac_ext=${ac_fc_srcext-f}
+ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
+ac_link='$FC -o conftest$ac_exeext $FCFLAGS $LDFLAGS $ac_fcflags_srcext conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_fc_compiler_gnu
 
 
 ac_config_files="$ac_config_files Makefile"

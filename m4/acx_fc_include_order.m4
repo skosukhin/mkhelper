@@ -55,7 +55,7 @@ AS_IF([test x"$acx_cv_fc_hash_include_order" != xunknown],
 # The result is stored to the variable _acx_fc_inc_order.
 AC_DEFUN([_ACX_FC_INC_ORDER],[
 _acx_fc_inc_order=
-AS_IF([test "$cross_compiling" = yes], [], [
+AS_IF([test x"$cross_compiling" = xno], [
 AC_LANG_PUSH([Fortran])
 AS_MKDIR_P([conftest.dir/src/inc])
 AS_MKDIR_P([conftest.dir/build])
