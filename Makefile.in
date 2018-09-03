@@ -45,7 +45,7 @@ all: main;
 main : $(obj_dir)/main.o
 	$(FC) -o $@ $(LDFLAGS) $< $(call required_objs, $(<F)) $(LIBS)
 
-%.@FORTDEP_MODULE_FILE_EXT@:
+$(mod_dir)/%.@FORTDEP_MODULE_FILE_EXT@:
 	@if test -f $@; then :; else rm -f $<; $(MAKE) $<; fi
 
 $(obj_dir)/%.o: %.f90 $(mod_dir)/.sentinel $(obj_dir)/.sentinel
