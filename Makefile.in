@@ -68,6 +68,9 @@ clean:
 distclean: depclean clean
 	rm -f config.log config.status Makefile
 
-ifeq (,$(filter $(MAKECMDGOALS), clean depclean distclean depend))
+maintainer-clean: distclean
+	rm -rf autom4te.cache
+
+ifeq (,$(filter $(MAKECMDGOALS), clean depclean distclean depend maintainer-clean))
 -include $(addprefix $(dep_dir)/, $(dep_f90_files))
 endif
