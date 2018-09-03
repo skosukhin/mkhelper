@@ -2,11 +2,8 @@ AC_INIT([mkhelper], [1.0], [skosukhin@gmail.com])
 AC_PREREQ([2.69])
 
 AC_CONFIG_MACRO_DIR([m4])
-AC_CONFIG_AUX_DIR([config])
 
 AC_PREFIX_DEFAULT([$(pwd)/bin])
-
-AC_PROG_MKDIR_P
 
 AC_PROG_FC
 AC_FC_PP_SRCEXT(f90)

@@ -59,7 +59,7 @@ $(dep_dir)/main.d: main.f90 $(dep_dir)/.sentinel
 	echo $(obj_dir)/main.o: $(obj_dir)/implicit_external.o >> $@
 
 %/.sentinel:
-	@echo Creating directory $(@D); mkdir -p $(@D); touch $@
+	@echo Creating directory $(@D); mkdir $(@D); touch $@
 
 depend: $(dep_f90_files)
 
