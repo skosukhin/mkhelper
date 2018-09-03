@@ -33,6 +33,10 @@ ACX_FC_HASH_INCLUDE_ORDER(
 [FORTDEP_INC_PP_ORDER=inc,flg])
 AC_SUBST([FORTDEP_INC_PP_ORDER])
 
+AC_ARG_VAR([PYTHON], [Python interpreter command (used for Fortran dependency generation)])
+AC_CHECK_PROGS([PYTHON], [python python3], [unknown])
+AS_IF([test x"$ac_cv_prog_PYTHON" = xunknown],
+  [AC_MSG_ERROR([unable to find Python interpreter command])])
 
 AC_CONFIG_FILES(Makefile)
 AC_OUTPUT
