@@ -4,7 +4,7 @@ LDFLAGS=@LDFLAGS@
 LIBS=@LIBS@
 
 # Add definitions
-FCFLAGS+=@FC_DEFINE@PRINT_MOD_STRINGS
+FCFLAGS+=@FC_DEFINITIONS@
 
 src_dir=@srcdir@/src
 src_f90_files=$(notdir $(shell find $(src_dir) -name '*.f90'))

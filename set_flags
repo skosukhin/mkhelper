@@ -1,0 +1,17 @@
+NETCDFF_ROOT=/path/to/dynamically/linked/netcdf-fortran
+NETCDFF_LIBS=-lnetcdff
+
+FC=gfortran
+FCFLAGS="-I${NETCDFF_ROOT}/include"
+LDFLAGS="-L${NETCDFF_ROOT}/lib"
+LIBS="${NETCDFF_LIBS}"
+
+# Add RPATHs.
+LDFLAGS=$(echo $LDFLAGS | sed 's%\(-L\s*\(\S\+\)\)%\1 -Wl,-rpath -Wl,\2%g')
+
+export FC && export FCFLAGS && export LDFLAGS && export LIBS
+
+echo FC: $FC
+echo FCFLAGS: $FCFLAGS
+echo LDFLAGS: $LDFLAGS
+echo LIBS: $LIBS

@@ -1,17 +1,48 @@
 #include "include_pp.inc"
+
 program main
-#ifdef USE_MOD_A
+
+#ifdef INCLUDE_A
   use mod_a
 #endif
-#ifdef USE_MOD_B
+
+#ifdef INCLUDE_A
   use mod_b
 #endif
+
+  implicit none
   include "include_fc.inc"
-  write(*, *) included_str
-#ifdef USE_MOD_A
-  write(*, *) mod_a_str
+
+#ifndef NO_NETCDF
+  include "netcdf.inc"
+  integer ncid, retval
 #endif
-#ifdef USE_MOD_B
-  write(*, *) mod_b_str
+
+  print *, included_str
+
+#ifdef INCLUDE_A
+  print *, mod_a_str
 #endif
+
+#ifdef INCLUDE_A
+  print *, mod_b_str
+#endif
+
+#ifndef NO_NETCDF
+  print *, "Support for NetCDF is enabled."
+  print *, "Creating dummy NetCDF file 'dummy.nc'..."
+  retval = nf_create("dummy.nc", NF_CLOBBER, ncid)
+  if (retval .ne. nf_noerr) stop 2
+  retval = nf_close(ncid)
+  if (retval .ne. nf_noerr) stop 2
+
+  print *, "The file was successfully created. Deleting it now..."
+  open (unit=5, file="dummy.nc", status="old")
+  close (unit=5, status="delete")
+
+  print *, "The file was successfully deleted."
+#else
+  print *, "Support for NetCDF is disabled."
+#endif
+
 end program main

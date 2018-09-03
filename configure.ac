@@ -1,9 +1,10 @@
 AC_INIT([mkhelper], [1.0], [skosukhin@gmail.com])
 AC_PREREQ([2.69])
 
-AC_PREFIX_DEFAULT([$(pwd)/build])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_AUX_DIR([config])
+
+AC_PREFIX_DEFAULT([$(pwd)/bin])
 
 AC_PROG_MKDIR_P
 
@@ -37,6 +38,27 @@ AC_ARG_VAR([PYTHON], [Python interpreter command (used for Fortran dependency ge
 AC_CHECK_PROGS([PYTHON], [python python3], [unknown])
 AS_IF([test x"$ac_cv_prog_PYTHON" = xunknown],
   [AC_MSG_ERROR([unable to find Python interpreter command])])
+
+AC_SUBST([FC_DEFINITIONS])
+
+AC_ARG_ENABLE([additional-mods],
+  [AC_HELP_STRING([--enable-additional-mods], [enable usage of additional modules  @<:@default: yes @>:@])],
+  [],
+  [enable_additional_mods=yes])
+
+AS_IF([test x"$enable_additional_mods" = xyes],
+  AS_VAR_APPEND([FC_DEFINITIONS], [" ${FC_DEFINE}INCLUDE_MODULES"]))
+
+AC_LANG_PUSH([Fortran])
+AC_MSG_CHECKING([whether the Fortran interface of NetCDF library is available])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([], [[
+      include 'netcdf.inc'
+      integer ncid, status
+      status = nf_open('dummy.nc', 0, ncid)]])],
+  [AC_MSG_RESULT([yes])],
+  [AC_MSG_RESULT([no])
+  AS_VAR_APPEND([FC_DEFINITIONS], [" ${FC_DEFINE}NO_NETCDF"])])
+AC_LANG_POP([Fortran])
 
 AC_CONFIG_FILES(Makefile)
 AC_OUTPUT
