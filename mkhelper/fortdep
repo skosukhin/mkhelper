@@ -450,7 +450,7 @@ class DependencyParser:
         r'(.*)$')
     # _re_interface_start = re.compile(r'^\s*interface', re.I)
     # _re_interface_end = re.compile(r'^\s*end interface', re.I)
-    _re_module_provide = re.compile(r'^\s*module\s+(?!procedure)(\w+)', re.I)
+    _re_module_provide = re.compile(r'^\s*module\s+(?!procedure\s)(\w+)', re.I)
     _re_module_require = re.compile(
         r'^\s*use(?:\s+(?:::)?|\s*(?:,\s*\w+\s*)?::)\s*(\w+)', re.I)
 
