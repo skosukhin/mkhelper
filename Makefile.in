@@ -63,7 +63,7 @@ depclean:
 	rm -rf $(dep_dir)
 
 clean:
-	rm -rf $(mod_dir) $(obj_dir)
+	rm -rf $(mod_dir) $(obj_dir) main
 
 distclean: depclean clean
 	rm -f config.log config.status Makefile @srcdir@/mkhelper/*.pyc

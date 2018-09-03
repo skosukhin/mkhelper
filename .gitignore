@@ -1,12 +1,5 @@
 mkhelper/.idea
 mkhelper/*.pyc
-configure
-Makefile
-aclocal.m4
-autom4te.cache
-config.log
-config.status
 obj/*
 dep/*
 mod/*
-main
