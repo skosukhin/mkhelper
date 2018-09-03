@@ -1,0 +1,22 @@
+FC=@FC@
+FCFLAGS=@FCFLAGS@
+
+SRC_DIR=@srcdir@
+MOD_DIR=@builddir@/modules
+FORTDEP=@srcdir@/mkhelper/fortdep
+
+# Create directory for module files
+$(shell @MKDIR_P@ $(MOD_DIR))
+
+# The dependency generator ignores these modules as dependencies
+FORTDEP_EXTERNAL_MODS=iso_c_binding,iso_fortran_env,ieee_exceptions,ieee_arithmetic,ieee_features,omp_lib,omp_lib_kinds,openacc,mpi
+
+FORTDEP_FLAGS="--mod-file-naming=@FORTDEP_MODULE_FILE_NAMING@"\
+              "--inc-order=@FORTDEP_INC_ORDER@"\
+              "--inc-pp-order=@FORTDEP_INC_PP_ORDER@"\
+              "--external-mods=$(FORTDEP_EXTERNAL_MODS)"\
+              "--mod-dir=$(MOD_DIR)"\
+              "--inc-root=$(SRC_DIR)"
+
+all:
+	@$(FORTDEP) $(FORTDEP_FLAGS) --fcflags="$(FCFLAGS)"
