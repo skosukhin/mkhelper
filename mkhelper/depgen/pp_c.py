@@ -1,10 +1,9 @@
-import os
 import re
 
-import common
+from depgen.include_reader import IncludeReader
 
 
-class Preprocessor:
+class CPreprocessor:
     _re_ifdef = re.compile(r'^#\s*if(n)?def\s+([a-zA-Z_]\w*)')
     _re_if_expr = re.compile(r'^#\s*if((?:\s|\().*)')
 
@@ -25,22 +24,13 @@ class Preprocessor:
     _re_identifier = re.compile(
         r'(([a-zA-Z_]\w*)(\s*\(\s*(\w+(?:\s*,\s*\w+)*)?\s*\))?)')
 
-    def __init__(self, stream, processed_file_dir, keep_debug_info=False):
-        # input properties
-        self.inc_order = []
-        self.inc_root = ''
-        self.inc_flag_dirs = []
-        self.try_eval_expr = False
-
-        # output properties
-        self.included_files = set()
-        self.if_expressions = []
-
-        # private members
-        self._keep_debug_info = keep_debug_info
-        self._processed_file_dir = processed_file_dir
-        self._include_reader = common.IncludeReader()
-        self._include_reader.include(stream)
+    def __init__(self, stream, **kwargs):
+        self._include_reader = IncludeReader(stream)
+        self._include_reader.include_root = kwargs.get('include_root', None)
+        self._include_reader.include_dirs = kwargs.get('include_dirs', None)
+        self._include_reader.include_order = kwargs.get('include_order', None)
+        self._try_eval_expr = kwargs.get('try_eval_expr', False)
+        self._enable_debug = kwargs.get('debug', False)
 
         self._defined_macros = {}
 
@@ -55,6 +45,8 @@ class Preprocessor:
         # closed with #endif statement. This numbers are stored in a separate
         # stack:
         self._states_per_endif_stack = []
+
+        self._if_expressions = [] if self._enable_debug else None
 
     def readline(self):
         while True:
@@ -72,7 +64,7 @@ class Preprocessor:
                 line = re.sub(r'/\*.*?\*/', '', line)
 
             # if(n)def statement
-            match = Preprocessor._re_ifdef.match(line)
+            match = CPreprocessor._re_ifdef.match(line)
             if match:
                 state = 0
                 eval_expr = not self._check_ignore_branch()
@@ -87,11 +79,11 @@ class Preprocessor:
                 continue
 
             # if statement
-            match = Preprocessor._re_if_expr.match(line)
+            match = CPreprocessor._re_if_expr.match(line)
             if match:
                 state = 0
                 eval_expr = (not self._check_ignore_branch() and
-                             self.try_eval_expr)
+                             self._try_eval_expr)
                 if eval_expr:
                     state = self._evaluate_expr_to_state(match.group(1))
 
@@ -102,13 +94,13 @@ class Preprocessor:
                 continue
 
             # elif statement
-            match = Preprocessor._re_elif.match(line)
+            match = CPreprocessor._re_elif.match(line)
             if match:
                 self._else()
 
                 state = 0
                 eval_expr = (not self._check_ignore_branch() and
-                             self.try_eval_expr)
+                             self._try_eval_expr)
                 if eval_expr:
                     state = self._evaluate_expr_to_state(match.group(1))
 
@@ -119,13 +111,13 @@ class Preprocessor:
                 continue
 
             # else statement
-            match = Preprocessor._re_else.match(line)
+            match = CPreprocessor._re_else.match(line)
             if match:
                 self._else()
                 continue
 
             # endif statement
-            match = Preprocessor._re_endif.match(line)
+            match = CPreprocessor._re_endif.match(line)
             if match:
                 if self._if_state_stack:
                     pop_count = self._states_per_endif_stack.pop()
@@ -137,24 +129,56 @@ class Preprocessor:
                 continue
 
             # include statement
-            match = Preprocessor._re_include.match(line)
+            match = CPreprocessor._re_include.match(line)
             if match:
-                self._include(match.group(match.lastindex))
+                self._include_reader.include(match.group(match.lastindex))
                 continue
 
             # define statement
-            match = Preprocessor._re_define.match(line)
+            match = CPreprocessor._re_define.match(line)
             if match:
                 self._define(*match.group(1, 2, 3))
                 continue
 
             # undef statement
-            match = Preprocessor._re_undef.match(line)
+            match = CPreprocessor._re_undef.match(line)
             if match:
                 self.undef(match.group(1))
                 continue
 
             return line
+
+    @property
+    def included_files(self):
+        return self._include_reader.included_files
+
+    def print_debug(self, stream):
+        lines = [
+            '# C preprocessor:\n'
+            '#   Input file: ', self.name, '\n',
+            '#   Conditional preprocessor statements:\n']
+
+        if self._enable_debug:
+            if self._if_expressions:
+                lines.extend([
+                    '#     ',
+                    '\n#     '.join(
+                        [expr[:-1] + ' = ' + result
+                         for expr, result in self._if_expressions]), '\n'])
+            else:
+                lines.append('#     none\n')
+        else:
+            lines.append('#     debug info disabled\n')
+
+        lines.append('#   Included files ("#include" directive):\n')
+        if self._include_reader.included_files:
+            lines.extend(['#     ',
+                          '\n#     '.join(self.included_files),
+                          '\n'])
+        else:
+            lines.append('#     none')
+
+        stream.writelines(lines)
 
     def close(self):
         self._include_reader.close()
@@ -164,7 +188,7 @@ class Preprocessor:
         return self._include_reader.name
 
     def define_from_cmd_line(self, macro_def):
-        match = Preprocessor._re_cmd_line_define.match(macro_def)
+        match = CPreprocessor._re_cmd_line_define.match(macro_def)
         if match:
             name, args = match.group(1, 2)
             body = match.group(3) if match.group(3) else '1'
@@ -177,18 +201,6 @@ class Preprocessor:
     def undef(self, name):
         self._defined_macros.pop(name, None)
 
-    def _include(self, file_path):
-        inc_file = common.find_included_file(
-            file_path,
-            self.inc_order,
-            self._processed_file_dir,
-            os.path.dirname(self._include_reader.name),
-            self.inc_flag_dirs)
-
-        if inc_file and os.path.abspath(inc_file).startswith(self.inc_root):
-            self._include_reader.include(open(inc_file, 'r'))
-            self.included_files.add(inc_file)
-
     def _else(self):
         if self._if_state_stack:
             self._if_state_stack[-1] = -self._if_state_stack[-1]
@@ -197,7 +209,7 @@ class Preprocessor:
         return any(state < 0 for state in self._if_state_stack)
 
     def _log_result_for_debug(self, line, state, if_evaluated):
-        if self._keep_debug_info:
+        if self._enable_debug:
             result = 'unknown'
             if not if_evaluated:
                 result = 'suppressed'
@@ -205,7 +217,7 @@ class Preprocessor:
                 result = 'true'
             elif state == -1:
                 result = 'false'
-            self.if_expressions.append((line, result))
+            self._if_expressions.append((line, result))
 
     def _evaluate_def_to_state(self, macro, negate):
         return 1 if bool(macro in self._defined_macros) ^ negate else -1
@@ -214,12 +226,12 @@ class Preprocessor:
         prev_expr = expr
         while True:
             # replace calls to function "defined"
-            defined_calls = re.findall(Preprocessor._re_defined_call, expr)
+            defined_calls = re.findall(CPreprocessor._re_defined_call, expr)
             for call in defined_calls:
                 expr = expr.replace(
                     call[0], '1' if call[2] in self._defined_macros else '0')
 
-            identifiers = re.findall(Preprocessor._re_identifier, expr)
+            identifiers = re.findall(CPreprocessor._re_identifier, expr)
 
             for ident in identifiers:
                 if ident[1] == 'defined':

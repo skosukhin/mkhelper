@@ -17,19 +17,21 @@ obj_dir=obj
 mod_dir=mod
 
 # Dependency generator
-dep_gen=@PYTHON@ @srcdir@/mkhelper/fortdep/generator
+
+dep_gen=@PYTHON@ @srcdir@/mkhelper/depgen.py
 # The dependency generator ignores these modules as dependencies
-dep_external_mods="iso_c_binding,iso_fortran_env,ieee_exceptions,ieee_arithmetic,ieee_features,omp_lib,omp_lib_kinds,openacc,mpi"
-dep_gen_flags=--mod-file-ext=@FORTDEP_MODULE_FILE_EXT@ --mod-file-upper=@FORTDEP_MODULE_FILE_UPPER@\
-              --inc-order=@FORTDEP_INC_ORDER@ --inc-pp-order=@FORTDEP_INC_PP_ORDER@\
-              --external-mods=$(dep_external_mods)\
-              --fc-def-flag=@FC_DEFINE@ --fc-mod-out-flag=@FC_MODOUT@\
-              --inc-root=$(src_dir) --try-eval-pp-expr --debug
+dep_external_mods="mpi"
+
+dep_gen_flags=--root='$(src_dir)' --pp-enable --pp-eval-expr\
+              --pp-inc-order='@FORTDEP_INC_PP_ORDER@' --pp-macro-flag='@FC_DEFINE@'\
+              --fc-enable --fc-mod-ext='@FORTDEP_MODULE_FILE_EXT@'\
+              --fc-mod-upper='@FORTDEP_MODULE_FILE_UPPER@' --fc-inc-order='@FORTDEP_INC_ORDER@'\
+              --fc-external-mods='$(dep_external_mods)' --fc-mod-dir-flag='@FC_MODOUT@'
 
 # Dependency collector
-dep_collector=@PYTHON@ @srcdir@/mkhelper/fortdep/collector
+dep_collector=@PYTHON@ @srcdir@/mkhelper/deplist.py
 # Function that collects all *.o prerequisites of a given target.
-required_objs=$(shell $(dep_collector) -s -p '*.o' $(1) $(dep_dir)/*.d)
+required_objs=$(shell $(dep_collector) -p '*.o' $(1) $(dep_dir)/*.d 2> /dev/null)
 
 # Disable suffix rules
 .SUFFIXES:
@@ -46,17 +48,18 @@ main : $(obj_dir)/main.o $(call required_objs, $(obj_dir)/main.o)
 	$(FC) $(LDFLAGS) -o $@ $^  $(LIBS)
 
 $(mod_dir)/%.@FORTDEP_MODULE_FILE_EXT@:
-	@if test -f $@; then :; else rm -f $<; $(MAKE) $<; fi
+	@if $(if $<,true,false); then if test -f $@; then :; else rm -f $<; $(MAKE) $<; fi; \
+        if test -f $@; then :; else false; fi; fi
 
 $(obj_dir)/%.o: %.f90 $(mod_dir)/.sentinel $(obj_dir)/.sentinel
 	$(FC) -c $(FCFLAGS) -o $@ -c @FCFLAGS_f90@ $<
 
 $(dep_dir)/%.d: %.f90 $(dep_dir)/.sentinel
-	@$(dep_gen) $< $@ --compile-target $(obj_dir)/$(@F:.d=.o) --compile-src-prereq $(<F) $(dep_gen_flags) -- $(FCFLAGS) 2> /dev/null
+	@$(dep_gen) $< $@ --debug $(@:.d=.debug) --target $(obj_dir)/$(@F:.d=.o) --src-prereq $(<F) $(dep_gen_flags) -- $(FCFLAGS) 2> /dev/null
 
 # Append undetectable dependencies
 $(dep_dir)/main.d: main.f90 $(dep_dir)/.sentinel
-	@$(dep_gen) $< $@ --compile-target $(obj_dir)/$(@F:.d=.o) --compile-src-prereq $(<F) $(dep_gen_flags) -- $(FCFLAGS) 2> /dev/null && \
+	@$(dep_gen) $< $@ --debug $(@:.d=.debug) --target $(obj_dir)/$(@F:.d=.o) --src-prereq $(<F) $(dep_gen_flags) -- $(FCFLAGS) 2> /dev/null && \
 	echo $(obj_dir)/$(@F:.d=.o): $(obj_dir)/implicit_external.o >> $@
 
 %/.sentinel:
@@ -71,7 +74,7 @@ clean:
 	rm -rf $(mod_dir) $(obj_dir) main
 
 distclean: depclean clean
-	rm -f config.log config.status Makefile @srcdir@/mkhelper/fortdep/*.pyc @srcdir@/mkhelper/fortdep/*.pyo
+	rm -f config.log config.status Makefile $$(find @srcdir@/mkhelper -name '*.pyc' -o -name '*.pyo')
 
 maintainer-clean: distclean
 	rm -rf autom4te.cache

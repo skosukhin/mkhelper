@@ -39,7 +39,7 @@ AS_IF([test "x$AR" = xunknown],
 
 AC_ARG_VAR([PYTHON], [Python interpreter command (used for Fortran dependency generation)])
 ACX_CHECK_PROGS([PYTHON], [python python3], [for Python interpreter command],
-  [acx_fortdep_try='$acx_prog_candidate $srcdir/mkhelper/fortdep/generator --help > /dev/null && $acx_prog_candidate $srcdir/mkhelper/fortdep/collector --help > /dev/null'
+  [acx_fortdep_try='$acx_prog_candidate $srcdir/mkhelper/depgen.py -h > /dev/null'
   AC_TRY_EVAL([acx_fortdep_try])],
   [unknown])
 AS_IF([test "x$PYTHON" = xunknown],
