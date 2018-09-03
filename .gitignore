@@ -1,5 +1,3 @@
-mkhelper/.idea
-mkhelper/*.pyc
 obj/*
 dep/*
 mod/*

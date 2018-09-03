@@ -11,13 +11,13 @@ src_f90_files=$(notdir $(shell find $(src_dir) -name '*.f90'))
 vpath %.f90 $(shell find $(src_dir) -type d)
 
 dep_dir=dep
-dep_f90_files=$(patsubst %.f90, %.d, $(src_f90_files))
+dep_f90_files=$(addprefix $(dep_dir)/, $(patsubst %.f90, %.d, $(src_f90_files)))
 
 obj_dir=obj
 mod_dir=mod
 
 # Dependency generator
-dep_gen=@PYTHON@ @srcdir@/mkhelper/dep_generator.py
+dep_gen=@PYTHON@ @srcdir@/mkhelper/fortdep/generator
 # The dependency generator ignores these modules as dependencies
 dep_external_mods="iso_c_binding,iso_fortran_env,ieee_exceptions,ieee_arithmetic,ieee_features,omp_lib,omp_lib_kinds,openacc,mpi"
 dep_gen_flags=--mod-file-ext=@FORTDEP_MODULE_FILE_EXT@ --mod-file-upper=@FORTDEP_MODULE_FILE_UPPER@\
@@ -27,7 +27,7 @@ dep_gen_flags=--mod-file-ext=@FORTDEP_MODULE_FILE_EXT@ --mod-file-upper=@FORTDEP
               --inc-root=$(src_dir) --try-eval-pp-expr --debug
 
 # Dependency collector
-dep_collector=@PYTHON@ @srcdir@/mkhelper/dep_collector.py
+dep_collector=@PYTHON@ @srcdir@/mkhelper/fortdep/collector
 # Function that collects all *.o prerequisites of a given target.
 required_objs=$(shell $(dep_collector) -p '*.o' $(1) $(dep_dir)/* 2> /dev/null)
 
@@ -57,7 +57,7 @@ $(dep_dir)/%.d: %.f90 $(dep_dir)/.sentinel
 %/.sentinel:
 	@echo Creating directory $(@D); mkdir -p $(@D); touch $@
 
-depend: $(addprefix $(dep_dir)/, $(dep_f90_files))
+depend: $(dep_f90_files)
 
 depclean:
 	rm -rf $(dep_dir)
@@ -66,11 +66,11 @@ clean:
 	rm -rf $(mod_dir) $(obj_dir) main
 
 distclean: depclean clean
-	rm -f config.log config.status Makefile @srcdir@/mkhelper/*.pyc
+	rm -f config.log config.status Makefile @srcdir@/mkhelper/fortdep/*.pyc @srcdir@/mkhelper/fortdep/*.pyo
 
 maintainer-clean: distclean
 	rm -rf autom4te.cache
 
 ifeq (,$(filter $(MAKECMDGOALS), clean depclean distclean depend maintainer-clean))
--include $(addprefix $(dep_dir)/, $(dep_f90_files))
+-include $(dep_f90_files)
 endif
