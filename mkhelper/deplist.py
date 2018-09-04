@@ -25,7 +25,7 @@ def parse_args():
     return parser.parse_args()
 
 
-def pick_prerequisites(dep_graph, targets, result=set()):
+def pick_prerequisites(dep_graph, targets, result):
     for target in targets:
         prerequisites = dep_graph.get(target, None)
         if prerequisites:
@@ -64,9 +64,11 @@ def main():
         parse_dep_file_to_dict(makefile, dep_graph)
 
     if not args.t:
-        args.t = dep_graph.keys()
-
-    all_prerequisites = pick_prerequisites(dep_graph, args.t)
+        all_prerequisites = pick_prerequisites(dep_graph,
+                                               dep_graph.keys(),
+                                               set(dep_graph.keys()))
+    else:
+        all_prerequisites = pick_prerequisites(dep_graph, args.t, set())
 
     filtered_prerequisites = fnmatch.filter(all_prerequisites, args.p)
 
