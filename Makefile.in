@@ -58,7 +58,7 @@ depclean:
 	rm -rf $(DEP_DIR)
 
 distclean: clean depclean
-	rm -f config.log config.status Makefile $$(find @srcdir@/mkhelper -name '*.pyc' -o -name '*.pyo')
+	rm -f config.log config.status Makefile $(shell find @srcdir@/mkhelper -name '*.pyc' -o -name '*.pyo')
 
 maintainer-clean: distclean
 	rm -rf autom4te.cache
