@@ -584,7 +584,7 @@ PACKAGE_STRING='mkhelper 1.0'
 PACKAGE_BUGREPORT='skosukhin@gmail.com'
 PACKAGE_URL=''
 
-ac_default_prefix=$(pwd)/bin
+ac_unique_file="src/program/main.f90"
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
 FC_DEFS
@@ -1792,7 +1792,6 @@ ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
-
 
 
 

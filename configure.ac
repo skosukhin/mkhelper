@@ -1,9 +1,8 @@
 AC_INIT([mkhelper], [1.0], [skosukhin@gmail.com])
 AC_PREREQ([2.69])
 
+AC_CONFIG_SRCDIR([src/program/main.f90])
 AC_CONFIG_MACRO_DIR([m4])
-
-AC_PREFIX_DEFAULT([$(pwd)/bin])
 
 AC_CONFIG_FILES(Makefile)
 
