@@ -5,6 +5,8 @@ AC_CONFIG_MACRO_DIR([m4])
 
 AC_PREFIX_DEFAULT([$(pwd)/bin])
 
+AC_CONFIG_FILES(Makefile)
+
 AC_PROG_FC
 AC_LANG([Fortran])
 AC_FC_PP_SRCEXT(f90)
@@ -15,24 +17,24 @@ ACX_FC_MODULE_INC_FLAG
 ACX_FC_MODULE_OUT_FLAG
 
 ACX_FC_MODULE_FILE_NAMING(
-[FORTDEP_MODULE_FILE_UPPER=$acx_cv_fc_module_file_naming_upper
-FORTDEP_MODULE_FILE_EXT=$acx_cv_fc_module_file_naming_ext],
-[FORTDEP_MODULE_FILE_UPPER=no
-FORTDEP_MODULE_FILE_EXT=mod])
-AC_SUBST([FORTDEP_MODULE_FILE_UPPER])
-AC_SUBST([FORTDEP_MODULE_FILE_EXT])
+[FC_MODULE_UPPER=$acx_cv_fc_module_file_naming_upper
+FC_MODULE_EXT=$acx_cv_fc_module_file_naming_ext],
+[FC_MODULE_UPPER=no
+FC_MODULE_EXT=mod])
+AC_SUBST([FC_MODULE_UPPER])
+AC_SUBST([FC_MODULE_EXT])
 
 ACX_FC_INCLUDE_ORDER(
-[FORTDEP_INC_ORDER=$acx_cv_fc_include_order],
-[FORTDEP_INC_ORDER=src,flg])
-AC_SUBST([FORTDEP_INC_ORDER])
+[FC_INC_ORDER=$acx_cv_fc_include_order],
+[FC_INC_ORDER=src,flg])
+AC_SUBST([FC_INC_ORDER])
 
 ACX_FC_HASH_INCLUDE_ORDER(
-[FORTDEP_INC_PP_ORDER=$acx_cv_fc_hash_include_order],
-[FORTDEP_INC_PP_ORDER=inc,flg])
-AC_SUBST([FORTDEP_INC_PP_ORDER])
+[PP_INC_ORDER_f90=$acx_cv_fc_hash_include_order],
+[PP_INC_ORDER_f90=inc,flg])
+AC_SUBST([PP_INC_ORDER_f90])
 
-AC_ARG_VAR([AR], [the archiver command (used to create convenience libraries)])
+AC_ARG_VAR([AR], [the archiver command])
 ACX_CHECK_AR([AR], [ar], [unknown])
 AS_IF([test "x$AR" = xunknown],
   [AC_MSG_ERROR([unable to find the archiver command])])
@@ -45,17 +47,16 @@ ACX_CHECK_PROGS([PYTHON], [python python3], [for Python interpreter command],
 AS_IF([test "x$PYTHON" = xunknown],
   [AC_MSG_ERROR([unable to find Python interpreter])])
 
-AC_SUBST([FC_DEFINITIONS])
+AC_SUBST([FC_DEFS])
 
 AC_ARG_ENABLE([additional-mods],
   [AC_HELP_STRING([--enable-additional-mods], [enable usage of additional modules  @<:@default: yes @>:@])],
   [],
   [enable_additional_mods=yes])
 
-AS_IF([test x"$enable_additional_mods" = xyes],
-  AS_VAR_APPEND([FC_DEFINITIONS], [" ${FC_DEFINE}INCLUDE_MODULES"]))
+AS_IF([test "x$enable_additional_mods" = xyes],
+  AS_VAR_APPEND([FC_DEFS], [" ${FC_DEFINE}INCLUDE_MODULES"]))
 
-AC_LANG_PUSH([Fortran])
 AC_MSG_CHECKING([whether the Fortran interface of NetCDF library is available])
 AC_LINK_IFELSE([AC_LANG_PROGRAM([], [[
       include 'netcdf.inc'
@@ -63,8 +64,6 @@ AC_LINK_IFELSE([AC_LANG_PROGRAM([], [[
       status = nf_open('dummy.nc', 0, ncid)]])],
   [AC_MSG_RESULT([yes])],
   [AC_MSG_RESULT([no])
-  AS_VAR_APPEND([FC_DEFINITIONS], [" ${FC_DEFINE}NO_NETCDF"])])
-AC_LANG_POP([Fortran])
+  AS_VAR_APPEND([FC_DEFS], [" ${FC_DEFINE}NO_NETCDF"])])
 
-AC_CONFIG_FILES(Makefile)
 AC_OUTPUT

@@ -4,7 +4,7 @@ LDFLAGS=@LDFLAGS@
 LIBS=@LIBS@
 
 # Add definitions
-FCFLAGS+=@FC_DEFINITIONS@
+FCFLAGS+=@FC_DEFS@
 
 src_dir=@srcdir@/src
 dep_dir=dep
@@ -18,10 +18,10 @@ vpath %.f90 $(shell find $(src_dir) -type d)
 # Dependency generator
 dep_gen=@PYTHON@ @srcdir@/mkhelper/depgen.py $< $@ --target $(obj_dir)/$(@F:.d=.o) --src-prereq $(<F)\
               --root='@srcdir@' --pp-enable --pp-eval-expr\
-              --pp-inc-order='@FORTDEP_INC_PP_ORDER@' --pp-macro-flag='@FC_DEFINE@'\
-              --fc-enable --fc-mod-ext='@FORTDEP_MODULE_FILE_EXT@'\
-              --fc-mod-upper='@FORTDEP_MODULE_FILE_UPPER@' --fc-inc-order='@FORTDEP_INC_ORDER@'\
-              --fc-external-mods='mpi' --fc-mod-dir-flag='@FC_MODOUT@'\
+              --pp-inc-order='@PP_INC_ORDER_f90@' --pp-macro-flag='@FC_DEFINE@'\
+              --fc-enable --fc-mod-ext='@FC_MODULE_EXT@' --fc-mod-upper='@FC_MODULE_UPPER@'\
+              --fc-inc-order='@FC_INC_ORDER@' --fc-external-mods='mpi'\
+              --fc-mod-dir-flag='@FC_MODOUT@'\
               --debug $(@:.d=.debug)\
               --
 

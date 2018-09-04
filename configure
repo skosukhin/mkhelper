@@ -587,13 +587,13 @@ PACKAGE_URL=''
 ac_default_prefix=$(pwd)/bin
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
-FC_DEFINITIONS
+FC_DEFS
 PYTHON
 AR
-FORTDEP_INC_PP_ORDER
-FORTDEP_INC_ORDER
-FORTDEP_MODULE_FILE_EXT
-FORTDEP_MODULE_FILE_UPPER
+PP_INC_ORDER_f90
+FC_INC_ORDER
+FC_MODULE_EXT
+FC_MODULE_UPPER
 FC_MODOUT
 FC_MODINC
 FC_DEFINE
@@ -1275,7 +1275,7 @@ Some influential environment variables:
   LDFLAGS     linker flags, e.g. -L<lib dir> if you have libraries in a
               nonstandard directory <lib dir>
   LIBS        libraries to pass to the linker, e.g. -l<library>
-  AR          the archiver command (used to create convenience libraries)
+  AR          the archiver command
   PYTHON      Python interpreter command (used for Fortran dependency
               generation)
 
@@ -1798,6 +1798,9 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
+
+
+ac_config_files="$ac_config_files Makefile"
 
 
 ac_ext=${ac_fc_srcext-f}
@@ -2610,11 +2613,11 @@ fi
 $as_echo "uppercase=$acx_cv_fc_module_file_naming_upper extension=$acx_cv_fc_module_file_naming_ext" >&6; }
 if test x"$acx_cv_fc_module_file_naming_upper" != xunknown &&
   test x"$acx_cv_fc_module_file_naming_ext" != xunknown; then :
-  FORTDEP_MODULE_FILE_UPPER=$acx_cv_fc_module_file_naming_upper
-FORTDEP_MODULE_FILE_EXT=$acx_cv_fc_module_file_naming_ext
+  FC_MODULE_UPPER=$acx_cv_fc_module_file_naming_upper
+FC_MODULE_EXT=$acx_cv_fc_module_file_naming_ext
 else
-  FORTDEP_MODULE_FILE_UPPER=no
-FORTDEP_MODULE_FILE_EXT=mod
+  FC_MODULE_UPPER=no
+FC_MODULE_EXT=mod
 fi
 
 
@@ -2728,9 +2731,9 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_include_order" >&5
 $as_echo "$acx_cv_fc_include_order" >&6; }
 if test x"$acx_cv_fc_include_order" != xunknown; then :
-  FORTDEP_INC_ORDER=$acx_cv_fc_include_order
+  FC_INC_ORDER=$acx_cv_fc_include_order
 else
-  FORTDEP_INC_ORDER=src,flg
+  FC_INC_ORDER=src,flg
 fi
 
 
@@ -2843,9 +2846,9 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_hash_include_order" >&5
 $as_echo "$acx_cv_fc_hash_include_order" >&6; }
 if test x"$acx_cv_fc_hash_include_order" != xunknown; then :
-  FORTDEP_INC_PP_ORDER=$acx_cv_fc_hash_include_order
+  PP_INC_ORDER_f90=$acx_cv_fc_hash_include_order
 else
-  FORTDEP_INC_PP_ORDER=inc,flg
+  PP_INC_ORDER_f90=inc,flg
 fi
 
 
@@ -2936,14 +2939,9 @@ else
 fi
 
 
-if test x"$enable_additional_mods" = xyes; then :
-  as_fn_append FC_DEFINITIONS " ${FC_DEFINE}INCLUDE_MODULES"
+if test "x$enable_additional_mods" = xyes; then :
+  as_fn_append FC_DEFS " ${FC_DEFINE}INCLUDE_MODULES"
 fi
-
-ac_ext=${ac_fc_srcext-f}
-ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
-ac_link='$FC -o conftest$ac_exeext $FCFLAGS $LDFLAGS $ac_fcflags_srcext conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_fc_compiler_gnu
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether the Fortran interface of NetCDF library is available" >&5
 $as_echo_n "checking whether the Fortran interface of NetCDF library is available... " >&6; }
@@ -2961,17 +2959,10 @@ $as_echo "yes" >&6; }
 else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
-  as_fn_append FC_DEFINITIONS " ${FC_DEFINE}NO_NETCDF"
+  as_fn_append FC_DEFS " ${FC_DEFINE}NO_NETCDF"
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
-ac_ext=${ac_fc_srcext-f}
-ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
-ac_link='$FC -o conftest$ac_exeext $FCFLAGS $LDFLAGS $ac_fcflags_srcext conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_fc_compiler_gnu
-
-
-ac_config_files="$ac_config_files Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
