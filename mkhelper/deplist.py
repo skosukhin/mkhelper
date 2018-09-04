@@ -63,6 +63,9 @@ def main():
     for makefile in args.f:
         parse_dep_file_to_dict(makefile, dep_graph)
 
+    if not args.t:
+        args.t = dep_graph.keys()
+
     all_prerequisites = pick_prerequisites(dep_graph, args.t)
 
     filtered_prerequisites = fnmatch.filter(all_prerequisites, args.p)
