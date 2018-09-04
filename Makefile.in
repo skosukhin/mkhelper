@@ -7,26 +7,22 @@ LIBS=@LIBS@
 FCFLAGS+=@FC_DEFINITIONS@
 
 src_dir=@srcdir@/src
-src_f90_files=$(notdir $(shell find $(src_dir) -name '*.f90'))
-vpath %.f90 $(shell find $(src_dir) -type d)
-
 dep_dir=dep
-dep_f90_files=$(addprefix $(dep_dir)/, $(patsubst %.f90, %.d, $(src_f90_files)))
-
 obj_dir=obj
 mod_dir=mod
 
+src_f90=$(notdir $(shell find $(src_dir) -name '*.f90'))
+dep_f90=$(addprefix $(dep_dir)/, $(patsubst %.f90, %.d, $(src_f90)))
+vpath %.f90 $(shell find $(src_dir) -type d)
+
 # Dependency generator
-
-dep_gen=@PYTHON@ @srcdir@/mkhelper/depgen.py
-# The dependency generator ignores these modules as dependencies
-dep_external_mods="mpi"
-
-dep_gen_flags=--root='$(src_dir)' --pp-enable --pp-eval-expr\
+dep_gen=@PYTHON@ @srcdir@/mkhelper/depgen.py $< $@ --target $(obj_dir)/$(@F:.d=.o) --src-prereq $(<F)\
+              --root='@srcdir@' --pp-enable --pp-eval-expr\
               --pp-inc-order='@FORTDEP_INC_PP_ORDER@' --pp-macro-flag='@FC_DEFINE@'\
               --fc-enable --fc-mod-ext='@FORTDEP_MODULE_FILE_EXT@'\
               --fc-mod-upper='@FORTDEP_MODULE_FILE_UPPER@' --fc-inc-order='@FORTDEP_INC_ORDER@'\
-              --fc-external-mods='$(dep_external_mods)' --fc-mod-dir-flag='@FC_MODOUT@'
+              --fc-external-mods='mpi' --fc-mod-dir-flag='@FC_MODOUT@'\
+              --debug $(@:.d=.debug)
 
 # Dependency collector
 dep_collector=@PYTHON@ @srcdir@/mkhelper/deplist.py
@@ -55,17 +51,17 @@ $(obj_dir)/%.o: %.f90 $(mod_dir)/.sentinel $(obj_dir)/.sentinel
 	$(FC) -c $(FCFLAGS) -o $@ -c @FCFLAGS_f90@ $<
 
 $(dep_dir)/%.d: %.f90 $(dep_dir)/.sentinel
-	@$(dep_gen) $< $@ --debug $(@:.d=.debug) --target $(obj_dir)/$(@F:.d=.o) --src-prereq $(<F) $(dep_gen_flags) -- $(FCFLAGS) 2> /dev/null
+	@$(dep_gen) -- $(FCFLAGS) 2> /dev/null
 
 # Append undetectable dependencies
 $(dep_dir)/main.d: main.f90 $(dep_dir)/.sentinel
-	@$(dep_gen) $< $@ --debug $(@:.d=.debug) --target $(obj_dir)/$(@F:.d=.o) --src-prereq $(<F) $(dep_gen_flags) -- $(FCFLAGS) 2> /dev/null && \
+	@$(dep_gen) -- $(FCFLAGS) 2> /dev/null && \
 	echo $(obj_dir)/$(@F:.d=.o): $(obj_dir)/implicit_external.o >> $@
 
 %/.sentinel:
 	@echo Creating directory $(@D); mkdir $(@D); touch $@
 
-depend: $(dep_f90_files)
+depend: $(dep_f90)
 
 depclean:
 	rm -rf $(dep_dir)
@@ -80,5 +76,5 @@ maintainer-clean: distclean
 	rm -rf autom4te.cache
 
 ifeq (,$(filter $(MAKECMDGOALS), clean depclean distclean depend maintainer-clean))
--include $(dep_f90_files)
+-include $(dep_f90)
 endif
