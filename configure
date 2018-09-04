@@ -2909,9 +2909,9 @@ fi
 shift
 acx_cv_prog_PYTHON=unknown
 for acx_prog_candidate in "$@"; do
-acx_fortdep_try='$acx_prog_candidate $srcdir/mkhelper/depgen.py -h > /dev/null'
-  { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$acx_fortdep_try\""; } >&5
-  (eval $acx_fortdep_try) 2>&5
+acx_depgen_try='$acx_prog_candidate $srcdir/mkhelper/depgen.py -h > /dev/null'
+  { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$acx_depgen_try\""; } >&5
+  (eval $acx_depgen_try) 2>&5
   ac_status=$?
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }

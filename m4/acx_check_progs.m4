@@ -21,15 +21,3 @@ AS_IF([test $? -eq 0], [acx_cv_prog_$1="$acx_prog_candidate"; break])
 done])
 $1=$acx_cv_prog_$1
 ])
-
-# ACX_CHECK_AR(variable-name, progs-to-check-for, value-if-not-found)
-# ---------------------------------------------------------------------
-# Call ACX_CHECK_PROGS (see above) to find the archiver command
-AC_DEFUN([ACX_CHECK_AR],
-[ACX_CHECK_PROGS([$1], [$2], [for the archiver command],
-  [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([], [])],
-    [acx_ar_try='$acx_prog_candidate cru libconftest.a conftest.$ac_objext >&AS_MESSAGE_LOG_FD'
-    AC_TRY_EVAL([acx_ar_try])
-    rm -f libconftest.a])
-  test "$ac_status" -eq 0],
-  [$3])])

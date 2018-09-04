@@ -34,14 +34,20 @@ ACX_FC_HASH_INCLUDE_ORDER(
 AC_SUBST([PP_INC_ORDER_f90])
 
 AC_ARG_VAR([AR], [the archiver command])
-ACX_CHECK_AR([AR], [ar], [unknown])
+ACX_CHECK_PROGS([AR], [ar], [for the archiver command],
+  [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([], [])],
+    [acx_ar_try='$acx_prog_candidate cru libconftest.a conftest.$ac_objext >&AS_MESSAGE_LOG_FD'
+    AC_TRY_EVAL([acx_ar_try])
+    rm -f libconftest.a])
+  test "$ac_status" -eq 0],
+  [unknown])
 AS_IF([test "x$AR" = xunknown],
   [AC_MSG_ERROR([unable to find the archiver command])])
 
 AC_ARG_VAR([PYTHON], [Python interpreter command (used for Fortran dependency generation)])
 ACX_CHECK_PROGS([PYTHON], [python python3], [for Python interpreter command],
-  [acx_fortdep_try='$acx_prog_candidate $srcdir/mkhelper/depgen.py -h > /dev/null'
-  AC_TRY_EVAL([acx_fortdep_try])],
+  [acx_depgen_try='$acx_prog_candidate $srcdir/mkhelper/depgen.py -h > /dev/null'
+  AC_TRY_EVAL([acx_depgen_try])],
   [unknown])
 AS_IF([test "x$PYTHON" = xunknown],
   [AC_MSG_ERROR([unable to find Python interpreter])])
