@@ -1,3 +1,4 @@
+import os
 import fnmatch
 
 import argparse
@@ -34,23 +35,24 @@ def pick_prerequisites(dep_graph, target, result=set()):
 
 
 def parse_dep_file_to_dict(dep_file, result):
-    with open(dep_file, 'r') as f:
-        line = f.readline()
-        while line:
-            while line.endswith('\\\n'):
-                line = line[:-2] + f.readline()
-            split = line.strip().split(':', 1)
-            if split[0]:
-                targets = set(split[0].split())
-                new_prerequisites = set(
-                    split[1].replace('|', ' ').replace(':', ' ').split())
-                for t in targets:
-                    old_prerequisites = result.get(t, None)
-                    if old_prerequisites:
-                        old_prerequisites.update(new_prerequisites)
-                    else:
-                        result[t] = new_prerequisites
+    if os.path.isfile(dep_file):
+        with open(dep_file, 'r') as f:
             line = f.readline()
+            while line:
+                while line.endswith('\\\n'):
+                    line = line[:-2] + f.readline()
+                split = line.strip().split(':', 1)
+                if split[0]:
+                    targets = set(split[0].split())
+                    new_prerequisites = set(
+                        split[1].replace('|', ' ').replace(':', ' ').split())
+                    for t in targets:
+                        old_prerequisites = result.get(t, None)
+                        if old_prerequisites:
+                            old_prerequisites.update(new_prerequisites)
+                        else:
+                            result[t] = new_prerequisites
+                line = f.readline()
 
 
 def main():
