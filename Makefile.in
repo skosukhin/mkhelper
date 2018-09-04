@@ -81,6 +81,9 @@ $(MOD_DIR)/%.@FORTDEP_MODULE_FILE_EXT@:
 	  rm -f $<; $(MAKE) $<; \
 	fi
 
+# Some old versions of GNU Make strip the trailing slash when
+# searching for pattern rules, which is why we have to
+# create sentinel files inside the created directories.
 %/.sentinel:
 	@echo Creating directory $(@D); mkdir $(@D); touch $@
 
