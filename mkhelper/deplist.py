@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import os
 import fnmatch
 
@@ -10,27 +11,27 @@ def parse_args():
                     'direct and indirect prerequisites for TARGET. Optionally '
                     'filters the list with PATTERN.')
 
-    parser.add_argument('target',
-                        metavar='TARGET',
-                        help='name of the target')
+    parser.add_argument('-t',
+                        metavar='TARGET', nargs='+',
+                        help='names of the make targets')
     parser.add_argument('-p',
                         metavar='PATTERN', default='*',
                         help='shell-like pattern to filter the list of '
                              'prerequisites (default: %(default)s)')
-    parser.add_argument('makefile',
+    parser.add_argument('-f',
                         metavar='MAKEFILE', nargs='+',
-                        help='path to a simple makefile that contains only '
+                        help='paths to simple makefiles that contain only '
                              'dependencies (no recipes)')
     return parser.parse_args()
 
 
-def pick_prerequisites(dep_graph, target, result=set()):
-    prerequisites = dep_graph.get(target, None)
-    if prerequisites:
-        new_prerequisites = prerequisites - result
-        result.update(new_prerequisites)
-        for p in new_prerequisites:
-            pick_prerequisites(dep_graph, p, result)
+def pick_prerequisites(dep_graph, targets, result=set()):
+    for target in targets:
+        prerequisites = dep_graph.get(target, None)
+        if prerequisites:
+            new_prerequisites = prerequisites - result
+            result.update(new_prerequisites)
+            pick_prerequisites(dep_graph, new_prerequisites, result)
     return result
 
 
@@ -59,12 +60,14 @@ def main():
     args = parse_args()
 
     dep_graph = dict()
-    for makefile in args.makefile:
+    for makefile in args.f:
         parse_dep_file_to_dict(makefile, dep_graph)
 
-    prerequisites = pick_prerequisites(dep_graph, args.target)
+    all_prerequisites = pick_prerequisites(dep_graph, args.t)
 
-    print('\n'.join(fnmatch.filter(prerequisites, args.p)))
+    filtered_prerequisites = fnmatch.filter(all_prerequisites, args.p)
+
+    print('\n'.join(filtered_prerequisites))
 
 
 if __name__ == "__main__":
