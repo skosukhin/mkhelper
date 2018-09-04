@@ -22,7 +22,8 @@ dep_gen=@PYTHON@ @srcdir@/mkhelper/depgen.py $< $@ --target $(obj_dir)/$(@F:.d=.
               --fc-enable --fc-mod-ext='@FORTDEP_MODULE_FILE_EXT@'\
               --fc-mod-upper='@FORTDEP_MODULE_FILE_UPPER@' --fc-inc-order='@FORTDEP_INC_ORDER@'\
               --fc-external-mods='mpi' --fc-mod-dir-flag='@FC_MODOUT@'\
-              --debug $(@:.d=.debug)
+              --debug $(@:.d=.debug)\
+              --
 
 # Dependency collector
 dep_collector=@PYTHON@ @srcdir@/mkhelper/deplist.py
@@ -44,18 +45,21 @@ main : $(obj_dir)/main.o $(call required_objs, $(obj_dir)/main.o)
 	$(FC) $(LDFLAGS) -o $@ $^  $(LIBS)
 
 $(mod_dir)/%.@FORTDEP_MODULE_FILE_EXT@:
-	@if $(if $<,true,false); then if test -f $@; then :; else rm -f $<; $(MAKE) $<; fi; \
-        if test -f $@; then :; else false; fi; fi
+	@if test -z $<; then \
+	  echo 'Unexpected request to compile Fortran module $(basename $(@F)).' && false; \
+	elif test ! -f $@; then \
+	  rm -f $<; $(MAKE) $<; \
+	fi
 
 $(obj_dir)/%.o: %.f90 $(mod_dir)/.sentinel $(obj_dir)/.sentinel
 	$(FC) -c $(FCFLAGS) -o $@ -c @FCFLAGS_f90@ $<
 
 $(dep_dir)/%.d: %.f90 $(dep_dir)/.sentinel
-	@$(dep_gen) -- $(FCFLAGS) 2> /dev/null
+	@$(dep_gen) $(FCFLAGS) 2> /dev/null
 
 # Append undetectable dependencies
 $(dep_dir)/main.d: main.f90 $(dep_dir)/.sentinel
-	@$(dep_gen) -- $(FCFLAGS) 2> /dev/null && \
+	@$(dep_gen) $(FCFLAGS) 2> /dev/null && \
 	echo $(obj_dir)/$(@F:.d=.o): $(obj_dir)/implicit_external.o >> $@
 
 %/.sentinel:
