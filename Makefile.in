@@ -65,7 +65,7 @@ maintainer-clean: distclean
 
 # Main building rules
 $(BIN_DIR)/main: $(OBJ_DIR)/main.o $(LIB_DIR)/libmain.a | $(BIN_DIR)/.sentinel
-	$(FC) -L$(LIB_DIR) $(LDFLAGS) -o $@ $< -lmain $(LIBS)
+	$(FC) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 $(LIB_DIR)/libmain.a: $(shell $(DEPLIST) -p '*.o' $(OBJ_DIR)/main.o $(DEP_DIR)/*.d) | $(LIB_DIR)/.sentinel
 	$(AR) cru $@ $^
