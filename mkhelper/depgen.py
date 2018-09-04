@@ -35,9 +35,13 @@ def parse_args():
              'equals to INPUT but, for example, can be set to the '
              'filename part of the INPUT if vpath feature is used')
     parser.add_argument(
-        '--root', metavar='ROOT',
-        help='ignore dependencies on files that are not in ROOT or '
-             'its subdirectories (location of INPUT is not checked)')
+        '--src-root', metavar='SRC_ROOT',
+        help='ignore dependencies on files that are not in SRC_ROOT or '
+             'its subdirectories; location of INPUT is not checked; '
+             'the current working directory (i.e. where the building takes '
+             'place) and its subdirectories are never ignored to allow for '
+             'dependencies of/on automatically generated files (i.e. '
+             'config.h)')
     parser.add_argument(
         'sep', metavar='-- [$CPPFLAGS | $FCFLAGS]',
         action='store_const', const='--',
@@ -130,8 +134,8 @@ def parse_args():
             os.path.basename(args.input.name))[0] + '.o'
     if not args.src_prereq:
         args.src_prereq = args.input.name
-    if args.root:
-        args.root = os.path.abspath(args.root)
+    if args.src_root:
+        args.src_root = os.path.abspath(args.src_root)
 
     compiler_args = dict(pp_inc_dirs='-I',
                          pp_macros=args.pp_macro_flag,
@@ -211,7 +215,7 @@ def main():
         from depgen.pp_c import CPreprocessor
         pp = CPreprocessor(
             args.input,
-            include_root=args.root,
+            include_root=args.src_root,
             include_dirs=args.pp_inc_dirs,
             include_order=args.pp_inc_order,
             try_eval_expr=args.pp_eval_expr,
@@ -227,7 +231,7 @@ def main():
         from depgen.gen_fortran import FortranGenerator
         generator = FortranGenerator(
             pp,
-            include_root=args.root,
+            include_root=args.src_root,
             include_dirs=args.fc_inc_dirs,
             include_order=args.fc_inc_order,
             mods_to_ignore=args.fc_ignored_mods,

@@ -70,9 +70,14 @@ class IncludeReader:
                 if inc_candidate and os.path.isfile(inc_candidate):
                     break
 
-        if (inc_candidate and
-                (not self.include_root or
-                 os.path.abspath(inc_candidate).startswith(
-                     self.include_root))):
-            self.included_files.add(inc_candidate)
-            self._file_stack.append(open(inc_candidate, 'r'))
+        if not inc_candidate:
+            return
+
+        if self.include_root and self.include_root != os.getcwd():
+            inc_candidate_path = os.path.abspath(inc_candidate)
+            if not (inc_candidate_path.startswith(self.include_root) or
+                    inc_candidate_path.startswith(os.getcwd())):
+                return
+
+        self.included_files.add(inc_candidate)
+        self._file_stack.append(open(inc_candidate, 'r'))
