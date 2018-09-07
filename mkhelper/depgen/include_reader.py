@@ -73,7 +73,7 @@ class IncludeReader:
         if not inc_candidate:
             return
 
-        if self.include_root and self.include_root != os.getcwd():
+        if self.include_root:
             inc_candidate_path = os.path.abspath(inc_candidate)
             if not (inc_candidate_path.startswith(self.include_root) or
                     inc_candidate_path.startswith(os.getcwd())):
