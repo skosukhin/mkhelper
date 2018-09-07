@@ -2,6 +2,7 @@ AC_INIT([mkhelper], [1.0], [skosukhin@gmail.com])
 AC_PREREQ([2.69])
 
 AC_CONFIG_SRCDIR([src/program/main.f90])
+AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_MACRO_DIR([m4])
 
 AC_CONFIG_FILES(Makefile)
@@ -70,5 +71,7 @@ AC_LINK_IFELSE([AC_LANG_PROGRAM([], [[
   [AC_MSG_RESULT([yes])],
   [AC_MSG_RESULT([no])
   AS_VAR_APPEND([FC_DEFS], [" ${FC_DEFINE}NO_NETCDF"])])
+
+AC_PROG_INSTALL
 
 AC_OUTPUT

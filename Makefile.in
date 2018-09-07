@@ -8,6 +8,10 @@ MOD_DIR=@builddir@/mods
 LIB_DIR=@builddir@/lib
 BIN_DIR=@builddir@/bin
 
+# Install directories
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+
 # Compilers, building tools and the corresponding flags
 FC=@FC@
 FCFLAGS=@FC_MODINC@$(MOD_DIR) -I$(SRC_DIR)/include @FC_DEFS@ @FC_MODOUT@$(MOD_DIR) @FCFLAGS@
@@ -15,6 +19,8 @@ LDFLAGS=@LDFLAGS@
 LIBS=@LIBS@
 
 AR=@AR@
+INSTALL=@INSTALL@
+INSTALL_DATA=@INSTALL_DATA@
 
 DEPGEN=@PYTHON@ @srcdir@/mkhelper/depgen.py
 DEPLIST=@PYTHON@ @srcdir@/mkhelper/deplist.py
@@ -42,7 +48,7 @@ vpath %.f90 $(shell find $(SRC_DIR) -type d)
 # Disable built-in suffix rules
 .SUFFIXES:
 # Targets not associated with files
-.PHONY: all depend clean depclean distclean maintainer-clean
+.PHONY: all depend clean depclean distclean maintainer-clean install
 # Keep sentinel files of created directories
 .PRECIOUS: %/.sentinel
 
@@ -62,6 +68,10 @@ distclean: clean depclean
 
 maintainer-clean: distclean
 	rm -rf autom4te.cache
+
+install: $(BIN_DIR)/main $(LIB_DIR)/libmain.a
+	$(INSTALL) -D $(BIN_DIR)/main @bindir@/main
+	$(INSTALL_DATA) -D $(LIB_DIR)/libmain.a @libdir@/libmain.a
 
 # Main building rules
 $(BIN_DIR)/main: $(OBJ_DIR)/main.o $(LIB_DIR)/libmain.a | $(BIN_DIR)/.sentinel
@@ -85,7 +95,7 @@ $(MOD_DIR)/%.@FC_MODULE_EXT@:
 # searching for pattern rules, which is why we have to
 # create sentinel files inside the created directories.
 %/.sentinel:
-	@echo Creating directory $(@D); mkdir $(@D); touch $@
+	@echo "Creating directory '$(@D)'..."; mkdir $(@D); touch $@
 
 # Common dependency generation rule
 $(DEP_DIR)/%.f90.d: %.f90 | $(DEP_DIR)/.sentinel

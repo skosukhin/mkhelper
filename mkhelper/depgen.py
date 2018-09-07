@@ -200,7 +200,7 @@ def parse_args():
 def main():
     args = parse_args()
 
-    print('Generating %s...' % args.output.name)
+    print('Generating \'%s\'...' % args.output.name)
 
     if args.debug_file:
         args.debug_file.writelines([
