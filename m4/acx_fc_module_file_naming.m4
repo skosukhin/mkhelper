@@ -30,7 +30,7 @@ AC_COMPILE_IFELSE([[
       end module]],
   [acx_cv_fc_module_file_naming_ext=`ls | sed -n 's,conftest_module\.,,p'`
   AS_IF([test x"$acx_cv_fc_module_file_naming_ext" = x],
-    [acx_cv_fc_module_file_naming_ext=`ls | sed -n ',CONFTEST_MODULE\.,,p'`
+    [acx_cv_fc_module_file_naming_ext=`ls | sed -n 's,CONFTEST_MODULE\.,,p'`
     AS_IF([test x"$acx_cv_fc_module_file_naming_ext" = x],
       [acx_cv_fc_module_file_naming_ext=unknown
       acx_cv_fc_module_file_naming_upper=unknown],

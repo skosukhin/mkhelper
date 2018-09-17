@@ -2660,7 +2660,7 @@ _ACEOF
 if ac_fn_fc_try_compile "$LINENO"; then :
   acx_cv_fc_module_file_naming_ext=`ls | sed -n 's,conftest_module\.,,p'`
   if test x"$acx_cv_fc_module_file_naming_ext" = x; then :
-  acx_cv_fc_module_file_naming_ext=`ls | sed -n ',CONFTEST_MODULE\.,,p'`
+  acx_cv_fc_module_file_naming_ext=`ls | sed -n 's,CONFTEST_MODULE\.,,p'`
     if test x"$acx_cv_fc_module_file_naming_ext" = x; then :
   acx_cv_fc_module_file_naming_ext=unknown
       acx_cv_fc_module_file_naming_upper=unknown
