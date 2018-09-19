@@ -70,8 +70,9 @@ maintainer-clean: distclean
 	rm -rf autom4te.cache
 
 install: $(BIN_DIR)/main $(LIB_DIR)/libmain.a
-	$(INSTALL) -D $(BIN_DIR)/main @bindir@/main
-	$(INSTALL_DATA) -D $(LIB_DIR)/libmain.a @libdir@/libmain.a
+	$(INSTALL) -d @bindir@ @libdir@
+	$(INSTALL) $(BIN_DIR)/main @bindir@/main
+	$(INSTALL_DATA) $(LIB_DIR)/libmain.a @libdir@/libmain.a
 
 # Main building rules
 $(BIN_DIR)/main: $(OBJ_DIR)/main.o $(LIB_DIR)/libmain.a | $(BIN_DIR)/.sentinel
