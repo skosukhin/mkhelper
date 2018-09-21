@@ -1,0 +1,14 @@
+.idea
+*.pyc
+
+/autom4te.cache
+
+/config.log
+/config.status
+/Makefile
+
+/bin
+/deps
+/lib
+/mods
+/objs
