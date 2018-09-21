@@ -2,11 +2,11 @@
 SRC_DIR=@srcdir@/src
 
 # Build directories
-DEP_DIR=@builddir@/deps
-OBJ_DIR=@builddir@/objs
-MOD_DIR=@builddir@/mods
-LIB_DIR=@builddir@/lib
-BIN_DIR=@builddir@/bin
+DEP_DIR=deps
+OBJ_DIR=objs
+MOD_DIR=mods
+LIB_DIR=lib
+BIN_DIR=bin
 
 # Install directories
 prefix=@prefix@
@@ -29,7 +29,8 @@ DEPLIST=@PYTHON@ @srcdir@/mkhelper/deplist.py
 EXTERNAL_MODS=mpi
 
 # Dependency generation command for Fortran source files
-DEPGEN_f90=$(DEPGEN) $< $@ --target $(OBJ_DIR)/$(<F:.f90=.o) --src-prereq $(<F)\
+DEPGEN_f90=echo "Generating dependency file '$@'..."; \
+           $(DEPGEN) $< --output $@ --obj-name $(OBJ_DIR)/$(<F:.f90=.o) --src-name $(<F)\
            --src-root='@srcdir@' --pp-enable --pp-eval-expr\
            --pp-inc-order='@PP_INC_ORDER_f90@' --pp-macro-flag='@FC_DEFINE@'\
            --fc-enable --fc-mod-ext='@FC_MODULE_EXT@' --fc-mod-upper='@FC_MODULE_UPPER@'\
@@ -100,11 +101,11 @@ $(MOD_DIR)/%.@FC_MODULE_EXT@:
 
 # Common dependency generation rule
 $(DEP_DIR)/%.f90.d: %.f90 | $(DEP_DIR)/.sentinel
-	@$(DEPGEN_f90) $(FCFLAGS) 2> /dev/null
+	@$(DEPGEN_f90) $(FCFLAGS)
 
 # Overriden dependency generation rules for source files with undetectable dependencies
 $(DEP_DIR)/main.f90.d: main.f90 | $(DEP_DIR)/.sentinel
-	@$(DEPGEN_f90) $(FCFLAGS) 2> /dev/null && \
+	@$(DEPGEN_f90) $(FCFLAGS) && \
 	echo $(OBJ_DIR)/$(<F:.f90=.o): $(OBJ_DIR)/implicit_external.o >> $@
 
 ifeq (,$(filter $(MAKECMDGOALS), clean depclean distclean depend maintainer-clean))

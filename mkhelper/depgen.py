@@ -16,24 +16,35 @@ def parse_args():
         'input', metavar='INPUT', type=argparse.FileType('r'),
         help='input source file')
     parser.add_argument(
-        'output', metavar='OUTPUT', type=argparse.FileType('w'),
-        help='output makefile with generated dependency rules')
+        '--output', metavar='OUTPUT', type=argparse.FileType('w'),
+        help='output makefile with generated dependency rules; if not '
+             'specified, the program writes to the standard output')
     parser.add_argument(
         '--debug-file', metavar='DEBUG_FILE', type=argparse.FileType('w'),
         help='dump debug information to DEBUG_FILE')
     parser.add_argument(
-        '--target',
-        help='target of the compilation rule as it will appear in the '
-             'generated makefile; normally equals to the path to the object '
-             'file that is supposed to be generated as a result of '
-             'compilation (by default, equals to name of the INPUT without '
-             'directory prefix and with extension replaced with ".o")')
+        '--obj-name',
+        help='name of the object file, the target of the corresponding '
+             'compilation rule as it will appear in the OUTPUT; normally '
+             'equals to the path to the object file that is supposed to be '
+             'generated as a result of compilation (by default, equals to the '
+             'name of the INPUT without the directory-part with the file '
+             'extension replaced with ".o")')
     parser.add_argument(
-        '--src-prereq',
-        help='source file prerequisite of the compilation rule as it will '
-             'appear in the generated makefile; normally (and by default) '
-             'equals to INPUT but, for example, can be set to the '
-             'filename part of the INPUT if vpath feature is used')
+        '--src-name',
+        help='name of the source file, the prerequisite of the corresponding '
+             'compilation rule as it will appear in the OUTPUT; normally (and '
+             'by default) equals to the INPUT but can be overridden when, for '
+             'example, the source file needs to be referenced in the OUTPUT '
+             'without the directory-part (i.e. source files in the calling '
+             'Makefile are located using the vpath feature)')
+    parser.add_argument(
+        '--dep-name',
+        help='name of the generated makefile, the additional target of the'
+             'corresponding compilation rule (for auto-dependency generation) '
+             'as it will appear in the OUTPUT; normally (and by default) '
+             'equals to the OUTPUT but can be explicitly set when the latter '
+             'is not specified (i.e. writing to the standard output stream)')
     parser.add_argument(
         '--src-root', metavar='SRC_ROOT',
         help='ignore dependencies on files that are not in SRC_ROOT or '
@@ -43,8 +54,8 @@ def parse_args():
              'dependencies of/on automatically generated files (i.e. '
              'config.h)')
     parser.add_argument(
-        'sep', metavar='-- [$CPPFLAGS | $FCFLAGS]',
-        action='store_const', const='--',
+        'flags', metavar='-- [$CPPFLAGS | $FCFLAGS]', nargs='?',
+        default=argparse.SUPPRESS,
         help='actual flags to be used in compilation, i.e. $(CPPFLAGS) or '
              '$(FCFLAGS), must be given at the end of the command line '
              'following the double dash separator (--); the program searches '
@@ -121,19 +132,21 @@ def parse_args():
              'module files are saved; only flags starting with a single dash '
              '(-) are currently supported (default: %(default)s)')
 
-    args, unknown = parser.parse_known_args()
+    unknown = []
+    try:
+        sep_idx = sys.argv.index('--')
+        args = parser.parse_args(sys.argv[1:sep_idx])
+        unknown = sys.argv[sep_idx + 1:]
+    except ValueError:
+        args = parser.parse_args()
 
-    if unknown:
-        if unknown[0] != '--':
-            parser.error('unknown argument %s' % unknown[0])
-        else:
-            unknown = unknown[1:]
-
-    if not args.target:
-        args.target = os.path.splitext(
+    if not args.obj_name:
+        args.obj_name = os.path.splitext(
             os.path.basename(args.input.name))[0] + '.o'
-    if not args.src_prereq:
-        args.src_prereq = args.input.name
+    if not args.src_name:
+        args.src_name = args.input.name
+    if not args.dep_name and args.output:
+        args.dep_name = args.output.name
     if args.src_root:
         args.src_root = os.path.abspath(args.src_root)
 
@@ -200,8 +213,6 @@ def parse_args():
 def main():
     args = parse_args()
 
-    print('Generating \'%s\'...' % args.output.name)
-
     if args.debug_file:
         args.debug_file.writelines([
             '# Python version: ', sys.version.replace('\n', ' '), '\n',
@@ -248,11 +259,12 @@ def main():
     if args.debug_file:
         generator.print_debug(args.debug_file)
 
-    args.output.writelines(
-        generator.gen_dep_rules(args.target,
-                                args.output.name,
-                                args.src_prereq))
-    args.output.close()
+    out_stream = args.output if args.output else sys.stdout
+
+    out_stream.writelines(
+        generator.gen_dep_rules(args.obj_name, args.dep_name, args.src_name))
+
+    out_stream.close()
 
     if args.debug_file:
         args.debug_file.close()
