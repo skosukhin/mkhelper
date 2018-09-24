@@ -59,6 +59,9 @@ def parse_dep_file_to_dict(dep_file, result):
 def main():
     args = parse_args()
 
+    if args.f is None:
+        return
+
     dep_graph = dict()
     for makefile in args.f:
         parse_dep_file_to_dict(makefile, dep_graph)
