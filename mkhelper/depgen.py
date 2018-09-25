@@ -2,7 +2,10 @@
 import os
 import sys
 
-import argparse
+try:
+    import argparse
+except ImportError:
+    import _argparse as argparse
 
 
 def parse_args():
