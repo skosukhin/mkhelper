@@ -19,7 +19,7 @@ def parse_args():
         'input', metavar='INPUT', type=argparse.FileType('r'),
         help='input source file')
     parser.add_argument(
-        '--output', metavar='OUTPUT', type=argparse.FileType('w'),
+        '--output', metavar='OUTPUT',
         help='output makefile with generated dependency rules; if not '
              'specified, the program writes to the standard output')
     parser.add_argument(
@@ -149,7 +149,7 @@ def parse_args():
     if not args.src_name:
         args.src_name = args.input.name
     if not args.dep_name and args.output:
-        args.dep_name = args.output.name
+        args.dep_name = args.output
     if args.src_root:
         args.src_root = os.path.abspath(args.src_root)
 
@@ -262,7 +262,7 @@ def main():
     if args.debug_file:
         generator.print_debug(args.debug_file)
 
-    out_stream = args.output if args.output else sys.stdout
+    out_stream = open(args.output, 'w') if args.output else sys.stdout
 
     out_stream.writelines(
         generator.gen_dep_rules(args.obj_name, args.dep_name, args.src_name))
