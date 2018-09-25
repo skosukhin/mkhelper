@@ -1,5 +1,7 @@
 import os
 
+from depgen import open23
+
 
 class IncludeReader:
     """Provides a transparent interface for reading a source file that includes
@@ -80,4 +82,4 @@ class IncludeReader:
                 return
 
         self.included_files.add(inc_candidate)
-        self._file_stack.append(open(inc_candidate, 'r'))
+        self._file_stack.append(open23(inc_candidate, 'r'))

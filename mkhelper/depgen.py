@@ -2,6 +2,8 @@
 import os
 import sys
 
+from depgen import open23
+
 try:
     import argparse
 except ImportError:
@@ -16,14 +18,14 @@ def parse_args():
                     'Fortran "include", "use" and "module" statements.')
 
     parser.add_argument(
-        'input', metavar='INPUT', type=argparse.FileType('r'),
+        'input', metavar='INPUT',
         help='input source file')
     parser.add_argument(
         '--output', metavar='OUTPUT',
         help='output makefile with generated dependency rules; if not '
              'specified, the program writes to the standard output')
     parser.add_argument(
-        '--debug-file', metavar='DEBUG_FILE', type=argparse.FileType('w'),
+        '--debug-file', metavar='DEBUG_FILE',
         help='dump debug information to DEBUG_FILE')
     parser.add_argument(
         '--obj-name',
@@ -145,9 +147,9 @@ def parse_args():
 
     if not args.obj_name:
         args.obj_name = os.path.splitext(
-            os.path.basename(args.input.name))[0] + '.o'
+            os.path.basename(args.input))[0] + '.o'
     if not args.src_name:
-        args.src_name = args.input.name
+        args.src_name = args.input
     if not args.dep_name and args.output:
         args.dep_name = args.output
     if args.src_root:
@@ -216,8 +218,10 @@ def parse_args():
 def main():
     args = parse_args()
 
+    debug_file = None
     if args.debug_file:
-        args.debug_file.writelines([
+        debug_file = open(args.debug_file, 'w')
+        debug_file.writelines([
             '# Python version: ', sys.version.replace('\n', ' '), '\n',
             '# Command:\n',
             '  ', '\n    '.join(sys.argv), '\n',
@@ -225,21 +229,23 @@ def main():
             '\n '.join(
                 [k + '=' + str(v) for k, v in vars(args).items()]), '\n'])
 
+    in_stream = open23(args.input, 'r')
+
     if args.pp_enable:
         from depgen.pp_c import CPreprocessor
         pp = CPreprocessor(
-            args.input,
+            in_stream,
             include_root=args.src_root,
             include_dirs=args.pp_inc_dirs,
             include_order=args.pp_inc_order,
             try_eval_expr=args.pp_eval_expr,
-            debug=bool(args.debug_file))
+            debug=(debug_file is not None))
 
         for macro in args.pp_macros:
             pp.define_from_cmd_line(macro)
     else:
         from depgen.pp_dummy import DummyPreprocessor
-        pp = DummyPreprocessor(args.input)
+        pp = DummyPreprocessor(in_stream)
 
     if args.fc_enable:
         from depgen.gen_fortran import FortranGenerator
@@ -252,15 +258,15 @@ def main():
             mod_file_dir=args.fc_mod_dir,
             mod_file_ext=args.fc_mod_ext,
             mod_file_upper=args.fc_mod_upper,
-            debug=bool(args.debug_file))
+            debug=(debug_file is not None))
     else:
         from depgen.gen_pp import PpGenerator
         generator = PpGenerator(pp)
 
     generator.parse()
 
-    if args.debug_file:
-        generator.print_debug(args.debug_file)
+    if debug_file:
+        generator.print_debug(debug_file)
 
     out_stream = open(args.output, 'w') if args.output else sys.stdout
 
@@ -269,8 +275,8 @@ def main():
 
     out_stream.close()
 
-    if args.debug_file:
-        args.debug_file.close()
+    if debug_file:
+        debug_file.close()
 
 
 if __name__ == "__main__":
