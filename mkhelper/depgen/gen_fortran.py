@@ -105,15 +105,19 @@ class FortranGenerator:
         if included_files:
             result.extend([' ', ' '.join(included_files)])
 
+        required_mods = self._required_mods
+
         if self._provided_mods:
+            # Do not depend on the modules that are provided in the same file
+            required_mods -= self._provided_mods
             provided_mod_files = ' '.join(
                 self._mods_to_file_names(self._provided_mods))
             result.append(
                 '\n' + provided_mod_files + ': ' + compile_target)
 
-        if self._required_mods:
+        if required_mods:
             required_mod_files = ' '.join(
-                self._mods_to_file_names(self._required_mods))
+                self._mods_to_file_names(required_mods))
             result.append(
                 '\n' + compile_target + ': ' + required_mod_files)
 
