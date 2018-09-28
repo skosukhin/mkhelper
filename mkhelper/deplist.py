@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import os
+import sys
 import fnmatch
 
 try:
@@ -14,6 +15,9 @@ def parse_args():
                     'direct and indirect prerequisites for TARGET. Optionally '
                     'filters the list with PATTERN.')
 
+    parser.add_argument('--debug-file',
+                        metavar='DEBUG_FILE',
+                        help='dump debug information to DEBUG_FILE')
     parser.add_argument('-t',
                         metavar='TARGET', nargs='+',
                         help='names of the make targets')
@@ -61,6 +65,16 @@ def parse_dep_file_to_dict(dep_file, result):
 
 def main():
     args = parse_args()
+
+    if args.debug_file:
+        with open(args.debug_file, 'w') as debug_file:
+            debug_file.writelines([
+                '# Python version: ', sys.version.replace('\n', ' '), '\n',
+                '# Command:\n',
+                '  ', '\n    '.join(sys.argv), '\n',
+                '# Parsed arguments:\n ',
+                '\n '.join(
+                    [k + '=' + str(v) for k, v in vars(args).items()]), '\n'])
 
     if args.f is None:
         return
