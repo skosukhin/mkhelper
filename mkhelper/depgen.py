@@ -12,6 +12,7 @@ except ImportError:
 
 def parse_args():
     parser = argparse.ArgumentParser(
+        fromfile_prefix_chars='@',
         description='Generates OUTPUT makefile containing dependency rules '
                     'for the INPUT source file. Recognizes preprocessor '
                     '"#include", "#if" and associated directives as well as '
@@ -21,11 +22,11 @@ def parse_args():
         'input', metavar='INPUT',
         help='input source file')
     parser.add_argument(
-        '--output', metavar='OUTPUT',
+        '--output', '-o', metavar='OUTPUT',
         help='output makefile with generated dependency rules; if not '
              'specified, the program writes to the standard output')
     parser.add_argument(
-        '--debug-file', metavar='DEBUG_FILE',
+        '--debug-file', '-d', metavar='DEBUG_FILE',
         help='dump debug information to DEBUG_FILE')
     parser.add_argument(
         '--obj-name',
@@ -228,6 +229,9 @@ def main():
             '# Parsed arguments:\n ',
             '\n '.join(
                 [k + '=' + str(v) for k, v in vars(args).items()]), '\n'])
+
+    if args.output:
+        print('Generating dependency file \'' + args.output + '\'...')
 
     in_stream = open23(args.input, 'r')
 

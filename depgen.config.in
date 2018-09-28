@@ -1,0 +1,11 @@
+--src-root=@srcdir@
+--pp-enable
+--pp-eval-expr
+--pp-inc-order=@PP_INC_ORDER_f90@
+--pp-macro-flag=@FC_DEFINE@
+--fc-enable
+--fc-mod-ext=@FC_MODULE_EXT@
+--fc-mod-upper=@FC_MODULE_UPPER@
+--fc-inc-order=@FC_INC_ORDER@
+--fc-external-mods=mpi
+--fc-mod-dir-flag=@FC_MODOUT@

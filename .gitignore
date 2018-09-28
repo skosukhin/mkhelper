@@ -7,6 +7,7 @@ __pycache__
 /config.log
 /config.status
 /Makefile
+/depgen.config
 
 /bin
 /deps

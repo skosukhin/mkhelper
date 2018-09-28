@@ -1,18 +1,18 @@
-# Source file directory
+# Source file directory:
 SRC_DIR=@srcdir@/src
 
-# Build directories
+# Build directories:
 DEP_DIR=deps
 OBJ_DIR=objs
 MOD_DIR=mods
 LIB_DIR=lib
 BIN_DIR=bin
 
-# Install directories
+# Install directories:
 prefix=@prefix@
 exec_prefix=@exec_prefix@
 
-# Compilers, building tools and the corresponding flags
+# Compilers, building tools and the corresponding flags:
 FC=@FC@
 FCFLAGS=@FC_MODINC@$(MOD_DIR) -I$(SRC_DIR)/include @FC_DEFS@ @FC_MODOUT@$(MOD_DIR) @FCFLAGS@
 LDFLAGS=@LDFLAGS@
@@ -22,60 +22,48 @@ AR=@AR@
 INSTALL=@INSTALL@
 INSTALL_DATA=@INSTALL_DATA@
 
-DEPGEN=@PYTHON@ @srcdir@/mkhelper/depgen.py
+# Dependency generation command:
+DEPGEN=@PYTHON@ @srcdir@/mkhelper/depgen.py \
+       @depgen.config $< -o $@ -d $(@:.d=.debug) \
+       --obj-name $(OBJ_DIR)/$(<F:.f90=.o) --src-name $(<F)
+
+# Dependency listing command:
 DEPLIST=@PYTHON@ @srcdir@/mkhelper/deplist.py
 
-# List of external modules for the dependency generation
-EXTERNAL_MODS=mpi
+# List of the dependency files:
+srcs=$(notdir $(shell find $(SRC_DIR) -name '*.f90'))
+DEP_FILES=$(addprefix $(DEP_DIR)/, $(srcs:.f90=.f90.d))
 
-# Dependency generation command for Fortran source files
-DEPGEN_f90=echo "Generating dependency file '$@'..."; \
-           $(DEPGEN) $< --output $@ --obj-name $(OBJ_DIR)/$(<F:.f90=.o) --src-name $(<F)\
-           --src-root='@srcdir@' --pp-enable --pp-eval-expr\
-           --pp-inc-order='@PP_INC_ORDER_f90@' --pp-macro-flag='@FC_DEFINE@'\
-           --fc-enable --fc-mod-ext='@FC_MODULE_EXT@' --fc-mod-upper='@FC_MODULE_UPPER@'\
-           --fc-inc-order='@FC_INC_ORDER@' --fc-external-mods='$(EXTERNAL_MODS)'\
-           --fc-mod-dir-flag='@FC_MODOUT@'\
-           --debug $(@:.f90.d=.f90.debug)\
-           --
-
-# List of the dependency files
-src_f90=$(notdir $(shell find $(SRC_DIR) -name '*.f90'))
-DEP_FILES=$(addprefix $(DEP_DIR)/, $(src_f90:.f90=.f90.d))
-
-# Source file selective search paths
+# Source file selective search paths:
 vpath %.f90 $(shell find $(SRC_DIR) -type d)
 
-# Disable built-in suffix rules
+# Disable built-in suffix rules:
 .SUFFIXES:
-# Targets not associated with files
-.PHONY: all depend clean depclean distclean maintainer-clean install
-# Keep sentinel files of created directories
+# Targets not associated with files:
+.PHONY: all depend clean distclean maintainer-clean install
+# Keep sentinel files of created directories:
 .PRECIOUS: %/.sentinel
 
-# User interface rules
+# User interface rules:
 all: $(BIN_DIR)/main;
 
 depend: $(DEP_FILES)
 
 clean:
-	rm -rf $(BIN_DIR) $(LIB_DIR) $(MOD_DIR) $(OBJ_DIR)
+	rm -rf $(DEP_DIR) $(OBJ_DIR) $(MOD_DIR) $(LIB_DIR) $(BIN_DIR)
 
-depclean:
-	rm -rf $(DEP_DIR)
-
-distclean: clean depclean
-	rm -f config.log config.status Makefile $(shell find @srcdir@/mkhelper -name '*.pyc' -o -name '*.pyo')
+distclean: clean
+	rm -f config.log config.status Makefile depgen.config
 
 maintainer-clean: distclean
-	rm -rf autom4te.cache
+	rm -rf autom4te.cache $(shell find @srcdir@/mkhelper -name '*.pyc' -o -name '*.pyo')
 
 install: $(BIN_DIR)/main $(LIB_DIR)/libmain.a
 	$(INSTALL) -d @bindir@ @libdir@
 	$(INSTALL) $(BIN_DIR)/main @bindir@/main
 	$(INSTALL_DATA) $(LIB_DIR)/libmain.a @libdir@/libmain.a
 
-# Main building rules
+# Main building rules:
 $(BIN_DIR)/main: $(OBJ_DIR)/main.o $(LIB_DIR)/libmain.a | $(BIN_DIR)/.sentinel
 	$(FC) $(LDFLAGS) -o $@ $^ $(LIBS)
 
@@ -85,7 +73,7 @@ $(LIB_DIR)/libmain.a: $(shell $(DEPLIST) -p '*.o' -t $(OBJ_DIR)/main.o -f $(DEP_
 $(OBJ_DIR)/%.o: %.f90 | $(MOD_DIR)/.sentinel $(OBJ_DIR)/.sentinel
 	$(FC) -c $(FCFLAGS) -o $@ @FCFLAGS_f90@ $<
 
-# Auxiliary building rules
+# Auxiliary building rules:
 $(MOD_DIR)/%.@FC_MODULE_EXT@:
 	@if test -z $<; then \
 	  echo "Cannot find Fortran source file providing module '$(basename $(@F))'." && false; \
@@ -95,19 +83,19 @@ $(MOD_DIR)/%.@FC_MODULE_EXT@:
 
 # Some old versions of GNU Make strip the trailing slash when
 # searching for pattern rules, which is why we have to
-# create sentinel files inside the created directories.
+# create sentinel files inside the created directories:
 %/.sentinel:
 	@echo "Creating directory '$(@D)'..."; mkdir $(@D); touch $@
 
-# Common dependency generation rule
+# Common dependency generation rule:
 $(DEP_DIR)/%.f90.d: %.f90 | $(DEP_DIR)/.sentinel
-	@$(DEPGEN_f90) $(FCFLAGS)
+	@$(DEPGEN) -- $(FCFLAGS)
 
-# Overriden dependency generation rules for source files with undetectable dependencies
+# Overridden dependency generation rules for source files with undetectable dependencies:
 $(DEP_DIR)/main.f90.d: main.f90 | $(DEP_DIR)/.sentinel
-	@$(DEPGEN_f90) $(FCFLAGS) && \
+	@$(DEPGEN) -- $(FCFLAGS) && \
 	echo $(OBJ_DIR)/$(<F:.f90=.o): $(OBJ_DIR)/implicit_external.o >> $@
 
-ifeq (,$(filter $(MAKECMDGOALS), clean depclean distclean depend maintainer-clean))
+ifeq (,$(filter $(MAKECMDGOALS), depend clean distclean maintainer-clean))
 -include $(DEP_FILES)
 endif
