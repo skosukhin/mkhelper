@@ -1,17 +1,23 @@
+# External libraries:
 NETCDFF_ROOT=/path/to/dynamically/linked/netcdf-fortran
 NETCDFF_LIBS=-lnetcdff
 
+# Compiler:
 FC=gfortran
-FCFLAGS="-I${NETCDFF_ROOT}/include"
-LDFLAGS="-L${NETCDFF_ROOT}/lib"
-LIBS="${NETCDFF_LIBS}"
 
-# Add RPATHs.
+# Compiler flags:
+FCFLAGS="-I${NETCDFF_ROOT}/include"
+
+# Linker flags with RPATHs:
+LDFLAGS="-L${NETCDFF_ROOT}/lib"
 LDFLAGS=$(echo $LDFLAGS | sed 's%\(-L\s*\(\S\+\)\)%\1 -Wl,-rpath -Wl,\2%g')
 
-export FC && export FCFLAGS && export LDFLAGS && export LIBS
+# Libraries:
+LIBS="${NETCDFF_LIBS}"
 
 echo FC: $FC
 echo FCFLAGS: $FCFLAGS
 echo LDFLAGS: $LDFLAGS
 echo LIBS: $LIBS
+
+$(cd "$(dirname "$0")"; pwd)/configure FC="$FC" FCFLAGS="$FCFLAGS" LDFLAGS="$LDFLAGS" LIBS="$LIBS"

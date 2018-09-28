@@ -56,7 +56,7 @@ distclean: clean
 	rm -f config.log config.status Makefile depgen.config
 
 maintainer-clean: distclean
-	rm -rf autom4te.cache $(shell find @srcdir@/mkhelper -name '*.pyc' -o -name '*.pyo')
+	rm -rf @srcdir@/autom4te.cache $(shell find @srcdir@/mkhelper -name '*.pyc' -o -name '*.pyo' -o -name '__pycache__')
 
 install: $(BIN_DIR)/main $(LIB_DIR)/libmain.a
 	$(INSTALL) -d @bindir@ @libdir@
