@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import os
+import re
 import sys
 import fnmatch
 
@@ -7,6 +8,10 @@ try:
     import argparse
 except ImportError:
     import _argparse as argparse
+
+
+_re_rule = re.compile(r'^([-\w./]+(?:[ ]+[-\w./]+)*)[ ]*:'
+                      r'[ ]*([-\w./]+(?:[ ]+[-\w./]+)*)')
 
 
 def parse_args():
@@ -49,11 +54,10 @@ def parse_dep_file_to_dict(dep_file, result):
             while line:
                 while line.endswith('\\\n'):
                     line = line[:-2] + f.readline()
-                split = line.strip().split(':', 1)
-                if split[0]:
-                    targets = set(split[0].split())
-                    new_prerequisites = set(
-                        split[1].replace('|', ' ').replace(':', ' ').split())
+                match = _re_rule.match(line)
+                if match:
+                    targets = set(match.group(1).split())
+                    new_prerequisites = set(match.group(2).split())
                     for t in targets:
                         old_prerequisites = result.get(t, None)
                         if old_prerequisites:
