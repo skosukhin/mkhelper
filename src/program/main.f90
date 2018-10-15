@@ -10,6 +10,14 @@ program main
   use mod_b
 #endif
 
+#if _OPENMP >= 201511
+  use mo_omp45, only: print_omp
+#elif _OPENMP >= 201307
+  use mo_omp40, only: print_omp
+#elif defined(_OPENMP)
+  use mo_omp, only: print_omp
+#endif
+
   implicit none
   include "include_fc.inc"
 
@@ -43,6 +51,12 @@ program main
   print *, "The file was successfully deleted."
 #else
   print *, "Support for NetCDF is disabled."
+#endif
+
+#ifndef _OPENMP
+  print *, "OpenMP is disabled."
+#else
+  call print_omp()
 #endif
 
   call implicit_external()

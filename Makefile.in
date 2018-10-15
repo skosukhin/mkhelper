@@ -14,7 +14,7 @@ exec_prefix=@exec_prefix@
 
 # Compilers, building tools and the corresponding flags:
 FC=@FC@
-FCFLAGS=@FC_MODINC@$(MOD_DIR) -I$(SRC_DIR)/include @FC_DEFS@ @FC_MODOUT@$(MOD_DIR) @FCFLAGS@
+FCFLAGS=@FC_MODINC@$(MOD_DIR) -I$(SRC_DIR)/include @FC_MODOUT@$(MOD_DIR) @FCFLAGS@
 LDFLAGS=@LDFLAGS@
 LIBS=@LIBS@
 
@@ -25,7 +25,8 @@ INSTALL_DATA=@INSTALL_DATA@
 # Dependency generation command:
 DEPGEN=@PYTHON@ @srcdir@/mkhelper/depgen.py \
        @depgen.config $< -o $@ -d $(@:.d=.debug) \
-       --obj-name $(OBJ_DIR)/$(<F:.f90=.o) --src-name $(<F)
+       --obj-name $(OBJ_DIR)/$(<F:.f90=.o) --src-name $(<F) \
+       -- @DEPGEN_DEFS@
 
 # Dependency listing command:
 DEPLIST=@PYTHON@ @srcdir@/mkhelper/deplist.py
@@ -33,6 +34,7 @@ DEPLIST=@PYTHON@ @srcdir@/mkhelper/deplist.py
 # List of the dependency files:
 srcs=$(notdir $(shell find $(SRC_DIR) -name '*.f90'))
 DEP_FILES=$(addprefix $(DEP_DIR)/, $(srcs:.f90=.f90.d))
+DEP_FILES+=$(DEP_DIR)/_undetectable.d
 
 # Source file selective search paths:
 vpath %.f90 $(shell find $(SRC_DIR) -type d)
@@ -89,12 +91,11 @@ $(MOD_DIR)/%.@FC_MODULE_EXT@:
 
 # Common dependency generation rule:
 $(DEP_DIR)/%.f90.d: %.f90 | $(DEP_DIR)/.sentinel
-	@$(DEPGEN) -- $(FCFLAGS)
+	@$(DEPGEN) $(FCFLAGS)
 
-# Overridden dependency generation rules for source files with undetectable dependencies:
-$(DEP_DIR)/main.f90.d: main.f90 | $(DEP_DIR)/.sentinel
-	@$(DEPGEN) -- $(FCFLAGS) && \
-	echo $(OBJ_DIR)/$(<F:.f90=.o): $(OBJ_DIR)/implicit_external.o >> $@
+# Undetectable dependencies:
+$(DEP_DIR)/_undetectable.d: | $(DEP_DIR)/.sentinel
+	@echo $(OBJ_DIR)/main.o: $(OBJ_DIR)/implicit_external.o > $@
 
 ifeq (,$(filter $(MAKECMDGOALS), depend clean distclean maintainer-clean))
 -include $(DEP_FILES)

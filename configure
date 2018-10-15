@@ -590,9 +590,10 @@ LIBOBJS
 INSTALL_DATA
 INSTALL_SCRIPT
 INSTALL_PROGRAM
-FC_DEFS
 PYTHON
 AR
+OPENMP_FCFLAGS
+DEPGEN_DEFS
 PP_INC_ORDER_f90
 FC_INC_ORDER
 FC_MODULE_EXT
@@ -649,6 +650,7 @@ ac_subst_files=''
 ac_user_opts='
 enable_option_checking
 enable_additional_mods
+enable_openmp
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1269,8 +1271,8 @@ Optional Features:
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --enable-additional-mods
-                          enable usage of additional modules [default: yes
-                          @>:@
+                          enable usage of additional modules [default: yes]
+  --enable-openmp         enable OpenMP support [default: yes]
 
 Some influential environment variables:
   FC          Fortran compiler command
@@ -2685,10 +2687,10 @@ $as_echo "uppercase=$acx_cv_fc_module_file_naming_upper extension=$acx_cv_fc_mod
 if test x"$acx_cv_fc_module_file_naming_upper" != xunknown &&
   test x"$acx_cv_fc_module_file_naming_ext" != xunknown; then :
   FC_MODULE_UPPER=$acx_cv_fc_module_file_naming_upper
-FC_MODULE_EXT=$acx_cv_fc_module_file_naming_ext
+  FC_MODULE_EXT=$acx_cv_fc_module_file_naming_ext
 else
   FC_MODULE_UPPER=no
-FC_MODULE_EXT=mod
+  FC_MODULE_EXT=mod
 fi
 
 
@@ -2924,6 +2926,185 @@ fi
 
 
 
+# Check whether --enable-additional-mods was given.
+if test "${enable_additional_mods+set}" = set; then :
+  enableval=$enable_additional_mods;
+else
+  enable_additional_mods=yes
+fi
+
+if test "x$enable_additional_mods" = xyes; then :
+  FCFLAGS="${FC_DEFINE}INCLUDE_MODULES $FCFLAGS"
+fi
+
+
+
+# Check whether --enable-openmp was given.
+if test "${enable_openmp+set}" = set; then :
+  enableval=$enable_openmp;
+else
+  enable_openmp=yes
+fi
+
+if test "x$enable_openmp" = "xyes"; then :
+
+OPENMP_FCFLAGS=
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $FC flag to enable OpenMP support" >&5
+$as_echo_n "checking for $FC flag to enable OpenMP support... " >&6; }
+if ${acx_cv_prog_fc_openmp+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  acx_cv_prog_fc_openmp="unsupported"
+  acx_FCFLAGS_save=$FCFLAGS
+  for acx_openmp_flag in '' -qopenmp -openmp -fopenmp -homp \
+                         -mp -xopenmp -omp -qsmp=omp -Popenmp --openmp; do
+    FCFLAGS="$acx_FCFLAGS_save $acx_openmp_flag"
+    cat > conftest.$ac_ext <<_ACEOF
+
+      program main
+      implicit none
+!$    integer tid
+      tid = 42
+      call omp_set_num_threads(2)
+      end
+
+_ACEOF
+if ac_fn_fc_try_link "$LINENO"; then :
+  if test "x$acx_openmp_flag" = "x"; then :
+  acx_cv_prog_fc_openmp="none needed"
+else
+  acx_cv_prog_fc_openmp=$acx_openmp_flag
+fi
+      break
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+  done
+  FCFLAGS=$acx_FCFLAGS_save
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_prog_fc_openmp" >&5
+$as_echo "$acx_cv_prog_fc_openmp" >&6; }
+if test "x$acx_cv_prog_fc_openmp" != "xunsupported"; then :
+  if test "x$acx_cv_prog_fc_openmp" != "xnone needed"; then :
+  OPENMP_FCFLAGS=$acx_cv_prog_fc_openmp
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for the value of the preprocessor macro _OPENMP set by $FC" >&5
+$as_echo_n "checking for the value of the preprocessor macro _OPENMP set by $FC... " >&6; }
+if ${acx_cv_prog_fc_openmp_macro+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  acx_cv_prog_fc_openmp_macro="unsupported"
+  acx_FCFLAGS_save=$FCFLAGS
+    FCFLAGS="$acx_FCFLAGS_save $OPENMP_FCFLAGS"
+  if test "x$cross_compiling" = "xno"; then :
+  cat > conftest.$ac_ext <<_ACEOF
+
+      program main
+      implicit none
+      integer ompver
+      ompver = _OPENMP
+      write (*, "(i0)") ompver
+      end
+_ACEOF
+if ac_fn_fc_try_link "$LINENO"; then :
+  acx_cv_prog_fc_openmp_macro=`./conftest$ac_exeext`
+      if test $? -ne 0; then :
+  acx_cv_prog_fc_openmp_macro="unsupported"
+fi
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+fi
+  if test "x$acx_cv_prog_fc_openmp_macro" = "xunsupported"; then :
+  cat > conftest.$ac_ext <<_ACEOF
+      program main
+
+#ifndef _OPENMP
+      choke me
+#endif
+      end
+_ACEOF
+if ac_fn_fc_try_link "$LINENO"; then :
+  acx_cv_prog_fc_openmp_macro=unknown
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+fi
+  FCFLAGS=$acx_FCFLAGS_save
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_prog_fc_openmp_macro" >&5
+$as_echo "$acx_cv_prog_fc_openmp_macro" >&6; }
+if test "x$acx_cv_prog_fc_openmp_macro" != unknown; then :
+  if test "x$acx_cv_prog_fc_openmp_macro" = "xunknown"; then :
+  as_fn_append DEPGEN_DEFS " ${FC_DEFINE}_OPENMP"
+else
+  as_fn_append DEPGEN_DEFS " ${FC_DEFINE}_OPENMP=$acx_cv_prog_fc_openmp_macro"
+fi
+else
+  as_fn_error $? "the preprocessor used by $FC does not set the macro _OPENMP" "$LINENO" 5
+fi
+
+else
+  as_fn_error $? "unable to detect flag needed to enable OpenMP support for $FC" "$LINENO" 5
+fi
+
+
+  FCFLAGS="$OPENMP_FCFLAGS $FCFLAGS"
+else
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether OpenMP support is disabled for $FC" >&5
+$as_echo_n "checking whether OpenMP support is disabled for $FC... " >&6; }
+if ${acx_cv_prog_fc_openmp_disabled+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  cat > conftest.$ac_ext <<_ACEOF
+      program main
+
+#ifndef _OPENMP
+      choke me
+#endif
+      end
+_ACEOF
+if ac_fn_fc_try_link "$LINENO"; then :
+  acx_cv_prog_fc_openmp_disabled=no
+else
+  acx_cv_prog_fc_openmp_disabled=yes
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_prog_fc_openmp_disabled" >&5
+$as_echo "$acx_cv_prog_fc_openmp_disabled" >&6; }
+if test "x$acx_cv_prog_fc_openmp_disabled" = "xyes"; then :
+
+else
+  as_fn_error $? "OpenMP support for $FC is enabled by default: set FCFLAGS accordingly to disable it" "$LINENO" 5
+fi
+
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether the Fortran interface of NetCDF library is available" >&5
+$as_echo_n "checking whether the Fortran interface of NetCDF library is available... " >&6; }
+cat > conftest.$ac_ext <<_ACEOF
+      program main
+
+      include 'netcdf.inc'
+      integer ncid, status
+      status = nf_open('dummy.nc', 0, ncid)
+      end
+_ACEOF
+if ac_fn_fc_try_link "$LINENO"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+  FCFLAGS="${FC_DEFINE}NO_NETCDF $FCFLAGS"
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for the archiver command" >&5
 $as_echo_n "checking for the archiver command... " >&6; }
@@ -2999,41 +3180,6 @@ PYTHON=$acx_cv_prog_PYTHON
 if test "x$PYTHON" = xunknown; then :
   as_fn_error $? "unable to find Python interpreter" "$LINENO" 5
 fi
-
-
-
-# Check whether --enable-additional-mods was given.
-if test "${enable_additional_mods+set}" = set; then :
-  enableval=$enable_additional_mods;
-else
-  enable_additional_mods=yes
-fi
-
-
-if test "x$enable_additional_mods" = xyes; then :
-  as_fn_append FC_DEFS " ${FC_DEFINE}INCLUDE_MODULES"
-fi
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether the Fortran interface of NetCDF library is available" >&5
-$as_echo_n "checking whether the Fortran interface of NetCDF library is available... " >&6; }
-cat > conftest.$ac_ext <<_ACEOF
-      program main
-
-      include 'netcdf.inc'
-      integer ncid, status
-      status = nf_open('dummy.nc', 0, ncid)
-      end
-_ACEOF
-if ac_fn_fc_try_link "$LINENO"; then :
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-  as_fn_append FC_DEFS " ${FC_DEFINE}NO_NETCDF"
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
 
 # Find a good install program.  We prefer a C program (faster),
 # so one script is as good as another.  But avoid the broken or
