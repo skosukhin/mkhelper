@@ -78,7 +78,16 @@ AC_CACHE_CHECK([for the value of the preprocessor macro _OPENMP set by $[]_AC_CC
       AS_IF([test $? -ne 0],
         [acx_cv_prog_[]_AC_LANG_ABBREV[]_openmp_macro="unsupported"])])])
   AS_IF([test "x$acx_cv_prog_[]_AC_LANG_ABBREV[]_openmp_macro" = "xunsupported"],
-    [AC_LINK_IFELSE([AC_LANG_PROGRAM([], [[
+    [for acx_openmp_ver in 201511 201307 201107 200805 200505; do
+      AC_COMPILE_IFELSE([AC_LANG_PROGRAM([], [[
+#if _OPENMP != $acx_openmp_ver
+      choke me
+#endif]])],
+        [acx_cv_prog_[]_AC_LANG_ABBREV[]_openmp_macro=$acx_openmp_ver
+        break])
+    done])
+  AS_IF([test "x$acx_cv_prog_[]_AC_LANG_ABBREV[]_openmp_macro" = "xunsupported"],
+    [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([], [[
 #ifndef _OPENMP
       choke me
 #endif]])],
@@ -104,7 +113,7 @@ AS_IF([test "x$acx_cv_prog_[]_AC_LANG_ABBREV[]_openmp_macro" != unknown],
 AC_DEFUN([ACX_OPENMP_CHECK_DISABLED], [
 AC_CACHE_CHECK([whether OpenMP support is disabled for $[]_AC_CC[]],
   [acx_cv_prog_[]_AC_LANG_ABBREV[]_openmp_disabled],
-  [AC_LINK_IFELSE([AC_LANG_PROGRAM([], [[
+  [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([], [[
 #ifndef _OPENMP
       choke me
 #endif]])],
