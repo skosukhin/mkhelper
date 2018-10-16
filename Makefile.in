@@ -67,7 +67,7 @@ install: $(BIN_DIR)/main $(LIB_DIR)/libmain.a
 
 # Main building rules:
 $(BIN_DIR)/main: $(OBJ_DIR)/main.o $(LIB_DIR)/libmain.a | $(BIN_DIR)/.sentinel
-	$(FC) $(LDFLAGS) -o $@ $^ $(LIBS)
+	$(FC) $(FCFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 $(LIB_DIR)/libmain.a: $(shell $(DEPLIST) -p '*.o' -t $(OBJ_DIR)/main.o -f $(DEP_DIR)/*.d) | $(LIB_DIR)/.sentinel
 	$(AR) cru $@ $^
