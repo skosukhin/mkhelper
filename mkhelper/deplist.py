@@ -12,59 +12,65 @@ except ImportError:
 
 _re_rule = re.compile(r'^([-\w./]+(?:[ ]+[-\w./]+)*)[ ]*:'
                       r'[ ]*([-\w./]+(?:[ ]+[-\w./]+)*)')
+_meta_root = 0
 
 
 def parse_args():
     parser = argparse.ArgumentParser(
         description='Reads a set of makefiles and returns a list of all '
-                    'direct and indirect prerequisites for TARGET. Optionally '
-                    'filters the list with PATTERN.')
+                    'direct and indirect dependencies or dependants of the '
+                    'TARGET(s).')
 
-    parser.add_argument('--debug-file',
-                        metavar='DEBUG_FILE',
-                        help='dump debug information to DEBUG_FILE')
-    parser.add_argument('-t',
-                        metavar='TARGET', nargs='+',
-                        help='names of the make targets')
-    parser.add_argument('-p',
-                        metavar='PATTERN', default='*',
-                        help='shell-like pattern to filter the list of '
-                             'prerequisites (default: %(default)s)')
-    parser.add_argument('-f',
-                        metavar='MAKEFILE', nargs='+',
-                        help='paths to simple makefiles that contain only '
-                             'dependencies (no recipes)')
-    return parser.parse_args()
+    parser.add_argument(
+        '-d', '--debug-file',
+        help='dump debug information to DEBUG_FILE')
+    parser.add_argument(
+        '-t', '--target', nargs='+',
+        help='names of the make targets (or prerequisites, see --reverse); if '
+             'not specified, all targets (or prerequisites) found in '
+             'MAKEFILE(s) are considered as children of a meta target, which '
+             'is the default value of the argument')
+    parser.add_argument(
+        '-p', '--pattern', default='*',
+        help='shell-like pattern to filter the list of '
+             'dependencies/dependants (default: %(default)s)')
+    parser.add_argument(
+        '-l', '--max-level', type=int,
+        help='positive integer, maximum recursion level when traversing the '
+             'dependency graph: 1 - to consider only children, 2 - to '
+             'consider children and their children, etc.; if not specified, '
+             'all descendants of the TARGET(s) are considered')
+    parser.add_argument(
+        '-r', '--reverse', action='store_true',
+        help='reverse the dependency graph: makefile targets become children '
+             'of their prerequisites')
+    parser.add_argument(
+        '-f', '--makefile', nargs='+',
+        help='paths to makefiles')
+
+    args = parser.parse_args()
+
+    if not args.target:
+        args.target = [_meta_root]
+
+    return args
 
 
-def pick_prerequisites(dep_graph, targets, result):
-    for target in targets:
-        prerequisites = dep_graph.get(target, None)
-        if prerequisites:
-            new_prerequisites = prerequisites - result
-            result.update(new_prerequisites)
-            pick_prerequisites(dep_graph, new_prerequisites, result)
+def get_descendants(dep_graph, roots, max_level=None):
+    result = set()
+    for root in roots:
+        descendants = _get_descendants(dep_graph, root, max_level, set())
+        if descendants:
+            result.update(descendants)
     return result
 
 
-def parse_dep_file_to_dict(dep_file, result):
-    if os.path.isfile(dep_file):
-        with open(dep_file, 'r') as f:
-            line = f.readline()
-            while line:
-                while line.endswith('\\\n'):
-                    line = line[:-2] + f.readline()
-                match = _re_rule.match(line)
-                if match:
-                    targets = set(match.group(1).split())
-                    new_prerequisites = set(match.group(2).split())
-                    for t in targets:
-                        old_prerequisites = result.get(t, None)
-                        if old_prerequisites:
-                            old_prerequisites.update(new_prerequisites)
-                        else:
-                            result[t] = new_prerequisites
-                line = f.readline()
+def build_dep_graph(makefiles, reverse=False):
+    result = dict()
+    for f in makefiles:
+        _update_dep_graph(result, f, reverse)
+    result[_meta_root] = set(result.keys())
+    return result
 
 
 def main():
@@ -80,23 +86,72 @@ def main():
                 '\n '.join(
                     [k + '=' + str(v) for k, v in vars(args).items()]), '\n'])
 
-    if args.f is None:
+    if args.makefile is None:
         return
 
-    dep_graph = dict()
-    for makefile in args.f:
-        parse_dep_file_to_dict(makefile, dep_graph)
+    dep_graph = build_dep_graph(args.makefile, args.reverse)
 
-    if not args.t:
-        all_prerequisites = pick_prerequisites(dep_graph,
-                                               dep_graph.keys(),
-                                               set(dep_graph.keys()))
-    else:
-        all_prerequisites = pick_prerequisites(dep_graph, args.t, set())
+    if not dep_graph:
+        return
 
-    filtered_prerequisites = fnmatch.filter(all_prerequisites, args.p)
+    descendants = get_descendants(dep_graph, args.target, args.max_level)
 
-    print('\n'.join(filtered_prerequisites))
+    filtered_descendants = fnmatch.filter(descendants, args.pattern)
+
+    print('\n'.join(filtered_descendants))
+
+
+def _get_descendants(dep_graph, root, max_level, visited):
+    if max_level is not None:
+        if max_level < 1:
+            return None
+        else:
+            max_level -= 1
+
+    children = dep_graph.get(root, None)
+    if children is None:
+        return None
+
+    visited.add(root)
+
+    result = children - visited
+
+    if max_level is not None and max_level < 1:
+        return result
+
+    for child in children:
+        if child not in visited:
+            new_descendants = _get_descendants(
+                dep_graph, child, max_level, visited)
+            if new_descendants:
+                result.update(new_descendants)
+    return result
+
+
+def _update_dep_graph(dep_graph, makefile, reverse):
+    if not os.path.isfile(makefile):
+        return
+
+    with open(makefile, 'r') as f:
+        line = f.readline()
+        while line:
+            while line.endswith('\\\n'):
+                line = line[:-2] + f.readline()
+            match = _re_rule.match(line)
+            if match:
+                parents = set(match.group(1).split())
+                new_children = set(match.group(2).split())
+
+                if reverse:
+                    parents, new_children = new_children, parents
+
+                for p in parents:
+                    known_children = dep_graph.get(p, None)
+                    if known_children:
+                        known_children.update(new_children)
+                    else:
+                        dep_graph[p] = new_children
+            line = f.readline()
 
 
 if __name__ == "__main__":
