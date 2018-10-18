@@ -78,7 +78,7 @@ $(OBJ_DIR)/%.o: %.f90 | $(MOD_DIR)/.sentinel $(OBJ_DIR)/.sentinel
 # Auxiliary building rules:
 $(MOD_DIR)/%.@FC_MODULE_EXT@:
 	@if test -z $<; then \
-	  echo "Cannot find Fortran source file providing module '$(basename $(@F))'." && false; \
+	  echo "Cannot find Fortran source file providing module '$(basename $(@F))'."; \
 	elif test ! -f $@; then \
 	  rm -f $<; $(MAKE) $<; \
 	fi
