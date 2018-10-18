@@ -18,6 +18,9 @@ def parse_args():
                     '"#include", "#if" and associated directives as well as '
                     'Fortran "include", "use" and "module" statements.')
 
+    def comma_splitter(s):
+        return list(filter(None, s.lower().split(',')))
+
     parser.add_argument(
         'input', metavar='INPUT',
         help='input source file')
@@ -83,7 +86,7 @@ def parse_args():
              'by the preprocessing stage.')
     pp_arg_group.add_argument(
         '--pp-inc-order', default='inc,flg', metavar='ORDER_LIST',
-        type=lambda s: s.lower().split(','),
+        type=comma_splitter,
         help='directory search order of files included using the preprocessor '
              '"#include" directive; ORDER_LIST is an ordered comma-separated '
              'list of keywords, the corresponding search paths of which are '
@@ -115,12 +118,12 @@ def parse_args():
              'names (default: %(default)s)')
     fc_arg_group.add_argument(
         '--fc-inc-order', default='src,flg', metavar='ORDER_LIST',
-        type=lambda s: s.lower().split(','),
+        type=comma_splitter,
         help='equivalent to the "--pp-inc-order" argument, only for the '
              'Fortran "include" statement. (default: %(default)s)')
     fc_arg_group.add_argument(
         '--fc-intrinsic-mods', metavar='IGNORED_MODULES',
-        type=lambda s: s.lower().split(','),
+        type=comma_splitter,
         default='iso_c_binding,iso_fortran_env,ieee_exceptions,'
                 'ieee_arithmetic,ieee_features,omp_lib,omp_lib_kinds,openacc',
         help='comma-separated list of common Fortran intrinsic modules that '
@@ -128,7 +131,8 @@ def parse_args():
              '(see also --fc-external-mods) (default: %(default)s)')
     fc_arg_group.add_argument(
         '--fc-external-mods', default=[], metavar='IGNORED_MODULES',
-        type=lambda s: s.lower().split(','), dest='fc_ignored_mods',
+        type=comma_splitter,
+        dest='fc_ignored_mods',
         help='comma-separated list of external (to the project) Fortran '
              'modules to be ignored when generating dependency rules (extends '
              'the list provided with --fc-intrinsic-mods)')
