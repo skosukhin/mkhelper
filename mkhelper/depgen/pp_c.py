@@ -24,6 +24,8 @@ class CPreprocessor:
     _re_identifier = re.compile(
         r'(([a-zA-Z_]\w*)(\s*\(\s*(\w+(?:\s*,\s*\w+)*)?\s*\))?)')
 
+    _re_block_comments = re.compile(r'/\*.*?\*/', re.S)
+
     def __init__(self, stream, **kwargs):
         self._include_reader = IncludeReader(stream)
         self._include_reader.include_root = kwargs.get('include_root', None)
@@ -54,14 +56,17 @@ class CPreprocessor:
             if not line:
                 return line
 
-            if line.startswith('#'):
-                # line continuation
-                while line.endswith('\\\n'):
-                    suffix = self._include_reader.readline()
-                    line = line[:-2] + suffix
+            line = self._replace_continuation(line)
+            line = CPreprocessor._re_block_comments.sub(' ', line)
 
-                # delete comments inside macro strings
-                line = re.sub(r'/\*.*?\*/', '', line)
+            # if the line still has '/*' - the start of the block comments
+            while re.search(r'/\*', line):
+                suffix = self._include_reader.readline()
+                if not suffix:
+                    break
+                suffix = self._replace_continuation(suffix)
+                line = line + suffix
+                line = CPreprocessor._re_block_comments.sub(' ', line)
 
             # if(n)def statement
             match = CPreprocessor._re_ifdef.match(line)
@@ -273,3 +278,9 @@ class CPreprocessor:
             return 1 if result else -1
         except:
             return 0
+
+    def _replace_continuation(self, line):
+        while line.endswith('\\\n'):
+            suffix = self._include_reader.readline()
+            line = line[:-2] + suffix
+        return line
