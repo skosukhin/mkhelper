@@ -70,7 +70,7 @@ $(BIN_DIR)/main: $(OBJ_DIR)/main.o $(LIB_DIR)/libmain.a | $(BIN_DIR)/.sentinel
 	$(FC) $(FCFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 $(LIB_DIR)/libmain.a: $(shell $(DEPLIST) -p '*.o' -t $(OBJ_DIR)/main.o -f $(DEP_DIR)/*.d) | $(LIB_DIR)/.sentinel
-	$(AR) cru $@ $^
+	rm -f $@ && $(AR) cru $@ $^
 
 $(OBJ_DIR)/%.o: %.f90 | $(MOD_DIR)/.sentinel $(OBJ_DIR)/.sentinel
 	$(FC) -c $(FCFLAGS) -o $@ @FCFLAGS_f90@ $<
