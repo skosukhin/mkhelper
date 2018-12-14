@@ -9,9 +9,10 @@ try:
 except ImportError:
     import _argparse as argparse
 
-
-_re_rule = re.compile(r'^([-\w./]+(?:[ ]+[-\w./]+)*)[ ]*:'
-                      r'[ ]*([-\w./]+(?:[ ]+[-\w./]+)*)')
+_re_rule = re.compile(
+    r'^[ ]*([-\w./]+(?:[ ]+[-\w./]+)*)[ ]*'  # targets
+    r':(?:[ ]*([-\w./]+(?:[ ]+[-\w./]+)*))?[ ]*'  # normal prerequisites
+    r'(?:\|[ ]*([-\w./]+(?:[ ]+[-\w./]+)*))?')  # order-only prerequisites
 _meta_root = 0
 
 
@@ -34,6 +35,9 @@ def parse_args():
         '-p', '--pattern', default='*',
         help='shell-like pattern to filter the list of '
              'dependencies/dependants (default: %(default)s)')
+    parser.add_argument(
+        '--inc-oo', action='store_true',
+        help='include order-only dependencies')
     parser.add_argument(
         '-l', '--max-level', type=int,
         help='positive integer, maximum recursion level when traversing the '
@@ -65,10 +69,10 @@ def get_descendants(dep_graph, roots, max_level=None):
     return result
 
 
-def build_dep_graph(makefiles, reverse=False):
+def build_dep_graph(makefiles, reverse=False, inc_order_only=False):
     result = dict()
     for f in makefiles:
-        _update_dep_graph(result, f, reverse)
+        _update_dep_graph(result, f, reverse, inc_order_only)
     result[_meta_root] = set(result.keys())
     return result
 
@@ -89,7 +93,7 @@ def main():
     if args.makefile is None:
         return
 
-    dep_graph = build_dep_graph(args.makefile, args.reverse)
+    dep_graph = build_dep_graph(args.makefile, args.reverse, args.inc_oo)
 
     if not dep_graph:
         return
@@ -128,19 +132,32 @@ def _get_descendants(dep_graph, root, max_level, visited):
     return result
 
 
-def _update_dep_graph(dep_graph, makefile, reverse):
+def _update_dep_graph(dep_graph, makefile, reverse, inc_order_only):
     if not os.path.isfile(makefile):
         return
 
     with open(makefile, 'r') as f:
-        line = f.readline()
-        while line:
+        while True:
+            line = f.readline()
+            if not line:
+                break
+
             while line.endswith('\\\n'):
                 line = line[:-2] + f.readline()
+
             match = _re_rule.match(line)
             if match:
                 parents = set(match.group(1).split())
-                new_children = set(match.group(2).split())
+                new_children = set()
+
+                if match.group(2):
+                    new_children.update(match.group(2).split())
+
+                if match.group(3) and inc_order_only:
+                    new_children.update(match.group(3).split())
+
+                if not new_children:
+                    continue
 
                 if reverse:
                     parents, new_children = new_children, parents
@@ -151,7 +168,6 @@ def _update_dep_graph(dep_graph, makefile, reverse):
                         known_children.update(new_children)
                     else:
                         dep_graph[p] = new_children
-            line = f.readline()
 
 
 if __name__ == "__main__":
