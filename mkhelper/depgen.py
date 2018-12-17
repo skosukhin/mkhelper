@@ -32,7 +32,7 @@ def parse_args():
         '--debug-file', '-d', metavar='DEBUG_FILE',
         help='dump debug information to DEBUG_FILE')
     parser.add_argument(
-        '--obj-name',
+        '--obj-name', metavar='OBJ_NAME',
         help='name of the object file, the target of the corresponding '
              'compilation rule as it will appear in the OUTPUT; normally '
              'equals to the path to the object file that is supposed to be '
@@ -54,6 +54,11 @@ def parse_args():
              'as it will appear in the OUTPUT; normally (and by default) '
              'equals to the OUTPUT but can be explicitly set when the latter '
              'is not specified (i.e. writing to the standard output stream)')
+    parser.add_argument(
+        '--oo-prereqs', metavar='ORDER_ONLY_PREREQUISITE_LIST',
+        type=comma_splitter,
+        help='comma-separated list of additional order only prerequisites of '
+             'the OBJ_NAME')
     parser.add_argument(
         '--src-root', metavar='SRC_ROOT',
         help='ignore dependencies on files that are not in SRC_ROOT or '
@@ -234,9 +239,6 @@ def main():
             '\n '.join(
                 [k + '=' + str(v) for k, v in vars(args).items()]), '\n'])
 
-    if args.output:
-        print('Generating dependency file \'' + args.output + '\'...')
-
     in_stream = open23(args.input, 'r')
 
     if args.pp_enable:
@@ -279,7 +281,9 @@ def main():
     out_stream = open(args.output, 'w') if args.output else sys.stdout
 
     out_stream.writelines(
-        generator.gen_dep_rules(args.obj_name, args.dep_name, args.src_name))
+        generator.gen_dep_rules(
+            args.obj_name, args.dep_name, args.src_name,
+            extra_order_prereqs=args.oo_prereqs))
 
     out_stream.close()
 

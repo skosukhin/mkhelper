@@ -21,6 +21,7 @@ class FortranGenerator:
         self._include_reader.include_dirs = kwargs.get('include_dirs', None)
         self._include_reader.include_order = kwargs.get('include_order', None)
         self._mods_to_ignore = kwargs.get('mods_to_ignore', set())
+        self._order_prereqs = kwargs.get('order_prereqs', None)
         self._mod_file_dir = kwargs.get('mod_file_dir', None)
         self._mod_file_ext = kwargs.get('mod_file_ext', None)
         self._mod_file_upper = kwargs.get('mod_file_upper', False)
@@ -91,19 +92,29 @@ class FortranGenerator:
                 self._include_reader.include(match.group(2))
                 continue
 
-    def gen_dep_rules(self, compile_target, dep_file_target, src_file_prereq):
+    def gen_dep_rules(self, compile_target, dep_file_target, src_file_prereq,
+                      extra_normal_prereqs=None,
+                      extra_order_prereqs=None):
         included_files = self._include_reader.included_files
         pp_included_files = self._preprocessor.included_files
         if pp_included_files:
             included_files |= pp_included_files
 
-        result = [compile_target +
-                  (' ' + dep_file_target if dep_file_target else '') +
-                  ': ' +
+        result = [compile_target,
+                  (' ' + dep_file_target if dep_file_target else ''),
+                  ': ',
                   src_file_prereq]
 
         if included_files:
-            result.extend([' ', ' '.join(included_files)])
+            result.append(' ' + ' '.join(included_files))
+
+        if extra_normal_prereqs:
+            result.append('\n' + compile_target + ': ' +
+                          ' '.join(extra_normal_prereqs))
+
+        if extra_order_prereqs:
+            result.append('\n' + compile_target + ':| ' +
+                          ' '.join(extra_order_prereqs))
 
         required_mods = self._required_mods
 

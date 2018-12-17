@@ -25,8 +25,7 @@ INSTALL_DATA=@INSTALL_DATA@
 # Dependency generation command:
 DEPGEN=@PYTHON@ @srcdir@/mkhelper/depgen.py \
        @depgen.config $< -o $@ -d $(@:.d=.debug) \
-       --obj-name $(OBJ_DIR)/$(<F:.f90=.o) --src-name $(<F) \
-       -- @DEPGEN_DEFS@
+       --obj-name $(OBJ_DIR)/$(<F:.f90=.o) --src-name $(<F)
 
 # Dependency listing command:
 DEPLIST=@PYTHON@ @srcdir@/mkhelper/deplist.py
@@ -34,7 +33,6 @@ DEPLIST=@PYTHON@ @srcdir@/mkhelper/deplist.py
 # List of the dependency files:
 srcs=$(notdir $(shell find $(SRC_DIR) -name '*.f90'))
 DEP_FILES=$(addprefix $(DEP_DIR)/, $(srcs:.f90=.f90.d))
-DEP_FILES+=$(DEP_DIR)/_undetectable.d
 
 # Source file selective search paths:
 vpath %.f90 $(shell find $(SRC_DIR) -type d)
@@ -69,7 +67,7 @@ install: $(BIN_DIR)/main $(LIB_DIR)/libmain.a
 $(BIN_DIR)/main: $(OBJ_DIR)/main.o $(LIB_DIR)/libmain.a | $(BIN_DIR)/.sentinel
 	$(FC) $(FCFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
 
-$(LIB_DIR)/libmain.a: $(shell $(DEPLIST) -p '*.o' -t $(OBJ_DIR)/main.o -f $(DEP_DIR)/*.d) | $(LIB_DIR)/.sentinel
+$(LIB_DIR)/libmain.a: $(shell $(DEPLIST) -p '*.o' -t $(OBJ_DIR)/main.o --inc-oo -f $(DEP_DIR)/*.d) | $(LIB_DIR)/.sentinel
 	rm -f $@ && $(AR) cru $@ $^
 
 $(OBJ_DIR)/%.o: %.f90 | $(MOD_DIR)/.sentinel $(OBJ_DIR)/.sentinel
@@ -91,11 +89,13 @@ $(MOD_DIR)/%.@FC_MODULE_EXT@:
 
 # Common dependency generation rule:
 $(DEP_DIR)/%.f90.d: %.f90 | $(DEP_DIR)/.sentinel
-	@$(DEPGEN) $(FCFLAGS)
+	$(DEPGEN) -- @DEPGEN_DEFS@ $(FCFLAGS)
 
 # Undetectable dependencies:
-$(DEP_DIR)/_undetectable.d: | $(DEP_DIR)/.sentinel
-	@echo $(OBJ_DIR)/main.o: $(OBJ_DIR)/implicit_external.o > $@
+$(DEP_DIR)/main.f90.d: main.f90 | $(DEP_DIR)/.sentinel
+	$(DEPGEN) --oo-prereqs=$(OBJ_DIR)/implicit_external.o -- @DEPGEN_DEFS@ $(FCFLAGS)
+
+$(DEP_FILES): Makefile
 
 ifeq (,$(filter $(MAKECMDGOALS), depend clean distclean maintainer-clean))
 -include $(DEP_FILES)
