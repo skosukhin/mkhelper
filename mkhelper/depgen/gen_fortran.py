@@ -12,7 +12,7 @@ class FortranGenerator:
         r'(.*)$')
     _re_module_provide = re.compile(r'^\s*module\s+(?!procedure\s)(\w+)', re.I)
     _re_module_require = re.compile(
-        r'^\s*use(?:\s+(?:::)?|\s*(?:,\s*\w+\s*)?::)\s*(\w+)', re.I)
+        r'^\s*use(?:\s+|(?:\s*,\s*((?:non_)?intrinsic))?\s*::\s*)(\w+)', re.I)
 
     def __init__(self, preprocessor, **kwargs):
         self._preprocessor = preprocessor
@@ -20,12 +20,23 @@ class FortranGenerator:
         self._include_reader.include_root = kwargs.get('include_root', None)
         self._include_reader.include_dirs = kwargs.get('include_dirs', None)
         self._include_reader.include_order = kwargs.get('include_order', None)
-        self._mods_to_ignore = kwargs.get('mods_to_ignore', set())
+        self._intrinsic_mods = kwargs.get('intrinsic_mods', None)
+        self._external_mods = kwargs.get('external_mods', None)
         self._order_prereqs = kwargs.get('order_prereqs', None)
         self._mod_file_dir = kwargs.get('mod_file_dir', None)
         self._mod_file_ext = kwargs.get('mod_file_ext', None)
         self._mod_file_upper = kwargs.get('mod_file_upper', False)
         self._enable_debug = kwargs.get('debug', False)
+
+        if self._intrinsic_mods:
+            self._intrinsic_mods = set(self._intrinsic_mods)
+        else:
+            self._intrinsic_mods = set()
+
+        if self._external_mods:
+            self._external_mods = set(self._external_mods)
+        else:
+            self._external_mods = set()
 
         self._provided_mods = set()
         self._required_mods = set()
@@ -70,20 +81,13 @@ class FortranGenerator:
             match = FortranGenerator._re_module_provide.match(line)
             if match:
                 module_name = match.group(1).lower()
-                if module_name not in self._mods_to_ignore:
-                    self._provided_mods.add(module_name)
-                elif self._enable_debug:
-                    self._ignored_mods.append(module_name)
+                self._provided_mods.add(module_name)
                 continue
 
             # module required
             match = FortranGenerator._re_module_require.match(line)
             if match:
-                module_name = match.group(1).lower()
-                if module_name not in self._mods_to_ignore:
-                    self._required_mods.add(module_name)
-                elif self._enable_debug:
-                    self._ignored_mods.append(module_name)
+                self._use_module(*match.group(1, 2))
                 continue
 
             # include statement
@@ -116,19 +120,25 @@ class FortranGenerator:
             result.append('\n' + compile_target + ':| ' +
                           ' '.join(extra_order_prereqs))
 
-        required_mods = self._required_mods
-
         if self._provided_mods:
             # Do not depend on the modules that are provided in the same file
-            required_mods -= self._provided_mods
+            if not self._enable_debug:
+                self._required_mods -= self._provided_mods
+            else:
+                required_mods = self._required_mods - self._provided_mods
+                for name in self._required_mods:
+                    if name not in required_mods:
+                        self._ignored_mods.append((name, 'provided module'))
+                self._required_mods = required_mods
+
             provided_mod_files = ' '.join(
                 self._mods_to_file_names(self._provided_mods))
             result.append(
                 '\n' + provided_mod_files + ': ' + compile_target)
 
-        if required_mods:
+        if self._required_mods:
             required_mod_files = ' '.join(
-                self._mods_to_file_names(required_mods))
+                self._mods_to_file_names(self._required_mods))
             result.append(
                 '\n' + compile_target + ': ' + required_mod_files)
 
@@ -161,11 +171,14 @@ class FortranGenerator:
         else:
             lines.append('#     none\n')
 
-        lines.append('#   Detected but ignored modules:\n')
+        lines.append('#   Detected but ignored required modules (reason):\n')
         if self._enable_debug:
             if self._ignored_mods:
                 lines.extend(['#     ',
-                              '\n#     '.join(self._ignored_mods), '\n'])
+                              '\n#     '.join('%s (%s)' % name_reason
+                                              for name_reason in
+                                              self._ignored_mods),
+                              '\n'])
             else:
                 lines.append('#     none\n')
         else:
@@ -191,3 +204,21 @@ class FortranGenerator:
         if self._mod_file_ext:
             result = map(lambda s: '%s.%s' % (s, self._mod_file_ext), result)
         return result
+
+    def _use_module(self, nature, name):
+        nature = nature.lower() if nature is not None else ''
+        if nature == 'intrinsic':
+            if self._enable_debug:
+                self._ignored_mods.append((name.lower(),
+                                           'explicitly intrinsic module'))
+        else:
+            name = name.lower()
+            if name in self._intrinsic_mods and nature != 'non_intrinsic':
+                if self._enable_debug:
+                    self._ignored_mods.append((name,
+                                               'implicitly intrinsic module'))
+            elif name in self._external_mods:
+                if self._enable_debug:
+                    self._ignored_mods.append((name, 'external module'))
+            else:
+                self._required_mods.add(name)

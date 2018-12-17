@@ -100,7 +100,7 @@ def parse_args():
              'directories specified with -I compiler flag), "src" (for the '
              'directory containing the INPUT source file), and "inc" (for the '
              'directory containing the file with the "#include" directive. '
-             '(default: %(default)s)')
+             'Default: "%(default)s".')
     pp_arg_group.add_argument(
         '--pp-macro-flag', metavar='MACRO_FLAG', default='-D',
         help='preprocessor flag used for macro definition; only flags '
@@ -125,22 +125,28 @@ def parse_args():
         '--fc-inc-order', default='src,flg', metavar='ORDER_LIST',
         type=comma_splitter,
         help='equivalent to the "--pp-inc-order" argument, only for the '
-             'Fortran "include" statement. (default: %(default)s)')
+             'Fortran "include" statement (default: "%(default)s")')
     fc_arg_group.add_argument(
-        '--fc-intrinsic-mods', metavar='IGNORED_MODULES',
+        '--fc-intrinsic-mods', metavar='INTRINSIC_MODS_LIST',
         type=comma_splitter,
         default='iso_c_binding,iso_fortran_env,ieee_exceptions,'
                 'ieee_arithmetic,ieee_features,omp_lib,omp_lib_kinds,openacc',
-        help='comma-separated list of common Fortran intrinsic modules that '
-             'usually need to be ignored when generating dependency rules '
-             '(see also --fc-external-mods) (default: %(default)s)')
+        help='comma-separated list of Fortran intrinsic modules. Fortran '
+             'modules that are explicitly specified as intrinsic in the '
+             'source file (i.e. "use, intrinsic :: <modulename>") are ignored '
+             'regardless of whether they are mentioned on the '
+             'INTRINSIC_MODS_LIST. Fortran modules that are mentioned on the '
+             'INTRINSIC_MODS_LIST are ignored only when their nature is not '
+             'specified in the source file at all (i.e. "use :: '
+             '<modulename>"). Fortran modules that need to be ignored '
+             'unconditionally must be put on the EXTERNAL_MODS_LIST (see '
+             '--fc-external-mods). Default: "%(default)s".')
     fc_arg_group.add_argument(
-        '--fc-external-mods', default=[], metavar='IGNORED_MODULES',
+        '--fc-external-mods', metavar='EXTERNAL_MODS_LIST',
         type=comma_splitter,
-        dest='fc_ignored_mods',
         help='comma-separated list of external (to the project) Fortran '
-             'modules to be ignored when generating dependency rules (extends '
-             'the list provided with --fc-intrinsic-mods)')
+             'modules that need to be unconditionally ignored when generating '
+             'dependency rules (see also --fc-intrinsic-mods)')
     fc_arg_group.add_argument(
         '--fc-mod-dir-flag', metavar='MOD_DIR_FLAG', default='-J',
         help='Fortran compiler flag used to specify the directory where '
@@ -187,9 +193,6 @@ def parse_args():
             if dest.startswith('fc_'):
                 enabled_compiler_args.append(dest)
         args.fc_mod_upper = args.fc_mod_upper == 'yes'
-        args.fc_ignored_mods = set(args.fc_ignored_mods +
-                                   args.fc_intrinsic_mods)
-        del args.fc_intrinsic_mods
 
     if enabled_compiler_args:
         compiler_flags = dict()
@@ -264,7 +267,8 @@ def main():
             include_root=args.src_root,
             include_dirs=args.fc_inc_dirs,
             include_order=args.fc_inc_order,
-            mods_to_ignore=args.fc_ignored_mods,
+            intrinsic_mods=args.fc_intrinsic_mods,
+            external_mods=args.fc_external_mods,
             mod_file_dir=args.fc_mod_dir,
             mod_file_ext=args.fc_mod_ext,
             mod_file_upper=args.fc_mod_upper,
@@ -274,9 +278,6 @@ def main():
         generator = PpGenerator(pp)
 
     generator.parse()
-
-    if debug_file:
-        generator.print_debug(debug_file)
 
     out_stream = open(args.output, 'w') if args.output else sys.stdout
 
@@ -288,6 +289,7 @@ def main():
     out_stream.close()
 
     if debug_file:
+        generator.print_debug(debug_file)
         debug_file.close()
 
 
