@@ -14,7 +14,7 @@ exec_prefix=@exec_prefix@
 
 # Compilers, building tools and the corresponding flags:
 FC=@FC@
-FCFLAGS=@FC_MODINC@$(MOD_DIR) -I$(SRC_DIR)/include @FC_MODOUT@$(MOD_DIR) @FCFLAGS@
+FCFLAGS=@FC_MOD_IN@$(MOD_DIR) -I$(SRC_DIR)/include @FC_MOD_OUT@$(MOD_DIR) @FCFLAGS@
 LDFLAGS=@LDFLAGS@
 LIBS=@LIBS@
 

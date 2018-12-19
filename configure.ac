@@ -11,6 +11,7 @@ AC_PROG_FC
 AC_LANG([Fortran])
 AC_FC_PP_SRCEXT([f90])
 AC_FC_FREEFORM
+AC_FC_LINE_LENGTH([unlimited])
 
 AC_SUBST([DEPGEN_DEFS])
 AC_SUBST([DEPGEN_INTRINSIC_MODS],
@@ -19,45 +20,42 @@ AC_SUBST([DEPGEN_EXTERNAL_MODS])
 
 ACX_FC_VENDOR
 
-ACX_FC_PP_DEFINE
-ACX_FC_MODULE_INC_FLAG
-ACX_FC_MODULE_OUT_FLAG
+ACX_FC_PP_DEFINE([AC_SUBST([FC_PP_DEF], [$acx_cv_fc_pp_define])])
+ACX_FC_MOD_IN_FLAG([AC_SUBST([FC_MOD_IN], [$acx_cv_fc_mod_in_flag])])
+ACX_FC_MOD_OUT_FLAG([AC_SUBST([FC_MOD_OUT], [$acx_cv_fc_mod_out_flag])])
 
-ACX_FC_MODULE_FILE_NAMING(
-  [FC_MODULE_UPPER=$acx_cv_fc_module_file_naming_upper
-  FC_MODULE_EXT=$acx_cv_fc_module_file_naming_ext],
-  [FC_MODULE_UPPER=no
-  FC_MODULE_EXT=mod])
-AC_SUBST([FC_MODULE_UPPER])
-AC_SUBST([FC_MODULE_EXT])
+ACX_FC_MOD_FILE_NAMING(
+  [AC_SUBST([FC_MOD_FILE_UPPER], [$acx_cv_fc_mod_file_naming_upper])
+   AC_SUBST([FC_MOD_FILE_EXT], [$acx_cv_fc_mod_file_naming_ext])])
 
 ACX_FC_INCLUDE_ORDER(
+  [-I],
   [FC_INC_ORDER=$acx_cv_fc_include_order],
   [FC_INC_ORDER=src,flg])
 AC_SUBST([FC_INC_ORDER])
 
-ACX_FC_HASH_INCLUDE_ORDER(
-  [PP_INC_ORDER_f90=$acx_cv_fc_hash_include_order],
-  [PP_INC_ORDER_f90=inc,flg])
-AC_SUBST([PP_INC_ORDER_f90])
+ACX_FC_PP_INCLUDE_ORDER(
+  [-I],
+  [FC_PP_INC_ORDER_f90=$acx_cv_fc_pp_include_order],
+  [FC_PP_INC_ORDER_f90=inc,flg])
+AC_SUBST([FC_PP_INC_ORDER_f90])
 
 AC_ARG_ENABLE([additional-mods],
   [AC_HELP_STRING([--enable-additional-mods], [enable usage of additional modules  @<:@default: yes@:>@])],
   [], [enable_additional_mods=yes])
 AS_IF([test "x$enable_additional_mods" = xyes],
-  [FCFLAGS="${FC_DEFINE}INCLUDE_MODULES $FCFLAGS"])
+  [FCFLAGS="${acx_cv_fc_pp_define}INCLUDE_MODULES $FCFLAGS"])
 
 AC_ARG_ENABLE([openmp],
   [AS_HELP_STRING([--enable-openmp], [enable OpenMP support @<:@default: yes@:>@])],
   [], [enable_openmp=yes])
 AS_IF([test "x$enable_openmp" = "xyes"],
   [ACX_OPENMP(
-    [ACX_OPENMP_MACRO_VAL(
-      [$OPENMP_FCFLAGS],
-      [AS_IF([test "x$acx_cv_prog_fc_openmp_macro" = "xunknown"],
-        [AS_VAR_APPEND([DEPGEN_DEFS], [" ${FC_DEFINE}_OPENMP"])],
-        [AS_VAR_APPEND([DEPGEN_DEFS], [" ${FC_DEFINE}_OPENMP=$acx_cv_prog_fc_openmp_macro"])])])])
-  FCFLAGS="$OPENMP_FCFLAGS $FCFLAGS"],
+     [FCFLAGS="$OPENMP_FCFLAG $FCFLAGS"
+      ACX_OPENMP_MACRO_VAL(
+        [AS_IF([test "x$acx_cv_prog_fc_openmp_macro" = "xunknown"],
+           [AS_VAR_APPEND([DEPGEN_DEFS], [" ${acx_cv_fc_pp_define}_OPENMP"])],
+           [AS_VAR_APPEND([DEPGEN_DEFS], [" ${acx_cv_fc_pp_define}_OPENMP=$acx_cv_prog_fc_openmp_macro"])])])])],
   [ACX_OPENMP_CHECK_DISABLED])
 
 AC_MSG_CHECKING([whether the Fortran interface of NetCDF library is available])
@@ -67,7 +65,7 @@ AC_LINK_IFELSE([AC_LANG_PROGRAM([], [[
       status = nf_open('dummy.nc', 0, ncid)]])],
   [AC_MSG_RESULT([yes])],
   [AC_MSG_RESULT([no])
-  FCFLAGS="${FC_DEFINE}NO_NETCDF $FCFLAGS"])
+  FCFLAGS="${acx_cv_fc_pp_define}NO_NETCDF $FCFLAGS"])
 
 AC_ARG_VAR([AR], [the archiver command])
 ACX_CHECK_PROGS([AR], [ar], [for the archiver command],
@@ -78,7 +76,7 @@ ACX_CHECK_PROGS([AR], [ar], [for the archiver command],
   test "$ac_status" -eq 0],
   [unknown])
 AS_IF([test "x$AR" = xunknown],
-  [AC_MSG_ERROR([unable to find the archiver command])])
+  [AC_MSG_FAILURE([unable to find the archiver command])])
 
 AC_ARG_VAR([PYTHON], [Python interpreter command (used for Fortran dependency generation)])
 ACX_CHECK_PROGS([PYTHON], [python python3], [for Python interpreter command],
@@ -86,7 +84,7 @@ ACX_CHECK_PROGS([PYTHON], [python python3], [for Python interpreter command],
   AC_TRY_EVAL([acx_depgen_try])],
   [unknown])
 AS_IF([test "x$PYTHON" = xunknown],
-  [AC_MSG_ERROR([unable to find Python interpreter])])
+  [AC_MSG_FAILURE([unable to find Python interpreter])])
 
 AC_PROG_INSTALL
 

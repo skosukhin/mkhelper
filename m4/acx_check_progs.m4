@@ -11,13 +11,13 @@
 # checks failed. The result is cached to the acx_cv_prog_variable_name
 # variable.
 AC_DEFUN([ACX_CHECK_PROGS],
-[AC_CACHE_CHECK([$3], [acx_cv_prog_$1],
-[AS_IF([test -n "$$1"], [set dummy "$$1"], [set dummy $2])
-shift
-acx_cv_prog_$1=$5
-for acx_prog_candidate in "$[@]"; do
-$4
-AS_IF([test $? -eq 0], [acx_cv_prog_$1="$acx_prog_candidate"; break])
-done])
-$1=$acx_cv_prog_$1
-])
+  [AC_CACHE_CHECK([$3], [acx_cv_prog_$1],
+     [AS_IF([test -n "$$1"], [set dummy "$$1"], [set dummy $2])
+      shift
+      acx_cv_prog_$1=$5
+      for acx_prog_candidate in "$[@]"; do
+        $4
+        AS_IF([test $? -eq 0],
+          [acx_cv_prog_$1="$acx_prog_candidate"; break])
+      done])
+   $1=$acx_cv_prog_$1])

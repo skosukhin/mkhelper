@@ -592,14 +592,14 @@ INSTALL_SCRIPT
 INSTALL_PROGRAM
 PYTHON
 AR
-OPENMP_FCFLAGS
-PP_INC_ORDER_f90
+OPENMP_FCFLAG
+FC_PP_INC_ORDER_f90
 FC_INC_ORDER
-FC_MODULE_EXT
-FC_MODULE_UPPER
-FC_MODOUT
-FC_MODINC
-FC_DEFINE
+FC_MOD_FILE_EXT
+FC_MOD_FILE_UPPER
+FC_MOD_OUT
+FC_MOD_IN
+FC_PP_DEF
 DEPGEN_EXTERNAL_MODS
 DEPGEN_INTRINSIC_MODS
 DEPGEN_DEFS
@@ -2407,6 +2407,62 @@ ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
 ac_link='$FC -o conftest$ac_exeext $FCFLAGS $LDFLAGS $ac_fcflags_srcext conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_fc_compiler_gnu
 
+ac_ext=${ac_fc_srcext-f}
+ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
+ac_link='$FC -o conftest$ac_exeext $FCFLAGS $LDFLAGS $ac_fcflags_srcext conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_fc_compiler_gnu
+ac_fc_line_len_string=unlimited
+	               ac_fc_line_len=0
+                       ac_fc_line_length_test='
+      subroutine longer_than_132(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,'\
+'arg9,arg10,arg11,arg12,arg13,arg14,arg15,arg16,arg17,arg18,arg19)'
+: ${ac_fc_line_len_string=$ac_fc_line_len}
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran flag needed to accept $ac_fc_line_len_string column source lines" >&5
+$as_echo_n "checking for Fortran flag needed to accept $ac_fc_line_len_string column source lines... " >&6; }
+if ${ac_cv_fc_line_length+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_cv_fc_line_length=unknown
+ac_fc_line_length_FCFLAGS_save=$FCFLAGS
+for ac_flag in none \
+	       -ffree-line-length-none -ffixed-line-length-none \
+	       -ffree-line-length-huge \
+	       -ffree-line-length-$ac_fc_line_len \
+	       -ffixed-line-length-$ac_fc_line_len \
+	       -qfixed=$ac_fc_line_len -Mextend \
+	       -$ac_fc_line_len -extend_source \
+	       -W$ac_fc_line_len -W +extend_source +es -wide --wide -w -e \
+               -f -Wf,-f -xline
+do
+  test "x$ac_flag" != xnone && FCFLAGS="$ac_fc_line_length_FCFLAGS_save $ac_flag"
+  cat > conftest.$ac_ext <<_ACEOF
+$ac_fc_line_length_test
+      end subroutine
+_ACEOF
+if ac_fn_fc_try_compile "$LINENO"; then :
+  ac_cv_fc_line_length=$ac_flag; break
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+done
+rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
+FCFLAGS=$ac_fc_line_length_FCFLAGS_save
+
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_fc_line_length" >&5
+$as_echo "$ac_cv_fc_line_length" >&6; }
+if test "x$ac_cv_fc_line_length" = xunknown; then
+  as_fn_error 77 "Fortran does not accept long source lines" "$LINENO" 5
+else
+  if test "x$ac_cv_fc_line_length" != xnone; then
+    FCFLAGS="$FCFLAGS $ac_cv_fc_line_length"
+  fi
+
+fi
+ac_ext=${ac_fc_srcext-f}
+ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
+ac_link='$FC -o conftest$ac_exeext $FCFLAGS $LDFLAGS $ac_fcflags_srcext conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_fc_compiler_gnu
+
 
 
 DEPGEN_INTRINSIC_MODS=iso_c_binding,iso_fortran_env,ieee_exceptions,ieee_arithmetic,ieee_features,omp_lib,omp_lib_kinds,openacc
@@ -2414,28 +2470,26 @@ DEPGEN_INTRINSIC_MODS=iso_c_binding,iso_fortran_env,ieee_exceptions,ieee_arithme
 
 
 
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler vendor" >&5
+   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler vendor" >&5
 $as_echo_n "checking for Fortran compiler vendor... " >&6; }
 if ${acx_cv_fc_vendor+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-
-_acx_fc_vendor_options="intel: __INTEL_COMPILER
-                        cray: _CRAYFTN
-                        pgi: __PGI
-                        nag: NAGFOR
-                        sun: __SUNPRO_F90,__SUNPRO_F95
-                        gnu: __GNUC__,__GFORTRAN__
-                        unknown: UNKNOWN"
-for _acx_fc_vendor_test in $_acx_fc_vendor_options; do
-  case $_acx_fc_vendor_test in #(
+  _acx_fc_vendor_options="intel: __INTEL_COMPILER
+                               cray: _CRAYFTN
+                                pgi: __PGI
+                                nag: NAGFOR
+                                sun: __SUNPRO_F90,__SUNPRO_F95
+                                gnu: __GNUC__,__GFORTRAN__
+                            unknown: UNKNOWN"
+      for _acx_fc_vendor_test in $_acx_fc_vendor_options; do
+        case $_acx_fc_vendor_test in #(
   *:) :
     _acx_fc_vendor_candidate=$_acx_fc_vendor_test; continue ;; #(
   *) :
     _acx_fc_vendor_defs="defined("`echo $_acx_fc_vendor_test | sed 's/,/) || defined(/g'`")" ;;
 esac
-  cat > conftest.$ac_ext <<_ACEOF
+        cat > conftest.$ac_ext <<_ACEOF
       program main
 
 #if !($_acx_fc_vendor_defs)
@@ -2447,15 +2501,14 @@ if ac_fn_fc_try_compile "$LINENO"; then :
   break
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-done
-acx_cv_fc_vendor=`echo $_acx_fc_vendor_candidate | cut -d: -f1`
-
+      done
+      acx_cv_fc_vendor=`echo $_acx_fc_vendor_candidate | cut -d: -f1`
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_vendor" >&5
 $as_echo "$acx_cv_fc_vendor" >&6; }
 
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking how to define symbols for preprocessed Fortran" >&5
+   { $as_echo "$as_me:${as_lineno-$LINENO}: checking how to define symbols for preprocessed Fortran" >&5
 $as_echo_n "checking how to define symbols for preprocessed Fortran... " >&6; }
 if ${acx_cv_fc_pp_define+:} false; then :
   $as_echo_n "(cached) " >&6
@@ -2465,11 +2518,11 @@ ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
 ac_link='$FC -o conftest$ac_exeext $FCFLAGS $LDFLAGS $ac_fcflags_srcext conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_fc_compiler_gnu
 
-acx_cv_fc_pp_define=unknown
-acx_fc_pp_define_FCFLAGS_save=$FCFLAGS
-for acx_fc_pp_define_flag in -D -WF,-D -Wp,-D -Wc,-D ; do
-  FCFLAGS="$acx_fc_pp_define_FCFLAGS_save ${acx_fc_pp_define_flag}FOOBAR ${acx_fc_pp_define_flag}ZORK=42"
-  cat > conftest.$ac_ext <<_ACEOF
+      acx_cv_fc_pp_define=unknown
+      acx_fc_pp_define_FCFLAGS_save=$FCFLAGS
+      for acx_fc_pp_define_flag in -D -WF,-D -Wp,-D -Wc,-D ; do
+        FCFLAGS="$acx_fc_pp_define_FCFLAGS_save ${acx_fc_pp_define_flag}FOOBAR ${acx_fc_pp_define_flag}ZORK=42"
+        cat > conftest.$ac_ext <<_ACEOF
       program main
 
 #ifndef FOOBAR
@@ -2482,46 +2535,43 @@ for acx_fc_pp_define_flag in -D -WF,-D -Wp,-D -Wc,-D ; do
 _ACEOF
 if ac_fn_fc_try_compile "$LINENO"; then :
   acx_cv_fc_pp_define=$acx_fc_pp_define_flag
-  break
+           break
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-done
-FCFLAGS=$acx_fc_pp_define_FCFLAGS_save
-ac_ext=${ac_fc_srcext-f}
+      done
+      FCFLAGS=$acx_fc_pp_define_FCFLAGS_save
+      ac_ext=${ac_fc_srcext-f}
 ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
 ac_link='$FC -o conftest$ac_exeext $FCFLAGS $LDFLAGS $ac_fcflags_srcext conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_fc_compiler_gnu
-
 
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_pp_define" >&5
 $as_echo "$acx_cv_fc_pp_define" >&6; }
-if test x"$acx_cv_fc_pp_define" != xunknown; then :
-  FC_DEFINE=$acx_cv_fc_pp_define
+   if test x"$acx_cv_fc_pp_define" != xunknown; then :
+  FC_PP_DEF=$acx_cv_fc_pp_define
 
 else
-  FC_DEFINE=
-  as_fn_error $? "Fortran does not allow to define preprocessor symbols" "$LINENO" 5
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "Fortran does not allow to define preprocessor symbols
+See \`config.log' for more details" "$LINENO" 5; }
 fi
 
-
-
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran flag to include modules from a specified directory" >&5
+   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran flag to include modules from a specified directory" >&5
 $as_echo_n "checking for Fortran flag to include modules from a specified directory... " >&6; }
-if ${acx_cv_fc_module_inc_flag+:} false; then :
+if ${acx_cv_fc_mod_in_flag+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-
-ac_ext=${ac_fc_srcext-f}
+  ac_ext=${ac_fc_srcext-f}
 ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
 ac_link='$FC -o conftest$ac_exeext $FCFLAGS $LDFLAGS $ac_fcflags_srcext conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_fc_compiler_gnu
 
-acx_cv_fc_module_inc_flag=unknown
-mkdir conftest.dir
-cd conftest.dir
-cat > conftest.$ac_ext <<_ACEOF
+      acx_cv_fc_mod_in_flag=unknown
+      mkdir conftest.dir
+      cd conftest.dir
+      cat > conftest.$ac_ext <<_ACEOF
 
       module conftest_module
       contains
@@ -2532,13 +2582,11 @@ cat > conftest.$ac_ext <<_ACEOF
 _ACEOF
 if ac_fn_fc_try_compile "$LINENO"; then :
   cd ..
-  acx_fc_module_inc_flag_FCFLAGS_save=$FCFLAGS
-  # Flag ordering is significant for gfortran and Sun.
-  for acx_fc_module_inc_flag in -M -I '-I ' '-M ' -p '-mod ' '-module ' '-Am -I'; do
-    # Add the flag twice to prevent matching an output flag.
-    FCFLAGS="$acx_fc_module_inc_flag_FCFLAGS_save \
-      ${acx_fc_module_inc_flag}conftest.dir ${acx_fc_module_inc_flag}conftest.dir"
-    cat > conftest.$ac_ext <<_ACEOF
+         acx_fc_mod_in_flag_FCFLAGS_save=$FCFLAGS
+         for acx_fc_mod_in_flag in -M -I '-I ' '-M ' -p '-mod ' '-module ' '-Am -I'; do
+           # Add the flag twice to prevent matching an output flag.
+           FCFLAGS="$acx_fc_mod_in_flag_FCFLAGS_save ${acx_fc_mod_in_flag}conftest.dir ${acx_fc_mod_in_flag}conftest.dir"
+           cat > conftest.$ac_ext <<_ACEOF
       program main
 
       use conftest_module
@@ -2546,38 +2594,36 @@ if ac_fn_fc_try_compile "$LINENO"; then :
       end
 _ACEOF
 if ac_fn_fc_try_compile "$LINENO"; then :
-  acx_cv_fc_module_inc_flag=$acx_fc_module_inc_flag
-      break
+  acx_cv_fc_mod_in_flag=$acx_fc_mod_in_flag
+              break
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-  done
-  FCFLAGS=$acx_fc_module_inc_flag_FCFLAGS_save
+         done
+         FCFLAGS=$acx_fc_mod_in_flag_FCFLAGS_save
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-rm -rf conftest.dir
-ac_ext=${ac_fc_srcext-f}
+      rm -rf conftest.dir
+      ac_ext=${ac_fc_srcext-f}
 ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
 ac_link='$FC -o conftest$ac_exeext $FCFLAGS $LDFLAGS $ac_fcflags_srcext conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_fc_compiler_gnu
 
-
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_module_inc_flag" >&5
-$as_echo "$acx_cv_fc_module_inc_flag" >&6; }
-if test x"$acx_cv_fc_module_inc_flag" != xunknown; then :
-  FC_MODINC=$acx_cv_fc_module_inc_flag
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_mod_in_flag" >&5
+$as_echo "$acx_cv_fc_mod_in_flag" >&6; }
+   if test x"$acx_cv_fc_mod_in_flag" != xunknown; then :
+  FC_MOD_IN=$acx_cv_fc_mod_in_flag
 
 else
-  FC_MODINC=
-  as_fn_error $? "unable to detect flag needed to include modules from a specified directory" "$LINENO" 5
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "unable to detect flag needed to include modules from a specified directory
+See \`config.log' for more details" "$LINENO" 5; }
 fi
 
-
-
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran flag to store modules to a specified directory" >&5
+   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran flag to store modules to a specified directory" >&5
 $as_echo_n "checking for Fortran flag to store modules to a specified directory... " >&6; }
-if ${acx_cv_fc_module_out_flag+:} false; then :
+if ${acx_cv_fc_mod_out_flag+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_ext=${ac_fc_srcext-f}
@@ -2585,16 +2631,14 @@ ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
 ac_link='$FC -o conftest$ac_exeext $FCFLAGS $LDFLAGS $ac_fcflags_srcext conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_fc_compiler_gnu
 
-as_dir=conftest.dir/sub; as_fn_mkdir_p
-cd conftest.dir
-acx_cv_fc_module_out_flag=unknown
-acx_fc_module_out_flag_FCFLAGS_save=$FCFLAGS
-# Flag ordering is significant: put flags late which some compilers use
-# for the search path.
-for acx_fc_module_out_flag in -J '-J ' -fmod= -moddir= +moddir= -qmoddir= '-mdir ' '-mod ' \
-	      '-module ' -M '-Am -M' '-e m -J '; do
-  FCFLAGS="$acx_fc_module_out_flag_FCFLAGS_save ${acx_fc_module_out_flag}sub"
-  cat > conftest.$ac_ext <<_ACEOF
+      as_dir=conftest.dir/sub; as_fn_mkdir_p
+      cd conftest.dir
+      acx_cv_fc_mod_out_flag=unknown
+      acx_fc_mod_out_flag_FCFLAGS_save=$FCFLAGS
+      for acx_fc_mod_out_flag in -J '-J ' -fmod= -moddir= +moddir= -qmoddir= '-mdir ' '-mod ' \
+                                 '-module ' -M '-Am -M' '-e m -J '; do
+        FCFLAGS="$acx_fc_mod_out_flag_FCFLAGS_save ${acx_fc_mod_out_flag}sub"
+        cat > conftest.$ac_ext <<_ACEOF
 
       module conftest_module
       contains
@@ -2605,7 +2649,7 @@ for acx_fc_module_out_flag in -J '-J ' -fmod= -moddir= +moddir= -qmoddir= '-mdir
 _ACEOF
 if ac_fn_fc_try_compile "$LINENO"; then :
   cd sub
-    cat > conftest.$ac_ext <<_ACEOF
+           cat > conftest.$ac_ext <<_ACEOF
       program main
 
       use conftest_module
@@ -2613,42 +2657,41 @@ if ac_fn_fc_try_compile "$LINENO"; then :
       end
 _ACEOF
 if ac_fn_fc_try_compile "$LINENO"; then :
-  acx_cv_fc_module_out_flag=$acx_fc_module_out_flag
+  acx_cv_fc_mod_out_flag=$acx_fc_mod_out_flag
+              cd ..
+              break
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+           cd ..
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+      done
+      FCFLAGS=$acx_fc_mod_out_flag_FCFLAGS_save
       cd ..
-      break
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-    cd ..
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-done
-FCFLAGS=$acx_fc_module_out_flag_FCFLAGS_save
-cd ..
-rm -rf conftest.dir
-ac_ext=${ac_fc_srcext-f}
+      rm -rf conftest.dir
+      ac_ext=${ac_fc_srcext-f}
 ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
 ac_link='$FC -o conftest$ac_exeext $FCFLAGS $LDFLAGS $ac_fcflags_srcext conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_fc_compiler_gnu
 
-
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_module_out_flag" >&5
-$as_echo "$acx_cv_fc_module_out_flag" >&6; }
-if test x"$acx_cv_fc_module_out_flag" != xunknown; then :
-  FC_MODOUT=$acx_cv_fc_module_out_flag
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_mod_out_flag" >&5
+$as_echo "$acx_cv_fc_mod_out_flag" >&6; }
+   if test x"$acx_cv_fc_mod_out_flag" != xunknown; then :
+  FC_MOD_OUT=$acx_cv_fc_mod_out_flag
 
 else
-  FC_MODOUT=
-  as_fn_error $? "unable to detect flag needed to stor modules to a specified directory" "$LINENO" 5
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "unable to detect flag needed to store modules to a specified directory
+See \`config.log' for more details" "$LINENO" 5; }
 fi
 
 
-
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran module file naming template" >&5
+   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran module file naming template" >&5
 $as_echo_n "checking for Fortran module file naming template... " >&6; }
-if ${acx_cv_fc_module_file_naming_upper+:} false &&
-  ${acx_cv_fc_module_file_naming_ext+:} false; then :
+   if ${acx_cv_fc_mod_file_naming_upper+:} false &&
+          ${acx_cv_fc_mod_file_naming_ext+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_ext=${ac_fc_srcext-f}
@@ -2656,9 +2699,9 @@ ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
 ac_link='$FC -o conftest$ac_exeext $FCFLAGS $LDFLAGS $ac_fcflags_srcext conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_fc_compiler_gnu
 
-mkdir conftest.dir
-cd conftest.dir
-cat > conftest.$ac_ext <<_ACEOF
+      mkdir conftest.dir
+      cd conftest.dir
+      cat > conftest.$ac_ext <<_ACEOF
 
       module conftest_module
       contains
@@ -2668,43 +2711,45 @@ cat > conftest.$ac_ext <<_ACEOF
       end module
 _ACEOF
 if ac_fn_fc_try_compile "$LINENO"; then :
-  acx_cv_fc_module_file_naming_ext=`ls | sed -n 's,conftest_module\.,,p'`
-  if test x"$acx_cv_fc_module_file_naming_ext" = x; then :
-  acx_cv_fc_module_file_naming_ext=`ls | sed -n 's,CONFTEST_MODULE\.,,p'`
-    if test x"$acx_cv_fc_module_file_naming_ext" = x; then :
-  acx_cv_fc_module_file_naming_ext=unknown
-      acx_cv_fc_module_file_naming_upper=unknown
+  acx_cv_fc_mod_file_naming_ext=`ls | sed -n 's,conftest_module\.,,p'`
+         if test x"$acx_cv_fc_mod_file_naming_ext" = x; then :
+  acx_cv_fc_mod_file_naming_ext=`ls | sed -n 's,CONFTEST_MODULE\.,,p'`
+            if test x"$acx_cv_fc_mod_file_naming_ext" = x; then :
+  acx_cv_fc_mod_file_naming_ext=unknown
+               acx_cv_fc_mod_file_naming_upper=unknown
 else
-  acx_cv_fc_module_file_naming_upper=yes
+  acx_cv_fc_mod_file_naming_upper=yes
 fi
 else
-  acx_cv_fc_module_file_naming_upper=no
+  acx_cv_fc_mod_file_naming_upper=no
 fi
+else
+  acx_cv_fc_mod_file_naming_ext=unknown
+         acx_cv_fc_mod_file_naming_upper=unknown
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-cd ..
-rm -rf conftest.dir
-ac_ext=${ac_fc_srcext-f}
+      cd ..
+      rm -rf conftest.dir
+      ac_ext=${ac_fc_srcext-f}
 ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
 ac_link='$FC -o conftest$ac_exeext $FCFLAGS $LDFLAGS $ac_fcflags_srcext conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_fc_compiler_gnu
 
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: uppercase=$acx_cv_fc_module_file_naming_upper extension=$acx_cv_fc_module_file_naming_ext" >&5
-$as_echo "uppercase=$acx_cv_fc_module_file_naming_upper extension=$acx_cv_fc_module_file_naming_ext" >&6; }
-if test x"$acx_cv_fc_module_file_naming_upper" != xunknown &&
-  test x"$acx_cv_fc_module_file_naming_ext" != xunknown; then :
-  FC_MODULE_UPPER=$acx_cv_fc_module_file_naming_upper
-  FC_MODULE_EXT=$acx_cv_fc_module_file_naming_ext
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: uppercase=$acx_cv_fc_mod_file_naming_upper extension=$acx_cv_fc_mod_file_naming_ext" >&5
+$as_echo "uppercase=$acx_cv_fc_mod_file_naming_upper extension=$acx_cv_fc_mod_file_naming_ext" >&6; }
+   if test x"$acx_cv_fc_mod_file_naming_upper" != xunknown &&
+          test x"$acx_cv_fc_mod_file_naming_ext" != xunknown; then :
+  FC_MOD_FILE_UPPER=$acx_cv_fc_mod_file_naming_upper
+
+   FC_MOD_FILE_EXT=$acx_cv_fc_mod_file_naming_ext
+
 else
-  FC_MODULE_UPPER=no
-  FC_MODULE_EXT=mod
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "unable to detect Fortran module file naming template
+See \`config.log' for more details" "$LINENO" 5; }
 fi
-
-
-
-
-
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran's include order of the \"include\" statement" >&5
 $as_echo_n "checking for Fortran's include order of the \"include\" statement... " >&6; }
@@ -2712,60 +2757,57 @@ if ${acx_cv_fc_include_order+:} false; then :
   $as_echo_n "(cached) " >&6
 else
 
-_acx_fc_inc_order=
-if test x"$cross_compiling" = xno; then :
-
-ac_ext=${ac_fc_srcext-f}
+   _acx_fc_inc_order=
+   if test x"$cross_compiling" = xno; then :
+  ac_ext=${ac_fc_srcext-f}
 ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
 ac_link='$FC -o conftest$ac_exeext $FCFLAGS $LDFLAGS $ac_fcflags_srcext conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_fc_compiler_gnu
 
-as_dir=conftest.dir/src/inc; as_fn_mkdir_p
-as_dir=conftest.dir/build; as_fn_mkdir_p
-as_dir=conftest.dir/src/inc2; as_fn_mkdir_p
-cat > conftest.$ac_ext <<_ACEOF
+      as_dir=conftest.dir/src/inc; as_fn_mkdir_p
+      as_dir=conftest.dir/build; as_fn_mkdir_p
+      as_dir=conftest.dir/src/inc2; as_fn_mkdir_p
+      cat > conftest.$ac_ext <<_ACEOF
       program main
       include "conftest_inc.inc"
       end
 _ACEOF
-cp conftest.$ac_ext conftest.dir/build/conftest.$ac_ext
-mv conftest.$ac_ext conftest.dir/src/conftest.$ac_ext
-cat > conftest.$ac_ext <<_ACEOF
+      cp conftest.$ac_ext conftest.dir/build/conftest.$ac_ext
+      mv conftest.$ac_ext conftest.dir/src/conftest.$ac_ext
+      cat > conftest.$ac_ext <<_ACEOF
 
       write (*,"(a)") "src"
 _ACEOF
-mv conftest.$ac_ext conftest.dir/src/conftest_write.inc
-cat > conftest.$ac_ext <<_ACEOF
+      mv conftest.$ac_ext conftest.dir/src/conftest_write.inc
+      cat > conftest.$ac_ext <<_ACEOF
 
       write (*,"(a)") "flg"
 _ACEOF
-mv conftest.$ac_ext conftest.dir/src/inc/conftest_write.inc
-cat > conftest.$ac_ext <<_ACEOF
+      mv conftest.$ac_ext conftest.dir/src/inc/conftest_write.inc
+      cat > conftest.$ac_ext <<_ACEOF
 
       write (*,"(a)") "inc"
 _ACEOF
-mv conftest.$ac_ext conftest.dir/src/inc2/conftest_write.inc
-cat > conftest.$ac_ext <<_ACEOF
+      mv conftest.$ac_ext conftest.dir/src/inc2/conftest_write.inc
+      cat > conftest.$ac_ext <<_ACEOF
       include "conftest_write.inc"
 _ACEOF
-mv conftest.$ac_ext conftest.dir/src/inc2/conftest_inc.inc
-cat > conftest.$ac_ext <<_ACEOF
+      mv conftest.$ac_ext conftest.dir/src/inc2/conftest_inc.inc
+      cat > conftest.$ac_ext <<_ACEOF
 
       write (*,"(a)") "cwd"
 _ACEOF
-mv conftest.$ac_ext conftest.dir/build/conftest_write.inc
-cd conftest.dir/build
-_acx_fc_inc_order_FCFLAGS_save=$FCFLAGS
-FCFLAGS="$FCFLAGS -I../src/inc -I../src/inc2"
-_acx_fc_inc_order_ac_link_save=$ac_link
-ac_link=`echo "$ac_link" | sed 's%conftest\(\.\$ac_ext\)%../src/conftest\1%'`
-while :; do
-  if ac_fn_fc_try_link "$LINENO"; then :
-
-    _acx_fc_inc_order_exe_result=`./conftest$ac_exeext`
-    if test $? -eq 0; then :
-
-      case $_acx_fc_inc_order_exe_result in #(
+      mv conftest.$ac_ext conftest.dir/build/conftest_write.inc
+      cd conftest.dir/build
+      _acx_fc_inc_order_FCFLAGS_save=$FCFLAGS
+      FCFLAGS="$FCFLAGS -I../src/inc -I../src/inc2"
+      _acx_fc_inc_order_ac_link_save=$ac_link
+      ac_link=`echo "$ac_link" | sed 's%conftest\(\.\$ac_ext\)%../src/conftest\1%'`
+      while :; do
+        if ac_fn_fc_try_link "$LINENO"; then :
+  _acx_fc_inc_order_exe_result=`./conftest$ac_exeext`
+           if test $? -eq 0; then :
+  case $_acx_fc_inc_order_exe_result in #(
   src) :
     rm -f ../src/conftest_write.inc ;; #(
   inc) :
@@ -2777,8 +2819,8 @@ while :; do
   *) :
     break ;;
 esac
-      _acx_fc_inc_order="$_acx_fc_inc_order $_acx_fc_inc_order_exe_result"
-      rm -f ./conftest$ac_exeext
+              _acx_fc_inc_order="$_acx_fc_inc_order $_acx_fc_inc_order_exe_result"
+              rm -f ./conftest$ac_exeext
 else
   break
 fi
@@ -2787,100 +2829,90 @@ else
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext
-done
-ac_link=$_acx_fc_inc_order_ac_link_save
-FCFLAGS=$_acx_fc_inc_order_FCFLAGS_save
-cd ..
-cd ..
-rm -rf conftest.dir
-ac_ext=${ac_fc_srcext-f}
+      done
+      ac_link=$_acx_fc_inc_order_ac_link_save
+      FCFLAGS=$_acx_fc_inc_order_FCFLAGS_save
+      cd ../..
+      rm -rf conftest.dir
+      ac_ext=${ac_fc_srcext-f}
 ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
 ac_link='$FC -o conftest$ac_exeext $FCFLAGS $LDFLAGS $ac_fcflags_srcext conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_fc_compiler_gnu
 
-
 fi
-if test x"$_acx_fc_inc_order" != x; then :
+   if test x"$_acx_fc_inc_order" != x; then :
   _acx_fc_inc_order=`echo $_acx_fc_inc_order | tr ' ' ','`
 else
   _acx_fc_inc_order=unknown
 fi
-
-acx_cv_fc_include_order=$_acx_fc_inc_order
-
+      acx_cv_fc_include_order=$_acx_fc_inc_order
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_include_order" >&5
 $as_echo "$acx_cv_fc_include_order" >&6; }
-if test x"$acx_cv_fc_include_order" != xunknown; then :
+   if test x"$acx_cv_fc_include_order" != xunknown; then :
   FC_INC_ORDER=$acx_cv_fc_include_order
 else
   FC_INC_ORDER=src,flg
 fi
 
 
-
-
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran's include order of the \"#include\" statement" >&5
-$as_echo_n "checking for Fortran's include order of the \"#include\" statement... " >&6; }
-if ${acx_cv_fc_hash_include_order+:} false; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran's include order of the \"#include\" directive" >&5
+$as_echo_n "checking for Fortran's include order of the \"#include\" directive... " >&6; }
+if ${acx_cv_fc_pp_include_order+:} false; then :
   $as_echo_n "(cached) " >&6
 else
 
-_acx_fc_inc_order=
-if test x"$cross_compiling" = xno; then :
-
-ac_ext=${ac_fc_srcext-f}
+   _acx_fc_inc_order=
+   if test x"$cross_compiling" = xno; then :
+  ac_ext=${ac_fc_srcext-f}
 ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
 ac_link='$FC -o conftest$ac_exeext $FCFLAGS $LDFLAGS $ac_fcflags_srcext conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_fc_compiler_gnu
 
-as_dir=conftest.dir/src/inc; as_fn_mkdir_p
-as_dir=conftest.dir/build; as_fn_mkdir_p
-as_dir=conftest.dir/src/inc2; as_fn_mkdir_p
-cat > conftest.$ac_ext <<_ACEOF
+      as_dir=conftest.dir/src/inc; as_fn_mkdir_p
+      as_dir=conftest.dir/build; as_fn_mkdir_p
+      as_dir=conftest.dir/src/inc2; as_fn_mkdir_p
+      cat > conftest.$ac_ext <<_ACEOF
       program main
 #include "conftest_inc.inc"
       end
 _ACEOF
-cp conftest.$ac_ext conftest.dir/build/conftest.$ac_ext
-mv conftest.$ac_ext conftest.dir/src/conftest.$ac_ext
-cat > conftest.$ac_ext <<_ACEOF
+      cp conftest.$ac_ext conftest.dir/build/conftest.$ac_ext
+      mv conftest.$ac_ext conftest.dir/src/conftest.$ac_ext
+      cat > conftest.$ac_ext <<_ACEOF
 
       write (*,"(a)") "src"
 _ACEOF
-mv conftest.$ac_ext conftest.dir/src/conftest_write.inc
-cat > conftest.$ac_ext <<_ACEOF
+      mv conftest.$ac_ext conftest.dir/src/conftest_write.inc
+      cat > conftest.$ac_ext <<_ACEOF
 
       write (*,"(a)") "flg"
 _ACEOF
-mv conftest.$ac_ext conftest.dir/src/inc/conftest_write.inc
-cat > conftest.$ac_ext <<_ACEOF
+      mv conftest.$ac_ext conftest.dir/src/inc/conftest_write.inc
+      cat > conftest.$ac_ext <<_ACEOF
 
       write (*,"(a)") "inc"
 _ACEOF
-mv conftest.$ac_ext conftest.dir/src/inc2/conftest_write.inc
-cat > conftest.$ac_ext <<_ACEOF
+      mv conftest.$ac_ext conftest.dir/src/inc2/conftest_write.inc
+      cat > conftest.$ac_ext <<_ACEOF
 #include "conftest_write.inc"
 _ACEOF
-mv conftest.$ac_ext conftest.dir/src/inc2/conftest_inc.inc
-cat > conftest.$ac_ext <<_ACEOF
+      mv conftest.$ac_ext conftest.dir/src/inc2/conftest_inc.inc
+      cat > conftest.$ac_ext <<_ACEOF
 
       write (*,"(a)") "cwd"
 _ACEOF
-mv conftest.$ac_ext conftest.dir/build/conftest_write.inc
-cd conftest.dir/build
-_acx_fc_inc_order_FCFLAGS_save=$FCFLAGS
-FCFLAGS="$FCFLAGS -I../src/inc -I../src/inc2"
-_acx_fc_inc_order_ac_link_save=$ac_link
-ac_link=`echo "$ac_link" | sed 's%conftest\(\.\$ac_ext\)%../src/conftest\1%'`
-while :; do
-  if ac_fn_fc_try_link "$LINENO"; then :
-
-    _acx_fc_inc_order_exe_result=`./conftest$ac_exeext`
-    if test $? -eq 0; then :
-
-      case $_acx_fc_inc_order_exe_result in #(
+      mv conftest.$ac_ext conftest.dir/build/conftest_write.inc
+      cd conftest.dir/build
+      _acx_fc_inc_order_FCFLAGS_save=$FCFLAGS
+      FCFLAGS="$FCFLAGS -I../src/inc -I../src/inc2"
+      _acx_fc_inc_order_ac_link_save=$ac_link
+      ac_link=`echo "$ac_link" | sed 's%conftest\(\.\$ac_ext\)%../src/conftest\1%'`
+      while :; do
+        if ac_fn_fc_try_link "$LINENO"; then :
+  _acx_fc_inc_order_exe_result=`./conftest$ac_exeext`
+           if test $? -eq 0; then :
+  case $_acx_fc_inc_order_exe_result in #(
   src) :
     rm -f ../src/conftest_write.inc ;; #(
   inc) :
@@ -2892,8 +2924,8 @@ while :; do
   *) :
     break ;;
 esac
-      _acx_fc_inc_order="$_acx_fc_inc_order $_acx_fc_inc_order_exe_result"
-      rm -f ./conftest$ac_exeext
+              _acx_fc_inc_order="$_acx_fc_inc_order $_acx_fc_inc_order_exe_result"
+              rm -f ./conftest$ac_exeext
 else
   break
 fi
@@ -2902,36 +2934,31 @@ else
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext
-done
-ac_link=$_acx_fc_inc_order_ac_link_save
-FCFLAGS=$_acx_fc_inc_order_FCFLAGS_save
-cd ..
-cd ..
-rm -rf conftest.dir
-ac_ext=${ac_fc_srcext-f}
+      done
+      ac_link=$_acx_fc_inc_order_ac_link_save
+      FCFLAGS=$_acx_fc_inc_order_FCFLAGS_save
+      cd ../..
+      rm -rf conftest.dir
+      ac_ext=${ac_fc_srcext-f}
 ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
 ac_link='$FC -o conftest$ac_exeext $FCFLAGS $LDFLAGS $ac_fcflags_srcext conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_fc_compiler_gnu
 
-
 fi
-if test x"$_acx_fc_inc_order" != x; then :
+   if test x"$_acx_fc_inc_order" != x; then :
   _acx_fc_inc_order=`echo $_acx_fc_inc_order | tr ' ' ','`
 else
   _acx_fc_inc_order=unknown
 fi
-
-acx_cv_fc_hash_include_order=$_acx_fc_inc_order
-
+      acx_cv_fc_pp_include_order=$_acx_fc_inc_order
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_hash_include_order" >&5
-$as_echo "$acx_cv_fc_hash_include_order" >&6; }
-if test x"$acx_cv_fc_hash_include_order" != xunknown; then :
-  PP_INC_ORDER_f90=$acx_cv_fc_hash_include_order
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_pp_include_order" >&5
+$as_echo "$acx_cv_fc_pp_include_order" >&6; }
+   if test x"$acx_cv_fc_pp_include_order" != xunknown; then :
+  FC_PP_INC_ORDER_f90=$acx_cv_fc_pp_include_order
 else
-  PP_INC_ORDER_f90=inc,flg
+  FC_PP_INC_ORDER_f90=inc,flg
 fi
-
 
 
 # Check whether --enable-additional-mods was given.
@@ -2942,7 +2969,7 @@ else
 fi
 
 if test "x$enable_additional_mods" = xyes; then :
-  FCFLAGS="${FC_DEFINE}INCLUDE_MODULES $FCFLAGS"
+  FCFLAGS="${acx_cv_fc_pp_define}INCLUDE_MODULES $FCFLAGS"
 fi
 
 # Check whether --enable-openmp was given.
@@ -2953,19 +2980,18 @@ else
 fi
 
 if test "x$enable_openmp" = "xyes"; then :
-
-OPENMP_FCFLAGS=
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $FC flag to enable OpenMP support" >&5
+  OPENMP_FCFLAG=
+   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $FC flag to enable OpenMP support" >&5
 $as_echo_n "checking for $FC flag to enable OpenMP support... " >&6; }
 if ${acx_cv_prog_fc_openmp+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   acx_cv_prog_fc_openmp="unsupported"
-  acx_FCFLAGS_save=$FCFLAGS
-  for acx_openmp_flag in '' -qopenmp -openmp -fopenmp -homp \
-                         -mp -xopenmp -omp -qsmp=omp -Popenmp --openmp; do
-    FCFLAGS="$acx_FCFLAGS_save $acx_openmp_flag"
-    cat > conftest.$ac_ext <<_ACEOF
+      acx_FCFLAGS_save=$FCFLAGS
+      for acx_openmp_flag in '' -qopenmp -openmp -fopenmp -homp \
+                             -mp -xopenmp -omp -qsmp=omp -Popenmp --openmp; do
+        FCFLAGS="$acx_FCFLAGS_save $acx_openmp_flag"
+        cat > conftest.$ac_ext <<_ACEOF
 
       program main
       implicit none
@@ -2981,29 +3007,27 @@ if ac_fn_fc_try_link "$LINENO"; then :
 else
   acx_cv_prog_fc_openmp=$acx_openmp_flag
 fi
-      break
+           break
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
-  done
-  FCFLAGS=$acx_FCFLAGS_save
+      done
+      FCFLAGS=$acx_FCFLAGS_save
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_prog_fc_openmp" >&5
 $as_echo "$acx_cv_prog_fc_openmp" >&6; }
-if test "x$acx_cv_prog_fc_openmp" != "xunsupported"; then :
+   if test "x$acx_cv_prog_fc_openmp" != "xunsupported"; then :
   if test "x$acx_cv_prog_fc_openmp" != "xnone needed"; then :
-  OPENMP_FCFLAGS=$acx_cv_prog_fc_openmp
+  OPENMP_FCFLAG=$acx_cv_prog_fc_openmp
 fi
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for the value of the preprocessor macro _OPENMP set by $FC" >&5
+      FCFLAGS="$OPENMP_FCFLAG $FCFLAGS"
+      { $as_echo "$as_me:${as_lineno-$LINENO}: checking for the value of the preprocessor macro _OPENMP set by $FC" >&5
 $as_echo_n "checking for the value of the preprocessor macro _OPENMP set by $FC... " >&6; }
 if ${acx_cv_prog_fc_openmp_macro+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   acx_cv_prog_fc_openmp_macro="unsupported"
-  acx_FCFLAGS_save=$FCFLAGS
-    FCFLAGS="$acx_FCFLAGS_save $OPENMP_FCFLAGS"
-  if test "x$cross_compiling" = "xno"; then :
+      if test "x$cross_compiling" = "xno"; then :
   cat > conftest.$ac_ext <<_ACEOF
 
       program main
@@ -3015,16 +3039,16 @@ else
 _ACEOF
 if ac_fn_fc_try_link "$LINENO"; then :
   acx_cv_prog_fc_openmp_macro=`./conftest$ac_exeext`
-      if test $? -ne 0; then :
+            if test $? -ne 0; then :
   acx_cv_prog_fc_openmp_macro="unsupported"
 fi
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 fi
-  if test "x$acx_cv_prog_fc_openmp_macro" = "xunsupported"; then :
+      if test "x$acx_cv_prog_fc_openmp_macro" = "xunsupported"; then :
   for acx_openmp_ver in 201511 201307 201107 200805 200505; do
-      cat > conftest.$ac_ext <<_ACEOF
+           cat > conftest.$ac_ext <<_ACEOF
       program main
 
 #if _OPENMP != $acx_openmp_ver
@@ -3034,12 +3058,12 @@ fi
 _ACEOF
 if ac_fn_fc_try_compile "$LINENO"; then :
   acx_cv_prog_fc_openmp_macro=$acx_openmp_ver
-        break
+              break
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-    done
+         done
 fi
-  if test "x$acx_cv_prog_fc_openmp_macro" = "xunsupported"; then :
+      if test "x$acx_cv_prog_fc_openmp_macro" = "xunsupported"; then :
   cat > conftest.$ac_ext <<_ACEOF
       program main
 
@@ -3053,29 +3077,30 @@ if ac_fn_fc_try_compile "$LINENO"; then :
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 fi
-  FCFLAGS=$acx_FCFLAGS_save
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_prog_fc_openmp_macro" >&5
 $as_echo "$acx_cv_prog_fc_openmp_macro" >&6; }
-if test "x$acx_cv_prog_fc_openmp_macro" != unknown; then :
+   if test "x$acx_cv_prog_fc_openmp_macro" != unknown; then :
   if test "x$acx_cv_prog_fc_openmp_macro" = "xunknown"; then :
-  as_fn_append DEPGEN_DEFS " ${FC_DEFINE}_OPENMP"
+  as_fn_append DEPGEN_DEFS " ${acx_cv_fc_pp_define}_OPENMP"
 else
-  as_fn_append DEPGEN_DEFS " ${FC_DEFINE}_OPENMP=$acx_cv_prog_fc_openmp_macro"
+  as_fn_append DEPGEN_DEFS " ${acx_cv_fc_pp_define}_OPENMP=$acx_cv_prog_fc_openmp_macro"
 fi
 else
-  as_fn_error $? "the preprocessor used by $FC does not set the macro _OPENMP" "$LINENO" 5
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "the preprocessor used by $FC does not set the macro _OPENMP
+See \`config.log' for more details" "$LINENO" 5; }
+fi
+else
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "unable to detect flag needed to enable OpenMP support for $FC
+See \`config.log' for more details" "$LINENO" 5; }
 fi
 
 else
-  as_fn_error $? "unable to detect flag needed to enable OpenMP support for $FC" "$LINENO" 5
-fi
-
-
-  FCFLAGS="$OPENMP_FCFLAGS $FCFLAGS"
-else
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether OpenMP support is disabled for $FC" >&5
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether OpenMP support is disabled for $FC" >&5
 $as_echo_n "checking whether OpenMP support is disabled for $FC... " >&6; }
 if ${acx_cv_prog_fc_openmp_disabled+:} false; then :
   $as_echo_n "(cached) " >&6
@@ -3097,12 +3122,14 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_prog_fc_openmp_disabled" >&5
 $as_echo "$acx_cv_prog_fc_openmp_disabled" >&6; }
-if test "x$acx_cv_prog_fc_openmp_disabled" = "xyes"; then :
+   if test "x$acx_cv_prog_fc_openmp_disabled" = "xyes"; then :
 
 else
-  as_fn_error $? "OpenMP support for $FC is enabled by default: set FCFLAGS accordingly to disable it" "$LINENO" 5
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "OpenMP support for $FC is enabled by default: set FCFLAGS accordingly to disable it
+See \`config.log' for more details" "$LINENO" 5; }
 fi
-
 fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether the Fortran interface of NetCDF library is available" >&5
@@ -3121,7 +3148,7 @@ $as_echo "yes" >&6; }
 else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
-  FCFLAGS="${FC_DEFINE}NO_NETCDF $FCFLAGS"
+  FCFLAGS="${acx_cv_fc_pp_define}NO_NETCDF $FCFLAGS"
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
@@ -3137,10 +3164,10 @@ else
 else
   set dummy ar
 fi
-shift
-acx_cv_prog_AR=unknown
-for acx_prog_candidate in "$@"; do
-cat > conftest.$ac_ext <<_ACEOF
+      shift
+      acx_cv_prog_AR=unknown
+      for acx_prog_candidate in "$@"; do
+        cat > conftest.$ac_ext <<_ACEOF
       program main
 
       end
@@ -3156,17 +3183,19 @@ if ac_fn_fc_try_compile "$LINENO"; then :
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
   test "$ac_status" -eq 0
-if test $? -eq 0; then :
+        if test $? -eq 0; then :
   acx_cv_prog_AR="$acx_prog_candidate"; break
 fi
-done
+      done
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_prog_AR" >&5
 $as_echo "$acx_cv_prog_AR" >&6; }
-AR=$acx_cv_prog_AR
-
+   AR=$acx_cv_prog_AR
 if test "x$AR" = xunknown; then :
-  as_fn_error $? "unable to find the archiver command" "$LINENO" 5
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "unable to find the archiver command
+See \`config.log' for more details" "$LINENO" 5; }
 fi
 
 
@@ -3180,26 +3209,28 @@ else
 else
   set dummy python python3
 fi
-shift
-acx_cv_prog_PYTHON=unknown
-for acx_prog_candidate in "$@"; do
-acx_depgen_try='$acx_prog_candidate $srcdir/mkhelper/depgen.py -h > /dev/null'
+      shift
+      acx_cv_prog_PYTHON=unknown
+      for acx_prog_candidate in "$@"; do
+        acx_depgen_try='$acx_prog_candidate $srcdir/mkhelper/depgen.py -h > /dev/null'
   { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$acx_depgen_try\""; } >&5
   (eval $acx_depgen_try) 2>&5
   ac_status=$?
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }
-if test $? -eq 0; then :
+        if test $? -eq 0; then :
   acx_cv_prog_PYTHON="$acx_prog_candidate"; break
 fi
-done
+      done
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_prog_PYTHON" >&5
 $as_echo "$acx_cv_prog_PYTHON" >&6; }
-PYTHON=$acx_cv_prog_PYTHON
-
+   PYTHON=$acx_cv_prog_PYTHON
 if test "x$PYTHON" = xunknown; then :
-  as_fn_error $? "unable to find Python interpreter" "$LINENO" 5
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "unable to find Python interpreter
+See \`config.log' for more details" "$LINENO" 5; }
 fi
 
 # Find a good install program.  We prefer a C program (faster),
