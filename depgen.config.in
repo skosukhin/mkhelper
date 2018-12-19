@@ -1,11 +1,13 @@
 --src-root=@srcdir@
 --pp-enable
 --pp-eval-expr
+--pp-inc-flag=@FC_PP_INC_FLAG_f90@
 --pp-inc-order=@FC_PP_INC_ORDER_f90@
 --pp-macro-flag=@FC_PP_DEF@
 --fc-enable
 --fc-mod-ext=@FC_MOD_FILE_EXT@
 --fc-mod-upper=@FC_MOD_FILE_UPPER@
+--fc-inc-order=@FC_INC_FLAG@
 --fc-inc-order=@FC_INC_ORDER@
 --fc-mod-dir-flag=@FC_MOD_OUT@
 --fc-intrinsic-mods=@DEPGEN_INTRINSIC_MODS@

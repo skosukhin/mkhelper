@@ -28,14 +28,16 @@ ACX_FC_MOD_FILE_NAMING(
   [AC_SUBST([FC_MOD_FILE_UPPER], [$acx_cv_fc_mod_file_naming_upper])
    AC_SUBST([FC_MOD_FILE_EXT], [$acx_cv_fc_mod_file_naming_ext])])
 
+ACX_FC_INCLUDE_FLAG([AC_SUBST([FC_INC_FLAG], [$acx_cv_fc_include_flag])])
 ACX_FC_INCLUDE_ORDER(
-  [-I],
+  [${acx_cv_fc_include_flag}],
   [FC_INC_ORDER=$acx_cv_fc_include_order],
   [FC_INC_ORDER=src,flg])
 AC_SUBST([FC_INC_ORDER])
 
+ACX_FC_PP_INCLUDE_FLAG([AC_SUBST([FC_PP_INC_FLAG_f90], [$acx_cv_fc_pp_include_flag])])
 ACX_FC_PP_INCLUDE_ORDER(
-  [-I],
+  [${acx_cv_fc_pp_include_flag}],
   [FC_PP_INC_ORDER_f90=$acx_cv_fc_pp_include_order],
   [FC_PP_INC_ORDER_f90=inc,flg])
 AC_SUBST([FC_PP_INC_ORDER_f90])

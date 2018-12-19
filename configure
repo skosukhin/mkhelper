@@ -594,7 +594,9 @@ PYTHON
 AR
 OPENMP_FCFLAG
 FC_PP_INC_ORDER_f90
+FC_PP_INC_FLAG_f90
 FC_INC_ORDER
+FC_INC_FLAG
 FC_MOD_FILE_EXT
 FC_MOD_FILE_UPPER
 FC_MOD_OUT
@@ -2751,13 +2753,70 @@ as_fn_error $? "unable to detect Fortran module file naming template
 See \`config.log' for more details" "$LINENO" 5; }
 fi
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran flag to specify search paths for the \"include\" statement" >&5
+$as_echo_n "checking for Fortran flag to specify search paths for the \"include\" statement... " >&6; }
+if ${acx_cv_fc_include_flag+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+
+   ac_ext=${ac_fc_srcext-f}
+ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
+ac_link='$FC -o conftest$ac_exeext $FCFLAGS $LDFLAGS $ac_fcflags_srcext conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_fc_compiler_gnu
+
+   _acx_fc_include_flag=unknown
+   mkdir conftest.dir
+   cat > conftest.$ac_ext <<_ACEOF
+
+      subroutine conftest_routine
+      write (*,"(a)") "a"
+      end subroutine
+_ACEOF
+   mv conftest.$ac_ext conftest.dir/conftest.inc
+   _acx_fc_include_flag_FCFLAGS_save=$FCFLAGS
+   for _acx_fc_include_flag_candidate in -I '-I '; do
+     FCFLAGS="$_acx_fc_include_flag_FCFLAGS_save ${_acx_fc_include_flag_candidate}conftest.dir"
+     cat > conftest.$ac_ext <<_ACEOF
+
+      include "conftest.inc"
+      program main
+      call conftest_routine
+      end
+_ACEOF
+if ac_fn_fc_try_link "$LINENO"; then :
+  _acx_fc_include_flag=$_acx_fc_include_flag_candidate
+        break
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+   done
+   FCFLAGS=$_acx_fc_include_flag_FCFLAGS_save
+   rm -rf conftest.dir
+   ac_ext=${ac_fc_srcext-f}
+ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
+ac_link='$FC -o conftest$ac_exeext $FCFLAGS $LDFLAGS $ac_fcflags_srcext conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_fc_compiler_gnu
+
+      acx_cv_fc_include_flag=$_acx_fc_include_flag
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_include_flag" >&5
+$as_echo "$acx_cv_fc_include_flag" >&6; }
+   if test x"$acx_cv_fc_include_flag" != xunknown; then :
+  FC_INC_FLAG=$acx_cv_fc_include_flag
+
+else
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "unable to detect Fortran flag needed to specify search paths for the \"include\" statement
+See \`config.log' for more details" "$LINENO" 5; }
+fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran's include order of the \"include\" statement" >&5
 $as_echo_n "checking for Fortran's include order of the \"include\" statement... " >&6; }
 if ${acx_cv_fc_include_order+:} false; then :
   $as_echo_n "(cached) " >&6
 else
 
-   _acx_fc_inc_order=
+   _acx_fc_include_order=
    if test x"$cross_compiling" = xno; then :
   ac_ext=${ac_fc_srcext-f}
 ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
@@ -2799,15 +2858,15 @@ _ACEOF
 _ACEOF
       mv conftest.$ac_ext conftest.dir/build/conftest_write.inc
       cd conftest.dir/build
-      _acx_fc_inc_order_FCFLAGS_save=$FCFLAGS
-      FCFLAGS="$FCFLAGS -I../src/inc -I../src/inc2"
-      _acx_fc_inc_order_ac_link_save=$ac_link
+      _acx_fc_include_order_FCFLAGS_save=$FCFLAGS
+      FCFLAGS="$FCFLAGS ${acx_cv_fc_include_flag}../src/inc ${acx_cv_fc_include_flag}../src/inc2"
+      _acx_fc_include_order_ac_link_save=$ac_link
       ac_link=`echo "$ac_link" | sed 's%conftest\(\.\$ac_ext\)%../src/conftest\1%'`
       while :; do
         if ac_fn_fc_try_link "$LINENO"; then :
-  _acx_fc_inc_order_exe_result=`./conftest$ac_exeext`
+  _acx_fc_include_order_exe_result=`./conftest$ac_exeext`
            if test $? -eq 0; then :
-  case $_acx_fc_inc_order_exe_result in #(
+  case $_acx_fc_include_order_exe_result in #(
   src) :
     rm -f ../src/conftest_write.inc ;; #(
   inc) :
@@ -2819,7 +2878,7 @@ _ACEOF
   *) :
     break ;;
 esac
-              _acx_fc_inc_order="$_acx_fc_inc_order $_acx_fc_inc_order_exe_result"
+              _acx_fc_include_order="$_acx_fc_include_order $_acx_fc_include_order_exe_result"
               rm -f ./conftest$ac_exeext
 else
   break
@@ -2830,8 +2889,8 @@ fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext
       done
-      ac_link=$_acx_fc_inc_order_ac_link_save
-      FCFLAGS=$_acx_fc_inc_order_FCFLAGS_save
+      ac_link=$_acx_fc_include_order_ac_link_save
+      FCFLAGS=$_acx_fc_include_order_FCFLAGS_save
       cd ../..
       rm -rf conftest.dir
       ac_ext=${ac_fc_srcext-f}
@@ -2840,12 +2899,12 @@ ac_link='$FC -o conftest$ac_exeext $FCFLAGS $LDFLAGS $ac_fcflags_srcext conftest
 ac_compiler_gnu=$ac_cv_fc_compiler_gnu
 
 fi
-   if test x"$_acx_fc_inc_order" != x; then :
-  _acx_fc_inc_order=`echo $_acx_fc_inc_order | tr ' ' ','`
+   if test x"$_acx_fc_include_order" != x; then :
+  _acx_fc_include_order=`echo $_acx_fc_include_order | tr ' ' ','`
 else
-  _acx_fc_inc_order=unknown
+  _acx_fc_include_order=unknown
 fi
-      acx_cv_fc_include_order=$_acx_fc_inc_order
+      acx_cv_fc_include_order=$_acx_fc_include_order
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_include_order" >&5
 $as_echo "$acx_cv_fc_include_order" >&6; }
@@ -2856,13 +2915,70 @@ else
 fi
 
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran flag to specify search paths for the \"#include\" directive" >&5
+$as_echo_n "checking for Fortran flag to specify search paths for the \"#include\" directive... " >&6; }
+if ${acx_cv_fc_pp_include_flag+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+
+   ac_ext=${ac_fc_srcext-f}
+ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
+ac_link='$FC -o conftest$ac_exeext $FCFLAGS $LDFLAGS $ac_fcflags_srcext conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_fc_compiler_gnu
+
+   _acx_fc_include_flag=unknown
+   mkdir conftest.dir
+   cat > conftest.$ac_ext <<_ACEOF
+
+      subroutine conftest_routine
+      write (*,"(a)") "a"
+      end subroutine
+_ACEOF
+   mv conftest.$ac_ext conftest.dir/conftest.inc
+   _acx_fc_include_flag_FCFLAGS_save=$FCFLAGS
+   for _acx_fc_include_flag_candidate in -I '-I ' '-WF,-I' '-Wp,-I'; do
+     FCFLAGS="$_acx_fc_include_flag_FCFLAGS_save ${_acx_fc_include_flag_candidate}conftest.dir"
+     cat > conftest.$ac_ext <<_ACEOF
+
+#include "conftest.inc"
+      program main
+      call conftest_routine
+      end
+_ACEOF
+if ac_fn_fc_try_link "$LINENO"; then :
+  _acx_fc_include_flag=$_acx_fc_include_flag_candidate
+        break
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+   done
+   FCFLAGS=$_acx_fc_include_flag_FCFLAGS_save
+   rm -rf conftest.dir
+   ac_ext=${ac_fc_srcext-f}
+ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
+ac_link='$FC -o conftest$ac_exeext $FCFLAGS $LDFLAGS $ac_fcflags_srcext conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_fc_compiler_gnu
+
+      acx_cv_fc_pp_include_flag=$_acx_fc_include_flag
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_pp_include_flag" >&5
+$as_echo "$acx_cv_fc_pp_include_flag" >&6; }
+   if test x"$acx_cv_fc_pp_include_flag" != xunknown; then :
+  FC_PP_INC_FLAG_f90=$acx_cv_fc_pp_include_flag
+
+else
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "unable to detect Fortran flag needed to specify search paths for the \"#include\" statement
+See \`config.log' for more details" "$LINENO" 5; }
+fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran's include order of the \"#include\" directive" >&5
 $as_echo_n "checking for Fortran's include order of the \"#include\" directive... " >&6; }
 if ${acx_cv_fc_pp_include_order+:} false; then :
   $as_echo_n "(cached) " >&6
 else
 
-   _acx_fc_inc_order=
+   _acx_fc_include_order=
    if test x"$cross_compiling" = xno; then :
   ac_ext=${ac_fc_srcext-f}
 ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
@@ -2904,15 +3020,15 @@ _ACEOF
 _ACEOF
       mv conftest.$ac_ext conftest.dir/build/conftest_write.inc
       cd conftest.dir/build
-      _acx_fc_inc_order_FCFLAGS_save=$FCFLAGS
-      FCFLAGS="$FCFLAGS -I../src/inc -I../src/inc2"
-      _acx_fc_inc_order_ac_link_save=$ac_link
+      _acx_fc_include_order_FCFLAGS_save=$FCFLAGS
+      FCFLAGS="$FCFLAGS ${acx_cv_fc_pp_include_flag}../src/inc ${acx_cv_fc_pp_include_flag}../src/inc2"
+      _acx_fc_include_order_ac_link_save=$ac_link
       ac_link=`echo "$ac_link" | sed 's%conftest\(\.\$ac_ext\)%../src/conftest\1%'`
       while :; do
         if ac_fn_fc_try_link "$LINENO"; then :
-  _acx_fc_inc_order_exe_result=`./conftest$ac_exeext`
+  _acx_fc_include_order_exe_result=`./conftest$ac_exeext`
            if test $? -eq 0; then :
-  case $_acx_fc_inc_order_exe_result in #(
+  case $_acx_fc_include_order_exe_result in #(
   src) :
     rm -f ../src/conftest_write.inc ;; #(
   inc) :
@@ -2924,7 +3040,7 @@ _ACEOF
   *) :
     break ;;
 esac
-              _acx_fc_inc_order="$_acx_fc_inc_order $_acx_fc_inc_order_exe_result"
+              _acx_fc_include_order="$_acx_fc_include_order $_acx_fc_include_order_exe_result"
               rm -f ./conftest$ac_exeext
 else
   break
@@ -2935,8 +3051,8 @@ fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext
       done
-      ac_link=$_acx_fc_inc_order_ac_link_save
-      FCFLAGS=$_acx_fc_inc_order_FCFLAGS_save
+      ac_link=$_acx_fc_include_order_ac_link_save
+      FCFLAGS=$_acx_fc_include_order_FCFLAGS_save
       cd ../..
       rm -rf conftest.dir
       ac_ext=${ac_fc_srcext-f}
@@ -2945,12 +3061,12 @@ ac_link='$FC -o conftest$ac_exeext $FCFLAGS $LDFLAGS $ac_fcflags_srcext conftest
 ac_compiler_gnu=$ac_cv_fc_compiler_gnu
 
 fi
-   if test x"$_acx_fc_inc_order" != x; then :
-  _acx_fc_inc_order=`echo $_acx_fc_inc_order | tr ' ' ','`
+   if test x"$_acx_fc_include_order" != x; then :
+  _acx_fc_include_order=`echo $_acx_fc_include_order | tr ' ' ','`
 else
-  _acx_fc_inc_order=unknown
+  _acx_fc_include_order=unknown
 fi
-      acx_cv_fc_pp_include_order=$_acx_fc_inc_order
+      acx_cv_fc_pp_include_order=$_acx_fc_include_order
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_pp_include_order" >&5
 $as_echo "$acx_cv_fc_pp_include_order" >&6; }
