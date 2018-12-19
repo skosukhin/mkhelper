@@ -73,10 +73,10 @@ def parse_args():
         help='actual flags to be used in compilation, i.e. $(CPPFLAGS) or '
              '$(FCFLAGS), must be given at the end of the command line '
              'following the double dash separator (--); the program searches '
-             'these flags for (possibly multiple instances of) -I, '
-             'MACRO_FLAG and MOD_DIR_FLAG; any values found are used in '
-             'the dependency generation of OUTPUT (in the case of '
-             'MOD_DIR_FLAG, only the last value found is used.')
+             'these flags for (possibly multiple instances of) PP_INC_FLAG, '
+             'PP_MACRO_FLAG, FC_INC_FLAG and FC_MOD_DIR_FLAG; any values '
+             'found are used in the dependency generation of OUTPUT (in the '
+             'case of FC_MOD_DIR_FLAG, only the last value found is used.')
 
     pp_arg_group = parser.add_argument_group('preprocessor arguments')
     pp_arg_group.add_argument(
@@ -97,15 +97,20 @@ def parse_args():
              'list of keywords, the corresponding search paths of which are '
              'to be searched in the given order. The recognized keywords are: '
              '"cwd" (for the current working directory), "flg" (for the '
-             'directories specified with -I compiler flag), "src" (for the '
-             'directory containing the INPUT source file), and "inc" (for the '
-             'directory containing the file with the "#include" directive. '
-             'Default: "%(default)s".')
+             'directories specified with PP_INC_FLAG compiler flag), "src" '
+             '(for the directory containing the INPUT source file), and "inc" '
+             '(for the directory containing the file with the "#include" '
+             'directive. Default: "%(default)s".')
     pp_arg_group.add_argument(
-        '--pp-macro-flag', metavar='MACRO_FLAG', default='-D',
+        '--pp-macro-flag', metavar='PP_MACRO_FLAG', default='-D',
         help='preprocessor flag used for macro definition; only flags '
              'starting with a single dash (-) are currently supported '
              '(default: %(default)s)')
+    pp_arg_group.add_argument(
+        '--pp-inc-flag', metavar='PP_INC_FLAG', default='-I',
+        help='preprocessor flag used for setting search paths for the '
+             '"#include" directive; only flags starting with a single dash '
+             '(-) are currently supported (default: %(default)s)')
 
     fc_arg_group = parser.add_argument_group('Fortran arguments')
     fc_arg_group.add_argument(
@@ -125,7 +130,8 @@ def parse_args():
         '--fc-inc-order', default='src,flg', metavar='ORDER_LIST',
         type=comma_splitter,
         help='equivalent to the "--pp-inc-order" argument, only for the '
-             'Fortran "include" statement (default: "%(default)s")')
+             'Fortran "include" statement and FC_INC_FLAG (default: '
+             '"%(default)s")')
     fc_arg_group.add_argument(
         '--fc-intrinsic-mods', metavar='INTRINSIC_MODS_LIST',
         type=comma_splitter,
@@ -148,10 +154,15 @@ def parse_args():
              'modules that need to be unconditionally ignored when generating '
              'dependency rules (see also --fc-intrinsic-mods)')
     fc_arg_group.add_argument(
-        '--fc-mod-dir-flag', metavar='MOD_DIR_FLAG', default='-J',
+        '--fc-mod-dir-flag', metavar='FC_MOD_DIR_FLAG', default='-J',
         help='Fortran compiler flag used to specify the directory where '
              'module files are saved; only flags starting with a single dash '
              '(-) are currently supported (default: %(default)s)')
+    fc_arg_group.add_argument(
+        '--fc-inc-flag', metavar='FC_INC_FLAG', default='-I',
+        help='preprocessor flag used for setting search paths for the '
+             'Fortran "include" statement; only flags starting with a single '
+             'dash (-) are currently supported (default: %(default)s)')
 
     unknown = []
     try:
@@ -171,9 +182,9 @@ def parse_args():
     if args.src_root:
         args.src_root = os.path.abspath(args.src_root)
 
-    compiler_args = dict(pp_inc_dirs='-I',
+    compiler_args = dict(pp_inc_dirs=args.pp_inc_flag,
                          pp_macros=args.pp_macro_flag,
-                         fc_inc_dirs='-I',
+                         fc_inc_dirs=args.fc_inc_flag,
                          fc_mod_dir=args.fc_mod_dir_flag)
 
     for dest, flag in compiler_args.items():
@@ -245,8 +256,8 @@ def main():
     in_stream = open23(args.input, 'r')
 
     if args.pp_enable:
-        from depgen.pp_c import CPreprocessor
-        pp = CPreprocessor(
+        from depgen.pp import Preprocessor
+        pp = Preprocessor(
             in_stream,
             include_root=args.src_root,
             include_dirs=args.pp_inc_dirs,

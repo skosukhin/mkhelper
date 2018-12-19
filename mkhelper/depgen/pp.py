@@ -3,7 +3,7 @@ import re
 from depgen.include_reader import IncludeReader
 
 
-class CPreprocessor:
+class Preprocessor:
     _re_ifdef = re.compile(r'^#\s*if(n)?def\s+([a-zA-Z_]\w*)')
     _re_if_expr = re.compile(r'^#\s*if((?:\s|\().*)')
 
@@ -57,7 +57,7 @@ class CPreprocessor:
                 return line
 
             line = self._replace_continuation(line)
-            line = CPreprocessor._re_block_comments.sub(' ', line)
+            line = Preprocessor._re_block_comments.sub(' ', line)
 
             # if the line still has '/*' - the start of the block comments
             while re.search(r'/\*', line):
@@ -66,10 +66,10 @@ class CPreprocessor:
                     break
                 suffix = self._replace_continuation(suffix)
                 line = line + suffix
-                line = CPreprocessor._re_block_comments.sub(' ', line)
+                line = Preprocessor._re_block_comments.sub(' ', line)
 
             # if(n)def statement
-            match = CPreprocessor._re_ifdef.match(line)
+            match = Preprocessor._re_ifdef.match(line)
             if match:
                 state = 0
                 eval_expr = not self._check_ignore_branch()
@@ -84,7 +84,7 @@ class CPreprocessor:
                 continue
 
             # if statement
-            match = CPreprocessor._re_if_expr.match(line)
+            match = Preprocessor._re_if_expr.match(line)
             if match:
                 state = 0
                 eval_expr = (not self._check_ignore_branch() and
@@ -99,7 +99,7 @@ class CPreprocessor:
                 continue
 
             # elif statement
-            match = CPreprocessor._re_elif.match(line)
+            match = Preprocessor._re_elif.match(line)
             if match:
                 self._else()
 
@@ -116,13 +116,13 @@ class CPreprocessor:
                 continue
 
             # else statement
-            match = CPreprocessor._re_else.match(line)
+            match = Preprocessor._re_else.match(line)
             if match:
                 self._else()
                 continue
 
             # endif statement
-            match = CPreprocessor._re_endif.match(line)
+            match = Preprocessor._re_endif.match(line)
             if match:
                 if self._if_state_stack:
                     pop_count = self._states_per_endif_stack.pop()
@@ -134,19 +134,19 @@ class CPreprocessor:
                 continue
 
             # include statement
-            match = CPreprocessor._re_include.match(line)
+            match = Preprocessor._re_include.match(line)
             if match:
                 self._include_reader.include(match.group(match.lastindex))
                 continue
 
             # define statement
-            match = CPreprocessor._re_define.match(line)
+            match = Preprocessor._re_define.match(line)
             if match:
                 self._define(*match.group(1, 2, 3))
                 continue
 
             # undef statement
-            match = CPreprocessor._re_undef.match(line)
+            match = Preprocessor._re_undef.match(line)
             if match:
                 self.undef(match.group(1))
                 continue
@@ -159,7 +159,7 @@ class CPreprocessor:
 
     def print_debug(self, stream):
         lines = [
-            '# C preprocessor:\n'
+            '# Preprocessor:\n'
             '#   Input file: ', self.name, '\n',
             '#   Conditional preprocessor statements:\n']
 
@@ -193,7 +193,7 @@ class CPreprocessor:
         return self._include_reader.name
 
     def define_from_cmd_line(self, macro_def):
-        match = CPreprocessor._re_cmd_line_define.match(macro_def)
+        match = Preprocessor._re_cmd_line_define.match(macro_def)
         if match:
             name, args = match.group(1, 2)
             body = match.group(3) if match.group(3) else '1'
@@ -231,12 +231,12 @@ class CPreprocessor:
         prev_expr = expr
         while True:
             # replace calls to function "defined"
-            defined_calls = re.findall(CPreprocessor._re_defined_call, expr)
+            defined_calls = re.findall(Preprocessor._re_defined_call, expr)
             for call in defined_calls:
                 expr = expr.replace(
                     call[0], '1' if call[2] in self._defined_macros else '0')
 
-            identifiers = re.findall(CPreprocessor._re_identifier, expr)
+            identifiers = re.findall(Preprocessor._re_identifier, expr)
 
             for ident in identifiers:
                 if ident[1] == 'defined':

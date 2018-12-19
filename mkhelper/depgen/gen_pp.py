@@ -9,6 +9,7 @@ class PpGenerator:
     def gen_dep_rules(self, compile_target, dep_file_target, src_file_prereq,
                       extra_normal_prereqs=None,
                       extra_order_prereqs=None):
+
         result = [compile_target,
                   ' ',
                   (dep_file_target if dep_file_target else ''),

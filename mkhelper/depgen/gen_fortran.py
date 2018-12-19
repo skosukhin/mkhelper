@@ -99,15 +99,14 @@ class FortranGenerator:
     def gen_dep_rules(self, compile_target, dep_file_target, src_file_prereq,
                       extra_normal_prereqs=None,
                       extra_order_prereqs=None):
-        included_files = self._include_reader.included_files
-        pp_included_files = self._preprocessor.included_files
-        if pp_included_files:
-            included_files |= pp_included_files
 
         result = [compile_target,
                   (' ' + dep_file_target if dep_file_target else ''),
                   ': ',
                   src_file_prereq]
+
+        included_files = (self._include_reader.included_files |
+                          self._preprocessor.included_files)
 
         if included_files:
             result.append(' ' + ' '.join(included_files))
