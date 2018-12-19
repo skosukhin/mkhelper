@@ -12,8 +12,14 @@ AC_LANG([Fortran])
 AC_FC_PP_SRCEXT([f90])
 AC_FC_FREEFORM
 
-ACX_FC_PP_DEFINE
+AC_SUBST([DEPGEN_DEFS])
+AC_SUBST([DEPGEN_INTRINSIC_MODS],
+  [[iso_c_binding,iso_fortran_env,ieee_exceptions,ieee_arithmetic,ieee_features,omp_lib,omp_lib_kinds,openacc]])
+AC_SUBST([DEPGEN_EXTERNAL_MODS])
+
 ACX_FC_VENDOR
+
+ACX_FC_PP_DEFINE
 ACX_FC_MODULE_INC_FLAG
 ACX_FC_MODULE_OUT_FLAG
 
@@ -40,8 +46,6 @@ AC_ARG_ENABLE([additional-mods],
   [], [enable_additional_mods=yes])
 AS_IF([test "x$enable_additional_mods" = xyes],
   [FCFLAGS="${FC_DEFINE}INCLUDE_MODULES $FCFLAGS"])
-
-AC_SUBST([DEPGEN_DEFS])
 
 AC_ARG_ENABLE([openmp],
   [AS_HELP_STRING([--enable-openmp], [enable OpenMP support @<:@default: yes@:>@])],

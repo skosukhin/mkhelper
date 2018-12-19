@@ -593,7 +593,6 @@ INSTALL_PROGRAM
 PYTHON
 AR
 OPENMP_FCFLAGS
-DEPGEN_DEFS
 PP_INC_ORDER_f90
 FC_INC_ORDER
 FC_MODULE_EXT
@@ -601,6 +600,9 @@ FC_MODULE_UPPER
 FC_MODOUT
 FC_MODINC
 FC_DEFINE
+DEPGEN_EXTERNAL_MODS
+DEPGEN_INTRINSIC_MODS
+DEPGEN_DEFS
 FCFLAGS_f90
 OBJEXT
 EXEEXT
@@ -2407,6 +2409,52 @@ ac_compiler_gnu=$ac_cv_fc_compiler_gnu
 
 
 
+DEPGEN_INTRINSIC_MODS=iso_c_binding,iso_fortran_env,ieee_exceptions,ieee_arithmetic,ieee_features,omp_lib,omp_lib_kinds,openacc
+
+
+
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler vendor" >&5
+$as_echo_n "checking for Fortran compiler vendor... " >&6; }
+if ${acx_cv_fc_vendor+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+
+_acx_fc_vendor_options="intel: __INTEL_COMPILER
+                        cray: _CRAYFTN
+                        pgi: __PGI
+                        nag: NAGFOR
+                        sun: __SUNPRO_F90,__SUNPRO_F95
+                        gnu: __GNUC__,__GFORTRAN__
+                        unknown: UNKNOWN"
+for _acx_fc_vendor_test in $_acx_fc_vendor_options; do
+  case $_acx_fc_vendor_test in #(
+  *:) :
+    _acx_fc_vendor_candidate=$_acx_fc_vendor_test; continue ;; #(
+  *) :
+    _acx_fc_vendor_defs="defined("`echo $_acx_fc_vendor_test | sed 's/,/) || defined(/g'`")" ;;
+esac
+  cat > conftest.$ac_ext <<_ACEOF
+      program main
+
+#if !($_acx_fc_vendor_defs)
+      choke me
+#endif
+      end
+_ACEOF
+if ac_fn_fc_try_compile "$LINENO"; then :
+  break
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+done
+acx_cv_fc_vendor=`echo $_acx_fc_vendor_candidate | cut -d: -f1`
+
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_vendor" >&5
+$as_echo "$acx_cv_fc_vendor" >&6; }
+
+
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking how to define symbols for preprocessed Fortran" >&5
 $as_echo_n "checking how to define symbols for preprocessed Fortran... " >&6; }
 if ${acx_cv_fc_pp_define+:} false; then :
@@ -2457,46 +2505,6 @@ else
 fi
 
 
-
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler vendor" >&5
-$as_echo_n "checking for Fortran compiler vendor... " >&6; }
-if ${acx_cv_fc_vendor+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-
-_acx_fc_vendor_options="intel: __INTEL_COMPILER
-                        cray: _CRAYFTN
-                        pgi: __PGI
-                        nag: NAGFOR
-                        sun: __SUNPRO_F90,__SUNPRO_F95
-                        gnu: __GNUC__,__GFORTRAN__
-                        unknown: UNKNOWN"
-for _acx_fc_vendor_test in $_acx_fc_vendor_options; do
-  case $_acx_fc_vendor_test in #(
-  *:) :
-    _acx_fc_vendor_candidate=$_acx_fc_vendor_test; continue ;; #(
-  *) :
-    _acx_fc_vendor_defs="defined("`echo $_acx_fc_vendor_test | sed 's/,/) || defined(/g'`")" ;;
-esac
-  cat > conftest.$ac_ext <<_ACEOF
-      program main
-
-#if !($_acx_fc_vendor_defs)
-      choke me
-#endif
-      end
-_ACEOF
-if ac_fn_fc_try_compile "$LINENO"; then :
-  break
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-done
-acx_cv_fc_vendor=`echo $_acx_fc_vendor_candidate | cut -d: -f1`
-
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_vendor" >&5
-$as_echo "$acx_cv_fc_vendor" >&6; }
 
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran flag to include modules from a specified directory" >&5
@@ -2936,8 +2944,6 @@ fi
 if test "x$enable_additional_mods" = xyes; then :
   FCFLAGS="${FC_DEFINE}INCLUDE_MODULES $FCFLAGS"
 fi
-
-
 
 # Check whether --enable-openmp was given.
 if test "${enable_openmp+set}" = set; then :
