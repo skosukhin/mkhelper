@@ -15,78 +15,105 @@ AC_FC_LINE_LENGTH([unlimited])
 
 AC_SUBST([DEPGEN_DEFS])
 AC_SUBST([DEPGEN_INTRINSIC_MODS],
-  [[iso_c_binding,iso_fortran_env,ieee_exceptions,ieee_arithmetic,ieee_features,omp_lib,omp_lib_kinds,openacc]])
+  [[iso_c_binding,iso_fortran_env,ieee_exceptions,ieee_arithmetic,]dnl
+[ieee_features,omp_lib,omp_lib_kinds,openacc]])
 AC_SUBST([DEPGEN_EXTERNAL_MODS])
 
-ACX_FC_VENDOR
+ACX_LANG_VENDOR
+AS_CASE([$acx_cv_fc_vendor],
+  [nag], [acx_fc_rpath_flag="-Wl,-Wl,,-rpath -Wl,-Wl,,"],
+  [acx_fc_rpath_flag="-Wl,-rpath -Wl,"])
 
-ACX_FC_MACRO_DEFINE([AC_SUBST([FC_PP_DEF], [$acx_cv_fc_macro_define])])
-ACX_FC_MOD_SEARCH_FLAG([AC_SUBST([FC_MOD_IN], [$acx_cv_fc_mod_search_flag])])
-ACX_FC_MOD_OUTPUT_FLAG([AC_SUBST([FC_MOD_OUT], [$acx_cv_fc_mod_output_flag])])
+ACX_FC_MODULE_IN_FLAG([AC_SUBST([FC_MOD_IN], [$acx_cv_fc_module_in_flag])])
+ACX_FC_MODULE_OUT_FLAG([AC_SUBST([FC_MOD_OUT], [$acx_cv_fc_module_out_flag])])
 
-ACX_FC_MOD_OUTPUT_NAME(
-  [AC_SUBST([FC_MOD_FILE_UPPER], [$acx_cv_fc_mod_output_name_upper])
-   AC_SUBST([FC_MOD_FILE_EXT], [$acx_cv_fc_mod_output_name_ext])])
+ACX_FC_MODULE_NAMING(
+  [AC_SUBST([FC_MOD_FILE_UPPER], [$acx_cv_fc_module_naming_upper])
+   AC_SUBST([FC_MOD_FILE_EXT], [$acx_cv_fc_module_naming_ext])])
 
-ACX_FC_INC_SEARCH_FLAG([fc], [AC_SUBST([FC_INC_FLAG], [$acx_cv_fc_inc_search_flag_fc])])
-ACX_FC_INC_SEARCH_ORDER([fc],
-  [${acx_cv_fc_inc_search_flag_fc}],
-  [FC_INC_ORDER=$acx_cv_fc_inc_search_order_fc],
+ACX_FC_INCLUDE_FLAG
+AS_VAR_IF([acx_cv_fc_ftn_include_flag], [unknown],
+  [AC_MSG_FAILURE([unable to detect Fortran compiler flag needed to specify dnl
+search paths for the "INCLUDE" statement])],
+  [AC_SUBST([FC_INC_FLAG], [$acx_cv_fc_ftn_include_flag])])
+ACX_FC_INCLUDE_ORDER(
+  [FC_INC_ORDER=$acx_cv_fc_ftn_include_order],
   [FC_INC_ORDER=src,flg])
 AC_SUBST([FC_INC_ORDER])
 
-ACX_FC_INC_SEARCH_FLAG([pp], [AC_SUBST([FC_PP_INC_FLAG_f90], [$acx_cv_fc_inc_search_flag_pp])])
-ACX_FC_INC_SEARCH_ORDER([pp],
-  [${acx_cv_fc_inc_search_flag_pp}],
-  [FC_PP_INC_ORDER_f90=$acx_cv_fc_inc_search_order_pp],
-  [FC_PP_INC_ORDER_f90=inc,flg])
-AC_SUBST([FC_PP_INC_ORDER_f90])
+ACX_FC_INCLUDE_FLAG_PP
+AS_VAR_IF([acx_cv_fc_pp_include_flag], [unknown],
+  [AC_MSG_FAILURE([unable to detect Fortran compiler flag needed to specify dnl
+search paths for the preprocessor "#include" directive])],
+  [AC_SUBST([FC_INC_FLAG_PP_f90], [$acx_cv_fc_pp_include_flag])])
+ACX_FC_INCLUDE_ORDER_PP(
+  [FC_INC_ORDER_PP_f90=$acx_cv_fc_pp_include_order],
+  [FC_INC_ORDER_PP_f90=inc,flg])
+AC_SUBST([FC_INC_ORDER_PP_f90])
 
+ACX_LANG_MACRO_FLAG([AC_SUBST([FC_PP_DEF], [$acx_cv_fc_macro_flag])])
 AC_ARG_ENABLE([additional-mods],
-  [AC_HELP_STRING([--enable-additional-mods], [enable usage of additional modules  @<:@default: yes@:>@])],
+  [AC_HELP_STRING([--enable-additional-mods],
+     [enable usage of additional modules  @<:@default: yes@:>@])],
   [], [enable_additional_mods=yes])
-AS_IF([test "x$enable_additional_mods" = xyes],
-  [FCFLAGS="${acx_cv_fc_macro_define}INCLUDE_MODULES $FCFLAGS"])
+AS_VAR_IF([enable_additional_mods], [yes],
+  [FCFLAGS="${acx_cv_fc_macro_flag}INCLUDE_MODULES $FCFLAGS"])
 
 AC_ARG_ENABLE([openmp],
-  [AS_HELP_STRING([--enable-openmp], [enable OpenMP support @<:@default: yes@:>@])],
+  [AC_HELP_STRING([--enable-openmp],
+     [enable OpenMP support @<:@default: yes@:>@])],
   [], [enable_openmp=yes])
-AS_IF([test "x$enable_openmp" = "xyes"],
-  [ACX_OPENMP(
-     [FCFLAGS="$OPENMP_FCFLAG $FCFLAGS"
-      ACX_OPENMP_MACRO_VAL(
-        [AS_IF([test "x$acx_cv_prog_fc_openmp_macro" = "xunknown"],
-           [AS_VAR_APPEND([DEPGEN_DEFS], [" ${acx_cv_fc_macro_define}_OPENMP"])],
-           [AS_VAR_APPEND([DEPGEN_DEFS], [" ${acx_cv_fc_macro_define}_OPENMP=$acx_cv_prog_fc_openmp_macro"])])])])],
-  [ACX_OPENMP_CHECK_DISABLED])
+AS_VAR_IF([enable_openmp], [yes],
+  [ACX_LANG_OPENMP_FLAG(
+     [FCFLAGS="${acx_cv_fc_openmp_flag} $FCFLAGS"
+      ACX_LANG_MACRO_CHECK_DEFINED([_OPENMP])
+      AS_VAR_IF([acx_macro_defined], [yes],
+        [ACX_LANG_MACRO_CHECK_VALUE([_OPENMP],
+           [201511 201307 201107 200805 200505])
+         AS_VAR_IF([acx_macro_value], [unknown],
+           [AS_VAR_APPEND([DEPGEN_DEFS], [" ${acx_cv_fc_macro_flag}_OPENMP"])],
+           [AS_VAR_APPEND([DEPGEN_DEFS],
+              [" ${acx_cv_fc_macro_flag}_OPENMP=$acx_macro_value"])])],
+        [AC_MSG_FAILURE([Fortran compiler does not define the _OPENMP dnl
+preprocessor macro])])])],
+  [ACX_LANG_MACRO_CHECK_DEFINED([_OPENMP])
+   AS_VAR_IF([acx_macro_defined], [yes],
+     [AC_MSG_ERROR([Fortran compiler enables OpenMP support by default: set dnl
+FCFLAGS accordingly to disable it])])])
 
-AC_MSG_CHECKING([whether the Fortran interface of NetCDF library is available])
-AC_LINK_IFELSE([AC_LANG_PROGRAM([], [[
-      include 'netcdf.inc'
-      integer ncid, status
-      status = nf_open('dummy.nc', 0, ncid)]])],
-  [AC_MSG_RESULT([yes])],
-  [AC_MSG_RESULT([no])
-  FCFLAGS="${acx_cv_fc_macro_define}NO_NETCDF $FCFLAGS"])
+ACX_LANG_PACKAGE_INIT([NetCDF],
+  [$acx_cv_fc_ftn_include_flag],
+  [-L "$acx_fc_rpath_flag"])
+acx_NETCDF_found=no
+acx_save_FCFLAGS=$FCFLAGS; acx_save_LIBS=$LIBS
+ASX_VAR_SET_IF_NOT_YET([NETCDF_FCFLAGS], [$acx_fc_NetCDF_inc_search_args])
+FCFLAGS="$NETCDF_FCFLAGS $FCFLAGS"
+ACX_FC_INCLUDE_CHECK([netcdf.inc],
+  [ACX_LANG_LIB_SEARCH([NETCDF_FCLIBS], [nf_open],
+     [ASX_PREPEND_LDFLAGS([$acx_fc_NetCDF_lib_search_args], [-lnetcdff])],
+     [LIBS="$acx_cv_fc_lib_func_NF_OPEN $LIBS"
+      acx_NETCDF_found=yes], [:])], [:])
+AS_VAR_IF([acx_NETCDF_found], [no],
+  [FCFLAGS="${acx_cv_fc_macro_flag}NO_NETCDF $acx_save_FCFLAGS"
+   LIBS=$acx_save_LIBS])
 
 AC_ARG_VAR([AR], [the archiver command])
-ACX_CHECK_PROGS([AR], [ar], [for the archiver command],
+ACX_PROG_SEARCH([AR], [ar],
   [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([], [])],
-    [acx_ar_try='$acx_prog_candidate cru libconftest.a conftest.$ac_objext >&AS_MESSAGE_LOG_FD'
-    AC_TRY_EVAL([acx_ar_try])
-    rm -f libconftest.a])
-  test "$ac_status" -eq 0],
-  [unknown])
-AS_IF([test "x$AR" = xunknown],
-  [AC_MSG_FAILURE([unable to find the archiver command])])
+     [acx_ar_try='$acx_candidate cru libconftest.a conftest.$ac_objext dnl
+>&AS_MESSAGE_LOG_FD'
+      AC_TRY_EVAL([acx_ar_try])
+      rm -f libconftest.a])
+   test "$ac_status" -eq 0],
+  [AR=$acx_candidate])
 
-AC_ARG_VAR([PYTHON], [Python interpreter command (used for Fortran dependency generation)])
-ACX_CHECK_PROGS([PYTHON], [python python3], [for Python interpreter command],
-  [acx_depgen_try='$acx_prog_candidate $srcdir/mkhelper/depgen.py -h > /dev/null'
-  AC_TRY_EVAL([acx_depgen_try])],
-  [unknown])
-AS_IF([test "x$PYTHON" = xunknown],
-  [AC_MSG_FAILURE([unable to find Python interpreter])])
+AC_ARG_VAR([PYTHON],
+  [Python interpreter command (used for Fortran dependency generation)])
+ACX_PROG_SEARCH([PYTHON], [python python3],
+  [acx_depgen_try=dnl
+'$acx_candidate $srcdir/mkhelper/depgen.py -h > /dev/null'
+   AC_TRY_EVAL([acx_depgen_try])],
+  [PYTHON=$acx_candidate])
 
 AC_PROG_INSTALL
 
