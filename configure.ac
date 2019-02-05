@@ -81,6 +81,14 @@ preprocessor macro])])])],
      [AC_MSG_ERROR([Fortran compiler enables OpenMP support by default: set dnl
 FCFLAGS accordingly to disable it])])])
 
+AC_ARG_ENABLE([module-nature-test],
+  [AC_HELP_STRING([--enable-module-nature-test],
+     [enable the test of special treatment for intrinsic Fortran modules, ]dnl
+[which might fail for some compilers @<:@default: yes@:>@])],
+  [], [enable_module_nature_test=yes])
+AS_VAR_IF([enable_module_nature_test], [yes],
+  [FCFLAGS="${acx_cv_fc_macro_flag}TEST_MODULE_NATURE $FCFLAGS"])
+
 ACX_LANG_PACKAGE_INIT([NetCDF],
   [$acx_cv_fc_ftn_include_flag],
   [-L "$acx_fc_rpath_flag"])

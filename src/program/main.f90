@@ -1,8 +1,11 @@
 #include "include_pp.inc"
 
 program main
+
+#ifdef TEST_MODULE_NATURE
   use mod_test_module_nature_intrinsic
   use mod_test_module_nature_non_intrinsic
+#endif
 
 #ifdef INCLUDE_A
   use mod_a
