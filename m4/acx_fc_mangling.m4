@@ -1,74 +1,4 @@
-# ACX_FC_MANGLING_DEFINE([ACTION-IF-SUCCESS],
-#                        [ACTION-IF-FAILURE = FAILURE])
-# -----------------------------------------------------------------------------
-# Defines C preprocessor macros FC_GLOBAL(name, NAME) and
-# FC_GLOBAL_(name, NAME) to properly mangle the names of C/C++ identifiers, and
-# identifiers with underscores, respectively, so that they match the
-# name-mangling scheme for the global functions used by the Fortran compiler.
-#
-# If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
-# (defaults to failing with an error message).
-#
-AC_DEFUN([ACX_FC_MANGLING_DEFINE],
-  [AC_LANG_ASSERT([Fortran])dnl
-   AC_REQUIRE([_ACX_FC_MANGLING_GLOBAL])dnl
-   m4_pushdef([acx_scheme_var], [acx_cv_fc_mangling_global])dnl
-   AS_VAR_IF([acx_scheme_var], [unknown], [m4_default([$2],
-        [AC_MSG_FAILURE([unable to detect the name-mangling scheme for dnl
-Fortran global functions])])],
-     [AC_DEFINE_UNQUOTED([FC_GLOBAL(name,NAME)],
-        [`AS_ECHO(["$acx_scheme_var"]) | cut -d, -f1 | sed 's%__*% [##] &%'`],
-        [Define to a macro mangling the given C identifier ]dnl
-[(in lower and upper case), which must not contain underscores, for ]dnl
-[linking Fortran global functions.])
-      AC_DEFINE_UNQUOTED([FC_GLOBAL_(name,NAME)],
-        [`AS_ECHO(["$acx_scheme_var"]) | cut -d, -f2 | sed 's%__*% [##] &%'`],
-        [As FC_GLOBAL, but for identifiers containing underscores.])
-      $1])
-   m4_popdef([acx_scheme_var])])
-
-# ACX_FC_MANGLING_SHVAR(FUNC-NAME,
-#                       [ACTION-IF-SUCCESS],
-#                       [ACTION-IF-FAILURE = FAILURE])
-# -----------------------------------------------------------------------------
-# Applies the name mangling scheme for the global Fortran functions to the
-# function FUNC-NAME. The result is empty on error.
-#
-# If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
-# (defaults to failing with an error message).
-#
-# The result is stored in the acx_mangled_name variable and cached in the
-# acx_cv_fc_mangling_shvar_[]AS_TR_CPP(FUNC-NAME) variable.
-#
-AC_DEFUN([ACX_FC_MANGLING_SHVAR],
-  [AC_LANG_ASSERT([Fortran])dnl
-   AC_REQUIRE([_ACX_FC_MANGLING_GLOBAL])dnl
-   m4_pushdef([acx_cache_var], [acx_cv_fc_mangling_shvar_[]AS_TR_CPP([$1])])dnl
-   AC_CACHE_CHECK([for the mangled name of the Fortran function $1],
-     [acx_cache_var],
-     [AS_VAR_SET([acx_cache_var])
-      m4_pushdef([acx_scheme_var], [acx_cv_fc_mangling_global])dnl
-      AS_VAR_IF([acx_scheme_var], [unknown], [],
-        [acx_func_name=$1
-         AS_CASE(["$acx_func_name"],
-           [*_*],
-           [acx_tmp=`AS_ECHO(["$acx_scheme_var"]) | cut -d, -f2`],
-           [acx_tmp=`AS_ECHO(["$acx_scheme_var"]) | cut -d, -f1`])
-         AS_CASE(["$acx_tmp"],
-           [NAME*],
-           [acx_tmp=`AS_ECHO(["$acx_tmp"]) | dnl
-sed "s/^NAME/$acx_func_name/" | tr 'm4_cr_letters' 'm4_cr_LETTERS'`],
-           [acx_tmp=`AS_ECHO(["$acx_tmp"]) | dnl
-sed "s/^name/$acx_func_name/" | tr 'm4_cr_LETTERS' 'm4_cr_letters'`])
-         AS_VAR_COPY([acx_cache_var], [acx_tmp])])
-       m4_popdef([acx_scheme_var])])
-   AS_VAR_COPY([acx_mangled_name], [acx_cache_var])
-   m4_popdef([acx_cache_var])dnl
-   AS_IF([test -n "$acx_mangled_name"], [$2], [m4_default([$3],
-     [AC_MSG_FAILURE([unable to detect the mangled name of dnl
-the Fortran function $1])])])])
-
-# _ACX_FC_MANGLING_GLOBAL()
+# ACX_FC_MANGLING_GLOBAL()
 # -----------------------------------------------------------------------------
 # Detects the name mangling scheme for the global Fortran functions. The result
 # is either "unknown" or a comma-separated pair of two strings each denoting
@@ -85,10 +15,10 @@ the Fortran function $1])])])])
 #
 # The result is cached in the acx_cv_fc_mangling_global variable.
 #
-AC_DEFUN([_ACX_FC_MANGLING_GLOBAL],
-  [AC_LANG_ASSERT([Fortran])dnl
-   AC_REQUIRE([AC_PROG_CC])dnl
+AC_DEFUN([ACX_FC_MANGLING_GLOBAL],
+  [AC_REQUIRE([AC_PROG_CC])dnl
    m4_pushdef([acx_cache_var], [acx_cv_fc_mangling_global])dnl
+   AC_LANG_PUSH([Fortran])
    AC_CACHE_CHECK([for the name-mangling scheme for Fortran global functions],
      [acx_cache_var],
      [acx_cache_var=unknown
@@ -143,7 +73,76 @@ AC_DEFUN([_ACX_FC_MANGLING_GLOBAL],
       rm -f ./conftest_c.$ac_objext
       AC_LANG_POP([C])
       LIBS=$acx_save_LIBS])
+   AC_LANG_POP([Fortran])
    m4_popdef([acx_cache_var])])
+
+# ACX_FC_MANGLING_DEFINE([ACTION-IF-SUCCESS],
+#                        [ACTION-IF-FAILURE = FAILURE])
+# -----------------------------------------------------------------------------
+# Defines C preprocessor macros FC_GLOBAL(name, NAME) and
+# FC_GLOBAL_(name, NAME) to properly mangle the names of C/C++ identifiers, and
+# identifiers with underscores, respectively, so that they match the
+# name-mangling scheme for the global functions used by the Fortran compiler.
+#
+# If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
+# (defaults to failing with an error message).
+#
+AC_DEFUN([ACX_FC_MANGLING_DEFINE],
+  [AC_REQUIRE([ACX_FC_MANGLING_GLOBAL])dnl
+   m4_pushdef([acx_scheme_var], [acx_cv_fc_mangling_global])dnl
+   AS_VAR_IF([acx_scheme_var], [unknown], [m4_default([$2],
+        [AC_MSG_FAILURE([unable to detect the name-mangling scheme for dnl
+Fortran global functions])])],
+     [AC_DEFINE_UNQUOTED([FC_GLOBAL(name,NAME)],
+        [`AS_ECHO(["$acx_scheme_var"]) | cut -d, -f1 | sed 's%__*% [##] &%'`],
+        [Define to a macro mangling the given C identifier ]dnl
+[(in lower and upper case), which must not contain underscores, for ]dnl
+[linking Fortran global functions.])
+      AC_DEFINE_UNQUOTED([FC_GLOBAL_(name,NAME)],
+        [`AS_ECHO(["$acx_scheme_var"]) | cut -d, -f2 | sed 's%__*% [##] &%'`],
+        [As FC_GLOBAL, but for identifiers containing underscores.])
+      $1])
+   m4_popdef([acx_scheme_var])])
+
+# ACX_FC_MANGLING_SHVAR(FUNC-NAME,
+#                       [ACTION-IF-SUCCESS],
+#                       [ACTION-IF-FAILURE = FAILURE])
+# -----------------------------------------------------------------------------
+# Applies the name mangling scheme for the global Fortran functions to the
+# function FUNC-NAME. The result is empty on error.
+#
+# If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
+# (defaults to failing with an error message).
+#
+# The result is stored in the acx_mangled_name variable and cached in the
+# acx_cv_fc_mangling_shvar_[]AS_TR_CPP(FUNC-NAME) variable.
+#
+AC_DEFUN([ACX_FC_MANGLING_SHVAR],
+  [AC_REQUIRE([ACX_FC_MANGLING_GLOBAL])dnl
+   m4_pushdef([acx_cache_var], [acx_cv_fc_mangling_shvar_[]AS_TR_CPP([$1])])dnl
+   AC_CACHE_CHECK([for the mangled name of the Fortran function $1],
+     [acx_cache_var],
+     [AS_VAR_SET([acx_cache_var])
+      m4_pushdef([acx_scheme_var], [acx_cv_fc_mangling_global])dnl
+      AS_VAR_IF([acx_scheme_var], [unknown], [],
+        [acx_func_name=$1
+         AS_CASE(["$acx_func_name"],
+           [*_*],
+           [acx_tmp=`AS_ECHO(["$acx_scheme_var"]) | cut -d, -f2`],
+           [acx_tmp=`AS_ECHO(["$acx_scheme_var"]) | cut -d, -f1`])
+         AS_CASE(["$acx_tmp"],
+           [NAME*],
+           [acx_tmp=`AS_ECHO(["$acx_tmp"]) | dnl
+sed "s/^NAME/$acx_func_name/" | tr 'm4_cr_letters' 'm4_cr_LETTERS'`],
+           [acx_tmp=`AS_ECHO(["$acx_tmp"]) | dnl
+sed "s/^name/$acx_func_name/" | tr 'm4_cr_LETTERS' 'm4_cr_letters'`])
+         AS_VAR_COPY([acx_cache_var], [acx_tmp])])
+       m4_popdef([acx_scheme_var])])
+   AS_VAR_COPY([acx_mangled_name], [acx_cache_var])
+   m4_popdef([acx_cache_var])dnl
+   AS_IF([test -n "$acx_mangled_name"], [$2], [m4_default([$3],
+     [AC_MSG_FAILURE([unable to detect the mangled name of dnl
+the Fortran function $1])])])])
 
 # ACX_FC_MANGLING_MAIN([ACTION-IF-SUCCESS],
 #                      [ACTION-IF-FAILURE = FAILURE])
