@@ -1,27 +1,3 @@
-# ACX_FC_MODULE_CHECK(MODULE-NAME,
-#                     [ACTION-IF-SUCCESS],
-#                     [ACTION-IF-FAILURE = FAILURE])
-# -----------------------------------------------------------------------------
-# Checks whether the Fortran module MODULE-NAME is available. The result is
-# either "yes" or "no".
-#
-# If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
-# (defaults to failing with an error message).
-#
-# The result is cached in the acx_cv_fc_module_[]AS_TR_CPP(HEADER-FILE)
-# variable.
-#
-AC_DEFUN([ACX_FC_CHECK_MODULE],
-  [AC_LANG_ASSERT([Fortran])dnl
-   m4_pushdef([acx_cache_var], [acx_cv_fc_module_[]AS_TR_CPP([$1])])dnl
-   AC_CACHE_CHECK([for Fortran module AS_TR_CPP([$1])], [acx_cache_var],
-     [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([], [[      use $1]])],
-        [AS_VAR_SET([acx_cache_var], [yes])],
-        [AS_VAR_SET([acx_cache_var], [no])])])
-   AS_VAR_IF([acx_cache_var], [yes], [$2], [m4_default([$3],
-     [AC_MSG_FAILURE([Fortran module 'AS_TR_CPP([$1])' is not available])])])
-   m4_popdef([acx_cache_var])])
-
 # ACX_FC_MODULE_IN_FLAG([ACTION-IF-SUCCESS],
 #                       [ACTION-IF-FAILURE = FAILURE])
 # -----------------------------------------------------------------------------
@@ -194,3 +170,65 @@ module file naming template])])],
         [AC_MSG_RESULT([NAME.$acx_cv_fc_module_naming_ext])],
         [AC_MSG_RESULT([name.$acx_cv_fc_module_naming_ext])])
       $1])])
+
+# ACX_FC_MODULE_CHECK(MODULE-NAME,
+#                     [ACTION-IF-SUCCESS],
+#                     [ACTION-IF-FAILURE = FAILURE])
+# -----------------------------------------------------------------------------
+# Checks whether the Fortran module MODULE-NAME is available. The result is
+# either "yes" or "no".
+#
+# If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
+# (defaults to failing with an error message).
+#
+# The result is cached in the acx_cv_fc_module_[]AS_TR_CPP(MODULE-NAME)
+# variable.
+#
+AC_DEFUN([ACX_FC_CHECK_MODULE],
+  [AC_LANG_ASSERT([Fortran])dnl
+   m4_pushdef([acx_cache_var], [acx_cv_fc_module_[]AS_TR_CPP([$1])])dnl
+   AC_CACHE_CHECK([for Fortran module AS_TR_CPP([$1])], [acx_cache_var],
+     [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([], [[      use $1]])],
+        [AS_VAR_SET([acx_cache_var], [yes])],
+        [AS_VAR_SET([acx_cache_var], [no])])])
+   AS_VAR_IF([acx_cache_var], [yes], [$2], [m4_default([$3],
+     [AC_MSG_FAILURE([Fortran module 'AS_TR_CPP([$1])' is not available])])])
+   m4_popdef([acx_cache_var])])
+
+# ACX_FC_MODULE_PROC_CHECK(MODULE-NAME,
+#                          PROCEDURE-NAME,
+#                          [CALL-CODE = "      CALL PROCEDURE-NAME()"],
+#                          [ACTION-IF-SUCCESS],
+#                          [ACTION-IF-FAILURE = FAILURE])
+# -----------------------------------------------------------------------------
+# Checks whether the Fortran module procedure PROCEDURE-NAME from the module
+# MODULE-NAME is available. The check is performed by linking a program that
+# uses the module MODULE-NAME as "USE MODULE-NAME, ONLY : PROCEDURE-NAME"
+# followed by the "IMPLICIT NONE" statement and the CALL-CODE (defaults to
+# calling the PROCEDURE-NAME without parameters, which means that if
+# PROCEDURE-NAME is a function or a subroutine with parameters, the CALL-CODE
+# must be provided). The result is either "yes" or "no".
+#
+# If successful, runs ACTION-IF-SUCCESS (defaults to nothing), otherwise runs
+# ACTION-IF-FAILURE (defaults to failing with an error message).
+#
+# The result is stored in the
+# acx_cv_fc_module_proc_[]AS_TR_CPP(MODULE-NAME)_[]AS_TR_CPP(PROCEDURE-NAME)
+# variable.
+#
+AC_DEFUN([ACX_FC_MODULE_PROC_CHECK],
+  [AC_LANG_ASSERT([Fortran])dnl
+   m4_pushdef([acx_cache_var],
+     [acx_cv_fc_module_proc_[]AS_TR_CPP([$1])_[]AS_TR_CPP([$2])])dnl
+   AC_CACHE_CHECK([for Fortran procedure AS_TR_CPP([$2]) from module dnl
+AS_TR_CPP([$1])],
+     [acx_cache_var],
+     [AC_LINK_IFELSE([AC_LANG_PROGRAM([],[[      use $1, only : $2
+      implicit none]
+m4_default([$3], [[      call $2 ()]])])],
+        [AS_VAR_SET([acx_cache_var], [yes])],
+        [AS_VAR_SET([acx_cache_var], [no])])])
+   AS_VAR_IF([acx_cache_var], [yes], [$4], [m4_default([$5],
+     [AC_MSG_FAILURE([Fortran module procedure 'AS_TR_CPP([$2])' from dnl
+module 'AS_TR_CPP([$1])' is not available])])])
+   m4_popdef([acx_cache_var])])
