@@ -2736,7 +2736,7 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_ftn_include_flag" >&5
 $as_echo "$acx_cv_fc_ftn_include_flag" >&6; }
 
-if test "x$acx_cv_fc_ftn_include_flag" = xunknown; then :
+   if test "x$acx_cv_fc_ftn_include_flag" = xunknown; then :
   { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
 as_fn_error $? "unable to detect Fortran compiler flag needed to specify search paths for the \"INCLUDE\" statement
@@ -2863,10 +2863,10 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_pp_include_flag" >&5
 $as_echo "$acx_cv_fc_pp_include_flag" >&6; }
 
-if test "x$acx_cv_fc_pp_include_flag" = xunknown; then :
+   if test "x$acx_cv_fc_pp_include_flag" = xunknown; then :
   { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
-as_fn_error $? "unable to detect Fortran compiler flag needed to specify search paths for the preprocessor \"#include\" directive
+as_fn_error $? "unable to detect Fortran compiler flag needed to specify search paths for the quoted form of the \"#include\" directive
 See \`config.log' for more details" "$LINENO" 5; }
 else
   FC_INC_FLAG_PP_f90=$acx_cv_fc_pp_include_flag
@@ -3004,7 +3004,7 @@ else
 fi
 
 if test "x$enable_additional_mods" = xyes; then :
-  FCFLAGS="${acx_cv_fc_macro_flag}INCLUDE_MODULES $FCFLAGS"
+  as_fn_append FCFLAGS " ${acx_cv_fc_macro_flag}INCLUDE_MODULES"
 fi
 
 # Check whether --enable-openmp was given.
@@ -3056,7 +3056,7 @@ $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
 as_fn_error $? "unable to detect Fortran compiler flag needed to enable OpenMP support
 See \`config.log' for more details" "$LINENO" 5; }
 else
-  FCFLAGS="${acx_cv_fc_openmp_flag} $FCFLAGS"
+  as_fn_append FCFLAGS " $acx_cv_fc_openmp_flag"
          { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether the Fortran preprocessor macro _OPENMP is defined" >&5
 $as_echo_n "checking whether the Fortran preprocessor macro _OPENMP is defined... " >&6; }
 if ${acx_cv_fc_macro__OPENMP_defined+:} false; then :
@@ -3236,7 +3236,7 @@ else
 fi
 
 if test "x$enable_module_nature_test" = xyes; then :
-  FCFLAGS="${acx_cv_fc_macro_flag}TEST_MODULE_NATURE $FCFLAGS"
+  as_fn_append FCFLAGS " ${acx_cv_fc_macro_flag}TEST_MODULE_NATURE"
 fi
 
 
@@ -3373,7 +3373,7 @@ else
   :
 fi
 if test "x$acx_NETCDF_found" = xno; then :
-  FCFLAGS="${acx_cv_fc_macro_flag}NO_NETCDF $acx_save_FCFLAGS"
+  FCFLAGS="$acx_save_FCFLAGS ${acx_cv_fc_macro_flag}NO_NETCDF"
    LIBS=$acx_save_LIBS
 fi
 

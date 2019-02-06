@@ -1,22 +1,40 @@
-# ACX_FC_INCLUDE_FLAG()
+# ACX_FC_INCLUDE_FLAG([ACTION-IF-SUCCESS],
+#                     [ACTION-IF-FAILURE = FAILURE])
 # -----------------------------------------------------------------------------
 # Finds the compiler flag needed to specify search paths for the Fortran
 # "INCLUDE" statement. The result is either "unknown" or the actual compiler
 # flag, which may contain a significant trailing whitespace.
 #
+# If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
+# (defaults to failing with an error message).
+#
 # The result is cached in the acx_cv_fc_ftn_include_flag variable.
 #
-AC_DEFUN([ACX_FC_INCLUDE_FLAG], [_ACX_FC_INCLUDE_FLAG([ftn])])
+AC_DEFUN([ACX_FC_INCLUDE_FLAG],
+  [_ACX_FC_INCLUDE_FLAG
+   AS_VAR_IF([acx_cv_fc_ftn_include_flag], [unknown],
+     [m4_default([$2],
+        [AC_MSG_FAILURE([unable to detect Fortran compiler flag needed to dnl
+specify search paths for _ACX_FC_INCLUDE_DESC([ftn])])])], [$1])])
 
-    # ACX_FC_INCLUDE_FLAG_PP()
+# ACX_FC_INCLUDE_FLAG_PP([ACTION-IF-SUCCESS],
+#                        [ACTION-IF-FAILURE = FAILURE])
 # -----------------------------------------------------------------------------
 # Finds the compiler flag needed to specify search paths for the quoted form of
 # the preprocessor "#include" directive. The result is either "unknown" or the
 # actual compiler flag, which may contain a significant trailing whitespace.
 #
+# If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
+# (defaults to failing with an error message).
+#
 # The result is cached in the acx_cv_fc_pp_include_flag variable.
 #
-AC_DEFUN([ACX_FC_INCLUDE_FLAG_PP], [_ACX_FC_INCLUDE_FLAG([pp])])
+AC_DEFUN([ACX_FC_INCLUDE_FLAG_PP],
+  [_ACX_FC_INCLUDE_FLAG_PP
+   AS_VAR_IF([acx_cv_fc_pp_include_flag], [unknown],
+     [m4_default([$2],
+        [AC_MSG_FAILURE([unable to detect Fortran compiler flag needed to dnl
+specify search paths for _ACX_FC_INCLUDE_DESC([pp])])])], [$1])])
 
 # ACX_FC_INCLUDE_ORDER([ACTION-IF-SUCCESS],
 #                      [ACTION-IF-FAILURE = FAILURE])
@@ -37,7 +55,7 @@ AC_DEFUN([ACX_FC_INCLUDE_FLAG_PP], [_ACX_FC_INCLUDE_FLAG([pp])])
 # The result is cached in the acx_cv_fc_ftn_include_order variable.
 #
 AC_DEFUN([ACX_FC_INCLUDE_ORDER],
-  [AC_REQUIRE([ACX_FC_INCLUDE_FLAG])_ACX_FC_INCLUDE_ORDER([ftn],$@)])
+  [AC_REQUIRE([_ACX_FC_INCLUDE_FLAG])_ACX_FC_INCLUDE_ORDER([ftn],$@)])
 
 # ACX_FC_INCLUDE_ORDER_PP([ACTION-IF-SUCCESS],
 #                         [ACTION-IF-FAILURE = FAILURE])
@@ -52,7 +70,7 @@ AC_DEFUN([ACX_FC_INCLUDE_ORDER],
 # The result is cached in the acx_cv_fc_pp_include_order variable.
 #
 AC_DEFUN([ACX_FC_INCLUDE_ORDER_PP],
-  [AC_REQUIRE([ACX_FC_INCLUDE_FLAG_PP])_ACX_FC_INCLUDE_ORDER([pp],$@)])
+  [AC_REQUIRE([_ACX_FC_INCLUDE_FLAG_PP])_ACX_FC_INCLUDE_ORDER([pp],$@)])
 
 # ACX_FC_INCLUDE_CHECK(HEADER-FILE,
 #                      [ACTION-IF-SUCCESS],
@@ -109,7 +127,21 @@ m4_define([_ACX_FC_INCLUDE_KNOWN_FLAGS],
      [[pp|pp_sys]], [[-I '-I ' '-WF,-I' '-Wp,-I']],
      [m4_fatal([unexpected header type: '$1'])])])
 
-# _ACX_FC_INCLUDE_FLAG(HEADER-TYPE)
+# _ACX_FC_INCLUDE_FLAG()
+# -----------------------------------------------------------------------------
+# A parameterless alias for __ACX_FC_INCLUDE_FLAG([ftn]) to be used as an
+# argument for AC_REQUIRE.
+#
+AC_DEFUN([_ACX_FC_INCLUDE_FLAG], [__ACX_FC_INCLUDE_FLAG([ftn])])
+
+# _ACX_FC_INCLUDE_FLAG_PP()
+# -----------------------------------------------------------------------------
+# A parameterless alias for __ACX_FC_INCLUDE_FLAG([pp]) to be used as an
+# argument for AC_REQUIRE.
+#
+AC_DEFUN([_ACX_FC_INCLUDE_FLAG_PP], [__ACX_FC_INCLUDE_FLAG([pp])])
+
+# __ACX_FC_INCLUDE_FLAG(HEADER-TYPE)
 # -----------------------------------------------------------------------------
 # Finds the compiler flag needed to specify search paths for the HEADER-TYPE
 # (see _ACX_FC_INCLUDE_LINE).
@@ -118,7 +150,7 @@ m4_define([_ACX_FC_INCLUDE_KNOWN_FLAGS],
 #
 # See _ACX_LANG_KNOWN_INC_FLAGS for the known flags.
 #
-m4_define([_ACX_FC_INCLUDE_FLAG],
+m4_define([__ACX_FC_INCLUDE_FLAG],
   [AC_LANG_ASSERT([Fortran])dnl
    m4_pushdef([acx_cache_var], [acx_cv_fc_[]$1[]_include_flag])dnl
    AC_CACHE_CHECK([for Fortran compiler flag needed to specify search dnl
@@ -148,7 +180,8 @@ paths for _ACX_FC_INCLUDE_DESC([$1])], [acx_cache_var],
 # _ACX_FC_INCLUDE_LINE). See ACX_FC_INCLUDE_ORDER for the description of the
 # result.
 #
-# It is implied that _ACX_FC_INCLUDE_FLAG(HEADER-TYPE) has already been called.
+# It is implied that __ACX_FC_INCLUDE_FLAG(HEADER-TYPE) has already been
+# called.
 #
 # If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
 # (defaults to failing with an error message).
