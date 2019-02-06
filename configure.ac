@@ -31,20 +31,14 @@ ACX_FC_MODULE_NAMING(
   [AC_SUBST([FC_MOD_FILE_UPPER], [$acx_cv_fc_module_naming_upper])
    AC_SUBST([FC_MOD_FILE_EXT], [$acx_cv_fc_module_naming_ext])])
 
-ACX_FC_INCLUDE_FLAG
-AS_VAR_IF([acx_cv_fc_ftn_include_flag], [unknown],
-  [AC_MSG_FAILURE([unable to detect Fortran compiler flag needed to specify dnl
-search paths for the "INCLUDE" statement])],
+ACX_FC_INCLUDE_FLAG(
   [AC_SUBST([FC_INC_FLAG], [$acx_cv_fc_ftn_include_flag])])
 ACX_FC_INCLUDE_ORDER(
   [FC_INC_ORDER=$acx_cv_fc_ftn_include_order],
   [FC_INC_ORDER=src,flg])
 AC_SUBST([FC_INC_ORDER])
 
-ACX_FC_INCLUDE_FLAG_PP
-AS_VAR_IF([acx_cv_fc_pp_include_flag], [unknown],
-  [AC_MSG_FAILURE([unable to detect Fortran compiler flag needed to specify dnl
-search paths for the preprocessor "#include" directive])],
+ACX_FC_INCLUDE_FLAG_PP(
   [AC_SUBST([FC_INC_FLAG_PP_f90], [$acx_cv_fc_pp_include_flag])])
 ACX_FC_INCLUDE_ORDER_PP(
   [FC_INC_ORDER_PP_f90=$acx_cv_fc_pp_include_order],
@@ -57,7 +51,7 @@ AC_ARG_ENABLE([additional-mods],
      [enable usage of additional modules  @<:@default: yes@:>@])],
   [], [enable_additional_mods=yes])
 AS_VAR_IF([enable_additional_mods], [yes],
-  [FCFLAGS="${acx_cv_fc_macro_flag}INCLUDE_MODULES $FCFLAGS"])
+  [AS_VAR_APPEND([FCFLAGS], [" ${acx_cv_fc_macro_flag}INCLUDE_MODULES"])])
 
 AC_ARG_ENABLE([openmp],
   [AC_HELP_STRING([--enable-openmp],
@@ -65,7 +59,7 @@ AC_ARG_ENABLE([openmp],
   [], [enable_openmp=yes])
 AS_VAR_IF([enable_openmp], [yes],
   [ACX_LANG_OPENMP_FLAG(
-     [FCFLAGS="${acx_cv_fc_openmp_flag} $FCFLAGS"
+     [AS_VAR_APPEND([FCFLAGS], [" $acx_cv_fc_openmp_flag"])
       ACX_LANG_MACRO_CHECK_DEFINED([_OPENMP])
       AS_VAR_IF([acx_macro_defined], [yes],
         [ACX_LANG_MACRO_CHECK_VALUE([_OPENMP],
@@ -87,7 +81,7 @@ AC_ARG_ENABLE([module-nature-test],
 [which might fail for some compilers @<:@default: yes@:>@])],
   [], [enable_module_nature_test=yes])
 AS_VAR_IF([enable_module_nature_test], [yes],
-  [FCFLAGS="${acx_cv_fc_macro_flag}TEST_MODULE_NATURE $FCFLAGS"])
+  [AS_VAR_APPEND([FCFLAGS], [" ${acx_cv_fc_macro_flag}TEST_MODULE_NATURE"])])
 
 ACX_LANG_PACKAGE_INIT([NetCDF],
   [$acx_cv_fc_ftn_include_flag],
@@ -102,7 +96,7 @@ ACX_FC_INCLUDE_CHECK([netcdf.inc],
      [LIBS="$acx_cv_fc_lib_func_NF_OPEN $LIBS"
       acx_NETCDF_found=yes], [:])], [:])
 AS_VAR_IF([acx_NETCDF_found], [no],
-  [FCFLAGS="${acx_cv_fc_macro_flag}NO_NETCDF $acx_save_FCFLAGS"
+  [FCFLAGS="$acx_save_FCFLAGS ${acx_cv_fc_macro_flag}NO_NETCDF"
    LIBS=$acx_save_LIBS])
 
 AC_ARG_VAR([AR], [the archiver command])
