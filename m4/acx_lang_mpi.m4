@@ -31,7 +31,7 @@
 AC_DEFUN([ACX_LANG_MPI_CHECK],
   [acx_save_[]_AC_LANG_PREFIX[]FLAGS=$[]_AC_LANG_PREFIX[]FLAGS
    for acx_prog_mpi_test_file in dnl
-m4_ifval([$2], ["$srcdir/$4"], ["$ac_aux_dir"])/*.$ac_ext; do
+m4_ifval([$2], ["$srcdir/$2"], ["$ac_aux_dir"])/*.$ac_ext; do
      AS_VAR_PUSHDEF([acx_cache_var],
        [acx_cv_prog_${acx_prog_mpi_test_file}])dnl
      AC_CACHE_CHECK(
@@ -44,14 +44,33 @@ q}' "$acx_prog_mpi_test_file"`
         AS_IF([test "$acx_tmp" -gt 0 2>/dev/null], [], [acx_tmp=1])
         AC_LINK_IFELSE([AC_LANG_SOURCE([`cat "$acx_prog_mpi_test_file"`])],
           [AC_TRY_COMMAND(
-             [AS_VAR_GET([$1]) -n $acx_tmp ./conftest$ac_exeext dnl
->&AS_MESSAGE_LOG_FD])
+             [$1 -n $acx_tmp ./conftest$ac_exeext >&AS_MESSAGE_LOG_FD])
            AS_IF([test $? -eq 0],
              [AS_VAR_SET([acx_cache_var], [yes])],
              [AS_VAR_SET([acx_cache_var], [no])])])])
      AS_VAR_COPY([acx_prog_mpi_test_result], [acx_cache_var])
      AS_VAR_POPDEF([acx_cache_var])
-     AS_VAR_IF([acx_prog_mpi_test_result], [yes], [$5], [m4_default([$6],
+     AS_VAR_IF([acx_prog_mpi_test_result], [yes], [$3], [m4_default([$4],
        [AC_MSG_FAILURE([MPI implementation failed test dnl
 "$acx_prog_mpi_test_file"])])])
    done])
+
+# ACX_LANG_MPI_CHECK_FAIL_MSG(VARIABLE,
+#                             TEST-FILE,
+#                             [TEST-DOC-DIR = $ac_aux_dir]
+#                             [DEFAULT-MESSAGE = generic message])
+# -----------------------------------------------------------------------------
+# Set the shell VARIABLE variable to a message describing the failed MPI
+# library test implemented in a source file TEST-FILE. First, checks whether a
+# file with the same basename as TEST-FILE but with extension ".txt" exists in
+# the directory TEST-DOC-DIR (defaults to the directory set with
+# AC_CONFIG_AUX_DIR). If the file exists, VARIABLE is set to the contents of
+# the file, otherwise VARIABLE is set to DEFAULT-MESSAGE (defaults to a
+# generic message saing that the test TEST-FILE failed).
+#
+AC_DEFUN([ACX_LANG_MPI_CHECK_FAIL_MSG],
+  [eval "acx_msg_file=`AS_ECHO(["$2"]) | sed 's%.*/\(.*\)\.@<:@^\.@:>@*%dnl
+m4_ifval([$3], [$srcdir/$3], [$ac_aux_dir])/\1.txt%'`"
+   AS_IF([test -r "$acx_msg_file"],
+     [AS_VAR_SET([$1], [`cat $acx_msg_file`])],
+     [AS_VAR_SET([$1], ["MPI implementation failed test \"$2\""])])])
