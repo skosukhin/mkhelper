@@ -145,6 +145,6 @@ m4_define([ACX_LANG_LIB_SEARCH()],
 # acx_cv_[]_AC_LANG_ABBREV[]_lib_func_[]AS_TR_CPP(FUNC-NAME) variable.
 #
 m4_define([ACX_LANG_LIB_SEARCH(Fortran)],
-  [#ttt
-   AS_VAR_SET([acx_tmp], [AS_TR_CPP([$2])])
-   m4_indir([ACX_LANG_LIB_SEARCH()], [$1], [$acx_tmp], m4_shift2($@))])
+  [AS_VAR_SET([acx_fc_lib_search], [AS_TR_CPP([$2])])
+   m4_indir([ACX_LANG_LIB_SEARCH()],
+     [$1], [$acx_fc_lib_search], m4_shift2($@))])
