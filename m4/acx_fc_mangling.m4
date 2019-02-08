@@ -78,15 +78,17 @@ AC_DEFUN([ACX_FC_MANGLING_GLOBAL],
    AC_LANG_POP([Fortran])
    m4_popdef([acx_cache_var])])
 
-# ACX_FC_MANGLING_DEFINE([ACTION-IF-SUCCESS],
+# ACX_FC_MANGLING_DEFINE([MACRO-PREFIX = FC]
+#                        [ACTION-IF-SUCCESS],
 #                        [ACTION-IF-FAILURE = FAILURE])
 # -----------------------------------------------------------------------------
 # Originally taken from Autoconf where it is known as AC_FC_WRAPPERS.
 # -----------------------------------------------------------------------------
-# Defines C preprocessor macros FC_GLOBAL(name, NAME) and
-# FC_GLOBAL_(name, NAME) to properly mangle the names of C/C++ identifiers, and
-# identifiers with underscores, respectively, so that they match the
-# name-mangling scheme for the global functions used by the Fortran compiler.
+# Defines C preprocessor macros <MACRO-PREFIX>_GLOBAL(name, NAME) and
+# <MACRO-PREFIX>_GLOBAL_(name, NAME) to properly mangle the names of C/C++
+# identifiers, and identifiers with underscores, respectively, so that they
+# match the name-mangling scheme for the global functions used by the Fortran
+# compiler. The default value for <MACRO-PREFIX> is "FC".
 #
 # If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
 # (defaults to failing with an error message).
@@ -94,18 +96,19 @@ AC_DEFUN([ACX_FC_MANGLING_GLOBAL],
 AC_DEFUN([ACX_FC_MANGLING_DEFINE],
   [AC_REQUIRE([ACX_FC_MANGLING_GLOBAL])dnl
    m4_pushdef([acx_scheme_var], [acx_cv_fc_mangling_global])dnl
-   AS_VAR_IF([acx_scheme_var], [unknown], [m4_default([$2],
+   AS_VAR_IF([acx_scheme_var], [unknown], [m4_default([$3],
         [AC_MSG_FAILURE([unable to detect the name-mangling scheme for dnl
 Fortran global functions])])],
-     [AC_DEFINE_UNQUOTED([FC_GLOBAL(name,NAME)],
+     [AC_DEFINE_UNQUOTED(m4_default([$1], [FC])[_GLOBAL(name,NAME)],
         [`AS_ECHO(["$acx_scheme_var"]) | cut -d, -f1 | sed 's%__*% [##] &%'`],
         [Define to a macro mangling the given C identifier ]dnl
 [(in lower and upper case), which must not contain underscores, for ]dnl
 [linking Fortran global functions.])
-      AC_DEFINE_UNQUOTED([FC_GLOBAL_(name,NAME)],
+      AC_DEFINE_UNQUOTED(m4_default([$1], [FC])[_GLOBAL_(name,NAME)],
         [`AS_ECHO(["$acx_scheme_var"]) | cut -d, -f2 | sed 's%__*% [##] &%'`],
-        [As FC_GLOBAL, but for identifiers containing underscores.])
-      $1])
+        [As ]m4_default([$1], [FC])[_GLOBAL, but for identifiers ]dnl
+[containing underscores.])
+      $2])
    m4_popdef([acx_scheme_var])])
 
 # ACX_FC_MANGLING_SHVAR(FUNC-NAME,

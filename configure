@@ -3323,16 +3323,15 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_ftn_header_netcdf_inc" >&5
 $as_echo "$acx_cv_fc_ftn_header_netcdf_inc" >&6; }
    if test "x$acx_cv_fc_ftn_header_netcdf_inc" = xyes; then :
-  #ttt
-   acx_tmp=NF_OPEN
-      { $as_echo "$as_me:${as_lineno-$LINENO}: checking for linker flags enabling Fortran function $acx_tmp" >&5
-$as_echo_n "checking for linker flags enabling Fortran function $acx_tmp... " >&6; }
-   if { as_var=acx_cv_fc_lib_func_`$as_echo "$acx_tmp" | $as_tr_sh`; eval \${$as_var+:} false; }; then :
+  acx_fc_lib_search=NF_OPEN
+      { $as_echo "$as_me:${as_lineno-$LINENO}: checking for linker flags enabling Fortran function $acx_fc_lib_search" >&5
+$as_echo_n "checking for linker flags enabling Fortran function $acx_fc_lib_search... " >&6; }
+   if { as_var=acx_cv_fc_lib_func_`$as_echo "$acx_fc_lib_search" | $as_tr_sh`; eval \${$as_var+:} false; }; then :
   $as_echo_n "(cached) " >&6
 else
   cat > conftest.$ac_ext <<_ACEOF
       program main
-      call $acx_tmp
+      call $acx_fc_lib_search
       end
 _ACEOF
       acx_save_LIBS=$LIBS
@@ -3345,7 +3344,7 @@ fi
       for acx_libs in "$@"; do
         LIBS="$acx_libs $acx_save_LIBS"
         if ac_fn_fc_try_link "$LINENO"; then :
-  eval acx_cv_fc_lib_func_`$as_echo "$acx_tmp" | $as_tr_sh`=\$acx_libs
+  eval acx_cv_fc_lib_func_`$as_echo "$acx_fc_lib_search" | $as_tr_sh`=\$acx_libs
            break
 fi
 rm -f core conftest.err conftest.$ac_objext \
@@ -3353,10 +3352,10 @@ rm -f core conftest.err conftest.$ac_objext \
       done
       LIBS=$acx_save_LIBS
 fi
-   if { as_var=acx_cv_fc_lib_func_`$as_echo "$acx_tmp" | $as_tr_sh`; eval \${$as_var+:} false; }; then :
-  if test -n "`eval 'as_val=${'acx_cv_fc_lib_func_\`$as_echo "$acx_tmp" | $as_tr_sh\`'};$as_echo "$as_val"'`"; then :
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: `eval 'as_val=${'acx_cv_fc_lib_func_\`$as_echo "$acx_tmp" | $as_tr_sh\`'};$as_echo "$as_val"'`" >&5
-$as_echo "`eval 'as_val=${'acx_cv_fc_lib_func_\`$as_echo "$acx_tmp" | $as_tr_sh\`'};$as_echo "$as_val"'`" >&6; }
+   if { as_var=acx_cv_fc_lib_func_`$as_echo "$acx_fc_lib_search" | $as_tr_sh`; eval \${$as_var+:} false; }; then :
+  if test -n "`eval 'as_val=${'acx_cv_fc_lib_func_\`$as_echo "$acx_fc_lib_search" | $as_tr_sh\`'};$as_echo "$as_val"'`"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: `eval 'as_val=${'acx_cv_fc_lib_func_\`$as_echo "$acx_fc_lib_search" | $as_tr_sh\`'};$as_echo "$as_val"'`" >&5
+$as_echo "`eval 'as_val=${'acx_cv_fc_lib_func_\`$as_echo "$acx_fc_lib_search" | $as_tr_sh\`'};$as_echo "$as_val"'`" >&6; }
 else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: none needed" >&5
 $as_echo "none needed" >&6; }
