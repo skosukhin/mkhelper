@@ -22,5 +22,5 @@ choke me
         [acx_cv_c_ldbl_gt_dbl=no])])
    AS_VAR_IF([acx_cv_c_ldbl_gt_dbl], [yes], [$1],
      [m4_default([$2],
-     [AC_MSG_FAILURE([C "long double" does not have higher precision and/or dnl
-greater range than "double"])])])])
+        [AC_MSG_FAILURE([C "long double" does not have higher precision dnl
+and/or greater range than "double"])])])])
