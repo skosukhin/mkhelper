@@ -40,7 +40,8 @@ m4_ifval([$2], ["$srcdir/$2"], ["$ac_aux_dir"])/*.$ac_ext; do
        [AS_VAR_SET([acx_cache_var], [unknown])
         acx_tmp=`sed -n '/acx_mpi_job_count *= *\([[0-9]]*\)/dnl
 {s/.*acx_mpi_job_count *= *\([[0-9]]*\).*/\1/p
-q}' "$acx_prog_mpi_test_file"`
+q
+}' "$acx_prog_mpi_test_file"`
         AS_IF([test "$acx_tmp" -gt 0 2>/dev/null], [], [acx_tmp=1])
         AC_LINK_IFELSE([AC_LANG_SOURCE([`cat "$acx_prog_mpi_test_file"`])],
           [AC_TRY_COMMAND(
