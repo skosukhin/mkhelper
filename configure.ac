@@ -112,8 +112,7 @@ ACX_PROG_SEARCH([AR], [ar],
 AC_ARG_VAR([PYTHON],
   [Python interpreter command (used for Fortran dependency generation)])
 ACX_PROG_SEARCH([PYTHON], [python python3],
-  [acx_depgen_try=dnl
-'$acx_candidate $srcdir/mkhelper/depgen.py -h > /dev/null'
+  [acx_depgen_try='$acx_candidate $srcdir/mkhelper/depgen.py -h > /dev/null'
    AC_TRY_EVAL([acx_depgen_try])],
   [PYTHON=$acx_candidate])
 
