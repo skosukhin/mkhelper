@@ -90,7 +90,7 @@ AC_DEFUN([ACX_LANG_MACRO_CHECK_VALUE],
      [AS_VAR_SET([acx_cache_var], [unknown])
       AS_VAR_IF([cross_compiling], [no],
         [AC_LINK_IFELSE([_ACX_LANG_MACRO_PRINT_PROGRAM([$1])],
-           [acx_exec_result=`./conftest$ac_exeext`
+           [acx_exec_result=`./conftest$ac_exeext 2>/dev/null`
             AS_IF([test $? -eq 0],
               [AS_VAR_COPY([acx_cache_var], [acx_exec_result])])])])
       m4_ifnblank([$2],
