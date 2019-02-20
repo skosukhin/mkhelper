@@ -184,7 +184,7 @@ module file naming template])])],
 # The result is cached in the acx_cv_fc_module_[]AS_TR_CPP(MODULE-NAME)
 # variable.
 #
-AC_DEFUN([ACX_FC_CHECK_MODULE],
+AC_DEFUN([ACX_FC_MODULE_CHECK],
   [AC_LANG_ASSERT([Fortran])dnl
    m4_pushdef([acx_cache_var], [acx_cv_fc_module_[]AS_TR_CPP([$1])])dnl
    AC_CACHE_CHECK([for Fortran module AS_TR_CPP([$1])], [acx_cache_var],
