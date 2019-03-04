@@ -24,7 +24,7 @@ INSTALL= @INSTALL@
 INSTALL_DATA=@INSTALL_DATA@
 AR= @AR@
 PYTHON= @PYTHON@
-DEPLIST= $(PYTHON) $(srcdir)/mkhelper/deplist.py
+DEPLIST= $(PYTHON) $(srcdir)/mkhelper/deplist.py -d deplist.debug
 DEPGEN= $(PYTHON) $(srcdir)/mkhelper/depgen.py
 
 # Silent rule prefixes:

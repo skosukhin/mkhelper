@@ -16,4 +16,5 @@ __pycache__
 *.mod
 *.o
 .dirstamp
+/deplist.debug
 /main
