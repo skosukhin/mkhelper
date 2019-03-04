@@ -1,16 +1,19 @@
 .idea
+
 *.pyc
 __pycache__
 
 /autom4te.cache
 
+/Makefile
 /config.log
 /config.status
-/Makefile
 /depgen.config
 
-/bin
-/deps
-/lib
-/mods
-/objs
+*.a
+*.f90.d
+*.f90.debug
+*.mod
+*.o
+.dirstamp
+/main

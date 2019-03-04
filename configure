@@ -585,8 +585,10 @@ PACKAGE_BUGREPORT='skosukhin@gmail.com'
 PACKAGE_URL=''
 
 ac_unique_file="src/program/main.f90"
+ac_default_prefix="`pwd`/install"
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
+MKDIR_P
 INSTALL_DATA
 INSTALL_SCRIPT
 INSTALL_PROGRAM
@@ -594,7 +596,9 @@ PYTHON
 AR
 NETCDF_FCLIBS
 NETCDF_FCFLAGS
+DEFAULT_VERBOSITY
 FC_PP_DEF
+config_FCFLAGS
 FC_INC_ORDER_PP_f90
 FC_INC_FLAG_PP_f90
 FC_INC_ORDER
@@ -654,6 +658,7 @@ SHELL'
 ac_subst_files=''
 ac_user_opts='
 enable_option_checking
+enable_silent_rules
 enable_additional_mods
 enable_openmp
 enable_module_nature_test
@@ -1281,6 +1286,8 @@ Optional Features:
   --disable-option-checking  ignore unrecognized --enable/--with options
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
+  --enable-silent-rules   less verbose build output (undo: "make V=1")
+                          [default=yes]
   --enable-additional-mods
                           enable usage of additional modules [default: yes]
   --enable-openmp         enable OpenMP support [default: yes]
@@ -1863,6 +1870,8 @@ ac_configure="$SHELL $ac_aux_dir/configure"  # Please don't use this var.
 
 
 ac_config_files="$ac_config_files Makefile depgen.config"
+
+
 
 
 ac_ext=${ac_fc_srcext-f}
@@ -2910,6 +2919,8 @@ fi
 
 
 
+
+
    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler flag needed to define a preprocessor macro" >&5
 $as_echo_n "checking for Fortran compiler flag needed to define a preprocessor macro... " >&6; }
 if ${acx_cv_fc_macro_flag+:} false; then :
@@ -2949,6 +2960,21 @@ else
 
 fi
 
+
+# Check whether --enable-silent-rules was given.
+if test "${enable_silent_rules+set}" = set; then :
+  enableval=$enable_silent_rules;
+else
+  enable_silent_rules=yes
+fi
+
+if test "x$enable_silent_rules" = xyes; then :
+  DEFAULT_VERBOSITY=0
+else
+  DEFAULT_VERBOSITY=1
+fi
+
+
 # Check whether --enable-additional-mods was given.
 if test "${enable_additional_mods+set}" = set; then :
   enableval=$enable_additional_mods;
@@ -2957,7 +2983,7 @@ else
 fi
 
 if test "x$enable_additional_mods" = xyes; then :
-  as_fn_append FCFLAGS " ${acx_cv_fc_macro_flag}INCLUDE_MODULES"
+  as_fn_append config_FCFLAGS " ${acx_cv_fc_macro_flag}INCLUDE_MODULES"
 fi
 
 # Check whether --enable-openmp was given.
@@ -3127,14 +3153,17 @@ $as_echo "$acx_cv_fc_macro__OPENMP_value" >&6; }
    acx_macro_value=$acx_cv_fc_macro__OPENMP_value
 
          if test "x$acx_macro_value" = xunknown; then :
-  as_fn_append DEPGEN_DEFS " ${acx_cv_fc_macro_flag}_OPENMP"
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "unable to detect the value of the Fortran preprocessor macro _OPENMP
+See \`config.log' for more details" "$LINENO" 5; }
 else
   as_fn_append DEPGEN_DEFS " ${acx_cv_fc_macro_flag}_OPENMP=$acx_macro_value"
 fi
 else
   { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
-as_fn_error $? "Fortran compiler does not define the _OPENMP preprocessor macro
+as_fn_error $? "Fortran compiler does not define the preprocessor macro _OPENMP
 See \`config.log' for more details" "$LINENO" 5; }
 fi
 fi
@@ -3190,7 +3219,7 @@ else
 fi
 
 if test "x$enable_module_nature_test" = xyes; then :
-  as_fn_append FCFLAGS " ${acx_cv_fc_macro_flag}TEST_MODULE_NATURE"
+  as_fn_append config_FCFLAGS " ${acx_cv_fc_macro_flag}TEST_MODULE_NATURE"
 fi
 
 
@@ -3249,7 +3278,7 @@ fi
 
 
 acx_NETCDF_found=no
-acx_save_FCFLAGS=$FCFLAGS; acx_save_LIBS=$LIBS
+acx_save_FCFLAGS=$FCFLAGS
 if ${NETCDF_FCFLAGS+:} false; then :
 
 else
@@ -3314,7 +3343,7 @@ else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: none needed" >&5
 $as_echo "none needed" >&6; }
 fi
-      LIBS="$acx_cv_fc_lib_func_NF_OPEN $LIBS"
+      NETCDF_FCLIBS=$acx_cv_fc_lib_func_NF_OPEN
       acx_NETCDF_found=yes
 else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: unknown" >&5
@@ -3325,9 +3354,10 @@ fi
 else
   :
 fi
+FCFLAGS=$acx_save_FCFLAGS
 if test "x$acx_NETCDF_found" = xno; then :
-  FCFLAGS="$acx_save_FCFLAGS ${acx_cv_fc_macro_flag}NO_NETCDF"
-   LIBS=$acx_save_LIBS
+  as_fn_append config_FCFLAGS " ${acx_cv_fc_macro_flag}NO_NETCDF"
+   NETCDF_FCFLAGS=;NETCDF_FCLIBS=
 fi
 
 
@@ -3510,6 +3540,48 @@ test -z "$INSTALL_PROGRAM" && INSTALL_PROGRAM='${INSTALL}'
 test -z "$INSTALL_SCRIPT" && INSTALL_SCRIPT='${INSTALL}'
 
 test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 644'
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for a thread-safe mkdir -p" >&5
+$as_echo_n "checking for a thread-safe mkdir -p... " >&6; }
+if test -z "$MKDIR_P"; then
+  if ${ac_cv_path_mkdir+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH$PATH_SEPARATOR/opt/sfw/bin
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_prog in mkdir gmkdir; do
+	 for ac_exec_ext in '' $ac_executable_extensions; do
+	   as_fn_executable_p "$as_dir/$ac_prog$ac_exec_ext" || continue
+	   case `"$as_dir/$ac_prog$ac_exec_ext" --version 2>&1` in #(
+	     'mkdir (GNU coreutils) '* | \
+	     'mkdir (coreutils) '* | \
+	     'mkdir (fileutils) '4.1*)
+	       ac_cv_path_mkdir=$as_dir/$ac_prog$ac_exec_ext
+	       break 3;;
+	   esac
+	 done
+       done
+  done
+IFS=$as_save_IFS
+
+fi
+
+  test -d ./--version && rmdir ./--version
+  if test "${ac_cv_path_mkdir+set}" = set; then
+    MKDIR_P="$ac_cv_path_mkdir -p"
+  else
+    # As a last resort, use the slow shell script.  Don't cache a
+    # value for MKDIR_P within a source directory, because that will
+    # break other packages using the cache if that directory is
+    # removed, or if the value is a relative name.
+    MKDIR_P="$ac_install_sh -d"
+  fi
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $MKDIR_P" >&5
+$as_echo "$MKDIR_P" >&6; }
 
 
 cat >confcache <<\_ACEOF
@@ -4118,6 +4190,7 @@ gives unlimited permission to copy, distribute and modify it."
 ac_pwd='$ac_pwd'
 srcdir='$srcdir'
 INSTALL='$INSTALL'
+MKDIR_P='$MKDIR_P'
 test -n "\$AWK" || AWK=awk
 _ACEOF
 
@@ -4558,6 +4631,11 @@ ac_abs_srcdir=$ac_abs_top_srcdir$ac_dir_suffix
   [\\/$]* | ?:[\\/]* ) ac_INSTALL=$INSTALL ;;
   *) ac_INSTALL=$ac_top_build_prefix$INSTALL ;;
   esac
+  ac_MKDIR_P=$MKDIR_P
+  case $MKDIR_P in
+  [\\/$]* | ?:[\\/]* ) ;;
+  */*) ac_MKDIR_P=$ac_top_build_prefix$MKDIR_P ;;
+  esac
 _ACEOF
 
 cat >>$CONFIG_STATUS <<\_ACEOF || ac_write_fail=1
@@ -4612,6 +4690,7 @@ s&@builddir@&$ac_builddir&;t t
 s&@abs_builddir@&$ac_abs_builddir&;t t
 s&@abs_top_builddir@&$ac_abs_top_builddir&;t t
 s&@INSTALL@&$ac_INSTALL&;t t
+s&@MKDIR_P@&$ac_MKDIR_P&;t t
 $ac_datarootdir_hack
 "
 eval sed \"\$ac_sed_extra\" "$ac_file_inputs" | $AWK -f "$ac_tmp/subs.awk" \
