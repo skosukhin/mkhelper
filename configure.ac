@@ -10,7 +10,6 @@ AC_CONFIG_FILES([Makefile depgen.config])
 AC_PROG_FC
 AC_LANG([Fortran])
 AC_FC_PP_SRCEXT([f90])
-AC_FC_FREEFORM
 AC_FC_LINE_LENGTH([unlimited])
 
 AC_SUBST([DEPGEN_DEFS])
