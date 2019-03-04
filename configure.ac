@@ -7,6 +7,8 @@ AC_CONFIG_MACRO_DIR([m4])
 
 AC_CONFIG_FILES([Makefile depgen.config])
 
+AC_PREFIX_DEFAULT(["`pwd`/install"])
+
 AC_PROG_FC
 AC_LANG([Fortran])
 AC_FC_PP_SRCEXT([f90])
@@ -44,13 +46,24 @@ ACX_FC_INCLUDE_ORDER_PP(
   [FC_INC_ORDER_PP_f90=inc,flg])
 AC_SUBST([FC_INC_ORDER_PP_f90])
 
+AC_SUBST([config_FCFLAGS])
+
 ACX_LANG_MACRO_FLAG([AC_SUBST([FC_PP_DEF], [$acx_cv_fc_macro_flag])])
+
+AC_ARG_ENABLE([silent-rules],
+  [AC_HELP_STRING([--enable-silent-rules],
+     [less verbose build output (undo: "make V=1") @<:@default=yes@:>@])], [],
+  [enable_silent_rules=yes])
+AS_VAR_IF([enable_silent_rules], [yes],
+  [DEFAULT_VERBOSITY=0], [DEFAULT_VERBOSITY=1])
+AC_SUBST([DEFAULT_VERBOSITY])
+
 AC_ARG_ENABLE([additional-mods],
   [AC_HELP_STRING([--enable-additional-mods],
      [enable usage of additional modules  @<:@default: yes@:>@])],
   [], [enable_additional_mods=yes])
 AS_VAR_IF([enable_additional_mods], [yes],
-  [AS_VAR_APPEND([FCFLAGS], [" ${acx_cv_fc_macro_flag}INCLUDE_MODULES"])])
+  [AS_VAR_APPEND([config_FCFLAGS], [" ${acx_cv_fc_macro_flag}INCLUDE_MODULES"])])
 
 AC_ARG_ENABLE([openmp],
   [AC_HELP_STRING([--enable-openmp],
@@ -64,11 +77,12 @@ AS_VAR_IF([enable_openmp], [yes],
         [ACX_LANG_MACRO_CHECK_VALUE([_OPENMP],
            [201511 201307 201107 200805 200505])
          AS_VAR_IF([acx_macro_value], [unknown],
-           [AS_VAR_APPEND([DEPGEN_DEFS], [" ${acx_cv_fc_macro_flag}_OPENMP"])],
+           [AC_MSG_FAILURE([unable to detect the value of the Fortran dnl
+preprocessor macro _OPENMP])],
            [AS_VAR_APPEND([DEPGEN_DEFS],
               [" ${acx_cv_fc_macro_flag}_OPENMP=$acx_macro_value"])])],
-        [AC_MSG_FAILURE([Fortran compiler does not define the _OPENMP dnl
-preprocessor macro])])])],
+        [AC_MSG_FAILURE([Fortran compiler does not define the dnl
+preprocessor macro _OPENMP])])])],
   [ACX_LANG_MACRO_CHECK_DEFINED([_OPENMP])
    AS_VAR_IF([acx_macro_defined], [yes],
      [AC_MSG_ERROR([Fortran compiler enables OpenMP support by default: set dnl
@@ -80,23 +94,25 @@ AC_ARG_ENABLE([module-nature-test],
 [which might fail for some compilers @<:@default: yes@:>@])],
   [], [enable_module_nature_test=yes])
 AS_VAR_IF([enable_module_nature_test], [yes],
-  [AS_VAR_APPEND([FCFLAGS], [" ${acx_cv_fc_macro_flag}TEST_MODULE_NATURE"])])
+  [AS_VAR_APPEND([config_FCFLAGS],
+     [" ${acx_cv_fc_macro_flag}TEST_MODULE_NATURE"])])
 
 ACX_LANG_PACKAGE_INIT([NetCDF],
   [$acx_cv_fc_ftn_include_flag],
   [-L "$acx_fc_rpath_flag"])
 acx_NETCDF_found=no
-acx_save_FCFLAGS=$FCFLAGS; acx_save_LIBS=$LIBS
+acx_save_FCFLAGS=$FCFLAGS
 ASX_VAR_SET_IF_NOT_YET([NETCDF_FCFLAGS], [$acx_fc_NetCDF_inc_search_args])
 FCFLAGS="$NETCDF_FCFLAGS $FCFLAGS"
 ACX_FC_INCLUDE_CHECK([netcdf.inc],
   [ACX_LANG_LIB_SEARCH([NETCDF_FCLIBS], [nf_open],
      [ASX_PREPEND_LDFLAGS([$acx_fc_NetCDF_lib_search_args], [-lnetcdff])],
-     [LIBS="$acx_cv_fc_lib_func_NF_OPEN $LIBS"
+     [NETCDF_FCLIBS=$acx_cv_fc_lib_func_NF_OPEN
       acx_NETCDF_found=yes], [:])], [:])
+FCFLAGS=$acx_save_FCFLAGS
 AS_VAR_IF([acx_NETCDF_found], [no],
-  [FCFLAGS="$acx_save_FCFLAGS ${acx_cv_fc_macro_flag}NO_NETCDF"
-   LIBS=$acx_save_LIBS])
+  [AS_VAR_APPEND([config_FCFLAGS], [" ${acx_cv_fc_macro_flag}NO_NETCDF"])
+   NETCDF_FCFLAGS=;NETCDF_FCLIBS=])
 
 AC_ARG_VAR([AR], [the archiver command])
 ACX_PROG_SEARCH([AR], [ar],
@@ -116,5 +132,6 @@ ACX_PROG_SEARCH([PYTHON], [python python3],
   [PYTHON=$acx_candidate])
 
 AC_PROG_INSTALL
+AC_PROG_MKDIR_P
 
 AC_OUTPUT
