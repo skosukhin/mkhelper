@@ -11,6 +11,10 @@ exec_prefix:= @exec_prefix@
 # Fortran module file directory:
 moddir:= mod
 
+# Shell and environment:
+SHELL= @SHELL@
+BUILD_ENV= @BUILD_ENV@
+
 # Compilers and flags:
 FC= @FC@
 FCFLAGS= @FCFLAGS@
@@ -84,18 +88,18 @@ maintainer-clean: distclean
 	rm -rf autom4te.cache
 
 install: all
-	$(INSTALL) -d @bindir@ && $(INSTALL) main @bindir@/main
-	$(INSTALL) -d @libdir@ && $(INSTALL_DATA) libmain.a @libdir@/libmain.a
+	$(INSTALL) -d $(DESTDIR)@bindir@ && $(INSTALL) main $(DESTDIR)@bindir@/main
+	$(INSTALL) -d $(DESTDIR)@libdir@ && $(INSTALL_DATA) libmain.a $(DESTDIR)@libdir@/libmain.a
 
 # Main building rules:
 main: $(rootobj) libmain.a
-	$(silent_FCLD)$(FC) -o $@ $(config_FCFLAGS) $(FCFLAGS) $(LDFLAGS) $^ $(config_LIBS) $(LIBS)
+	$(silent_FCLD)$(BUILD_ENV) $(FC) -o $@ $(config_FCFLAGS) $(FCFLAGS) $(LDFLAGS) $^ $(config_LIBS) $(LIBS)
 
 libmain.a: $(shell $(DEPLIST) -t $(rootobj) -p '*.o' --inc-oo -f $(depfiles) Makefile)
-	$(silent_AR)rm -f $@ && $(AR) cru $@ $^
+	$(silent_AR)$(BUILD_ENV) rm -f $@ && $(AR) cru $@ $^
 
 %.o: %.f90 | $(dirstamps)
-	$(silent_FC)$(FC) -o $@ -c $(config_FCFLAGS) $(FCFLAGS) @FCFLAGS_f90@ $<
+	$(silent_FC)$(BUILD_ENV) $(FC) -o $@ -c $(config_FCFLAGS) $(FCFLAGS) @FCFLAGS_f90@ $<
 
 # Fortran module file tracking rule:
 $(moddir)/%.@FC_MOD_FILE_EXT@:

@@ -617,6 +617,7 @@ ac_ct_FC
 LDFLAGS
 FCFLAGS
 FC
+BUILD_ENV
 target_alias
 host_alias
 build_alias
@@ -669,6 +670,7 @@ with_netcdf_lib
       ac_precious_vars='build_alias
 host_alias
 target_alias
+BUILD_ENV
 FC
 FCFLAGS
 LDFLAGS
@@ -1306,6 +1308,8 @@ Optional Packages:
   --with-netcdf-lib=DIR   search path for NetCDF libraries [NETCDF_ROOT/lib]
 
 Some influential environment variables:
+  BUILD_ENV   initialization code to set up the building environment (must end
+              with a semicolon), e.g. 'LICENSE=file.lic; export LICENSE;'
   FC          Fortran compiler command
   FCFLAGS     Fortran compiler flags
   LDFLAGS     linker flags, e.g. -L<lib dir> if you have libraries in a
@@ -1873,6 +1877,48 @@ ac_config_files="$ac_config_files Makefile depgen.config"
 
 
 
+
+
+   if test -n "$BUILD_ENV"; then :
+  if $as_echo "$BUILD_ENV" | grep ';[ ]*$' >/dev/null 2>&1; then :
+
+else
+  as_fn_error $? "\$BUILD_ENV does not end with a semicolon: '$BUILD_ENV'" "$LINENO" 5
+fi
+      { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether \$BUILD_ENV is accepted by '$SHELL -c'" >&5
+$as_echo_n "checking whether \$BUILD_ENV is accepted by '$SHELL -c'... " >&6; }
+      eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$SHELL -c '$BUILD_ENV'\"" >&5 2>&1
+      eval \$SHELL -c "'$BUILD_ENV'" >&5 2>&1
+      if test $? -eq 0; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+         { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether \$BUILD_ENV is accepted by the current shell" >&5
+$as_echo_n "checking whether \$BUILD_ENV is accepted by the current shell... " >&6; }
+         eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$BUILD_ENV\"" >&5 2>&1
+         eval "$BUILD_ENV" >&5 2>&1
+         if test $? -eq 0; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+         acx_failMsg="failed to initialize '$SHELL' with the provided BUILD_ENV='$BUILD_ENV'
+A possible workaround for the problem is to re-run the configuration with the following command:
+CONFIG_SHELL=\$SHELL \$SHELL $as_myself"
+         for acx_config_arg in "$@"; do
+           as_fn_append acx_failMsg " '$acx_config_arg'"
+         done
+         { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "$acx_failMsg
+See \`config.log' for more details" "$LINENO" 5; }
+fi
+fi
 
 ac_ext=${ac_fc_srcext-f}
 ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
@@ -3729,6 +3775,7 @@ LIBOBJS=$ac_libobjs
 LTLIBOBJS=$ac_ltlibobjs
 
 
+BUILD_ENV=`echo "$BUILD_ENV" | sed 's/\\$/$$/g'`
 
 : "${CONFIG_STATUS=./config.status}"
 ac_write_fail=0
