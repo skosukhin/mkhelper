@@ -9,6 +9,8 @@ AC_CONFIG_FILES([Makefile depgen.config])
 
 AC_PREFIX_DEFAULT(["`pwd`/install"])
 
+ACX_BUILD_ENVIRONMENT
+
 AC_PROG_FC
 AC_LANG([Fortran])
 AC_FC_PP_SRCEXT([f90])
