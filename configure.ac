@@ -22,8 +22,8 @@ AC_SUBST([DEPGEN_INTRINSIC_MODS],
 [ieee_features,omp_lib,omp_lib_kinds,openacc]])
 AC_SUBST([DEPGEN_EXTERNAL_MODS])
 
-ACX_LANG_VENDOR
-AS_CASE([$acx_cv_fc_vendor],
+ACX_COMPILER_FC_VERSION
+AS_CASE([$acx_cv_fc_compiler_vendor],
   [nag], [acx_fc_rpath_flag="-Wl,-Wl,,-rpath -Wl,-Wl,,"],
   [acx_fc_rpath_flag="-Wl,-rpath -Wl,"])
 

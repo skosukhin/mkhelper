@@ -2504,30 +2504,30 @@ DEPGEN_INTRINSIC_MODS=iso_c_binding,iso_fortran_env,ieee_exceptions,ieee_arithme
 
 
 
-   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler vendor" >&5
+      { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler vendor" >&5
 $as_echo_n "checking for Fortran compiler vendor... " >&6; }
-if ${acx_cv_fc_vendor+:} false; then :
+if ${acx_cv_fc_compiler_vendor+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  acx_lang_vendor_options="intel: __INTEL_COMPILER
+  acx_compiler_vendor_options="intel: __INTEL_COMPILER
 cray: _CRAYFTN
-pgi: __PGI
+portland: __PGI
 nag: NAGFOR
 sun: __SUNPRO_F95
 gnu: __GFORTRAN__
 ibm: __xlC__
-unknown: UNKNOWN"
-      for acx_lang_vendor_test in $acx_lang_vendor_options; do
-        case $acx_lang_vendor_test in #(
+unknown: CHOKEME"
+      for acx_compiler_vendor_test in $acx_compiler_vendor_options; do
+        case $acx_compiler_vendor_test in #(
   *:) :
-    acx_lang_vendor_candidate=$acx_lang_vendor_test
+    acx_compiler_vendor_candidate=$acx_compiler_vendor_test
                  continue ;; #(
   *) :
-    acx_lang_vendor_macro_defs="defined("`echo $acx_lang_vendor_test | sed 's%,%) || defined(%g'`")" ;;
+    acx_compiler_vendor_macro_defs="defined("`echo $acx_compiler_vendor_test | sed 's%,%) || defined(%g'`")" ;;
 esac
         cat > conftest.$ac_ext <<_ACEOF
       program main
-#if !($acx_lang_vendor_macro_defs)
+#if !($acx_compiler_vendor_macro_defs)
       choke me
 #endif
       end
@@ -2537,18 +2537,46 @@ if ac_fn_fc_try_compile "$LINENO"; then :
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
       done
-      acx_cv_fc_vendor=`echo $acx_lang_vendor_candidate | cut -d: -f1`
+      acx_compiler_vendor=`echo $acx_compiler_vendor_candidate | cut -d: -f1`
+      acx_cv_fc_compiler_vendor=$acx_compiler_vendor
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_vendor" >&5
-$as_echo "$acx_cv_fc_vendor" >&6; }
-   if test "x$acx_cv_fc_vendor" = xunknown; then :
-  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
-$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
-as_fn_error $? "unable to detect Fortran compiler vendor
-See \`config.log' for more details" "$LINENO" 5; }
-fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_compiler_vendor" >&5
+$as_echo "$acx_cv_fc_compiler_vendor" >&6; }
+   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler version" >&5
+$as_echo_n "checking for Fortran compiler version... " >&6; }
+if ${acx_cv_fc_compiler_version+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  acx_cv_fc_compiler_version=unknown
+      case $acx_cv_fc_compiler_vendor in #(
+        intel) acx_cv_fc_compiler_version=`$FC --version 2>/dev/null | sed -n 's/^ifort (IFORT) \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`
+   if test "`echo $acx_cv_fc_compiler_version | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
+  acx_cv_fc_compiler_version=unknown
+fi ;; #(
+        cray) acx_cv_fc_compiler_version=`$FC -V 2>&1 | sed -n 's/.*ersion \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`
+   if test "`echo $acx_cv_fc_compiler_version | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
+  acx_cv_fc_compiler_version=unknown
+fi ;; #(
+        portland) acx_cv_fc_compiler_version=`$FC -V | sed -n 's/pgfortran \([0-9][0-9]*\.[0-9][0-9]*\)-\([0-9][0-9]*\).*/\1.\2/p'`
+   if test "`echo $acx_cv_fc_compiler_version | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
+  acx_cv_fc_compiler_version=unknown
+fi ;; #(
+        nag) acx_cv_fc_compiler_version=`$FC -V 2>&1 | sed -n 's/^NAG Fortran Compiler Release \([0-9][0-9]*\.[0-9][0-9]*\).*Build \([0-9][0-9]*\)/\1.\2/p'`
+   if test "`echo $acx_cv_fc_compiler_version | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
+  acx_cv_fc_compiler_version=unknown
+fi ;; #(
+        gnu) acx_cv_fc_compiler_version=`$FC -dumpversion 2>/dev/null`
+   if test "`echo $acx_cv_fc_compiler_version | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
+  acx_cv_fc_compiler_version=unknown
+fi ;; #(
 
-case $acx_cv_fc_vendor in #(
+        *) : acx_cv_fc_compiler_version=unknown ;;
+      esac
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_compiler_version" >&5
+$as_echo "$acx_cv_fc_compiler_version" >&6; }
+
+case $acx_cv_fc_compiler_vendor in #(
   nag) :
     acx_fc_rpath_flag="-Wl,-Wl,,-rpath -Wl,-Wl,," ;; #(
   *) :
