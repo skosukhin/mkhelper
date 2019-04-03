@@ -37,7 +37,7 @@ ${acx_lang_macro_flag}CONFTEST_ONE ${acx_lang_macro_flag}CONFTEST_TWO=42"
       done
       _AC_LANG_PREFIX[]FLAGS=$acx_save_[]_AC_LANG_PREFIX[]FLAGS])
    AS_VAR_IF([acx_cache_var], [unknown], [m4_default([$2],
-        [AC_MSG_FAILURE([unable to detect _AC_LANG compiler flag needed to dnl
+     [AC_MSG_FAILURE([unable to detect _AC_LANG compiler flag needed to dnl
 define a preprocessor macro])])], [$1])
    m4_popdef([acx_cache_var])])
 
