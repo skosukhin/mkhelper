@@ -21,6 +21,10 @@
 # TODO: split _ACX_COMPILER_KNOWN_VENDORS(C)() into
 #             _ACX_COMPILER_KNOWN_VENDORS(C)() and
 #             _ACX_COMPILER_KNOWN_VENDORS(C++)()
+#
+# If these macros look like an overkill to you, consider using ACX2_COMPILER_*
+# macros from
+# https://github.com/skosukhin/mkhelper/tree/master/m4_alternatives/acx_compiler.m4
 
 # ACX_COMPILER_FC_VENDOR()
 # -----------------------------------------------------------------------------
