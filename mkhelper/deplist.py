@@ -32,7 +32,7 @@ def parse_args():
              'MAKEFILE(s) are considered as children of a meta target, which '
              'is the default value of the argument')
     parser.add_argument(
-        '-p', '--pattern', default='*',
+        '-p', '--pattern', action='append',
         help='shell-like pattern to filter the list of '
              'dependencies/dependants (default: %(default)s)')
     parser.add_argument(
@@ -100,9 +100,16 @@ def main():
 
     descendants = get_descendants(dep_graph, args.target, args.max_level)
 
-    filtered_descendants = fnmatch.filter(descendants, args.pattern)
-
-    print('\n'.join(filtered_descendants))
+    if not args.pattern:
+        print('\n'.join(descendants))
+    elif len(args.pattern) == 1:
+        print('\n'.join(fnmatch.filter(descendants, args.pattern[0])))
+    else:
+        print('\n'.join(
+            [descendant
+             for descendant in descendants if any(
+                [fnmatch.fnmatch(descendant, pattern)
+                 for pattern in args.pattern])]))
 
 
 def _get_descendants(dep_graph, root, max_level, visited):
