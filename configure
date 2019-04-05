@@ -1920,6 +1920,11 @@ See \`config.log' for more details" "$LINENO" 5; }
 fi
 fi
 
+acx_save_cross_compiling=$cross_compiling
+   acx_save_ac_tool_warned=$ac_tool_warned
+   cross_compiling=yes
+   ac_tool_warned=yes
+
 ac_ext=${ac_fc_srcext-f}
 ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
 ac_link='$FC -o conftest$ac_exeext $FCFLAGS $LDFLAGS $ac_fcflags_srcext conftest.$ac_ext $LIBS >&5'
@@ -2193,48 +2198,6 @@ cat > conftest.$ac_ext <<_ACEOF
       end
 _ACEOF
 ac_clean_files="$ac_clean_files conftest.out"
-# Check that the compiler produces executables we can run.  If not, either
-# the compiler is broken, or we cross compile.
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether we are cross compiling" >&5
-$as_echo_n "checking whether we are cross compiling... " >&6; }
-if test "$cross_compiling" != yes; then
-  { { ac_try="$ac_link"
-case "(($ac_try" in
-  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-  *) ac_try_echo=$ac_try;;
-esac
-eval ac_try_echo="\"\$as_me:${as_lineno-$LINENO}: $ac_try_echo\""
-$as_echo "$ac_try_echo"; } >&5
-  (eval "$ac_link") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }
-  if { ac_try='./conftest$ac_cv_exeext'
-  { { case "(($ac_try" in
-  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-  *) ac_try_echo=$ac_try;;
-esac
-eval ac_try_echo="\"\$as_me:${as_lineno-$LINENO}: $ac_try_echo\""
-$as_echo "$ac_try_echo"; } >&5
-  (eval "$ac_try") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; }; then
-    cross_compiling=no
-  else
-    if test "$cross_compiling" = maybe; then
-	cross_compiling=yes
-    else
-	{ { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
-$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
-as_fn_error $? "cannot run Fortran compiled programs.
-If you meant to cross compile, use \`--host'.
-See \`config.log' for more details" "$LINENO" 5; }
-    fi
-  fi
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $cross_compiling" >&5
-$as_echo "$cross_compiling" >&6; }
 
 rm -f conftest.$ac_ext conftest$ac_cv_exeext conftest.out
 ac_clean_files=$ac_clean_files_save
@@ -2442,6 +2405,106 @@ ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
 ac_link='$FC -o conftest$ac_exeext $FCFLAGS $LDFLAGS $ac_fcflags_srcext conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_fc_compiler_gnu
 
+      { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler vendor" >&5
+$as_echo_n "checking for Fortran compiler vendor... " >&6; }
+if ${acx_cv_fc_compiler_vendor+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  acx_compiler_vendor_options="intel: __INTEL_COMPILER
+cray: _CRAYFTN
+portland: __PGI
+nag: NAGFOR
+sun: __SUNPRO_F95
+gnu: __GFORTRAN__
+ibm: __xlC__
+unknown: CHOKEME"
+      for acx_compiler_vendor_test in $acx_compiler_vendor_options; do
+        case $acx_compiler_vendor_test in #(
+  *:) :
+    acx_compiler_vendor_candidate=$acx_compiler_vendor_test
+                 continue ;; #(
+  *) :
+    acx_compiler_vendor_macro_defs="defined("`echo $acx_compiler_vendor_test | sed 's%,%) || defined(%g'`")" ;;
+esac
+        cat > conftest.$ac_ext <<_ACEOF
+      program main
+#if !($acx_compiler_vendor_macro_defs)
+      choke me
+#endif
+      end
+_ACEOF
+if ac_fn_fc_try_compile "$LINENO"; then :
+  break
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+      done
+      acx_compiler_vendor=`echo $acx_compiler_vendor_candidate | cut -d: -f1`
+      acx_cv_fc_compiler_vendor=$acx_compiler_vendor
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_compiler_vendor" >&5
+$as_echo "$acx_cv_fc_compiler_vendor" >&6; }
+case $acx_cv_fc_compiler_vendor in #(
+  nag) :
+    acx_fc_rpath_flag="-Wl,-Wl,,-rpath -Wl,-Wl,," ;; #(
+  *) :
+    acx_fc_rpath_flag="-Wl,-rpath -Wl," ;;
+esac
+LDFLAGS=`$as_echo "$LDFLAGS" | sed 's%\(-L[ ]*\([^ ][^ ]*\)\)%\1 '"$acx_fc_rpath_flag"'\2%g'`
+LIBS=`$as_echo "$LIBS" | sed 's%\(-L[ ]*\([^ ][^ ]*\)\)%\1 '"$acx_fc_rpath_flag"'\2%g'`
+FCFLAGS=`$as_echo "$FCFLAGS" | sed 's%\(-L[ ]*\([^ ][^ ]*\)\)%\1 '"$acx_fc_rpath_flag"'\2%g'`
+   cross_compiling=$acx_save_cross_compiling
+   ac_tool_warned=$acx_save_ac_tool_warned
+      cat > conftest.$ac_ext <<_ACEOF
+      program main
+      open(unit=9,file='conftest.out')
+      close(unit=9)
+
+      end
+_ACEOF
+   # Check that the compiler produces executables we can run.  If not, either
+# the compiler is broken, or we cross compile.
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether we are cross compiling" >&5
+$as_echo_n "checking whether we are cross compiling... " >&6; }
+if test "$cross_compiling" != yes; then
+  { { ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval ac_try_echo="\"\$as_me:${as_lineno-$LINENO}: $ac_try_echo\""
+$as_echo "$ac_try_echo"; } >&5
+  (eval "$ac_link") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+  if { ac_try='./conftest$ac_cv_exeext'
+  { { case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval ac_try_echo="\"\$as_me:${as_lineno-$LINENO}: $ac_try_echo\""
+$as_echo "$ac_try_echo"; } >&5
+  (eval "$ac_try") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; }; then
+    cross_compiling=no
+  else
+    if test "$cross_compiling" = maybe; then
+	cross_compiling=yes
+    else
+	{ { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "cannot run Fortran compiled programs.
+If you meant to cross compile, use \`--host'.
+See \`config.log' for more details" "$LINENO" 5; }
+    fi
+  fi
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $cross_compiling" >&5
+$as_echo "$cross_compiling" >&6; }
+
+   rm -f conftest.$ac_ext conftest$ac_exeext conftest.out
 ac_ext=${ac_fc_srcext-f}
 ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
 ac_link='$FC -o conftest$ac_exeext $FCFLAGS $LDFLAGS $ac_fcflags_srcext conftest.$ac_ext $LIBS >&5'
@@ -2503,85 +2566,6 @@ ac_compiler_gnu=$ac_cv_fc_compiler_gnu
 DEPGEN_INTRINSIC_MODS=iso_c_binding,iso_fortran_env,ieee_exceptions,ieee_arithmetic,ieee_features,omp_lib,omp_lib_kinds,openacc
 
 
-
-      { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler vendor" >&5
-$as_echo_n "checking for Fortran compiler vendor... " >&6; }
-if ${acx_cv_fc_compiler_vendor+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  acx_compiler_vendor_options="intel: __INTEL_COMPILER
-cray: _CRAYFTN
-portland: __PGI
-nag: NAGFOR
-sun: __SUNPRO_F95
-gnu: __GFORTRAN__
-ibm: __xlC__
-unknown: CHOKEME"
-      for acx_compiler_vendor_test in $acx_compiler_vendor_options; do
-        case $acx_compiler_vendor_test in #(
-  *:) :
-    acx_compiler_vendor_candidate=$acx_compiler_vendor_test
-                 continue ;; #(
-  *) :
-    acx_compiler_vendor_macro_defs="defined("`echo $acx_compiler_vendor_test | sed 's%,%) || defined(%g'`")" ;;
-esac
-        cat > conftest.$ac_ext <<_ACEOF
-      program main
-#if !($acx_compiler_vendor_macro_defs)
-      choke me
-#endif
-      end
-_ACEOF
-if ac_fn_fc_try_compile "$LINENO"; then :
-  break
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-      done
-      acx_compiler_vendor=`echo $acx_compiler_vendor_candidate | cut -d: -f1`
-      acx_cv_fc_compiler_vendor=$acx_compiler_vendor
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_compiler_vendor" >&5
-$as_echo "$acx_cv_fc_compiler_vendor" >&6; }
-   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler version" >&5
-$as_echo_n "checking for Fortran compiler version... " >&6; }
-if ${acx_cv_fc_compiler_version+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  acx_cv_fc_compiler_version=unknown
-      case $acx_cv_fc_compiler_vendor in #(
-        intel) acx_cv_fc_compiler_version=`$FC --version 2>/dev/null | sed -n 's/^ifort (IFORT) \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`
-   if test "`echo $acx_cv_fc_compiler_version | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
-  acx_cv_fc_compiler_version=unknown
-fi ;; #(
-        cray) acx_cv_fc_compiler_version=`$FC -V 2>&1 | sed -n 's/.*ersion \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`
-   if test "`echo $acx_cv_fc_compiler_version | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
-  acx_cv_fc_compiler_version=unknown
-fi ;; #(
-        portland) acx_cv_fc_compiler_version=`$FC -V | sed -n 's/pgfortran \([0-9][0-9]*\.[0-9][0-9]*\)-\([0-9][0-9]*\).*/\1.\2/p'`
-   if test "`echo $acx_cv_fc_compiler_version | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
-  acx_cv_fc_compiler_version=unknown
-fi ;; #(
-        nag) acx_cv_fc_compiler_version=`$FC -V 2>&1 | sed -n 's/^NAG Fortran Compiler Release \([0-9][0-9]*\.[0-9][0-9]*\).*Build \([0-9][0-9]*\)/\1.\2/p'`
-   if test "`echo $acx_cv_fc_compiler_version | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
-  acx_cv_fc_compiler_version=unknown
-fi ;; #(
-        gnu) acx_cv_fc_compiler_version=`$FC -dumpversion 2>/dev/null`
-   if test "`echo $acx_cv_fc_compiler_version | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
-  acx_cv_fc_compiler_version=unknown
-fi ;; #(
-
-        *) : acx_cv_fc_compiler_version=unknown ;;
-      esac
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_compiler_version" >&5
-$as_echo "$acx_cv_fc_compiler_version" >&6; }
-
-case $acx_cv_fc_compiler_vendor in #(
-  nag) :
-    acx_fc_rpath_flag="-Wl,-Wl,,-rpath -Wl,-Wl,," ;; #(
-  *) :
-    acx_fc_rpath_flag="-Wl,-rpath -Wl," ;;
-esac
 
    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler flag needed to specify search paths for module files" >&5
 $as_echo_n "checking for Fortran compiler flag needed to specify search paths for module files... " >&6; }

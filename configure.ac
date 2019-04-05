@@ -11,9 +11,23 @@ AC_PREFIX_DEFAULT(["`pwd`/install"])
 
 ACX_BUILD_ENVIRONMENT
 
+ACX_COMPILER_CROSS_CHECK_DELAY
 AC_PROG_FC
 AC_LANG([Fortran])
 AC_FC_PP_SRCEXT([f90])
+ACX_COMPILER_FC_VENDOR
+AS_CASE([$acx_cv_fc_compiler_vendor],
+  [nag], [acx_fc_rpath_flag="-Wl,-Wl,,-rpath -Wl,-Wl,,"],
+  [acx_fc_rpath_flag="-Wl,-rpath -Wl,"])
+LDFLAGS=`AS_ECHO(["$LDFLAGS"]) | dnl
+sed ['s%\(-L[ ]*\([^ ][^ ]*\)\)%\1 '"$acx_fc_rpath_flag"'\2%g']`
+dnl Some people add -L flags to the LIBS
+LIBS=`AS_ECHO(["$LIBS"]) | dnl
+sed ['s%\(-L[ ]*\([^ ][^ ]*\)\)%\1 '"$acx_fc_rpath_flag"'\2%g']`
+dnl Sometime the add them even to FCFLAGS
+FCFLAGS=`AS_ECHO(["$FCFLAGS"]) | dnl
+sed ['s%\(-L[ ]*\([^ ][^ ]*\)\)%\1 '"$acx_fc_rpath_flag"'\2%g']`
+ACX_COMPILER_CROSS_CHECK_NOW
 AC_FC_LINE_LENGTH([unlimited])
 
 AC_SUBST([DEPGEN_DEFS])
@@ -21,11 +35,6 @@ AC_SUBST([DEPGEN_INTRINSIC_MODS],
   [[iso_c_binding,iso_fortran_env,ieee_exceptions,ieee_arithmetic,]dnl
 [ieee_features,omp_lib,omp_lib_kinds,openacc]])
 AC_SUBST([DEPGEN_EXTERNAL_MODS])
-
-ACX_COMPILER_FC_VERSION
-AS_CASE([$acx_cv_fc_compiler_vendor],
-  [nag], [acx_fc_rpath_flag="-Wl,-Wl,,-rpath -Wl,-Wl,,"],
-  [acx_fc_rpath_flag="-Wl,-rpath -Wl,"])
 
 ACX_FC_MODULE_IN_FLAG([AC_SUBST([FC_MOD_IN], [$acx_cv_fc_module_in_flag])])
 ACX_FC_MODULE_OUT_FLAG([AC_SUBST([FC_MOD_OUT], [$acx_cv_fc_module_out_flag])])
