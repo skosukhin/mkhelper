@@ -2443,15 +2443,37 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_compiler_vendor" >&5
 $as_echo "$acx_cv_fc_compiler_vendor" >&6; }
-case $acx_cv_fc_compiler_vendor in #(
+   case $acx_cv_fc_compiler_vendor in #(
   nag) :
     acx_fc_rpath_flag="-Wl,-Wl,,-rpath -Wl,-Wl,," ;; #(
   *) :
     acx_fc_rpath_flag="-Wl,-rpath -Wl," ;;
 esac
-LDFLAGS=`$as_echo "$LDFLAGS" | sed 's%\(-L[ ]*\([^ ][^ ]*\)\)%\1 '"$acx_fc_rpath_flag"'\2%g'`
-LIBS=`$as_echo "$LIBS" | sed 's%\(-L[ ]*\([^ ][^ ]*\)\)%\1 '"$acx_fc_rpath_flag"'\2%g'`
-FCFLAGS=`$as_echo "$FCFLAGS" | sed 's%\(-L[ ]*\([^ ][^ ]*\)\)%\1 '"$acx_fc_rpath_flag"'\2%g'`
+
+libdirs=
+   asx_extract_args_args="$FCFLAGS $LDFLAGS $LIBS"
+   asx_extract_args_args=`$as_echo "$asx_extract_args_args" | sed 's%''-L[ ]*''%_ASX_EXTRACT_ARGS_MARKER_%g'`
+   for asx_extract_args_arg in $asx_extract_args_args; do
+     case $asx_extract_args_arg in #(
+  _ASX_EXTRACT_ARGS_MARKER_*) :
+    asx_extract_args_value=`$as_echo "$asx_extract_args_arg" | sed 's%^_ASX_EXTRACT_ARGS_MARKER_%%'`
+        as_fn_append libdirs " $asx_extract_args_value" ;; #(
+  *) :
+     ;;
+esac
+   done
+rpaths=
+for libdir in $libdirs; do
+  case ' '$rpaths' ' in #(
+  *' '"$acx_fc_rpath_flag$libdir"' '*) :
+     ;; #(
+  ' '' ') :
+    as_fn_append rpaths "$acx_fc_rpath_flag$libdir" ;; #(
+  *) :
+    as_fn_append rpaths ' '; as_fn_append rpaths "$acx_fc_rpath_flag$libdir" ;;
+esac
+done
+LDFLAGS="$rpaths $LDFLAGS"
    cross_compiling=$acx_save_cross_compiling
    ac_tool_warned=$acx_save_ac_tool_warned
       cat > conftest.$ac_ext <<_ACEOF

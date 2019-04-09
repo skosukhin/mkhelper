@@ -15,18 +15,13 @@ ACX_COMPILER_CROSS_CHECK_DELAY
 AC_PROG_FC
 AC_LANG([Fortran])
 AC_FC_PP_SRCEXT([f90])
-ACX_COMPILER_FC_VENDOR
-AS_CASE([$acx_cv_fc_compiler_vendor],
-  [nag], [acx_fc_rpath_flag="-Wl,-Wl,,-rpath -Wl,-Wl,,"],
-  [acx_fc_rpath_flag="-Wl,-rpath -Wl,"])
-LDFLAGS=`AS_ECHO(["$LDFLAGS"]) | dnl
-sed ['s%\(-L[ ]*\([^ ][^ ]*\)\)%\1 '"$acx_fc_rpath_flag"'\2%g']`
-dnl Some people add -L flags to the LIBS
-LIBS=`AS_ECHO(["$LIBS"]) | dnl
-sed ['s%\(-L[ ]*\([^ ][^ ]*\)\)%\1 '"$acx_fc_rpath_flag"'\2%g']`
-dnl Sometime the add them even to FCFLAGS
-FCFLAGS=`AS_ECHO(["$FCFLAGS"]) | dnl
-sed ['s%\(-L[ ]*\([^ ][^ ]*\)\)%\1 '"$acx_fc_rpath_flag"'\2%g']`
+ACX_COMPILER_FC_RPATH_FLAG
+ASX_EXTRACT_ARGS([libdirs], ["$FCFLAGS $LDFLAGS $LIBS"], ['-L@<:@ @:>@*'])
+rpaths=
+for libdir in $libdirs; do
+  ASX_VAR_APPEND_UNIQ([rpaths], ["$acx_fc_rpath_flag$libdir"], [' '])
+done
+LDFLAGS="$rpaths $LDFLAGS"
 ACX_COMPILER_CROSS_CHECK_NOW
 AC_FC_LINE_LENGTH([unlimited])
 
