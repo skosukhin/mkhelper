@@ -588,6 +588,7 @@ ac_unique_file="src/program/main.f90"
 ac_default_prefix="`pwd`/install"
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
+subdirs_extra
 MKDIR_P
 INSTALL_DATA
 INSTALL_SCRIPT
@@ -3664,6 +3665,60 @@ fi
 $as_echo "$MKDIR_P" >&6; }
 
 
+   acx_config_subdir_args_dummy_subdir=
+   acx_config_subdir_ignore_arg=no
+   eval "set dummy $ac_configure_args"; shift
+   for acx_config_subdir_arg; do
+     if test "x$acx_config_subdir_ignore_arg" = xno; then :
+  case $acx_config_subdir_arg in #(
+  -cache-file|--cache-file|--cache-fil|--cache-fi| \
+           --cache-f|--cache-|--cache|--cach|--cac|--ca|--c| \
+           -srcdir|--srcdir|--srcdi|--srcd|--src|--sr| \
+           -prefix|--prefix|--prefi|--pref|--pre|--pr|--p) :
+    acx_config_subdir_ignore_arg=yes ;; #(
+  -cache-file=*|--cache-file=*|--cache-fil=*|--cache-fi=*| \
+           --cache-f=*|--cache-=*|--cache=*|--cach=*|--cac=*|--ca=*|--c=*| \
+           --config-cache|-C| \
+           -srcdir=*|--srcdir=*|--srcdi=*|--srcd=*|--src=*|--sr=*| \
+           -prefix=*|--prefix=*|--prefi=*|--pref=*|--pre=*|--pr=*|--p=*| \
+           --disable-option-checking) :
+     ;; #(
+  FCFLAGS=*|CFLAGS=*|LDFLAGS=*|LIBS=*) :
+     ;; #(
+  -enable-silent-rules|-enable-silent-rules=*|--enable-silent-rules|--enable-silent-rules=*|-disable-silent-rules|--disable-silent-rules) :
+     ;; #(
+  -with-netcdf-root|-with-netcdf-root=*|--with-netcdf-root|--with-netcdf-root=*|-without-netcdf-root|--without-netcdf-root) :
+     ;; #(
+  -enable-always|-enable-always=*|--enable-always|--enable-always=*|-disable-always|--disable-always) :
+     ;; #(
+  *) :
+
+           case $acx_config_subdir_arg in #(
+  *\'*) :
+    acx_config_subdir_arg=`$as_echo "$acx_config_subdir_arg" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+  *) :
+     ;;
+esac
+            as_fn_append acx_config_subdir_args_dummy_subdir " '$acx_config_subdir_arg'" ;;
+esac
+else
+  acx_config_subdir_ignore_arg=no
+fi
+   done
+   set dummy FCFLAGS= CFLAGS='-g' --enable-always=yes ; shift
+      for acx_config_subdir_arg; do
+        case $acx_config_subdir_arg in #(
+  *\'*) :
+    acx_config_subdir_arg=`$as_echo "$acx_config_subdir_arg" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+  *) :
+     ;;
+esac
+        as_fn_append acx_config_subdir_args_dummy_subdir " '$acx_config_subdir_arg'"
+      done
+      subdirs_extra="dummy_subdir"
+
+
+
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -3810,6 +3865,90 @@ LTLIBOBJS=$ac_ltlibobjs
 
 
 BUILD_ENV=`echo "$BUILD_ENV" | sed 's/\\$/$$/g'`
+if test "x$no_recursion" = xyes; then :
+  subdirs_extra=
+else
+  acx_config_subdir_common_args="'--disable-option-checking'"
+            if test "x$silent" = xyes; then :
+  as_fn_append acx_config_subdir_common_args " '--silent'"
+fi
+            acx_config_subdir_popdir=`pwd`
+            for acx_config_subdir in $subdirs_extra; do
+              acx_msg="=== configuring in $acx_config_subdir ($acx_config_subdir_popdir/$acx_config_subdir)"
+              $as_echo "$as_me:${as_lineno-$LINENO}: $acx_msg" >&5
+              $as_echo "$acx_msg" >&6
+              as_dir="$acx_config_subdir"; as_fn_mkdir_p
+              ac_builddir=.
+
+case "$acx_config_subdir" in
+.) ac_dir_suffix= ac_top_builddir_sub=. ac_top_build_prefix= ;;
+*)
+  ac_dir_suffix=/`$as_echo "$acx_config_subdir" | sed 's|^\.[\\/]||'`
+  # A ".." for each directory in $ac_dir_suffix.
+  ac_top_builddir_sub=`$as_echo "$ac_dir_suffix" | sed 's|/[^\\/]*|/..|g;s|/||'`
+  case $ac_top_builddir_sub in
+  "") ac_top_builddir_sub=. ac_top_build_prefix= ;;
+  *)  ac_top_build_prefix=$ac_top_builddir_sub/ ;;
+  esac ;;
+esac
+ac_abs_top_builddir=$ac_pwd
+ac_abs_builddir=$ac_pwd$ac_dir_suffix
+# for backward compatibility:
+ac_top_builddir=$ac_top_build_prefix
+
+case $srcdir in
+  .)  # We are building in place.
+    ac_srcdir=.
+    ac_top_srcdir=$ac_top_builddir_sub
+    ac_abs_top_srcdir=$ac_pwd ;;
+  [\\/]* | ?:[\\/]* )  # Absolute name.
+    ac_srcdir=$srcdir$ac_dir_suffix;
+    ac_top_srcdir=$srcdir
+    ac_abs_top_srcdir=$srcdir ;;
+  *) # Relative name.
+    ac_srcdir=$ac_top_build_prefix$srcdir$ac_dir_suffix
+    ac_top_srcdir=$ac_top_build_prefix$srcdir
+    ac_abs_top_srcdir=$ac_pwd/$srcdir ;;
+esac
+ac_abs_srcdir=$ac_abs_top_srcdir$ac_dir_suffix
+
+              cd "$acx_config_subdir"
+              if test -f "$ac_srcdir/configure.gnu"; then :
+  acx_config_subdir_script="$ac_srcdir/configure.gnu"
+elif test -f "$ac_srcdir/configure"; then :
+  acx_config_subdir_script="$ac_srcdir/configure"
+else
+  as_fn_error $? "unable to configure '$acx_config_subdir': no configure script found" "$LINENO" 5
+                 acx_config_subdir_script=
+fi
+              if test -n "$acx_config_subdir_script"; then :
+  eval acx_config_subdir_args=\$acx_config_subdir_args_`$as_echo "$acx_config_subdir" | $as_tr_sh`
+                 case $cache_file in #(
+  [\\/]* | ?:[\\/]*) :
+    acx_sub_cache_file=$cache_file ;; #(
+  *) :
+    acx_sub_cache_file="$ac_top_build_prefix$cache_file" ;;
+esac
+                 for acx_config_subdir_arg in \
+                   "--cache-file=$acx_sub_cache_file" \
+                   "--srcdir=$ac_srcdir" \
+                   "--prefix=$prefix"; do
+                   case $acx_config_subdir_arg in #(
+  *\'*) :
+    acx_config_subdir_arg=`$as_echo "$acx_config_subdir_arg" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+  *) :
+     ;;
+esac
+                   as_fn_append acx_config_subdir_args " '$acx_config_subdir_arg'"
+                 done
+                 as_fn_append acx_config_subdir_args " $acx_config_subdir_common_args"
+                 { $as_echo "$as_me:${as_lineno-$LINENO}: running $SHELL $acx_config_subdir_script $acx_config_subdir_args" >&5
+$as_echo "$as_me: running $SHELL $acx_config_subdir_script $acx_config_subdir_args" >&6;}
+                 eval "\$SHELL \"$acx_config_subdir_script\" $acx_config_subdir_args" || as_fn_error $? "$acx_config_subdir_script failed for $acx_config_subdir" "$LINENO" 5
+fi
+              cd "$acx_config_subdir_popdir"
+            done
+fi
 
 : "${CONFIG_STATUS=./config.status}"
 ac_write_fail=0

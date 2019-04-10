@@ -2,7 +2,7 @@
 srcdir:= @srcdir@
 
 # Source file subdirectories:
-subdirs:= src
+subdirs:= src @subdirs_extra@
 
 # Installation directories:
 prefix:= @prefix@

@@ -140,4 +140,12 @@ ACX_PROG_SEARCH([PYTHON], [python python3],
 AC_PROG_INSTALL
 AC_PROG_MKDIR_P
 
+ACX_CONFIG_SUBDIR([dummy_subdir],
+  [[FCFLAGS=*|CFLAGS=*|LDFLAGS=*|LIBS=*],
+   [ACX_CONFIG_SUBDIR_PATTERN_ENABLE([silent-rules])],
+   [ACX_CONFIG_SUBDIR_PATTERN_WITH([netcdf-root])],
+   [ACX_CONFIG_SUBDIR_PATTERN_ENABLE([always])]],
+  [[FCFLAGS=], [CFLAGS='-g'],
+   [--enable-always=yes]])
+
 AC_OUTPUT

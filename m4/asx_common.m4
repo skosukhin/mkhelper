@@ -71,3 +71,15 @@ sed 's%'$3'%_ASX_EXTRACT_ARGS_MARKER_%g'`
 sed 's%^_ASX_EXTRACT_ARGS_MARKER_%%'`
         AS_VAR_APPEND([$1], [" $asx_extract_args_value"])])
    done])
+
+# ASX_ESCAPE_SINGLE_QUOTE(VARIABLE)
+# -----------------------------------------------------------------------------
+# Emits shell code that replaces any occurrence of the single-quote (') in the
+# shell variable VARIABLE with the following string: '\'', which is required
+# when contents of the VARIABLE must be passed literally to a subprocess, e.g.
+# eval \$SHELL -c "'$VARIABLE'".
+#
+AC_DEFUN([ASX_ESCAPE_SINGLE_QUOTE],
+  [AS_CASE([AS_VAR_GET([$1])], [*\'*],
+     [AS_VAR_SET([$1], [`AS_ECHO(["AS_VAR_GET([$1])"]) | dnl
+sed "s/'/'\\\\\\\\''/g"`])])])
