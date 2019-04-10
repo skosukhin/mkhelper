@@ -1888,14 +1888,21 @@ else
 fi
       { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether \$BUILD_ENV is accepted by '$SHELL -c'" >&5
 $as_echo_n "checking whether \$BUILD_ENV is accepted by '$SHELL -c'... " >&6; }
-      eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$SHELL -c '$BUILD_ENV'\"" >&5 2>&1
-      eval \$SHELL -c "'$BUILD_ENV'" >&5 2>&1
+      acx_BUILD_ENV=$BUILD_ENV
+      case $acx_BUILD_ENV in #(
+  *\'*) :
+    acx_BUILD_ENV=`$as_echo "$acx_BUILD_ENV" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+  *) :
+     ;;
+esac
+      $as_echo "$as_me:${as_lineno-$LINENO}: $SHELL -c '$acx_BUILD_ENV'" >&5
+      eval \$SHELL -c "'$acx_BUILD_ENV'" >&5 2>&1
       if test $? -eq 0; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
          { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether \$BUILD_ENV is accepted by the current shell" >&5
 $as_echo_n "checking whether \$BUILD_ENV is accepted by the current shell... " >&6; }
-         eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$BUILD_ENV\"" >&5 2>&1
+         $as_echo "$as_me:${as_lineno-$LINENO}: $BUILD_ENV" >&5
          eval "$BUILD_ENV" >&5 2>&1
          if test $? -eq 0; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
