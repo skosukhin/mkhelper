@@ -18,15 +18,15 @@ AC_DEFUN([ACX_BUILD_ENVIRONMENT],
         [AC_MSG_ERROR(
            [\$BUILD_ENV does not end with a semicolon: '$BUILD_ENV'])])
       AC_MSG_CHECKING([whether \$BUILD_ENV is accepted by '$SHELL -c'])
-      eval echo "\"\$as_me\":${as_lineno-$LINENO}: dnl
-\"$SHELL -c '$BUILD_ENV'\"" >&AS_MESSAGE_LOG_FD 2>&1
-      eval \$SHELL -c "'$BUILD_ENV'" >&AS_MESSAGE_LOG_FD 2>&1
+      acx_BUILD_ENV=$BUILD_ENV
+      ASX_ESCAPE_SINGLE_QUOTE([acx_BUILD_ENV])
+      _AS_ECHO_LOG([$SHELL -c '$acx_BUILD_ENV'])
+      eval \$SHELL -c "'$acx_BUILD_ENV'" >&AS_MESSAGE_LOG_FD 2>&1
       AS_IF([test $? -eq 0],
         [AC_MSG_RESULT([yes])
          AC_MSG_CHECKING(
            [whether \$BUILD_ENV is accepted by the current shell])
-         eval echo "\"\$as_me\":${as_lineno-$LINENO}: dnl
-\"$BUILD_ENV\"" >&AS_MESSAGE_LOG_FD 2>&1
+         _AS_ECHO_LOG([$BUILD_ENV])
          eval "$BUILD_ENV" >&AS_MESSAGE_LOG_FD 2>&1
          AS_IF([test $? -eq 0],
            [AC_MSG_RESULT([yes])
