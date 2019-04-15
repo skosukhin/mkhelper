@@ -9,19 +9,35 @@ AC_CONFIG_FILES([Makefile depgen.config])
 
 AC_PREFIX_DEFAULT(["`pwd`/install"])
 
+AC_CANONICAL_HOST
+
 ACX_BUILD_ENVIRONMENT
+
+AC_ARG_ENABLE([rpaths],
+  [AC_HELP_STRING([--enable-rpaths],
+     [append additional linker flags to LDFLAGS to add directories specified
+with -L flags to the runtime library search path @<:@default=yes@:>@])], [],
+  [enable_rpaths=yes])
 
 ACX_COMPILER_CROSS_CHECK_DELAY
 AC_PROG_FC
 AC_LANG([Fortran])
 AC_FC_PP_SRCEXT([f90])
-ACX_COMPILER_FC_RPATH_FLAG
-ASX_EXTRACT_ARGS([libdirs], ["$FCFLAGS $LDFLAGS $LIBS"], ['-L@<:@ @:>@*'])
-rpaths=
-for libdir in $libdirs; do
-  ASX_VAR_APPEND_UNIQ([rpaths], ["$acx_fc_rpath_flag$libdir"], [' '])
-done
-LDFLAGS="$rpaths $LDFLAGS"
+
+AS_VAR_IF([enable_rpaths], [yes],
+  [ACX_SHLIB_FC_RPATH_FLAG
+   ACX_SHLIB_PATH_VAR
+   eval link_cmd="\"$ac_link\""
+   ASX_EXTRACT_ARGS([mkhelper_libdirs], [`echo $link_cmd`], ['-L@<:@ @:>@*'])
+   for mkhelper_libdir in $mkhelper_libdirs; do
+     AS_IF([test -d "$mkhelper_libdir"],
+       [ASX_VAR_APPEND_UNIQ([LDFLAGS],
+          ["$acx_cv_fc_rpath_flag$mkhelper_libdir"], [' '])
+        ASX_VAR_APPEND_UNIQ([$acx_cv_shlib_path_var],
+          ["$mkhelper_libdir"], [':'])])
+   done
+   eval export $acx_cv_shlib_path_var])
+
 ACX_COMPILER_CROSS_CHECK_NOW
 AC_FC_LINE_LENGTH([unlimited])
 
@@ -105,7 +121,7 @@ AS_VAR_IF([enable_module_nature_test], [yes],
 
 ACX_LANG_PACKAGE_INIT([NetCDF],
   [$acx_cv_fc_ftn_include_flag],
-  [-L "$acx_fc_rpath_flag"])
+  [-L "$acx_cv_fc_rpath_flag"])
 acx_NETCDF_found=no
 acx_save_FCFLAGS=$FCFLAGS
 ASX_VAR_SET_IF_NOT_YET([NETCDF_FCFLAGS], [$acx_fc_NetCDF_inc_search_args])
@@ -141,7 +157,7 @@ AC_PROG_INSTALL
 AC_PROG_MKDIR_P
 
 ACX_CONFIG_SUBDIR([dummy_subdir],
-  [[FCFLAGS=*|CFLAGS=*|LDFLAGS=*|LIBS=*],
+  [[FCFLAGS=*|CFLAGS=*],
    [ACX_CONFIG_SUBDIR_PATTERN_ENABLE([silent-rules])],
    [ACX_CONFIG_SUBDIR_PATTERN_WITH([netcdf-root])],
    [ACX_CONFIG_SUBDIR_PATTERN_ENABLE([always])]],

@@ -10,12 +10,9 @@
 #     AC_PROG_FC
 #     AC_LANG([Fortran])
 #     AC_FC_PP_SRCEXT([f90])
-#     ACX_COMPILER_FC_VENDOR
-#     AS_CASE([$acx_cv_fc_compiler_vendor],
-#       [nag], [acx_fc_rpath_flag="-Wl,-Wl,,-rpath -Wl,-Wl,,"],
-#       [acx_fc_rpath_flag="-Wl,-rpath -Wl,"])
+#     ACX_SHLIB_FC_RPATH_FLAG
 #     LDFLAGS=`AS_ECHO(["$LDFLAGS"]) | dnl
-#     sed ['s%\(-L[ ]*\([^ ][^ ]*\)\)%\1 '"$acx_fc_rpath_flag"'\2%g']`
+#     sed ['s%\(-L[ ]*\([^ ][^ ]*\)\)%\1 '"$acx_cv_fc_rpath_flag"'\2%g']`
 #     ACX_COMPILER_CROSS_CHECK_NOW
 #
 AC_DEFUN([ACX_COMPILER_CROSS_CHECK_DELAY],
