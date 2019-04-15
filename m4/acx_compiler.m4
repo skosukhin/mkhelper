@@ -40,8 +40,7 @@ AC_DEFUN([ACX_COMPILER_FC_VENDOR],
         [ACX_COMPILER_FC_VENDOR requires calling the Fortran compiler with ]dnl
 [a preprocessor but no call to AC_FC_PP_SRCEXT is detected])])dnl
    AC_CACHE_CHECK([for Fortran compiler vendor], [acx_cv_fc_compiler_vendor],
-     [_ACX_COMPILER_VENDOR
-      acx_cv_fc_compiler_vendor=$acx_compiler_vendor])])
+     [_ACX_COMPILER_VENDOR])])
 
 # ACX_COMPILER_FC_VERSION()
 # -----------------------------------------------------------------------------
@@ -54,16 +53,6 @@ AC_DEFUN([ACX_COMPILER_FC_VENDOR],
 #
 AC_DEFUN([ACX_COMPILER_FC_VERSION],
   [AC_REQUIRE([ACX_COMPILER_FC_VENDOR])_ACX_COMPILER_VERSION])
-
-# ACX_COMPILER_FC_RPATH_FLAG
-# -----------------------------------------------------------------------------
-# Sets the result to the Fortran compiler flag needed to add a directory to the
-# runtime library search path.
-#
-# The result is stored in the acx_fc_rpath_flag variable.
-#
-AC_DEFUN([ACX_COMPILER_FC_RPATH_FLAG],
-  [AC_REQUIRE([ACX_COMPILER_FC_VENDOR])_ACX_COMPILER_RPATH_FLAG])
 
 # ACX_COMPILER_CC_VENDOR()
 # -----------------------------------------------------------------------------
@@ -78,8 +67,7 @@ AC_DEFUN([ACX_COMPILER_CC_VENDOR],
      [AS_IF([AS_VAR_GET([_AC_CC]) -V 2>&1 | dnl
 grep '^NAG Fortran Compiler Release' >/dev/null 2>&1],
         [acx_cv_c_compiler_vendor=nag],
-        [_ACX_COMPILER_VENDOR
-         acx_cv_c_compiler_vendor=$acx_compiler_vendor])])])
+        [_ACX_COMPILER_VENDOR])])])
 
 # ACX_COMPILER_CC_VERSION()
 # -----------------------------------------------------------------------------
@@ -93,16 +81,6 @@ grep '^NAG Fortran Compiler Release' >/dev/null 2>&1],
 AC_DEFUN([ACX_COMPILER_CC_VERSION],
   [AC_REQUIRE([ACX_COMPILER_CC_VENDOR])_ACX_COMPILER_VERSION])
 
-# ACX_COMPILER_CC_RPATH_FLAG
-# -----------------------------------------------------------------------------
-# Sets the result to the C compiler flag needed to add a directory to the
-# runtime library search path.
-#
-# The result is stored in the acx_c_rpath_flag variable.
-#
-AC_DEFUN([ACX_COMPILER_CC_RPATH_FLAG],
-  [AC_REQUIRE([ACX_COMPILER_CC_VENDOR])_ACX_COMPILER_RPATH_FLAG])
-
 # ACX_COMPILER_CXX_VENDOR()
 # -----------------------------------------------------------------------------
 # Detects the vendor of the C++ compiler. The result is "unknown" or one of
@@ -113,8 +91,7 @@ AC_DEFUN([ACX_COMPILER_CC_RPATH_FLAG],
 AC_DEFUN([ACX_COMPILER_CXX_VENDOR],
   [AC_LANG_ASSERT([C++])dnl
    AC_CACHE_CHECK([for C++ compiler vendor], [acx_cv_cxx_compiler_vendor],
-     [_ACX_COMPILER_VENDOR
-      acx_cv_cxx_compiler_vendor=$acx_compiler_vendor])])
+     [_ACX_COMPILER_VENDOR])])
 
 # ACX_COMPILER_CXX_VERSION()
 # -----------------------------------------------------------------------------
@@ -127,16 +104,6 @@ AC_DEFUN([ACX_COMPILER_CXX_VENDOR],
 #
 AC_DEFUN([ACX_COMPILER_CXX_VERSION],
   [AC_REQUIRE([ACX_COMPILER_CXX_VENDOR])_ACX_COMPILER_VERSION])
-
-# ACX_COMPILER_CXX_RPATH_FLAG
-# -----------------------------------------------------------------------------
-# Sets the result to the C compiler flag needed to add a directory to the
-# runtime library search path.
-#
-# The result is stored in the acx_cxx_rpath_flag variable.
-#
-AC_DEFUN([ACX_COMPILER_CXX_RPATH_FLAG],
-  [AC_REQUIRE([ACX_COMPILER_CXX_VENDOR])_ACX_COMPILER_RPATH_FLAG])
 
 # _ACX_COMPILER_KNOWN_VENDORS()
 # -----------------------------------------------------------------------------
@@ -207,7 +174,7 @@ m4_copy([_ACX_COMPILER_KNOWN_VENDORS(C)], [_ACX_COMPILER_KNOWN_VENDORS(C++)])
 # macro. The result is "unknown" or one of the vendor IDs
 # (see _ACX_COMPILER_KNOWN_VENDORS).
 #
-# The result is cached in the acx_compiler_vendor
+# The result is stored in the acx_cv_[]_AC_LANG_ABBREV[]_compiler_vendor
 # variable.
 #
 m4_define([_ACX_COMPILER_VENDOR],
@@ -228,7 +195,8 @@ unknown: CHOKEME"
 #endif]])],
           [break])
       done
-      acx_compiler_vendor=`echo $acx_compiler_vendor_candidate | cut -d: -f1`])
+      AS_VAR_SET([acx_cv_[]_AC_LANG_ABBREV[]_compiler_vendor],
+        [`echo $acx_compiler_vendor_candidate | cut -d: -f1`])])
 
 # _ACX_COMPILER_VERSION()
 # -----------------------------------------------------------------------------
@@ -361,17 +329,3 @@ m4_define([_ACX_COMPILER_VERSION_TCC(C)],
      [__TINYC__/10000],
      [(__TINYC__%10000)/100],
      [__TINYC__%100])])
-
-# _ACX_COMPILER_RPATH_FLAG()
-# -----------------------------------------------------------------------------
-# Sets the result to the compiler flag needed to add a directory to the runtime
-# library search path.
-#
-# The result is stored in the acx_[]_AC_LANG_ABBREV[]_rpath_flag variable.
-#
-m4_define([_ACX_COMPILER_RPATH_FLAG],
-  [m4_pushdef([acx_result_var], [acx_[]_AC_LANG_ABBREV[]_rpath_flag])dnl
-   AS_CASE([AS_VAR_GET([acx_cv_[]_AC_LANG_ABBREV[]_compiler_vendor])],
-     [nag], [acx_result_var="-Wl,-Wl,,-rpath -Wl,-Wl,,"],
-     [acx_result_var="-Wl,-rpath -Wl,"])
-   m4_popdef([acx_result_var])])

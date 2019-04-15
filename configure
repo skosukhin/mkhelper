@@ -619,6 +619,14 @@ LDFLAGS
 FCFLAGS
 FC
 BUILD_ENV
+host_os
+host_vendor
+host_cpu
+host
+build_os
+build_vendor
+build_cpu
+build
 target_alias
 host_alias
 build_alias
@@ -660,6 +668,7 @@ SHELL'
 ac_subst_files=''
 ac_user_opts='
 enable_option_checking
+enable_rpaths
 enable_silent_rules
 enable_additional_mods
 enable_openmp
@@ -1276,6 +1285,10 @@ Fine tuning of the installation directories:
 _ACEOF
 
   cat <<\_ACEOF
+
+System types:
+  --build=BUILD     configure for building on BUILD [guessed]
+  --host=HOST       cross-compile to build programs to run on HOST [BUILD]
 _ACEOF
 fi
 
@@ -1289,6 +1302,9 @@ Optional Features:
   --disable-option-checking  ignore unrecognized --enable/--with options
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
+  --enable-rpaths         append additional linker flags to LDFLAGS to add
+                          directories specified with -L flags to the runtime
+                          library search path [default=yes]
   --enable-silent-rules   less verbose build output (undo: "make V=1")
                           [default=yes]
   --enable-additional-mods
@@ -1879,6 +1895,78 @@ ac_config_files="$ac_config_files Makefile depgen.config"
 
 
 
+# Make sure we can run config.sub.
+$SHELL "$ac_aux_dir/config.sub" sun4 >/dev/null 2>&1 ||
+  as_fn_error $? "cannot run $SHELL $ac_aux_dir/config.sub" "$LINENO" 5
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking build system type" >&5
+$as_echo_n "checking build system type... " >&6; }
+if ${ac_cv_build+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_build_alias=$build_alias
+test "x$ac_build_alias" = x &&
+  ac_build_alias=`$SHELL "$ac_aux_dir/config.guess"`
+test "x$ac_build_alias" = x &&
+  as_fn_error $? "cannot guess build type; you must specify one" "$LINENO" 5
+ac_cv_build=`$SHELL "$ac_aux_dir/config.sub" $ac_build_alias` ||
+  as_fn_error $? "$SHELL $ac_aux_dir/config.sub $ac_build_alias failed" "$LINENO" 5
+
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_build" >&5
+$as_echo "$ac_cv_build" >&6; }
+case $ac_cv_build in
+*-*-*) ;;
+*) as_fn_error $? "invalid value of canonical build" "$LINENO" 5;;
+esac
+build=$ac_cv_build
+ac_save_IFS=$IFS; IFS='-'
+set x $ac_cv_build
+shift
+build_cpu=$1
+build_vendor=$2
+shift; shift
+# Remember, the first character of IFS is used to create $*,
+# except with old shells:
+build_os=$*
+IFS=$ac_save_IFS
+case $build_os in *\ *) build_os=`echo "$build_os" | sed 's/ /-/g'`;; esac
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking host system type" >&5
+$as_echo_n "checking host system type... " >&6; }
+if ${ac_cv_host+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test "x$host_alias" = x; then
+  ac_cv_host=$ac_cv_build
+else
+  ac_cv_host=`$SHELL "$ac_aux_dir/config.sub" $host_alias` ||
+    as_fn_error $? "$SHELL $ac_aux_dir/config.sub $host_alias failed" "$LINENO" 5
+fi
+
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_host" >&5
+$as_echo "$ac_cv_host" >&6; }
+case $ac_cv_host in
+*-*-*) ;;
+*) as_fn_error $? "invalid value of canonical host" "$LINENO" 5;;
+esac
+host=$ac_cv_host
+ac_save_IFS=$IFS; IFS='-'
+set x $ac_cv_host
+shift
+host_cpu=$1
+host_vendor=$2
+shift; shift
+# Remember, the first character of IFS is used to create $*,
+# except with old shells:
+host_os=$*
+IFS=$ac_save_IFS
+case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
+
+
+
 
    if test -n "$BUILD_ENV"; then :
   if $as_echo "$BUILD_ENV" | grep ';[ ]*$' >/dev/null 2>&1; then :
@@ -1927,6 +2015,14 @@ as_fn_error $? "$acx_failMsg
 See \`config.log' for more details" "$LINENO" 5; }
 fi
 fi
+
+# Check whether --enable-rpaths was given.
+if test "${enable_rpaths+set}" = set; then :
+  enableval=$enable_rpaths;
+else
+  enable_rpaths=yes
+fi
+
 
 acx_save_cross_compiling=$cross_compiling
    acx_save_ac_tool_warned=$ac_tool_warned
@@ -2413,6 +2509,7 @@ ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
 ac_link='$FC -o conftest$ac_exeext $FCFLAGS $LDFLAGS $ac_fcflags_srcext conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_fc_compiler_gnu
 
+
       { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler vendor" >&5
 $as_echo_n "checking for Fortran compiler vendor... " >&6; }
 if ${acx_cv_fc_compiler_vendor+:} false; then :
@@ -2446,42 +2543,106 @@ if ac_fn_fc_try_compile "$LINENO"; then :
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
       done
-      acx_compiler_vendor=`echo $acx_compiler_vendor_candidate | cut -d: -f1`
-      acx_cv_fc_compiler_vendor=$acx_compiler_vendor
+      acx_cv_fc_compiler_vendor=`echo $acx_compiler_vendor_candidate | cut -d: -f1`
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_compiler_vendor" >&5
 $as_echo "$acx_cv_fc_compiler_vendor" >&6; }
-   case $acx_cv_fc_compiler_vendor in #(
+if test "x$enable_rpaths" = xyes; then :
+     { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler flag needed to add a directory to the runtime library search path" >&5
+$as_echo_n "checking for Fortran compiler flag needed to add a directory to the runtime library search path... " >&6; }
+if ${acx_cv_fc_rpath_flag+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  case $acx_cv_fc_compiler_vendor in #(
   nag) :
-    acx_fc_rpath_flag="-Wl,-Wl,,-rpath -Wl,-Wl,," ;; #(
+    acx_cv_fc_rpath_flag="-Wl,-Wl,,-rpath -Wl,-Wl,," ;; #(
   *) :
-    acx_fc_rpath_flag="-Wl,-rpath -Wl," ;;
+    acx_cv_fc_rpath_flag="-Wl,-rpath -Wl," ;;
 esac
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_rpath_flag" >&5
+$as_echo "$acx_cv_fc_rpath_flag" >&6; }
 
-libdirs=
-   asx_extract_args_args="$FCFLAGS $LDFLAGS $LIBS"
+      { $as_echo "$as_me:${as_lineno-$LINENO}: checking for the name of the environment variable specifying the search paths for shared libraries" >&5
+$as_echo_n "checking for the name of the environment variable specifying the search paths for shared libraries... " >&6; }
+if ${acx_cv_shlib_path_var+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  case $host_os in #(
+  aix3*) :
+    acx_cv_shlib_path_var=LIBPATH ;; #(
+  aix[4-9]*) :
+    if test "x$host_cpu" = xia64; then :
+  acx_cv_shlib_path_var=LD_LIBRARY_PATH
+else
+  acx_cv_shlib_path_var=LIBPATH
+fi ;; #(
+  beos* | haiku*) :
+    acx_cv_shlib_path_var=LIBRARY_PATH ;; #(
+  cygwin* | mingw* | pw32* | cegcc*) :
+    acx_cv_shlib_path_var=PATH ;; #(
+  darwin* | rhapsody*) :
+    acx_cv_shlib_path_var=DYLD_LIBRARY_PATH ;; #(
+  hpux9* | hpux10* | hpux11*) :
+    case $host_cpu in #(
+  ia64* | hppa*64*) :
+    acx_cv_shlib_path_var=LD_LIBRARY_PATH ;; #(
+  *) :
+    acx_cv_shlib_path_var=SHLIB_PATH ;;
+esac ;; #(
+  irix6*) :
+    case $LD in #(
+  *-n32|*"-n32 "|*-melf32bmipn32|*"-melf32bmipn32 ") :
+    acx_cv_shlib_path_var=LD_LIBRARYN32_PATH ;; #(
+  *-64|*"-64 "|*-melf64bmip|*"-melf64bmip ") :
+    acx_cv_shlib_path_var=LD_LIBRARY64_PATH ;; #(
+  *) :
+    acx_cv_shlib_path_var=LD_LIBRARY_PATH ;;
+esac ;; #(
+  os2*) :
+    acx_cv_shlib_path_var=BEGINLIBPATH ;; #(
+  *) :
+    acx_cv_shlib_path_var=LD_LIBRARY_PATH ;;
+esac
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_shlib_path_var" >&5
+$as_echo "$acx_cv_shlib_path_var" >&6; }
+   eval link_cmd="\"$ac_link\""
+   mkhelper_libdirs=
+   asx_extract_args_args=`echo $link_cmd`
    asx_extract_args_args=`$as_echo "$asx_extract_args_args" | sed 's%''-L[ ]*''%_ASX_EXTRACT_ARGS_MARKER_%g'`
    for asx_extract_args_arg in $asx_extract_args_args; do
      case $asx_extract_args_arg in #(
   _ASX_EXTRACT_ARGS_MARKER_*) :
     asx_extract_args_value=`$as_echo "$asx_extract_args_arg" | sed 's%^_ASX_EXTRACT_ARGS_MARKER_%%'`
-        as_fn_append libdirs " $asx_extract_args_value" ;; #(
+        as_fn_append mkhelper_libdirs " $asx_extract_args_value" ;; #(
   *) :
      ;;
 esac
    done
-rpaths=
-for libdir in $libdirs; do
-  case ' '$rpaths' ' in #(
-  *' '"$acx_fc_rpath_flag$libdir"' '*) :
+   for mkhelper_libdir in $mkhelper_libdirs; do
+     if test -d "$mkhelper_libdir"; then :
+  case ' '$LDFLAGS' ' in #(
+  *' '"$acx_cv_fc_rpath_flag$mkhelper_libdir"' '*) :
      ;; #(
   ' '' ') :
-    as_fn_append rpaths "$acx_fc_rpath_flag$libdir" ;; #(
+    as_fn_append LDFLAGS "$acx_cv_fc_rpath_flag$mkhelper_libdir" ;; #(
   *) :
-    as_fn_append rpaths ' '; as_fn_append rpaths "$acx_fc_rpath_flag$libdir" ;;
+    as_fn_append LDFLAGS ' '; as_fn_append LDFLAGS "$acx_cv_fc_rpath_flag$mkhelper_libdir" ;;
 esac
-done
-LDFLAGS="$rpaths $LDFLAGS"
+        case ':'`eval 'as_val=${'$acx_cv_shlib_path_var'};$as_echo "$as_val"'`':' in #(
+  *':'"$mkhelper_libdir"':'*) :
+     ;; #(
+  ':'':') :
+    as_fn_append $acx_cv_shlib_path_var "$mkhelper_libdir" ;; #(
+  *) :
+    as_fn_append $acx_cv_shlib_path_var ':'; as_fn_append $acx_cv_shlib_path_var "$mkhelper_libdir" ;;
+esac
+fi
+   done
+   eval export $acx_cv_shlib_path_var
+fi
+
    cross_compiling=$acx_save_cross_compiling
    ac_tool_warned=$acx_save_ac_tool_warned
       cat > conftest.$ac_ext <<_ACEOF
@@ -3352,7 +3513,7 @@ fi
 
 
       if ${with_netcdf_lib+:} false; then :
-  for acx_flag in -L "$acx_fc_rpath_flag"; do
+  for acx_flag in -L "$acx_cv_fc_rpath_flag"; do
            case " "$acx_fc_NetCDF_lib_search_args" " in #(
   *" ""${acx_flag}${with_netcdf_lib}"" "*) :
      ;; #(
@@ -3690,7 +3851,7 @@ $as_echo "$MKDIR_P" >&6; }
            -prefix=*|--prefix=*|--prefi=*|--pref=*|--pre=*|--pr=*|--p=*| \
            --disable-option-checking) :
      ;; #(
-  FCFLAGS=*|CFLAGS=*|LDFLAGS=*|LIBS=*) :
+  FCFLAGS=*|CFLAGS=*) :
      ;; #(
   -enable-silent-rules|-enable-silent-rules=*|--enable-silent-rules|--enable-silent-rules=*|-disable-silent-rules|--disable-silent-rules) :
      ;; #(
