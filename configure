@@ -1967,7 +1967,6 @@ case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
 
 
 
-
    if test -n "$BUILD_ENV"; then :
   if $as_echo "$BUILD_ENV" | grep ';[ ]*$' >/dev/null 2>&1; then :
 
@@ -3528,11 +3527,7 @@ fi
 
 acx_NETCDF_found=no
 acx_save_FCFLAGS=$FCFLAGS
-if ${NETCDF_FCFLAGS+:} false; then :
-
-else
-  NETCDF_FCFLAGS=$acx_fc_NetCDF_inc_search_args
-fi
+NETCDF_FCFLAGS=${NETCDF_FCFLAGS-$acx_fc_NetCDF_inc_search_args}
 FCFLAGS="$NETCDF_FCFLAGS $FCFLAGS"
       { $as_echo "$as_me:${as_lineno-$LINENO}: checking for netcdf.inc" >&5
 $as_echo_n "checking for netcdf.inc... " >&6; }
@@ -3609,7 +3604,6 @@ if test "x$acx_NETCDF_found" = xno; then :
    NETCDF_FCFLAGS=;NETCDF_FCLIBS=
 fi
 
-
    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for ar" >&5
 $as_echo_n "checking for ar... " >&6; }
    if ${acx_cv_prog_AR+:} false; then :
@@ -3656,7 +3650,6 @@ $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
 as_fn_error $? "unable to find ar
 See \`config.log' for more details" "$LINENO" 5; }
 fi
-
 
 
    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for python" >&5

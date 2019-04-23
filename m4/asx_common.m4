@@ -37,15 +37,6 @@ AC_DEFUN([ASX_VAR_APPEND_UNIQ],
 #
 AC_DEFUN([ASX_PREPEND_LDFLAGS], [m4_foreach([arg], m4_cdr($@), [ "$1 arg"])])
 
-# ASX_VAR_SET_IF_NOT_YET(VARIABLE,
-#                        [VALUE])
-# -----------------------------------------------------------------------------
-# Expands into a shell script that checks whether the shell variable VARIABLE
-# is already set and sets it to the VALUE if it is not the case.
-#
-AC_DEFUN([ASX_VAR_SET_IF_NOT_YET],
-  [AS_VAR_SET_IF([$1], [], [AS_VAR_SET([$1], [$2])])])
-
 # ASX_EXTRACT_ARGS(VARIABLE,
 #                  ARGUMENTS,
 #                  FLAG-PATTERN)
