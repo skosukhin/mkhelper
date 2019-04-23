@@ -11,7 +11,7 @@
 AC_DEFUN([ACX_BUILD_ENVIRONMENT],
   [AC_ARG_VAR([BUILD_ENV],
      [initialization code to set up the building environment (must end ]dnl
-[with a semicolon), e.g. 'LICENSE=file.lic; export LICENSE;'])
+[with a semicolon), e.g. 'LICENSE=file.lic; export LICENSE;'])dnl
    AS_IF([test -n "$BUILD_ENV"],
      [AS_IF([AS_ECHO(["$BUILD_ENV"]) | grep ';@<:@ @:>@*$' >/dev/null 2>&1],
         [],

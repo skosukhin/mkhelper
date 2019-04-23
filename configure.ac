@@ -124,7 +124,7 @@ ACX_LANG_PACKAGE_INIT([NetCDF],
   [-L "$acx_cv_fc_rpath_flag"])
 acx_NETCDF_found=no
 acx_save_FCFLAGS=$FCFLAGS
-ASX_VAR_SET_IF_NOT_YET([NETCDF_FCFLAGS], [$acx_fc_NetCDF_inc_search_args])
+NETCDF_FCFLAGS=${NETCDF_FCFLAGS-$acx_fc_NetCDF_inc_search_args}
 FCFLAGS="$NETCDF_FCFLAGS $FCFLAGS"
 ACX_FC_INCLUDE_CHECK([netcdf.inc],
   [ACX_LANG_LIB_SEARCH([NETCDF_FCLIBS], [nf_open],
@@ -136,7 +136,7 @@ AS_VAR_IF([acx_NETCDF_found], [no],
   [AS_VAR_APPEND([config_FCFLAGS], [" ${acx_cv_fc_macro_flag}NO_NETCDF"])
    NETCDF_FCFLAGS=;NETCDF_FCLIBS=])
 
-AC_ARG_VAR([AR], [the archiver command])
+AC_ARG_VAR([AR], [the archiver command])dnl
 ACX_PROG_SEARCH([AR], [ar],
   [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([], [])],
      [acx_ar_try='$acx_candidate cru libconftest.a conftest.$ac_objext dnl
@@ -147,7 +147,7 @@ ACX_PROG_SEARCH([AR], [ar],
   [AR=$acx_candidate])
 
 AC_ARG_VAR([PYTHON],
-  [Python interpreter command (used for Fortran dependency generation)])
+  [Python interpreter command (used for Fortran dependency generation)])dnl
 ACX_PROG_SEARCH([PYTHON], [python python3],
   [acx_depgen_try='$acx_candidate $srcdir/mkhelper/depgen.py -h > /dev/null'
    AC_TRY_EVAL([acx_depgen_try])],
