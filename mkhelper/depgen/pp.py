@@ -24,7 +24,8 @@ class Preprocessor:
     _re_identifier = re.compile(
         r'(([a-zA-Z_]\w*)(\s*\(\s*(\w+(?:\s*,\s*\w+)*)?\s*\))?)')
 
-    _re_block_comments = re.compile(r'/\*.*?\*/', re.S)
+    _re_block_comments_init = re.compile(r'(?:("|\').*?(?<!\\)\1)|(/\*)',
+                                         re.DOTALL)
 
     def __init__(self, stream, **kwargs):
         self._include_reader = IncludeReader(stream)
@@ -57,16 +58,12 @@ class Preprocessor:
                 return line
 
             line = self._replace_continuation(line)
-            line = Preprocessor._re_block_comments.sub(' ', line)
+            if not line:
+                return line
 
-            # if the line still has '/*' - the start of the block comments
-            while re.search(r'/\*', line):
-                suffix = self._include_reader.readline()
-                if not suffix:
-                    break
-                suffix = self._replace_continuation(suffix)
-                line = line + suffix
-                line = Preprocessor._re_block_comments.sub(' ', line)
+            line = self._remove_block_comments(line)
+            if not line:
+                return line
 
             # if(n)def statement
             match = Preprocessor._re_ifdef.match(line)
@@ -283,4 +280,37 @@ class Preprocessor:
         while line.endswith('\\\n'):
             suffix = self._include_reader.readline()
             line = line[:-2] + suffix
+        return line
+
+    def _remove_block_comments(self, line):
+        rescan = True
+        while rescan:
+            rescan = False
+            for match_init in \
+                    Preprocessor._re_block_comments_init.finditer(line):
+                # Check whether the line contains an unquoted block comment
+                # initiator '/*':
+                if match_init.group(2):
+                    # Check whether the line contains a block comment
+                    # terminator '*/' (even if it is quoted):
+                    term_idx = line.find('*/', match_init.regs[2][1])
+                    while term_idx < 0:
+                        # The block is not terminated yet, read the next line:
+                        next_line = self._include_reader.readline()
+                        if not next_line:
+                            # We have an unterminated block,
+                            # return an empty line:
+                            line = ''
+                            break  # while term_idx < 0
+                        line += next_line
+                        term_idx = line.find('*/', match_init.regs[2][1])
+                    else:
+                        # Replace the block of comments with a single
+                        # space:
+                        line = line[:match_init.regs[2][0]] + \
+                               ' ' + line[term_idx + 2:]
+                        # We have removed the first block of comments,
+                        # check if there is more on the next iteration:
+                        rescan = True
+                        break  # for match_init in ...
         return line
