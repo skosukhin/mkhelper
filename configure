@@ -1302,9 +1302,9 @@ Optional Features:
   --disable-option-checking  ignore unrecognized --enable/--with options
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
-  --enable-rpaths         append additional linker flags to LDFLAGS to add
+  --enable-rpaths         prepend LDFLAGS with additional linker flags to add
                           directories specified with -L flags to the runtime
-                          library search path [default=yes]
+                          library search path (RPATH) [default=yes]
   --enable-silent-rules   less verbose build output (undo: "make V=1")
                           [default=yes]
   --enable-additional-mods
@@ -2619,15 +2619,16 @@ $as_echo "$acx_cv_shlib_path_var" >&6; }
      ;;
 esac
    done
+   mkhelper_rpath_flags=
    for mkhelper_libdir in $mkhelper_libdirs; do
      if test -d "$mkhelper_libdir"; then :
-  case ' '$LDFLAGS' ' in #(
+  case ' '$mkhelper_rpath_flags' ' in #(
   *' '"$acx_cv_fc_rpath_flag$mkhelper_libdir"' '*) :
      ;; #(
   ' '' ') :
-    as_fn_append LDFLAGS "$acx_cv_fc_rpath_flag$mkhelper_libdir" ;; #(
+    as_fn_append mkhelper_rpath_flags "$acx_cv_fc_rpath_flag$mkhelper_libdir" ;; #(
   *) :
-    as_fn_append LDFLAGS ' '; as_fn_append LDFLAGS "$acx_cv_fc_rpath_flag$mkhelper_libdir" ;;
+    as_fn_append mkhelper_rpath_flags ' '; as_fn_append mkhelper_rpath_flags "$acx_cv_fc_rpath_flag$mkhelper_libdir" ;;
 esac
         case ':'`eval 'as_val=${'$acx_cv_shlib_path_var'};$as_echo "$as_val"'`':' in #(
   *':'"$mkhelper_libdir"':'*) :
@@ -2639,6 +2640,34 @@ esac
 esac
 fi
    done
+   if test -n "$mkhelper_rpath_flags"; then :
+  acx_shlib_rpath_flags_check_result=no
+   { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether Fortran compiler accepts the automatically generated RPATH flags" >&5
+$as_echo_n "checking whether Fortran compiler accepts the automatically generated RPATH flags... " >&6; }
+   acx_save_LDFLAGS=$LDFLAGS
+   LDFLAGS="$mkhelper_rpath_flags $LDFLAGS"
+   cat > conftest.$ac_ext <<_ACEOF
+      program main
+
+      end
+_ACEOF
+if ac_fn_fc_try_link "$LINENO"; then :
+  acx_shlib_rpath_flags_check_result=yes
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+   LDFLAGS=$acx_save_LDFLAGS
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_shlib_rpath_flags_check_result" >&5
+$as_echo "$acx_shlib_rpath_flags_check_result" >&6; }
+   if test "x$acx_shlib_rpath_flags_check_result" = xyes; then :
+  LDFLAGS="$mkhelper_rpath_flags $LDFLAGS"
+else
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "Fortran compiler does not accept the automatically generated RPATH flags '$mkhelper_rpath_flags'
+See \`config.log' for more details" "$LINENO" 5; }
+fi
+fi
    eval export $acx_cv_shlib_path_var
 fi
 

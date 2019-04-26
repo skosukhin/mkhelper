@@ -15,8 +15,9 @@ ACX_BUILD_ENVIRONMENT
 
 AC_ARG_ENABLE([rpaths],
   [AC_HELP_STRING([--enable-rpaths],
-     [append additional linker flags to LDFLAGS to add directories specified
-with -L flags to the runtime library search path @<:@default=yes@:>@])], [],
+     [prepend LDFLAGS with additional linker flags to add directories specified
+with -L flags to the runtime library search path (RPATH)
+@<:@default=yes@:>@])], [],
   [enable_rpaths=yes])
 
 ACX_COMPILER_CROSS_CHECK_DELAY
@@ -29,13 +30,17 @@ AS_VAR_IF([enable_rpaths], [yes],
    ACX_SHLIB_PATH_VAR
    eval link_cmd="\"$ac_link\""
    ASX_EXTRACT_ARGS([mkhelper_libdirs], [`echo $link_cmd`], ['-L@<:@ @:>@*'])
+   mkhelper_rpath_flags=
    for mkhelper_libdir in $mkhelper_libdirs; do
      AS_IF([test -d "$mkhelper_libdir"],
-       [ASX_VAR_APPEND_UNIQ([LDFLAGS],
+       [ASX_VAR_APPEND_UNIQ([mkhelper_rpath_flags],
           ["$acx_cv_fc_rpath_flag$mkhelper_libdir"], [' '])
         ASX_VAR_APPEND_UNIQ([$acx_cv_shlib_path_var],
           ["$mkhelper_libdir"], [':'])])
    done
+   AS_IF([test -n "$mkhelper_rpath_flags"],
+     [ACX_SHLIB_RPATH_FLAGS_CHECK([$mkhelper_rpath_flags],
+        [LDFLAGS="$mkhelper_rpath_flags $LDFLAGS"])])
    eval export $acx_cv_shlib_path_var])
 
 ACX_COMPILER_CROSS_CHECK_NOW

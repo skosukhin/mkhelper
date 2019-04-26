@@ -28,6 +28,31 @@ AC_DEFUN([ACX_SHLIB_CC_RPATH_FLAG],
 AC_DEFUN([ACX_SHLIB_CXX_RPATH_FLAG],
   [AC_REQUIRE([ACX_COMPILER_CXX_VENDOR])_ACX_SHLIB_RPATH_FLAG])
 
+# ACX_SHLIB_RPATH_FLAGS_CHECK(RPATH_FLAGS)
+#                             [ACTION-IF-SUCCESS],
+#                             [ACTION-IF-FAILURE = FAILURE])
+# -----------------------------------------------------------------------------
+# Expands to a shell script that checks whether the current compiler accepts
+# the automatically generated RPATH flags RPATH_FLAGS by trying to link a dummy
+# program with LDFLAGS set to "RPATH_FLAGS $LDFLAGS".
+#
+# If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
+# (defaults to failing with an error message).
+#
+AC_DEFUN([ACX_SHLIB_RPATH_FLAGS_CHECK],
+  [acx_shlib_rpath_flags_check_result=no
+   AC_MSG_CHECKING([whether _AC_LANG compiler accepts the automatically dnl
+generated RPATH flags])
+   acx_save_LDFLAGS=$LDFLAGS
+   LDFLAGS="$1 $LDFLAGS"
+   AC_LINK_IFELSE([AC_LANG_PROGRAM],
+     [acx_shlib_rpath_flags_check_result=yes])
+   LDFLAGS=$acx_save_LDFLAGS
+   AC_MSG_RESULT([$acx_shlib_rpath_flags_check_result])
+   AS_VAR_IF([acx_shlib_rpath_flags_check_result], [yes], [$2],
+     [m4_default([$3], [AC_MSG_FAILURE([_AC_LANG compiler does not accept dnl
+the automatically generated RPATH flags '$1'])])])])
+
 # ACX_SHLIB_PATH_VAR()
 # -----------------------------------------------------------------------------
 # Originally taken from Libtools where it is part of libtool.m4.
