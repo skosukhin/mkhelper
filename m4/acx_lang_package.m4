@@ -4,7 +4,7 @@
 #                       [INC-SEARCH-SUFFIX = /include],
 #                       [LIB-SEARCH-SUFFIX = /lib])
 # -----------------------------------------------------------------------------
-# Sets command-line arguments of the configure script that allow users to set
+# Sets command-line arguments of the configure script that allows for setting
 # search paths for the PACKAGE-NAME. By default, sets only the
 # "--with-package-name-root" argument.
 #
