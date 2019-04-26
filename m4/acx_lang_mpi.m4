@@ -29,8 +29,7 @@
 # acx_cv_prog_[]AS_TR_SH($acx_prog_mpi_test_file) variable.
 #
 AC_DEFUN([ACX_LANG_MPI_CHECK],
-  [acx_save_[]_AC_LANG_PREFIX[]FLAGS=$[]_AC_LANG_PREFIX[]FLAGS
-   for acx_prog_mpi_test_file in dnl
+  [for acx_prog_mpi_test_file in dnl
 m4_ifval([$2], ["$srcdir/$2"], ["$ac_aux_dir"])/*.$ac_ext; do
      AS_VAR_PUSHDEF([acx_cache_var],
        [acx_cv_prog_${acx_prog_mpi_test_file}])dnl
