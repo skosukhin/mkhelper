@@ -3,13 +3,13 @@
 *.pyc
 __pycache__
 
-/autom4te.cache
+autom4te.cache
 
-/Makefile
-/config.cache
+/config.cache*
 /config.log
-/config.status
 /depgen.config
+Makefile
+config.status
 
 *.a
 *.f90.d

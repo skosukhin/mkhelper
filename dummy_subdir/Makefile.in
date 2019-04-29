@@ -1,0 +1,7 @@
+FCFLAGS=@FCFLAGS@
+CFLAGS=@CFLAGS@
+
+.SUFFIXES:
+.PHONY: all
+
+all:;

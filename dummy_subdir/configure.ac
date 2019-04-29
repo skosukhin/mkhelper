@@ -1,6 +1,8 @@
 AC_INIT([mkhelper_dummy], [1.0], [skosukhin@gmail.com])
 AC_PREREQ([2.69])
 
+AC_CONFIG_FILES([Makefile])
+
 AC_PROG_CC
 
 AS_IF([test -n "$FCFLAGS"],
@@ -26,3 +28,5 @@ AS_IF([test x"$enable_always" != xyes],
 enable the option 'always'])])
 
 AC_ARG_VAR([FCFLAGS], [this variable must be empty])
+
+AC_OUTPUT
