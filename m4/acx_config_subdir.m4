@@ -86,9 +86,14 @@ script found])
               AS_IF([test -n "$acx_config_subdir_script"],
                 [AS_VAR_COPY([acx_config_subdir_args],
                    [acx_config_subdir_args_[]AS_TR_SH([$acx_config_subdir])])
-                 AS_CASE([$cache_file],
-                   [[[\\/]]* | ?:[[\\/]]*], [acx_sub_cache_file=$cache_file],
-                   [acx_sub_cache_file="$ac_top_build_prefix$cache_file"])
+                 AS_IF([test /dev/null != "$cache_file"],
+                   [AS_CASE([$cache_file],
+                      [[[\\/]]* | ?:[[\\/]]*],
+                      [acx_sub_cache_file=$cache_file],
+                      [acx_sub_cache_file="$ac_top_build_prefix$cache_file"])
+                      acx_sub_cache_file=dnl
+"$acx_sub_cache_file.`echo "$acx_config_subdir" | tr / .`"],
+                   [acx_sub_cache_file=$cache_file])
                  for acx_config_subdir_arg in \
                    "--cache-file=$acx_sub_cache_file" \
                    "--srcdir=$ac_srcdir" \

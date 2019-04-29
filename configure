@@ -4113,12 +4113,17 @@ else
 fi
               if test -n "$acx_config_subdir_script"; then :
   eval acx_config_subdir_args=\$acx_config_subdir_args_`$as_echo "$acx_config_subdir" | $as_tr_sh`
-                 case $cache_file in #(
+                 if test /dev/null != "$cache_file"; then :
+  case $cache_file in #(
   [\\/]* | ?:[\\/]*) :
     acx_sub_cache_file=$cache_file ;; #(
   *) :
     acx_sub_cache_file="$ac_top_build_prefix$cache_file" ;;
 esac
+                      acx_sub_cache_file="$acx_sub_cache_file.`echo "$acx_config_subdir" | tr / .`"
+else
+  acx_sub_cache_file=$cache_file
+fi
                  for acx_config_subdir_arg in \
                    "--cache-file=$acx_sub_cache_file" \
                    "--srcdir=$ac_srcdir" \
