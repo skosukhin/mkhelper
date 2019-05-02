@@ -1,21 +1,32 @@
-.idea
+# PyCharm project files
+/.idea
 
+# Autoreconf stage files
+/autom4te.cache
+
+# Configure stage files
 *.pyc
-__pycache__
-
-autom4te.cache
-
 /config.cache*
 /config.log
 /depgen.config
 Makefile
+__pycache__
 config.status
 
+# Build stage files
 *.a
 *.f90.d
 *.f90.debug
-*.mod
 *.o
 .dirstamp
 /deplist.debug
 /main
+/mod
+
+# Install stage files
+/install
+
+# Mac OS generated files
+*.dSYM
+.DS_Store
+
