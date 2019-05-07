@@ -48,7 +48,7 @@ AC_DEFUN([ACX_CONFIG_SUBDIR],
        [acx_config_subdir_ignore_arg=no])
    done
    m4_ifnblank([$3],
-     [set dummy m4_foreach([opt], [$3], [opt ]); shift
+     [set dummy m4_normalize(m4_foreach([opt], [$3], [opt ])) ; shift
       for acx_config_subdir_arg; do
         ASX_ESCAPE_SINGLE_QUOTE([acx_config_subdir_arg])
         AS_VAR_APPEND([acx_config_subdir_args],
