@@ -1,3 +1,6 @@
+# This file contains simplified (but probably less robust) versions of macros
+# from https://github.com/skosukhin/mkhelper/tree/master/m4/acx_compiler.m4
+
 # ACX_COMPILER_FC_VENDOR()
 # -----------------------------------------------------------------------------
 # Detects the vendor of the Fortran compiler. The result is "intel", "nag",

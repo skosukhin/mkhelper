@@ -206,7 +206,8 @@ unknown: CHOKEME"
 # Detects the version of the compiler. The result is either "unknown" or a
 # string in the form "epoch:major.minor.patchversion", where "epoch:" is an
 # optional prefix used in order to have an increasing version number in case of
-# marketing change.
+# marketing change. The "patchversion" position might equal to "x" if the
+# script fails to identify it correctly.
 #
 # The result is cached in the acx_cv_[]_AC_LANG_ABBREV[]_compiler_version
 # variable.
@@ -244,7 +245,7 @@ m4_define([_ACX_COMPILER_VERSION_FROM_MACROS],
         [$2], [], [acx_compiler_version_from_macros_result=unknown])])
    AS_IF([test x"$acx_compiler_version_from_macros_result" != xunknown],
      [AC_COMPUTE_INT([acx_compiler_version_patch],
-        [$3], [], [acx_compiler_version_from_macros_result=unknown])])
+        [$3], [], [acx_compiler_version_patch='x'])])
    AS_VAR_IF([acx_compiler_version_from_macros_result], [unknown],
      [acx_cache_var=unknown],
      [acx_cache_var="$acx_compiler_version_major.dnl
