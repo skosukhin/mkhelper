@@ -1,0 +1,27 @@
+--- a/config/ltmain.sh
++++ b/config/ltmain.sh
+@@ -8903,7 +8903,8 @@ func_mode_link ()
+ 	  xlcverstring="$wl-compatibility_version $wl$minor_current $wl-current_version $wl$minor_current.$revision"
+ 	  verstring="-compatibility_version $minor_current -current_version $minor_current.$revision"
+           # On Darwin other compilers
+-          case $CC in
++          func_cc_basename $CC
++          case $func_cc_basename_result in
+               nagfor*)
+                   verstring="$wl-compatibility_version $wl$minor_current $wl-current_version $wl$minor_current.$revision"
+                   ;;
+--- a/m4/libtool.m4
++++ b/m4/libtool.m4
+@@ -118,6 +118,12 @@ func_cc_basename ()
+       esac
+     done
+     func_cc_basename_result=`$ECHO "$cc_temp" | $SED "s%.*/%%; s%^$host_alias-%%"`
++
++    # Set result to 'nagfor-wrapper' when NAG compiler is called via a wrapper (e.g. mpif90).
++    case $func_cc_basename_result in
++      nagfor*) ;;
++      *) $cc_temp -V 2>&1 | $GREP '^NAG Fortran Compiler Release' >/dev/null 2>&1 && func_cc_basename_result='nagfor-wrapper' ;;
++    esac
+ }
+ ])# _LT_PREPARE_CC_BASENAME
+ 
