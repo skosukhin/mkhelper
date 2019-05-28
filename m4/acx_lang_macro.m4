@@ -90,7 +90,7 @@ AC_DEFUN([ACX_LANG_MACRO_CHECK_VALUE],
      [AS_VAR_SET([acx_cache_var], [unknown])
       AS_VAR_IF([cross_compiling], [no],
         [AC_LINK_IFELSE([_ACX_LANG_MACRO_PRINT_PROGRAM([$1])],
-           [acx_exec_result=`./conftest$ac_exeext 2>/dev/null`
+           [acx_exec_result=`./conftest$ac_exeext 2>&AS_MESSAGE_LOG_FD`
             AS_IF([test $? -eq 0],
               [AS_VAR_COPY([acx_cache_var], [acx_exec_result])])])])
       m4_ifnblank([$2],
@@ -158,12 +158,19 @@ _AC_LANG[ language])])])
 m4_define([_ACX_LANG_MACRO_PRINT_PROGRAM(C)],
   [AC_LANG_PROGRAM([[#include <stdio.h>]],
 [[#ifndef $1
-      choke me
+choke me
 #else
 #define STRINGIFY2(X) #X
 #define STRINGIFY(X) STRINGIFY2(X)
 printf("%s\n", STRINGIFY($1));
 #endif]])])
+
+# _ACX_LANG_MACRO_PRINT_PROGRAM(C)(MACRO-NAME)
+# -----------------------------------------------------------------------------
+# Implementation of _ACX_LANG_MACRO_PRINT_PROGRAM for C++ language.
+#
+m4_copy([_ACX_LANG_MACRO_PRINT_PROGRAM(C)],
+  [_ACX_LANG_MACRO_PRINT_PROGRAM(C++)])
 
 # _ACX_LANG_MACRO_PRINT_PROGRAM(Fortran)(MACRO-NAME)
 # -----------------------------------------------------------------------------
