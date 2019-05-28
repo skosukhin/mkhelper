@@ -3249,6 +3249,9 @@ else
   acx_cv_fc_openmp_flag=unknown
       acx_save_FCFLAGS=$FCFLAGS
       cat > conftest.$ac_ext <<_ACEOF
+#ifndef _OPENMP
+      choke me
+#endif
 
       program main
       implicit none
@@ -3283,45 +3286,7 @@ as_fn_error $? "unable to detect Fortran compiler flag needed to enable OpenMP s
 See \`config.log' for more details" "$LINENO" 5; }
 else
   as_fn_append FCFLAGS " $acx_cv_fc_openmp_flag"
-         { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether the Fortran preprocessor macro _OPENMP is defined" >&5
-$as_echo_n "checking whether the Fortran preprocessor macro _OPENMP is defined... " >&6; }
-if ${acx_cv_fc_macro__OPENMP_defined+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  cat > conftest.$ac_ext <<_ACEOF
-      program main
-#ifdef _OPENMP
-#else
-      choke me
-#endif
-      end
-_ACEOF
-if ac_fn_fc_try_compile "$LINENO"; then :
-  acx_cv_fc_macro__OPENMP_defined=yes
-else
-  cat > conftest.$ac_ext <<_ACEOF
-      program main
-#ifndef _OPENMP
-#else
-      choke me
-#endif
-      end
-_ACEOF
-if ac_fn_fc_try_compile "$LINENO"; then :
-  acx_cv_fc_macro__OPENMP_defined=no
-else
-  acx_cv_fc_macro__OPENMP_defined=unsupported
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_macro__OPENMP_defined" >&5
-$as_echo "$acx_cv_fc_macro__OPENMP_defined" >&6; }
-   acx_macro_defined=$acx_cv_fc_macro__OPENMP_defined
-
-      if test "x$acx_macro_defined" = xyes; then :
-     { $as_echo "$as_me:${as_lineno-$LINENO}: checking for the value of the Fortran preprocessor macro _OPENMP" >&5
+         { $as_echo "$as_me:${as_lineno-$LINENO}: checking for the value of the Fortran preprocessor macro _OPENMP" >&5
 $as_echo_n "checking for the value of the Fortran preprocessor macro _OPENMP... " >&6; }
 if ${acx_cv_fc_macro__OPENMP_value+:} false; then :
   $as_echo_n "(cached) " >&6
@@ -3367,7 +3332,7 @@ else
 #endif
 _ACEOF
 if ac_fn_fc_try_link "$LINENO"; then :
-  acx_exec_result=`./conftest$ac_exeext 2>/dev/null`
+  acx_exec_result=`./conftest$ac_exeext 2>&5`
             if test $? -eq 0; then :
   acx_cv_fc_macro__OPENMP_value=$acx_exec_result
 fi
@@ -3376,7 +3341,7 @@ rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 fi
       if test "x$acx_cv_fc_macro__OPENMP_value" = xunknown; then :
-  set dummy 201511 201307 201107 200805 200505; shift
+  set dummy 201511 201307 201107 200805 200505 200011 199911 199710; shift
             while test $# != 0; do
               cat > conftest.$ac_ext <<_ACEOF
       program main
@@ -3399,19 +3364,13 @@ fi
 $as_echo "$acx_cv_fc_macro__OPENMP_value" >&6; }
    acx_macro_value=$acx_cv_fc_macro__OPENMP_value
 
-         if test "x$acx_macro_value" = xunknown; then :
+      if test "x$acx_macro_value" = xunknown; then :
   { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
 as_fn_error $? "unable to detect the value of the Fortran preprocessor macro _OPENMP
 See \`config.log' for more details" "$LINENO" 5; }
 else
   as_fn_append DEPGEN_DEFS " ${acx_cv_fc_macro_flag}_OPENMP=$acx_macro_value"
-fi
-else
-  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
-$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
-as_fn_error $? "Fortran compiler does not define the preprocessor macro _OPENMP
-See \`config.log' for more details" "$LINENO" 5; }
 fi
 fi
 

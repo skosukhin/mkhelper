@@ -99,17 +99,13 @@ AC_ARG_ENABLE([openmp],
 AS_VAR_IF([enable_openmp], [yes],
   [ACX_LANG_OPENMP_FLAG(
      [AS_VAR_APPEND([FCFLAGS], [" $acx_cv_fc_openmp_flag"])
-      ACX_LANG_MACRO_CHECK_DEFINED([_OPENMP])
-      AS_VAR_IF([acx_macro_defined], [yes],
-        [ACX_LANG_MACRO_CHECK_VALUE([_OPENMP],
-           [201511 201307 201107 200805 200505])
-         AS_VAR_IF([acx_macro_value], [unknown],
-           [AC_MSG_FAILURE([unable to detect the value of the Fortran dnl
+      ACX_LANG_MACRO_CHECK_VALUE([_OPENMP],
+        [201511 201307 201107 200805 200505 200011 199911 199710])
+      AS_VAR_IF([acx_macro_value], [unknown],
+        [AC_MSG_FAILURE([unable to detect the value of the Fortran dnl
 preprocessor macro _OPENMP])],
-           [AS_VAR_APPEND([DEPGEN_DEFS],
-              [" ${acx_cv_fc_macro_flag}_OPENMP=$acx_macro_value"])])],
-        [AC_MSG_FAILURE([Fortran compiler does not define the dnl
-preprocessor macro _OPENMP])])])],
+        [AS_VAR_APPEND([DEPGEN_DEFS],
+           [" ${acx_cv_fc_macro_flag}_OPENMP=$acx_macro_value"])])])],
   [ACX_LANG_MACRO_CHECK_DEFINED([_OPENMP])
    AS_VAR_IF([acx_macro_defined], [yes],
      [AC_MSG_ERROR([Fortran compiler enables OpenMP support by default: set dnl
