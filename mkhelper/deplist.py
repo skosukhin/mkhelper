@@ -26,7 +26,7 @@ def parse_args():
         '-d', '--debug-file',
         help='dump debug information to DEBUG_FILE')
     parser.add_argument(
-        '-t', '--target', nargs='+',
+        '-t', '--target', nargs='*',
         help='names of the make targets (or prerequisites, see --reverse); if '
              'not specified, all targets (or prerequisites) found in '
              'MAKEFILE(s) are considered as children of a meta target, which '
@@ -49,7 +49,7 @@ def parse_args():
         help='reverse the dependency graph: makefile targets become children '
              'of their prerequisites')
     parser.add_argument(
-        '-f', '--makefile', nargs='+',
+        '-f', '--makefile', nargs='*',
         help='paths to makefiles')
 
     args = parser.parse_args()
