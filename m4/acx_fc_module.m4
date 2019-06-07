@@ -43,6 +43,8 @@ for module files],
       cd conftest.dir
       AC_COMPILE_IFELSE([AC_LANG_SOURCE(
 [[      module conftest_module
+      implicit none
+      public
       contains
       subroutine conftest_routine
       end subroutine
@@ -97,6 +99,8 @@ for module files],
       mv conftest.$ac_ext sub/conftest.$ac_ext
       AC_LANG_CONFTEST([AC_LANG_SOURCE(
 [[      module conftest_module
+      implicit none
+      public
       contains
       subroutine conftest_routine
       end subroutine
@@ -145,6 +149,8 @@ AS_VAR_TEST_SET([acx_cv_fc_module_naming_ext])],
       cd conftest.dir
       AC_COMPILE_IFELSE([AC_LANG_SOURCE(
 [[      module conftest_module
+      implicit none
+      public
       contains
       subroutine conftest_routine
       end subroutine

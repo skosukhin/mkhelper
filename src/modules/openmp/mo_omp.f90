@@ -1,4 +1,6 @@
 module mo_omp
+  implicit none
+  public
   contains
   subroutine print_omp()
 #ifndef _OPENMP
