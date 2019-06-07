@@ -2796,6 +2796,8 @@ else
       cd conftest.dir
       cat > conftest.$ac_ext <<_ACEOF
       module conftest_module
+      implicit none
+      public
       contains
       subroutine conftest_routine
       end subroutine
@@ -2853,6 +2855,8 @@ _ACEOF
       mv conftest.$ac_ext sub/conftest.$ac_ext
       cat > conftest.$ac_ext <<_ACEOF
       module conftest_module
+      implicit none
+      public
       contains
       subroutine conftest_routine
       end subroutine
@@ -2895,6 +2899,8 @@ else
       cd conftest.dir
       cat > conftest.$ac_ext <<_ACEOF
       module conftest_module
+      implicit none
+      public
       contains
       subroutine conftest_routine
       end subroutine

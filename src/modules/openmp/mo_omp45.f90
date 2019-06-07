@@ -1,4 +1,6 @@
 module mo_omp45
+  implicit none
+  public
   contains
   subroutine print_omp()
 #if _OPENMP < 201511
