@@ -5,8 +5,6 @@ AC_CONFIG_SRCDIR([src/program/main.f90])
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_MACRO_DIR([m4])
 
-AC_CONFIG_FILES([Makefile depgen.config])
-
 AC_PREFIX_DEFAULT(["`pwd`/install"])
 
 AC_CANONICAL_HOST
@@ -164,5 +162,12 @@ ACX_CONFIG_SUBDIR([dummy_subdir],
    [ACX_CONFIG_SUBDIR_PATTERN_ENABLE([always])]],
   [[FCFLAGS=], [CFLAGS='-g'],
    [--enable-always=yes]])
+
+AC_CONFIG_FILES([Makefile depgen.config])
+
+AC_CONFIG_COMMANDS([depfiles],
+  [${MAKE-make} -f Makefile dummy-depfiles >/dev/null 2>&AS_MESSAGE_LOG_FD
+   sleep 1
+   touch Makefile])
 
 AC_OUTPUT
