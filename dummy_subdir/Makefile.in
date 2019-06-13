@@ -2,6 +2,11 @@ FCFLAGS=@FCFLAGS@
 CFLAGS=@CFLAGS@
 
 .SUFFIXES:
-.PHONY: all
+.PHONY: all clean distclean
 
 all:;
+
+clean:;
+
+distclean:
+	rm -f config.log config.status Makefile

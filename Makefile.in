@@ -1,15 +1,18 @@
 # Source file root directory:
-srcdir:= @srcdir@
+srcdir= @srcdir@
 
 # Source file subdirectories:
-subdirs:= src @subdirs_extra@
+subdirs= src
+
+# Bundled subdirectories:
+bundled_subdirs= @subdirs_extra@
 
 # Installation directories:
-prefix:= @prefix@
-exec_prefix:= @exec_prefix@
+prefix= @prefix@
+exec_prefix= @exec_prefix@
 
 # Fortran module file directory:
-moddir:= mod
+moddir= mod
 
 # Shell and environment:
 SHELL= @SHELL@
@@ -20,8 +23,8 @@ FC= @FC@
 FCFLAGS= @FCFLAGS@
 LDFLAGS= @LDFLAGS@
 LIBS= @LIBS@
-config_FCFLAGS:= @FC_MOD_IN@$(moddir) @FC_MOD_OUT@$(moddir) @FC_INC_FLAG@$(srcdir)/src/include @FC_INC_FLAG_PP_f90@$(srcdir)/src/include @NETCDF_FCFLAGS@ @config_FCFLAGS@
-config_LIBS:= @NETCDF_FCLIBS@
+config_FCFLAGS= @FC_MOD_IN@$(moddir) @FC_MOD_OUT@$(moddir) @FC_INC_FLAG@$(srcdir)/src/include @FC_INC_FLAG_PP_f90@$(srcdir)/src/include @NETCDF_FCFLAGS@ @config_FCFLAGS@
+config_LIBS= @NETCDF_FCLIBS@
 
 # Other utilities:
 INSTALL= @INSTALL@
@@ -42,16 +45,16 @@ silent_AR=     @echo "  AR      " $@;
 endif
 
 # Source files:
-srcs:= $(shell find $(addprefix $(srcdir)/, $(subdirs)) -name '*.f90')
+srcs= $(shell find $(addprefix $(srcdir)/, $(subdirs)) -name '*.f90')
 
 # Stamp files of the build directories:
-dirstamps:= $(patsubst $(srcdir)/%, %.dirstamp, $(sort $(dir $(srcs)))) $(moddir)/.dirstamp
+dirstamps= $(patsubst $(srcdir)/%, %.dirstamp, $(sort $(dir $(srcs)))) $(moddir)/.dirstamp
 
 # Dependency files:
-depfiles:= $(patsubst $(srcdir)/%, %.d, $(srcs))
+depfiles= $(patsubst $(srcdir)/%, %.d, $(srcs))
 
 # Root object file:
-rootobj:= src/program/main.o
+rootobj= src/program/main.o
 
 # Source file selective search paths:
 vpath %.f90 $(srcdir)
@@ -60,6 +63,8 @@ vpath %.f90 $(srcdir)
 .SUFFIXES:
 # Targets not associated with files:
 .PHONY: all depend mostlyclean clean distclean maintainer-clean install dummy-depfiles
+# Call make inside the subdirectories unconditionally:
+.PHONY: $(bundled_subdirs)
 # Keep sentinel files of created directories:
 .PRECIOUS: $(dirstamps)
 
@@ -68,7 +73,7 @@ all: main
 
 depend: $(depfiles)
 
-mostlyclean:
+mostlyclean: $(bundled_subdirs)
 	rm -f main libmain.a $(patsubst $(srcdir)/%.f90, %.o, $(srcs)) $(moddir)/*.@FC_MOD_FILE_EXT@
 
 clean: mostlyclean
@@ -77,7 +82,7 @@ clean: mostlyclean
 distclean: clean
 	rm -f $(depfiles) $(dirstamps) config.log config.status Makefile depgen.config
 	find -name '*.pyc' -delete -o -name '*.pyo' -delete -o -name '__pycache__' -delete
-	@for dir in $(subdirs) $(moddir) externals; do \
+	@for dir in $(subdirs) $(bundled_subdirs) $(moddir) externals; do \
 	  if test -d "$$dir"; then \
 	    echo "find '$$dir' -type d -empty -delete"; \
 	    find "$$dir" -type d -empty -delete; \
@@ -98,7 +103,7 @@ main: $(rootobj) libmain.a
 libmain.a: $(shell $(DEPLIST) -t $(rootobj) -p '*.o' --inc-oo -f $(depfiles) Makefile)
 	$(silent_AR)$(BUILD_ENV) rm -f $@ && $(AR) cru $@ $^
 
-%.o: %.f90 | $(dirstamps)
+%.o: %.f90 | $(dirstamps) $(bundled_subdirs)
 	$(silent_FC)$(BUILD_ENV) $(FC) -o $@ -c $(config_FCFLAGS) $(FCFLAGS) @FCFLAGS_f90@ $<
 
 # Fortran module file tracking rule:
@@ -119,6 +124,14 @@ $(moddir)/%.@FC_MOD_FILE_EXT@:
 
 # Undetectable Fortran dependencies:
 src/program/main.o:| src/program/implicit_external.o
+
+# Make bundled libraries:
+$(bundled_subdirs):
+	@if test -f '$@/Makefile'; then \
+	  $(MAKE) -C $@ $(filter-out install, $(MAKECMDGOALS)) V=$(V); \
+	else \
+	  test xdistclean = x$(filter distclean, $(MAKECMDGOALS)); \
+	fi
 
 # Dummy dependency file generation rule (called by config.status):
 dummy-depfiles: | $(dirstamps)
