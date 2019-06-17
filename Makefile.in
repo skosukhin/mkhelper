@@ -128,7 +128,7 @@ src/program/main.o:| src/program/implicit_external.o
 # Make bundled libraries:
 $(bundled_subdirs):
 	@if test -f '$@/Makefile'; then \
-	  $(MAKE) -C $@ $(filter-out install, $(MAKECMDGOALS)) V=$(V); \
+	  $(MAKE) -C $@ $(filter all mostlyclean clean distclean, $(MAKECMDGOALS)) V=$(V); \
 	else \
 	  test xdistclean = x$(filter distclean, $(MAKECMDGOALS)); \
 	fi

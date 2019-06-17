@@ -2,9 +2,11 @@ FCFLAGS=@FCFLAGS@
 CFLAGS=@CFLAGS@
 
 .SUFFIXES:
-.PHONY: all clean distclean
+.PHONY: all mostlyclean clean distclean
 
 all:;
+
+mostlyclean:;
 
 clean:;
 
