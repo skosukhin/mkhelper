@@ -41,6 +41,7 @@ AC_DEFUN([ACX_FC_MANGLING_GLOBAL],
              AC_LANG_POP([C])
              AC_LINK_IFELSE([], [acx_success=yes])
              AC_LANG_PUSH([C])
+             rm -f ./conftest_c.$ac_objext
              AS_VAR_IF([acx_success], [yes], [break 2])])
         done
       done
@@ -66,13 +67,14 @@ AC_DEFUN([ACX_FC_MANGLING_GLOBAL],
              AC_LANG_POP([C])
              AC_LINK_IFELSE([], [acx_success=yes])
              AC_LANG_PUSH([C])
+             rm -f ./conftest_c.$ac_objext
              AS_VAR_IF([acx_success], [yes], [break])])
          done
          AS_VAR_IF([acx_success], [yes],
            [AS_VAR_APPEND([acx_cache_var], ["$acx_extra_underscore"])],
            [acx_cache_var=unknown])])
-      rm -f ./conftest_c.$ac_objext
       AC_LANG_POP([C])
+      rm -f conftest.$ac_ext
       LIBS=$acx_save_LIBS])
    AC_LANG_POP([Fortran])
    m4_popdef([acx_cache_var])])
@@ -207,10 +209,11 @@ __intel_new_feature_proc_init() {}
            AC_LANG_POP([C])
            AC_LINK_IFELSE([], [acx_cache_var=$acx_func_name])
            AC_LANG_PUSH([C])
+           rm -f conftest_c.$ac_objext
            AS_VAR_IF([acx_cache_var], [unknown], [], [break])])
       done
-      rm -f ./conftest_c.$ac_objext
       AC_LANG_POP([C])
+      rm -f conftest.$ac_ext
       LIBS=$acx_save_LIBS])
    AS_VAR_IF([acx_cache_var], [unknown],
      [m4_default([$2], [AC_MSG_FAILURE([unable to detect the name of dnl

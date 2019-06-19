@@ -2817,6 +2817,7 @@ _ACEOF
 fi
 rm -f core conftest.err conftest.$ac_objext
          done
+         rm -f conftest.$ac_ext
          FCFLAGS=$acx_save_FCFLAGS
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
@@ -2973,6 +2974,7 @@ rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext
       done
       FCFLAGS=$acx_save_FCFLAGS
+      rm -f conftest.$ac_ext
       rm -rf conftest.dir
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_ftn_include_flag" >&5
@@ -3043,7 +3045,7 @@ esac
 else
   as_fn_append acx_cv_fc_ftn_include_order ",$acx_exec_result"
 fi
-                 rm -f ./conftest$ac_exeext
+                 rm -f conftest$ac_exeext
 else
   break
 fi
@@ -3100,6 +3102,7 @@ rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext
       done
       FCFLAGS=$acx_save_FCFLAGS
+      rm -f conftest.$ac_ext
       rm -rf conftest.dir
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_pp_include_flag" >&5
@@ -3170,7 +3173,7 @@ esac
 else
   as_fn_append acx_cv_fc_pp_include_order ",$acx_exec_result"
 fi
-                 rm -f ./conftest$ac_exeext
+                 rm -f conftest$ac_exeext
 else
   break
 fi
@@ -3224,6 +3227,7 @@ _ACEOF
 fi
 rm -f core conftest.err conftest.$ac_objext
       done
+      rm -f conftest.$ac_ext
       FCFLAGS=$acx_save_FCFLAGS
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_macro_flag" >&5
@@ -3303,6 +3307,7 @@ fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext
       done
+      rm -f conftest.$ac_ext
       FCFLAGS=$acx_save_FCFLAGS
 fi
    if test -n "$acx_cv_fc_openmp_flag"; then :
@@ -3568,6 +3573,7 @@ fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext
       done
+      rm -f conftest.$ac_ext
       LIBS=$acx_save_LIBS
 fi
    if { as_var=acx_cv_fc_lib_func_`$as_echo "$acx_fc_lib_search" | $as_tr_sh`; eval \${$as_var+:} false; }; then :
