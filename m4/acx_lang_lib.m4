@@ -120,6 +120,7 @@ m4_define([ACX_LANG_LIB_SEARCH()],
           [AS_VAR_COPY([acx_cache_var], [acx_libs])
            break])
       done
+      rm -f conftest.$ac_ext
       LIBS=$acx_save_LIBS])
    AS_VAR_SET_IF([acx_cache_var],
      [AS_IF([test -n "AS_VAR_GET(acx_cache_var)"],

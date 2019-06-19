@@ -63,6 +63,7 @@ $acx_lang_openmp_flag"
           [acx_cache_var=$acx_lang_openmp_flag
            break])
       done
+      rm -f conftest.$ac_ext
       _AC_LANG_PREFIX[]FLAGS=$acx_save_[]_AC_LANG_PREFIX[]FLAGS])
    AS_IF([test -n "$acx_cache_var"],
      [AC_MSG_RESULT([$acx_cache_var])],

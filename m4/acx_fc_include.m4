@@ -169,6 +169,7 @@ paths for _ACX_FC_INCLUDE_DESC([$1])], [acx_cache_var],
            break])
       done
       FCFLAGS=$acx_save_FCFLAGS
+      rm -f conftest.$ac_ext
       rm -rf conftest.dir])
    m4_popdef([acx_cache_var])])
 
@@ -236,7 +237,7 @@ sed 's%conftest\(\.\$ac_ext\)%../src/conftest\1%'`
                  AS_IF([test -z "$acx_cache_var"],
                    [acx_cache_var=$acx_exec_result],
                    [AS_VAR_APPEND([acx_cache_var], [",$acx_exec_result"])])
-                 rm -f ./conftest$ac_exeext],
+                 rm -f conftest$ac_exeext],
                 [break])],
              [break])
          done

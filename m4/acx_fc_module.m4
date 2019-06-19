@@ -61,6 +61,7 @@ dnl Add the flag twice to prevent matching an output flag.
 ${acx_flag}conftest.dir"
            AC_COMPILE_IFELSE([], [acx_cv_fc_module_in_flag=$acx_flag; break])
          done
+         rm -f conftest.$ac_ext
          FCFLAGS=$acx_save_FCFLAGS])
       rm -rf conftest.dir])
    AS_VAR_IF([acx_cv_fc_module_in_flag], [unknown], [m4_default([$2],
