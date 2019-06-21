@@ -1,0 +1,41 @@
+--- a/config/ltmain.sh
++++ b/config/ltmain.sh
+@@ -8539,11 +8539,33 @@ func_mode_link ()
+ 	fi # linkmode = lib
+       done # for deplib in $libs
+       if test link = "$pass"; then
+-	if test prog = "$linkmode"; then
+-	  compile_deplibs="$new_inherited_linker_flags $compile_deplibs"
+-	  finalize_deplibs="$new_inherited_linker_flags $finalize_deplibs"
+-	else
+-	  compiler_flags="$compiler_flags "`$ECHO " $new_inherited_linker_flags" | $SED 's% \([^ $]*\).ltframework% -framework \1%g'`
++	# Avoid duplication of the flags
++	if test -n "$new_inherited_linker_flags"; then
++	  if test prog = "$linkmode"; then
++	    tmp_inherited_linker_flags_compile_deplibs=
++	    tmp_inherited_linker_flags_finalize_deplibs=
++	    for new_inherited_linker_flag in $new_inherited_linker_flags; do
++	      case "$compile_command " in
++	        *" $new_inherited_linker_flag "*) ;;
++	        *) func_append tmp_inherited_linker_flags_compile_deplibs " $new_inherited_linker_flag" ;;
++	      esac
++	      case "$finalize_command " in
++	        *" $new_inherited_linker_flag "*) ;;
++	        *) func_append tmp_inherited_linker_flags_finalize_deplibs " $new_inherited_linker_flag" ;;
++	      esac
++	    done
++	    compile_deplibs="$tmp_inherited_linker_flags_compile_deplibs $compile_deplibs"
++	    finalize_deplibs="$tmp_inherited_linker_flags_finalize_deplibs $finalize_deplibs"
++	  else
++	    tmp_inherited_linker_flags_compiler_flags=
++	    for new_inherited_linker_flag in $new_inherited_linker_flags; do
++	      case "$compiler_flags " in
++	        *" $new_inherited_linker_flag "*) ;;
++	        *) func_append tmp_inherited_linker_flags_compiler_flags " $new_inherited_linker_flag" ;;
++	      esac
++	    done
++	    compiler_flags="$compiler_flags "`$ECHO " $tmp_inherited_linker_flags_compiler_flags" | $SED 's% \([^ $]*\).ltframework% -framework \1%g'`
++	  fi
+ 	fi
+       fi
+       dependency_libs=$newdependency_libs
