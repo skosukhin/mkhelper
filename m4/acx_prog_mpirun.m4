@@ -50,7 +50,7 @@ AC_DEFUN([ACX_PROG_MPIRUN_FC_HEADER],
       if (e1 /= MPI_SUCCESS) then
         call MPI_Abort(MPI_COMM_WORLD, e1, e2)
       endif
-      if (r == 0) write(*, "(i0)") s
+      if (r == 0) write(*, "(a,i0)") 'conftest: ', s
       call MPI_Finalize(e1)
       if (e1 /= MPI_SUCCESS) then
         call MPI_Abort(MPI_COMM_WORLD, e1, e2)
@@ -67,9 +67,9 @@ AC_DEFUN([ACX_PROG_MPIRUN_FC_HEADER],
 # tested command is run appended with two additional arguments:
 # "-n MPI-JOB-COUNT" (MPI-JOB-COUNT defaults to 2) and the name of the
 # executable of the program CHECK-PROGRAM. The program is expected to print a
-# single integer that equals to the total number of tasks in the MPI_COMM_WORLD
-# communicator. The test is successful if it exits with a zero exit status and
-# prints an integer that is equal to MPI-JOB-COUNT.
+# line 'conftest: N', where N is the total number of tasks in the
+# MPI_COMM_WORLD communicator. The test is successful if it exits with a zero
+# exit status and prints a line 'conftest: MPI-JOB-COUNT'.
 #
 # If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
 # (defaults to failing with an error message).
@@ -97,10 +97,15 @@ m4_define([_ACX_PROG_MPIRUN],
             acx_status=$?
             _AS_ECHO_LOG([\$? = $acx_status])
             AS_IF([test $acx_status -eq 0],
-              [_AS_ECHO_LOG([\$acx_exec_result = $acx_exec_result dnl
-(expected m4_default([$6], [2]))])
-               AS_IF(
-                 [test $acx_exec_result -eq m4_default([$6], [2]) 2>/dev/null],
+              [_AS_ECHO_LOG([\$acx_exec_result = $acx_exec_result])
+               _AS_ECHO_LOG(
+                 [acx_exec_result=`AS_ECHO(["\$acx_exec_result"]) | dnl
+sed -n '/^conftest: m4_default([$6], [2])$/p'`])
+               acx_exec_result=`AS_ECHO(["$acx_exec_result"]) | dnl
+sed -n '/^conftest: m4_default([$6], [2])$/p'`
+               _AS_ECHO_LOG([\$acx_exec_result = $acx_exec_result])
+               AS_VAR_IF([acx_exec_result],
+                 ['conftest: m4_default([$6], [2])'],
                  [acx_cv_prog_mpirun=$acx_candidate
                   break])])
          done],
@@ -115,9 +120,10 @@ m4_define([_ACX_PROG_MPIRUN],
 
 # _ACX_PROG_MPIRUN_CHECK_PROGRAM()
 # -----------------------------------------------------------------------------
-# Expands into a program in the current language that prints the size of the
-# group associated with the MPI communicator MPI_COMM_WORLD. By default,
-# expands to m4_fatal with the message saying that _AC_LANG is not supported.
+# Expands into a program in the current language that prints a line
+# 'conftest: N', where N is the size of the group associated with the MPI
+# communicator MPI_COMM_WORLD. By default, expands to m4_fatal with the message
+# saying that _AC_LANG is not supported.
 #
 AC_DEFUN([_ACX_PROG_MPIRUN_CHECK_PROGRAM],
   [m4_ifdef([$0(]_AC_LANG[)],
@@ -141,7 +147,7 @@ int main(int argc, char **argv) {
   if ((e = MPI_Comm_rank(MPI_COMM_WORLD, &r)) != MPI_SUCCESS)
     MPI_Abort(MPI_COMM_WORLD, e);
   if (r == 0)
-    printf("%i\n", s);
+    printf("conftest: %i\n", s);
   if ((e = MPI_Finalize()) != MPI_SUCCESS)
     MPI_Abort(MPI_COMM_WORLD, e);
   return e; }]])])
@@ -168,7 +174,7 @@ m4_define([_ACX_PROG_MPIRUN_CHECK_PROGRAM(Fortran)],
       if (e1 /= MPI_SUCCESS) then
         call MPI_Abort(MPI_COMM_WORLD, e1, e2)
       endif
-      if (r == 0) write(*, "(i0)") s
+      if (r == 0) write(*, "(a,i0)") 'conftest: ', s
       call MPI_Finalize(e1)
       if (e1 /= MPI_SUCCESS) then
         call MPI_Abort(MPI_COMM_WORLD, e1, e2)
