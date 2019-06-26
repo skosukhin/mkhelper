@@ -88,7 +88,8 @@ AC_ARG_ENABLE([additional-mods],
      [enable usage of additional modules  @<:@default: yes@:>@])],
   [], [enable_additional_mods=yes])
 AS_VAR_IF([enable_additional_mods], [yes],
-  [AS_VAR_APPEND([config_FCFLAGS], [" ${acx_cv_fc_macro_flag}INCLUDE_MODULES"])])
+  [AS_VAR_APPEND([config_FCFLAGS],
+     [" ${acx_cv_fc_macro_flag}INCLUDE_MODULES"])])
 
 AC_ARG_ENABLE([openmp],
   [AC_HELP_STRING([--enable-openmp],

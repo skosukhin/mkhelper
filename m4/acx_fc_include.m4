@@ -164,9 +164,8 @@ paths for _ACX_FC_INCLUDE_DESC([$1])], [acx_cache_var],
       acx_save_FCFLAGS=$FCFLAGS
       for acx_flag in _ACX_FC_INCLUDE_KNOWN_FLAGS([$1]); do
         FCFLAGS="$acx_save_FCFLAGS ${acx_flag}conftest.dir"
-        AC_LINK_IFELSE([],
-          [AS_VAR_COPY([acx_cache_var], [acx_flag])
-           break])
+        AC_LINK_IFELSE([], [AS_VAR_COPY([acx_cache_var], [acx_flag])])
+        test "x$acx_cache_var" != xunknown && break
       done
       FCFLAGS=$acx_save_FCFLAGS
       rm -f conftest.$ac_ext

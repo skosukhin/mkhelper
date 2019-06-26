@@ -182,6 +182,7 @@ m4_define([_ACX_COMPILER_VENDOR],
 "m4_foreach([pair], _ACX_COMPILER_KNOWN_VENDORS,
     [m4_ifnblank(m4_quote(m4_shift(pair)), m4_n(m4_car(pair): m4_cdr(pair)))])dnl
 unknown: CHOKEME"
+      acx_success=no
       for acx_compiler_vendor_test in $acx_compiler_vendor_options; do
         AS_CASE([$acx_compiler_vendor_test],
           [*:], [acx_compiler_vendor_candidate=$acx_compiler_vendor_test
@@ -193,7 +194,8 @@ unknown: CHOKEME"
 [[#if !($acx_compiler_vendor_macro_defs)
       choke me
 #endif]])],
-          [break])
+          [acx_success=yes])
+        test "x$acx_success" = xyes && break
       done
       AS_VAR_SET([acx_cv_[]_AC_LANG_ABBREV[]_compiler_vendor],
         [`echo $acx_compiler_vendor_candidate | cut -d: -f1`])])

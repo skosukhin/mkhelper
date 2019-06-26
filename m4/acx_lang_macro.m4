@@ -31,9 +31,8 @@ preprocessor macro],
       for acx_lang_macro_flag in _ACX_LANG_KNOWN_MACRO_FLAGS; do
         _AC_LANG_PREFIX[]FLAGS="${acx_save_[]_AC_LANG_PREFIX[]FLAGS} dnl
 ${acx_lang_macro_flag}CONFTEST_ONE ${acx_lang_macro_flag}CONFTEST_TWO=42"
-        AC_COMPILE_IFELSE([],
-          [acx_cache_var=$acx_lang_macro_flag
-           break])
+        AC_COMPILE_IFELSE([], [acx_cache_var=$acx_lang_macro_flag])
+        test "x$acx_cache_var" != xunknown && break
       done
       rm -f conftest.$ac_ext
       _AC_LANG_PREFIX[]FLAGS=$acx_save_[]_AC_LANG_PREFIX[]FLAGS])

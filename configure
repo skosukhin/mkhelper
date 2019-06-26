@@ -2519,6 +2519,7 @@ sun: __SUNPRO_F95
 gnu: __GFORTRAN__
 ibm: __xlC__
 unknown: CHOKEME"
+      acx_success=no
       for acx_compiler_vendor_test in $acx_compiler_vendor_options; do
         case $acx_compiler_vendor_test in #(
   *:) :
@@ -2535,9 +2536,10 @@ esac
       end
 _ACEOF
 if ac_fn_fc_try_compile "$LINENO"; then :
-  break
+  acx_success=yes
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+        test "x$acx_success" = xyes && break
       done
       acx_cv_fc_compiler_vendor=`echo $acx_compiler_vendor_candidate | cut -d: -f1`
 fi
@@ -2783,9 +2785,10 @@ _ACEOF
          for acx_flag in -M -I '-I ' '-M ' -p '-mod ' '-module ' '-Am -I'; do
            FCFLAGS="$acx_save_FCFLAGS ${acx_flag}conftest.dir ${acx_flag}conftest.dir"
            if ac_fn_fc_try_compile "$LINENO"; then :
-  acx_cv_fc_module_in_flag=$acx_flag; break
+  acx_cv_fc_module_in_flag=$acx_flag
 fi
 rm -f core conftest.err conftest.$ac_objext
+           test "x$acx_cv_fc_module_in_flag" != xunknown && break
          done
          rm -f conftest.$ac_ext
          FCFLAGS=$acx_save_FCFLAGS
@@ -2835,12 +2838,13 @@ _ACEOF
         if ac_fn_fc_try_compile "$LINENO"; then :
   cd sub
            if ac_fn_fc_try_compile "$LINENO"; then :
-  acx_cv_fc_module_out_flag=$acx_flag; cd ..; break
+  acx_cv_fc_module_out_flag=$acx_flag
 fi
 rm -f core conftest.err conftest.$ac_objext
            cd ..
 fi
 rm -f core conftest.err conftest.$ac_objext
+        test "x$acx_cv_fc_module_out_flag" != xunknown && break
       done
       FCFLAGS=$acx_save_FCFLAGS
       cd ..
@@ -2938,10 +2942,10 @@ _ACEOF
         FCFLAGS="$acx_save_FCFLAGS ${acx_flag}conftest.dir"
         if ac_fn_fc_try_link "$LINENO"; then :
   acx_cv_fc_ftn_include_flag=$acx_flag
-           break
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext
+        test "x$acx_cv_fc_ftn_include_flag" != xunknown && break
       done
       FCFLAGS=$acx_save_FCFLAGS
       rm -f conftest.$ac_ext
@@ -3066,10 +3070,10 @@ _ACEOF
         FCFLAGS="$acx_save_FCFLAGS ${acx_flag}conftest.dir"
         if ac_fn_fc_try_link "$LINENO"; then :
   acx_cv_fc_pp_include_flag=$acx_flag
-           break
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext
+        test "x$acx_cv_fc_pp_include_flag" != xunknown && break
       done
       FCFLAGS=$acx_save_FCFLAGS
       rm -f conftest.$ac_ext
@@ -3193,9 +3197,9 @@ _ACEOF
         FCFLAGS="${acx_save_FCFLAGS} ${acx_lang_macro_flag}CONFTEST_ONE ${acx_lang_macro_flag}CONFTEST_TWO=42"
         if ac_fn_fc_try_compile "$LINENO"; then :
   acx_cv_fc_macro_flag=$acx_lang_macro_flag
-           break
 fi
 rm -f core conftest.err conftest.$ac_objext
+        test "x$acx_cv_fc_macro_flag" != xunknown && break
       done
       rm -f conftest.$ac_ext
       FCFLAGS=$acx_save_FCFLAGS
@@ -3272,10 +3276,10 @@ _ACEOF
         FCFLAGS="${acx_save_FCFLAGS} $acx_lang_openmp_flag"
         if ac_fn_fc_try_link "$LINENO"; then :
   acx_cv_fc_openmp_flag=$acx_lang_openmp_flag
-           break
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext
+        test "x$acx_cv_fc_openmp_flag" != xunknown && break
       done
       rm -f conftest.$ac_ext
       FCFLAGS=$acx_save_FCFLAGS
@@ -3538,10 +3542,12 @@ fi
         LIBS="$acx_libs $acx_save_LIBS"
         if ac_fn_fc_try_link "$LINENO"; then :
   eval acx_cv_fc_lib_func_`$as_echo "$acx_fc_lib_search" | $as_tr_sh`=\$acx_libs
-           break
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext
+        if { as_var=acx_cv_fc_lib_func_`$as_echo "$acx_fc_lib_search" | $as_tr_sh`; eval \${$as_var+:} false; }; then :
+  break
+fi
       done
       rm -f conftest.$ac_ext
       LIBS=$acx_save_LIBS

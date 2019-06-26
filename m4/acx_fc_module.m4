@@ -59,7 +59,8 @@ for module files],
            FCFLAGS="$acx_save_FCFLAGS ${acx_flag}conftest.dir dnl
 dnl Add the flag twice to prevent matching an output flag.
 ${acx_flag}conftest.dir"
-           AC_COMPILE_IFELSE([], [acx_cv_fc_module_in_flag=$acx_flag; break])
+           AC_COMPILE_IFELSE([], [acx_cv_fc_module_in_flag=$acx_flag])
+           test "x$acx_cv_fc_module_in_flag" != xunknown && break
          done
          rm -f conftest.$ac_ext
          FCFLAGS=$acx_save_FCFLAGS])
@@ -111,9 +112,9 @@ for module files],
         FCFLAGS="${acx_flag}sub $acx_save_FCFLAGS"
         AC_COMPILE_IFELSE([],
           [cd sub
-           AC_COMPILE_IFELSE([],
-             [acx_cv_fc_module_out_flag=$acx_flag; cd ..; break])
+           AC_COMPILE_IFELSE([], [acx_cv_fc_module_out_flag=$acx_flag])
            cd ..])
+        test "x$acx_cv_fc_module_out_flag" != xunknown && break
       done
       FCFLAGS=$acx_save_FCFLAGS
       cd ..

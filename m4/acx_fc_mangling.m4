@@ -40,8 +40,9 @@ AC_DEFUN([ACX_FC_MANGLING_GLOBAL],
              AC_LINK_IFELSE([], [acx_success=yes])
              AC_LANG_PUSH([C])
              rm -f ./conftest_c.$ac_objext
-             AS_VAR_IF([acx_success], [yes], [break 2])])
+             test "x$acx_success" = xyes && break])
         done
+        test "x$acx_success" = xyes && break
       done
       AS_VAR_IF([acx_success], [yes],
         [AS_VAR_IF([acx_name_case], [funcname],
@@ -66,7 +67,7 @@ AC_DEFUN([ACX_FC_MANGLING_GLOBAL],
              AC_LINK_IFELSE([], [acx_success=yes])
              AC_LANG_PUSH([C])
              rm -f ./conftest_c.$ac_objext
-             AS_VAR_IF([acx_success], [yes], [break])])
+             test "x$acx_success" = xyes && break])
          done
          AS_VAR_IF([acx_success], [yes],
            [AS_VAR_APPEND([acx_cache_var], ["$acx_extra_underscore"])],
@@ -201,8 +202,8 @@ __intel_new_feature_proc_init() {}
            AC_LANG_POP([C])
            AC_LINK_IFELSE([], [acx_cache_var=$acx_func_name])
            AC_LANG_PUSH([C])
-           rm -f conftest_c.$ac_objext
-           AS_VAR_IF([acx_cache_var], [unknown], [], [break])])
+           rm -f conftest_c.$ac_objext])
+        test "x$acx_cache_var" != xunknown && break
       done
       AC_LANG_POP([C])
       rm -f conftest.$ac_ext

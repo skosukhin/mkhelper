@@ -116,9 +116,8 @@ m4_define([ACX_LANG_LIB_SEARCH()],
       shift
       for acx_libs in "$[@]"; do
         LIBS="$acx_libs $acx_save_LIBS"
-        AC_LINK_IFELSE([],
-          [AS_VAR_COPY([acx_cache_var], [acx_libs])
-           break])
+        AC_LINK_IFELSE([], [AS_VAR_COPY([acx_cache_var], [acx_libs])])
+        AS_VAR_SET_IF([acx_cache_var], [break])
       done
       rm -f conftest.$ac_ext
       LIBS=$acx_save_LIBS])
