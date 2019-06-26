@@ -42,9 +42,8 @@ support])
       for acx_lang_openacc_flag in '' -fopenacc -hacc -acc; do
         _AC_LANG_PREFIX[]FLAGS="${acx_save_[]_AC_LANG_PREFIX[]FLAGS} dnl
 $acx_lang_openacc_flag"
-        AC_LINK_IFELSE([],
-          [acx_cache_var=$acx_lang_openacc_flag
-           break])
+        AC_LINK_IFELSE([], [acx_cache_var=$acx_lang_openacc_flag])
+        test "x$acx_cache_var" != xunknown && break
       done
       rm -f conftest.$ac_ext
       _AC_LANG_PREFIX[]FLAGS=$acx_save_[]_AC_LANG_PREFIX[]FLAGS])

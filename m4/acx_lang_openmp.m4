@@ -59,9 +59,8 @@ support])
 -xopenmp -omp -qsmp=omp -Popenmp --openmp; do
         _AC_LANG_PREFIX[]FLAGS="${acx_save_[]_AC_LANG_PREFIX[]FLAGS} dnl
 $acx_lang_openmp_flag"
-        AC_LINK_IFELSE([],
-          [acx_cache_var=$acx_lang_openmp_flag
-           break])
+        AC_LINK_IFELSE([], [acx_cache_var=$acx_lang_openmp_flag])
+        test "x$acx_cache_var" != xunknown && break
       done
       rm -f conftest.$ac_ext
       _AC_LANG_PREFIX[]FLAGS=$acx_save_[]_AC_LANG_PREFIX[]FLAGS])
