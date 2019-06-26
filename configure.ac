@@ -21,7 +21,7 @@ with -L flags to the runtime library search path (RPATH)
 ACX_COMPILER_CROSS_CHECK_DELAY
 AC_PROG_FC
 AC_LANG([Fortran])
-AC_FC_PP_SRCEXT([f90])
+ACX_FC_PP_SRCEXT([f90])
 
 AS_VAR_IF([enable_rpaths], [yes],
   [ACX_SHLIB_FC_RPATH_FLAG
