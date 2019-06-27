@@ -42,7 +42,7 @@ AS_VAR_IF([enable_rpaths], [yes],
    eval export $acx_cv_shlib_path_var])
 
 ACX_COMPILER_CROSS_CHECK_NOW
-AC_FC_LINE_LENGTH([unlimited])
+ACX_FC_LINE_LENGTH([unlimited])
 
 AC_SUBST([DEPGEN_DEFS])
 AC_SUBST([DEPGEN_INTRINSIC_MODS],
