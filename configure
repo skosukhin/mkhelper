@@ -3821,6 +3821,40 @@ fi
 $as_echo "$MKDIR_P" >&6; }
 
 
+acx_some_prog='true -a -b -c'
+acx_prog_search_path=unknown
+   set dummy $acx_some_prog; acx_tmp=$2
+   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for the path to $acx_tmp" >&5
+$as_echo_n "checking for the path to $acx_tmp... " >&6; }
+   case "$acx_tmp" in #(
+  [\\/]* | ?:[\\/]*) :
+    if as_fn_executable_p "$acx_tmp"; then :
+  acx_prog_search_path="$acx_some_prog"
+         { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_tmp" >&5
+$as_echo "$acx_tmp" >&6; }
+fi ;; #(
+  *) :
+    as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    if as_fn_executable_p "$as_dir/$acx_tmp"; then :
+  acx_prog_search_path="$as_dir/$acx_some_prog"
+            { $as_echo "$as_me:${as_lineno-$LINENO}: result: $as_dir/$acx_tmp" >&5
+$as_echo "$as_dir/$acx_tmp" >&6; }
+            break
+fi
+  done
+IFS=$as_save_IFS
+ ;;
+esac
+   if test "x$acx_prog_search_path" = xunknown; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: unknown" >&5
+$as_echo "unknown" >&6; }
+      :
+fi
+
    acx_config_subdir_args_dummy_subdir=
    acx_config_subdir_ignore_arg=no
    eval "set dummy $ac_configure_args"; shift
