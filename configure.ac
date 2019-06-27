@@ -156,6 +156,9 @@ ACX_PROG_SEARCH([PYTHON], [python python3],
 AC_PROG_INSTALL
 AC_PROG_MKDIR_P
 
+acx_some_prog='true -a -b -c'
+ACX_PROG_SEARCH_PATH([$acx_some_prog], [], [:])
+
 ACX_CONFIG_SUBDIR([dummy_subdir],
   [[FCFLAGS=*|CFLAGS=*],
    [ACX_CONFIG_SUBDIR_PATTERN_ENABLE([silent-rules])],
