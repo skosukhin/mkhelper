@@ -1,0 +1,14 @@
+branches:
+  only:
+  - master
+
+language: minimal
+
+addons:
+  apt:
+    packages:
+    - gfortran
+    - libnetcdff-dev
+
+script: ./configure 'NETCDF_FCFLAGS=-I/usr/include' 'NETCDF_FCLIBS=-L/usr/lib/x86_64-linux-gnu -lnetcdff' && make -j4 && ./main
+
