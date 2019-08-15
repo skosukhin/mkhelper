@@ -41,11 +41,13 @@ ${acx_lang_macro_flag}CONFTEST_ONE ${acx_lang_macro_flag}CONFTEST_TWO=42"
 define a preprocessor macro])])], [$1])
    m4_popdef([acx_cache_var])])
 
-# ACX_LANG_MACRO_CHECK_DEFINED(MACRO-NAME)
+# ACX_LANG_MACRO_CHECK_DEFINED(MACRO-NAME,
+#                              [INCLUDES])
 # -----------------------------------------------------------------------------
-# Checks whether the preprocessor macro MACRO-NAME is defined. The result is
-# either "yes", "no" or "unsupported" (if the current language does not
-# support preprocessor directives).
+# Checks whether the preprocessor macro MACRO-NAME is defined with optional
+# INCLUDE directives. The result is either "yes", "no" or "unsupported" (if the
+# current language does not support preprocessor directives or the INCLUDE
+# directives lead to a compilation error).
 #
 # The result is stored in the acx_macro_defined variable and cached in the
 # acx_cv_[]_AC_LANG_ABBREV[]_macro_[]AS_TR_SH(MACRO-NAME)_defined variable.
@@ -55,12 +57,12 @@ AC_DEFUN([ACX_LANG_MACRO_CHECK_DEFINED],
      [acx_cv_[]_AC_LANG_ABBREV[]_macro_[]AS_TR_SH([$1])_defined])dnl
    AC_CACHE_CHECK([whether the _AC_LANG preprocessor macro $1 is defined],
      [acx_cache_var],
-     [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([], [[#ifdef $1
+     [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([$2], [[#ifdef $1
 #else
       choke me
 #endif]])],
         [AS_VAR_SET([acx_cache_var], [yes])],
-        [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([], [[#ifndef $1
+        [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([$2], [[#ifndef $1
 #else
       choke me
 #endif]])],
@@ -70,14 +72,16 @@ AC_DEFUN([ACX_LANG_MACRO_CHECK_DEFINED],
    m4_popdef([acx_cache_var])])
 
 # ACX_LANG_MACRO_CHECK_VALUE(MACRO-NAME,
-#                            [KNOWN-INTEGER-VALUES])
+#                            [KNOWN-INTEGER-VALUES],
+#                            [INCLUDES])
 # -----------------------------------------------------------------------------
-# Detects the value of the preprocessor macro MACRO-NAME. First, tries to link
-# and to run a program that prints the value of MACRO-NAME. If that is
-# successful, returns the output of the program. Otherwise (e.g. in the case of
-# cross-compilation), goes through the optionally provided space-separated list
-# of integers KNOWN-INTEGER-VALUES and checks whether MACRO-NAME expands to one
-# of them. The result is either "unknown" or the actual value of the macro.
+# Detects the value of the preprocessor macro MACRO-NAME with the optional
+# INCLUDE directives. First, tries to link and to run a program that prints the
+# value of MACRO-NAME. If that is successful, returns the output of the
+# program. Otherwise (e.g. in the case of cross-compilation), goes through the
+# optionally provided space-separated list of integers KNOWN-INTEGER-VALUES and
+# checks whether MACRO-NAME expands to one of them. The result is either
+# "unknown" or the actual value of the macro.
 #
 # The result is stored in the acx_macro_value variable and cached in the
 # acx_cv_[]_AC_LANG_ABBREV[]_macro_[]AS_TR_SH(MACRO-NAME)_value variable.
@@ -89,7 +93,7 @@ AC_DEFUN([ACX_LANG_MACRO_CHECK_VALUE],
      [acx_cache_var],
      [AS_VAR_SET([acx_cache_var], [unknown])
       AS_VAR_IF([cross_compiling], [no],
-        [AC_LINK_IFELSE([_ACX_LANG_MACRO_PRINT_PROGRAM([$1])],
+        [AC_LINK_IFELSE([_ACX_LANG_MACRO_PRINT_PROGRAM([$1], [$3])],
            [acx_exec_result=`./conftest$ac_exeext 2>&AS_MESSAGE_LOG_FD`
             AS_IF([test $? -eq 0],
               [AS_VAR_COPY([acx_cache_var], [acx_exec_result])])])])
@@ -97,7 +101,7 @@ AC_DEFUN([ACX_LANG_MACRO_CHECK_VALUE],
         [AS_VAR_IF([acx_cache_var], [unknown],
            [set dummy $2; shift
             while test $[]@%:@ != 0; do
-              AC_COMPILE_IFELSE([AC_LANG_PROGRAM([],
+              AC_COMPILE_IFELSE([AC_LANG_PROGRAM([$3],
 [[#if $1 == _CONFTEST_UNDEFINED_OR_EMPTY || $1 != $][1
       choke me
 #endif]])],
@@ -138,12 +142,13 @@ m4_define([_ACX_LANG_KNOWN_MACRO_FLAGS(C)], [-D])
 #
 m4_define([_ACX_LANG_KNOWN_MACRO_FLAGS(Fortran)], [-D -WF,-D -Wp,-D -Wc,-D])
 
-# _ACX_LANG_MACRO_PRINT_PROGRAM(MACRO-NAME)
+# _ACX_LANG_MACRO_PRINT_PROGRAM(MACRO-NAME,
+#                               [INCLUDES])
 # -----------------------------------------------------------------------------
 # Expands into the source code of a program in the current language that prints
-# the value of the preprocessor macro MACRO-NAME. The program fails if
-# MACRO-NAME is not defined. By default, expands to m4_fatal with the message
-# saying that _AC_LANG is not supported.
+# the value of the preprocessor macro MACRO-NAME with the optional INCLUDE
+# directives. The program fails if MACRO-NAME is not defined. By default,
+# expands to m4_fatal with the message saying that _AC_LANG is not supported.
 #
 m4_define([_ACX_LANG_MACRO_PRINT_PROGRAM],
   [m4_ifdef([$0(]_AC_LANG[)],
@@ -151,12 +156,14 @@ m4_define([_ACX_LANG_MACRO_PRINT_PROGRAM],
      [m4_fatal([the macro print program is not defined for ]dnl
 _AC_LANG[ language])])])
 
-# _ACX_LANG_MACRO_PRINT_PROGRAM(C)(MACRO-NAME)
+# _ACX_LANG_MACRO_PRINT_PROGRAM(C)(MACRO-NAME,
+#                                  [INCLUDES])
 # -----------------------------------------------------------------------------
 # Implementation of _ACX_LANG_MACRO_PRINT_PROGRAM for C language.
 #
 m4_define([_ACX_LANG_MACRO_PRINT_PROGRAM(C)],
-  [AC_LANG_PROGRAM([[#include <stdio.h>]],
+  [AC_LANG_PROGRAM([[#include <stdio.h>
+$2]],
 [[#ifndef $1
 choke me
 #else
@@ -172,7 +179,8 @@ printf("%s\n", STRINGIFY($1));
 m4_copy([_ACX_LANG_MACRO_PRINT_PROGRAM(C)],
   [_ACX_LANG_MACRO_PRINT_PROGRAM(C++)])
 
-# _ACX_LANG_MACRO_PRINT_PROGRAM(Fortran)(MACRO-NAME)
+# _ACX_LANG_MACRO_PRINT_PROGRAM(Fortran)(MACRO-NAME,
+#                                        [INCLUDES])
 # -----------------------------------------------------------------------------
 # Implementation of _ACX_LANG_MACRO_PRINT_PROGRAM for Fortran language. The
 # program compilation succeeds only if MACRO-NAME expands either to an integer,
@@ -182,8 +190,8 @@ m4_copy([_ACX_LANG_MACRO_PRINT_PROGRAM(C)],
 # the single quotation marks ('').
 #
 m4_define([_ACX_LANG_MACRO_PRINT_PROGRAM(Fortran)],
-  [AC_LANG_SOURCE(
-[[#ifndef $1
+  [m4_ifval([$2], [m4_warn([syntax], [$0: ignoring INCLUDES: $2])])dnl
+AC_LANG_SOURCE([[#ifndef $1
       choke me
 #else
       subroutine p_str(s)
