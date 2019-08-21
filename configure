@@ -2501,7 +2501,6 @@ else
 
 fi
 
-
       { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler vendor" >&5
 $as_echo_n "checking for Fortran compiler vendor... " >&6; }
 if ${acx_cv_fc_compiler_vendor+:} false; then :
@@ -2541,6 +2540,41 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_compiler_vendor" >&5
 $as_echo "$acx_cv_fc_compiler_vendor" >&6; }
+      { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler version" >&5
+$as_echo_n "checking for Fortran compiler version... " >&6; }
+if ${acx_cv_fc_compiler_version+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  acx_cv_fc_compiler_version=unknown
+      case $acx_cv_fc_compiler_vendor in #(
+        intel) acx_cv_fc_compiler_version=`$FC --version 2>/dev/null | sed -n 's/^ifort (IFORT) \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`
+   if test "`echo $acx_cv_fc_compiler_version | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
+  acx_cv_fc_compiler_version=unknown
+fi ;; #(
+        cray) acx_cv_fc_compiler_version=`$FC -V 2>&1 | sed -n 's/.*ersion \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`
+   if test "`echo $acx_cv_fc_compiler_version | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
+  acx_cv_fc_compiler_version=unknown
+fi ;; #(
+        portland) acx_cv_fc_compiler_version=`$FC -V | sed -n 's/pgfortran \([0-9][0-9]*\.[0-9][0-9]*\)-\([0-9][0-9]*\).*/\1.\2/p'`
+   if test "`echo $acx_cv_fc_compiler_version | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
+  acx_cv_fc_compiler_version=unknown
+fi ;; #(
+        nag) acx_cv_fc_compiler_version=`$FC -V 2>&1 | sed -n 's/^NAG Fortran Compiler Release \([0-9][0-9]*\.[0-9][0-9]*\).*Build \([0-9][0-9]*\)/\1.\2/p'`
+   if test "`echo $acx_cv_fc_compiler_version | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
+  acx_cv_fc_compiler_version=unknown
+fi ;; #(
+        gnu) acx_cv_fc_compiler_version=`$FC -dumpversion 2>/dev/null`
+   if test "`echo $acx_cv_fc_compiler_version | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
+  acx_cv_fc_compiler_version=unknown
+fi ;; #(
+
+        *) : acx_cv_fc_compiler_version=unknown ;;
+      esac
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_compiler_version" >&5
+$as_echo "$acx_cv_fc_compiler_version" >&6; }
+
+
 if test "x$enable_rpaths" = xyes; then :
      { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler flag needed to add a directory to the runtime library search path" >&5
 $as_echo_n "checking for Fortran compiler flag needed to add a directory to the runtime library search path... " >&6; }
