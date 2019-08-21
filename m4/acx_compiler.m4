@@ -52,7 +52,8 @@ AC_DEFUN([ACX_COMPILER_FC_VENDOR],
 # The result is cached in the acx_cv_fc_compiler_version variable.
 #
 AC_DEFUN([ACX_COMPILER_FC_VERSION],
-  [AC_REQUIRE([ACX_COMPILER_FC_VENDOR])_ACX_COMPILER_VERSION])
+  [AC_LANG_ASSERT([Fortran])dnl
+   AC_REQUIRE([ACX_COMPILER_FC_VENDOR])_ACX_COMPILER_VERSION])
 
 # ACX_COMPILER_CC_VENDOR()
 # -----------------------------------------------------------------------------
@@ -79,7 +80,8 @@ grep '^NAG Fortran Compiler Release' >/dev/null 2>&1],
 # The result is cached in the acx_cv_c_compiler_version variable.
 #
 AC_DEFUN([ACX_COMPILER_CC_VERSION],
-  [AC_REQUIRE([ACX_COMPILER_CC_VENDOR])_ACX_COMPILER_VERSION])
+  [AC_LANG_ASSERT([Fortran])dnl
+   AC_REQUIRE([ACX_COMPILER_CC_VENDOR])_ACX_COMPILER_VERSION])
 
 # ACX_COMPILER_CXX_VENDOR()
 # -----------------------------------------------------------------------------
@@ -103,7 +105,8 @@ AC_DEFUN([ACX_COMPILER_CXX_VENDOR],
 # The result is cached in the acx_cv_cxx_compiler_version variable.
 #
 AC_DEFUN([ACX_COMPILER_CXX_VERSION],
-  [AC_REQUIRE([ACX_COMPILER_CXX_VENDOR])_ACX_COMPILER_VERSION])
+  [AC_LANG_ASSERT([C++])dnl
+   AC_REQUIRE([ACX_COMPILER_CXX_VENDOR])_ACX_COMPILER_VERSION])
 
 # _ACX_COMPILER_KNOWN_VENDORS()
 # -----------------------------------------------------------------------------

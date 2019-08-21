@@ -41,7 +41,8 @@ grep '^GNU Fortran' >/dev/null 2>&1],
 # The result is cached in the acx_cv_fc_compiler_version variable.
 #
 AC_DEFUN([ACX_COMPILER_FC_VERSION],
-  [AC_REQUIRE([ACX_COMPILER_FC_VENDOR])dnl
+  [AC_LANG_ASSERT([Fortran])dnl
+   AC_REQUIRE([ACX_COMPILER_FC_VENDOR])dnl
    m4_pushdef([acx_cache_var],
      [acx_cv_[]_AC_LANG_ABBREV[]_compiler_version])dnl
    AC_CACHE_CHECK([for _AC_LANG compiler version], [acx_cache_var],
@@ -103,7 +104,8 @@ grep '^Copyright.*\(The Protland Group\|NVIDIA CORPORATION\)' >/dev/null 2>&1],
 # The result is cached in the acx_cv_c_compiler_version variable.
 #
 AC_DEFUN([ACX_COMPILER_CC_VERSION],
-  [AC_REQUIRE([ACX_COMPILER_CC_VENDOR])dnl
+  [AC_LANG_ASSERT([C])dnl
+   AC_REQUIRE([ACX_COMPILER_CC_VENDOR])dnl
    m4_pushdef([acx_cache_var],
      [acx_cv_[]_AC_LANG_ABBREV[]_compiler_version])dnl
    AC_CACHE_CHECK([for _AC_LANG compiler version], [acx_cache_var],
