@@ -81,7 +81,7 @@ def parse_args():
     pp_arg_group = parser.add_argument_group('preprocessor arguments')
     pp_arg_group.add_argument(
         '--pp-enable', action='store_true',
-        help='enable the preprocessing stage; if disabled (default),all '
+        help='enable the preprocessing stage; if disabled (default), all '
              'arguments of this argument group are ignored')
     pp_arg_group.add_argument(
         '--pp-eval-expr', action='store_true',
