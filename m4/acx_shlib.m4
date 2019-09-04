@@ -91,7 +91,7 @@ search paths for shared libraries], [acx_cv_shlib_path_var],
 
 # _ACX_SHLIB_RPATH_FLAG()
 # -----------------------------------------------------------------------------
-# Sets the result to the compiler    flag needed to add a directory to the runtime
+# Sets the result to the compiler flag needed to add a directory to the runtime
 # library search path (requires calling _ACX_COMPILER_VENDOR first).
 #
 # The flag is cached in the acx_cv_[]_AC_LANG_ABBREV[]_rpath_flag variable.
