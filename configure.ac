@@ -167,6 +167,9 @@ ACX_CONFIG_SUBDIR([dummy_subdir],
    [ACX_CONFIG_SUBDIR_PATTERN_ENABLE([always])]],
   [[FCFLAGS=], [CFLAGS='-g'],
    [--enable-always=yes]])
+AC_CONFIG_COMMANDS_PRE(
+  [ACX_CONFIG_SUBDIR_VAR([DUMMY_LIBRT], [dummy_subdir], [@LIBRT@])
+   LIBS="$DUMMY_LIBRT $LIBS"])
 
 AC_CONFIG_FILES([Makefile depgen.config])
 
