@@ -129,3 +129,27 @@ AC_DEFUN([ACX_CONFIG_SUBDIR_PATTERN_ENABLE],
 #
 AC_DEFUN([ACX_CONFIG_SUBDIR_PATTERN_WITH],
   [[-with-$1|-with-$1=*|--with-$1|--with-$1=*|-without-$1|--without-$1]])
+
+# ACX_CONFIG_SUBDIR_VAR(VARIABLE,
+#                       SUBDIR,
+#                       TEMPLATE)
+# -----------------------------------------------------------------------------
+# Expands to a shell code setting the shell variable VARIABLE to the result of
+# the variable substitution TEMPLATE done by the config.status script residing
+# inside directory SUBDIR. The macro provides means of getting the results of
+# the configure script from the subdirectory to the top-level configure script.
+#
+# For example, if 'subdir/configure' sets an output variable 'LIBM' and the
+# value needs to be known in the top-level configure script, the way to do it
+# is to expand the following:
+#
+# ACX_CONFIG_SUBDIR([subdir])
+# AC_CONFIG_COMMANDS_PRE(
+#   [ACX_CONFIG_SUBDIR_VAR([SUBDIR_VAR], [subdir], [@LIBM@])
+#    AC_SUBST([SUBDIR_VAR])])
+#
+AC_DEFUN([ACX_CONFIG_SUBDIR_VAR],
+  [acx_exec_result=`AS_ECHO([$3]) | "$2/config.status" -q --file=- 2>/dev/null`
+   AS_IF([test $? -eq 0],
+     [AS_VAR_COPY([$1], [acx_exec_result])],
+     [AC_MSG_ERROR([unable to run '$2/config.status'])])])

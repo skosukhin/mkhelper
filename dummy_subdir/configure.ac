@@ -27,6 +27,10 @@ AS_IF([test x"$enable_always" != xyes],
   [AC_MSG_ERROR([this script must always receive an argument that would dnl
 enable the option 'always'])])
 
+AC_SUBST([LIBRT])
+AC_SEARCH_LIBS([aio_suspend], [rt],
+  [test "x$ac_res" = "xnone required" || LIBRT=$ac_res])
+
 AC_ARG_VAR([FCFLAGS], [this variable must be empty])
 
 AC_OUTPUT

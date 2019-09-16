@@ -3913,6 +3913,7 @@ esac
 
 
 
+
 ac_config_files="$ac_config_files Makefile depgen.config"
 
 
@@ -4154,6 +4155,13 @@ fi
               cd "$acx_config_subdir_popdir"
             done
 fi
+acx_exec_result=`$as_echo @LIBRT@ | "dummy_subdir/config.status" -q --file=- 2>/dev/null`
+   if test $? -eq 0; then :
+  DUMMY_LIBRT=$acx_exec_result
+else
+  as_fn_error $? "unable to run 'dummy_subdir/config.status'" "$LINENO" 5
+fi
+   LIBS="$DUMMY_LIBRT $LIBS"
 
 : "${CONFIG_STATUS=./config.status}"
 ac_write_fail=0
