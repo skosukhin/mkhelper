@@ -3597,6 +3597,7 @@ fi
 else
   :
 fi
+
 FCFLAGS=$acx_save_FCFLAGS
 if test "x$acx_NETCDF_found" = xno; then :
   as_fn_append config_FCFLAGS " ${acx_cv_fc_macro_flag}NO_NETCDF"

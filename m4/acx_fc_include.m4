@@ -275,4 +275,5 @@ m4_define([_ACX_FC_INCLUDE_CHECK],
         [AS_VAR_SET([acx_cache_var], [no])])])
    AS_VAR_IF([acx_cache_var], [yes], [$3], [m4_default([$4],
      [AC_MSG_FAILURE([Fortran header file '$2' included with dnl
-_ACX_FC_INCLUDE_DESC([$1]) is not available])])])])
+_ACX_FC_INCLUDE_DESC([$1]) is not available])])])
+    m4_popdef([acx_cache_var])])
