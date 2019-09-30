@@ -598,6 +598,7 @@ AR
 NETCDF_FCLIBS
 NETCDF_FCFLAGS
 DEFAULT_VERBOSITY
+FPP
 config_FCFLAGS
 FC_PP_DEF
 FC_INC_ORDER_PP_f90
@@ -685,6 +686,7 @@ FC
 FCFLAGS
 LDFLAGS
 LIBS
+FPP
 NETCDF_FCFLAGS
 NETCDF_FCLIBS
 AR
@@ -1332,6 +1334,7 @@ Some influential environment variables:
   LDFLAGS     linker flags, e.g. -L<lib dir> if you have libraries in a
               nonstandard directory <lib dir>
   LIBS        libraries to pass to the linker, e.g. -l<library>
+  FPP         Fortran preprocessor command
   NETCDF_FCFLAGS
               exact Fortran compiler flags enabling NetCDF
   NETCDF_FCLIBS
@@ -3244,6 +3247,137 @@ fi
 
 
 
+
+
+      { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran preprocessor command" >&5
+$as_echo_n "checking for Fortran preprocessor command... " >&6; }
+   if ${acx_cv_prog_fpp+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  as_dir=conftest.dir/sub; as_fn_mkdir_p
+      cd conftest.dir
+      cat > sub/conftest.fpp_inc <<_ACEOF
+#define CONFTEST_THREE
+#ifndef CONFTEST_ZERO
+      integer conftest_zero
+#else
+      choke me
+#endif
+#ifdef CONFTEST_ONE
+      integer conftest_one
+#else
+      choke me
+#endif
+#if CONFTEST_TWO != 42
+      choke me
+#else
+      integer conftest_two
+#endif
+#ifdef CONFTEST_THREE
+      integer conftest_three
+#else
+      choke me
+#endif
+
+_ACEOF
+      acx_save_FCFLAGS=$FCFLAGS
+      if ${FPP+:} false; then :
+  set dummy "$FPP"
+else
+  ac_builddir=.
+
+case . in
+.) ac_dir_suffix= ac_top_builddir_sub=. ac_top_build_prefix= ;;
+*)
+  ac_dir_suffix=/`$as_echo . | sed 's|^\.[\\/]||'`
+  # A ".." for each directory in $ac_dir_suffix.
+  ac_top_builddir_sub=`$as_echo "$ac_dir_suffix" | sed 's|/[^\\/]*|/..|g;s|/||'`
+  case $ac_top_builddir_sub in
+  "") ac_top_builddir_sub=. ac_top_build_prefix= ;;
+  *)  ac_top_build_prefix=$ac_top_builddir_sub/ ;;
+  esac ;;
+esac
+ac_abs_top_builddir=$ac_pwd
+ac_abs_builddir=$ac_pwd$ac_dir_suffix
+# for backward compatibility:
+ac_top_builddir=$ac_top_build_prefix
+
+case $srcdir in
+  .)  # We are building in place.
+    ac_srcdir=.
+    ac_top_srcdir=$ac_top_builddir_sub
+    ac_abs_top_srcdir=$ac_pwd ;;
+  [\\/]* | ?:[\\/]* )  # Absolute name.
+    ac_srcdir=$srcdir$ac_dir_suffix;
+    ac_top_srcdir=$srcdir
+    ac_abs_top_srcdir=$srcdir ;;
+  *) # Relative name.
+    ac_srcdir=$ac_top_build_prefix$srcdir$ac_dir_suffix
+    ac_top_srcdir=$ac_top_build_prefix$srcdir
+    ac_abs_top_srcdir=$ac_pwd/$srcdir ;;
+esac
+ac_abs_srcdir=$ac_abs_top_srcdir$ac_dir_suffix
+
+         acx_prog_fpp_wrapper_dir="${ac_abs_top_srcdir}/fpp-wrappers"
+         set dummy "$FC -E" "$FC -E $ac_fcflags_srcext" \
+                   "$FC -o - -Wp,-w,-P -F $ac_fcflags_srcext" \
+                   "$SHELL ${acx_prog_fpp_wrapper_dir}/cray-fpp.sh $FC" \
+                   "$FC -F" "$FC -F $ac_fcflags_srcext"
+fi
+      shift
+      acx_prog_fpp_include_flag=$FC_INC_FLAG_PP_f90
+      acx_prog_fpp_macro_flag=$FC_PP_DEF
+      for acx_candidate in "$@"; do
+        cat > conftest.$ac_ext <<_ACEOF
+      program main
+      implicit none
+#include "conftest.fpp_inc"
+      conftest_zero = 0
+      conftest_one = 1
+      conftest_two = 2
+      conftest_three = 3
+      end
+_ACEOF
+        rm -f conftest.acx_prog_fpp
+        acx_try_fpp="$acx_candidate \$FCFLAGS conftest.\$ac_ext >conftest.acx_prog_fpp"
+        FCFLAGS="${acx_prog_fpp_include_flag}sub ${acx_prog_fpp_macro_flag}CONFTEST_ONE ${acx_prog_fpp_macro_flag}CONFTEST_TWO=42 $acx_save_FCFLAGS"
+        { { ac_try="$acx_try_fpp"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval ac_try_echo="\"\$as_me:${as_lineno-$LINENO}: $ac_try_echo\""
+$as_echo "$ac_try_echo"; } >&5
+  (eval "$acx_try_fpp") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+        if test $? -eq 0 && test -f conftest.acx_prog_fpp; then :
+  acx_result=`grep -c 'integer conftest' conftest.acx_prog_fpp 2>/dev/null`
+           if test $? -eq 0 && test 4 -eq "$acx_result" 2>/dev/null; then :
+  mv conftest.acx_prog_fpp conftest.$ac_ext
+              FCFLAGS=$acx_save_FCFLAGS
+              if ac_fn_fc_try_compile "$LINENO"; then :
+  acx_cv_prog_fpp=$acx_candidate
+                 break
+fi
+rm -f core conftest.err conftest.$ac_objext
+fi
+fi
+      done
+      FCFLAGS=$acx_save_FCFLAGS
+      cd ..
+      rm -rf conftest.dir
+fi
+   if ${acx_cv_prog_fpp+:} false; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_prog_fpp" >&5
+$as_echo "$acx_cv_prog_fpp" >&6; }
+      FPP=$acx_cv_prog_fpp
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: unknown" >&5
+$as_echo "unknown" >&6; }
+      FPP=
+fi
 
 # Check whether --enable-silent-rules was given.
 if test "${enable_silent_rules+set}" = set; then :

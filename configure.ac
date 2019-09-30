@@ -76,6 +76,10 @@ ACX_LANG_MACRO_FLAG([AC_SUBST([FC_PP_DEF], [$acx_cv_fc_macro_flag])])
 
 AC_SUBST([config_FCFLAGS])
 
+AC_ARG_VAR([FPP], [Fortran preprocessor command])
+ACX_PROG_FPP([FPP], [FPP=$acx_cv_prog_fpp], [FPP=],
+  [$FC_INC_FLAG_PP_f90], [$FC_PP_DEF])
+
 AC_ARG_ENABLE([silent-rules],
   [AC_HELP_STRING([--enable-silent-rules],
      [less verbose build output (undo: "make V=1") @<:@default=yes@:>@])], [],
