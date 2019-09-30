@@ -53,7 +53,7 @@ $acx_lang_openacc_flag"
    AS_VAR_IF([acx_cache_var], [unknown], [m4_default([$2],
      [AC_MSG_FAILURE([unable to detect _AC_LANG compiler flag needed to dnl
 enable OpenACC support])])], [$1])
-   m4_pushdef([acx_cache_var])])
+   m4_popdef([acx_cache_var])])
 
 # _ACX_LANG_OPENACC()
 # -----------------------------------------------------------------------------
