@@ -20,6 +20,7 @@ BUILD_ENV= @BUILD_ENV@
 
 # Compilers and flags:
 FC= @FC@
+FPP= @FPP@
 FCFLAGS= @FCFLAGS@
 LDFLAGS= @LDFLAGS@
 LIBS= @LIBS@
