@@ -3003,8 +3003,10 @@ else
          as_dir=conftest.dir/build; as_fn_mkdir_p
          as_dir=conftest.dir/src/inc2; as_fn_mkdir_p
          cat > conftest.$ac_ext <<_ACEOF
+      program main
       include "conftest.inc"
 
+      end
 _ACEOF
          cp conftest.$ac_ext conftest.dir/build/conftest.$ac_ext
          mv conftest.$ac_ext conftest.dir/src/conftest.$ac_ext
@@ -3016,9 +3018,7 @@ _ACEOF
          set "src" "/src/" "flg" "/src/inc/" "inc" "/src/inc2/" "cwd" "/build/"
          while test $# != 0; do
            cat > conftest.$ac_ext <<_ACEOF
-      program main
       write(*,"(a)") "${1}"
-      end
 _ACEOF
            shift; mv conftest.$ac_ext conftest.dir${1}conftest.write; shift
          done
@@ -3026,7 +3026,7 @@ _ACEOF
          acx_save_FCFLAGS=$FCFLAGS
          FCFLAGS="$FCFLAGS ${acx_cv_fc_ftn_include_flag}../src/inc ${acx_cv_fc_ftn_include_flag}../src/inc2"
          acx_save_ac_link=$ac_link
-         ac_link=`echo "$ac_link" | sed 's%conftest\(\.\$ac_ext\)%../src/conftest\1%'`
+         ac_link=`$as_echo "$ac_link" | sed 's%conftest\.\$ac_ext%../src/&%'`
          while :; do
            if ac_fn_fc_try_link "$LINENO"; then :
   acx_exec_result=`./conftest$ac_exeext`
@@ -3131,8 +3131,10 @@ else
          as_dir=conftest.dir/build; as_fn_mkdir_p
          as_dir=conftest.dir/src/inc2; as_fn_mkdir_p
          cat > conftest.$ac_ext <<_ACEOF
+      program main
 #include "conftest.inc"
 
+      end
 _ACEOF
          cp conftest.$ac_ext conftest.dir/build/conftest.$ac_ext
          mv conftest.$ac_ext conftest.dir/src/conftest.$ac_ext
@@ -3144,9 +3146,7 @@ _ACEOF
          set "src" "/src/" "flg" "/src/inc/" "inc" "/src/inc2/" "cwd" "/build/"
          while test $# != 0; do
            cat > conftest.$ac_ext <<_ACEOF
-      program main
       write(*,"(a)") "${1}"
-      end
 _ACEOF
            shift; mv conftest.$ac_ext conftest.dir${1}conftest.write; shift
          done
@@ -3154,7 +3154,7 @@ _ACEOF
          acx_save_FCFLAGS=$FCFLAGS
          FCFLAGS="$FCFLAGS ${acx_cv_fc_pp_include_flag}../src/inc ${acx_cv_fc_pp_include_flag}../src/inc2"
          acx_save_ac_link=$ac_link
-         ac_link=`echo "$ac_link" | sed 's%conftest\(\.\$ac_ext\)%../src/conftest\1%'`
+         ac_link=`$as_echo "$ac_link" | sed 's%conftest\.\$ac_ext%../src/&%'`
          while :; do
            if ac_fn_fc_try_link "$LINENO"; then :
   acx_exec_result=`./conftest$ac_exeext`
