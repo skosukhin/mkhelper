@@ -199,7 +199,7 @@ _ACX_FC_INCLUDE_DESC([$1])], [acx_cache_var],
         [AS_MKDIR_P([conftest.dir/src/inc])
          AS_MKDIR_P([conftest.dir/build])
          AS_MKDIR_P([conftest.dir/src/inc2])
-         AC_LANG_CONFTEST([AC_LANG_SOURCE(
+         AC_LANG_CONFTEST([AC_LANG_PROGRAM([],
            [_ACX_FC_INCLUDE_LINE([$1], [conftest.inc])])])
 dnl Copy the file to the build dir to keep _AC_MSG_LOG_CONFTEST happy.
 dnl This copy does not get compiled.
@@ -211,8 +211,7 @@ dnl This instance of the file will be compiled.
          mv conftest.$ac_ext conftest.dir/src/inc2/conftest.inc
          set "src" "/src/" "flg" "/src/inc/" "inc" "/src/inc2/" "cwd" "/build/"
          while test $[]@%:@ != 0; do
-           AC_LANG_CONFTEST([AC_LANG_PROGRAM(
-             [], [[      write(*,"(a)") "${1}"]])])
+           AC_LANG_CONFTEST([AC_LANG_SOURCE([[      write(*,"(a)") "${1}"]])])
            shift; mv conftest.$ac_ext conftest.dir${1}conftest.write; shift
          done
          cd conftest.dir/build
@@ -220,8 +219,7 @@ dnl This instance of the file will be compiled.
          FCFLAGS="$FCFLAGS ${acx_cv_fc_[]$1[]_include_flag}../src/inc dnl
 ${acx_cv_fc_[]$1[]_include_flag}../src/inc2"
          acx_save_ac_link=$ac_link
-         ac_link=`echo "$ac_link" | dnl
-sed 's%conftest\(\.\$ac_ext\)%../src/conftest\1%'`
+         ac_link=`AS_ECHO(["$ac_link"]) | sed 's%conftest\.\$ac_ext%../src/&%'`
          while :; do
            AC_LINK_IFELSE([],
              [acx_exec_result=`./conftest$ac_exeext`
