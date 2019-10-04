@@ -16,10 +16,7 @@ class FortranGenerator:
 
     def __init__(self, preprocessor, **kwargs):
         self._preprocessor = preprocessor
-        self._include_reader = IncludeReader(self._preprocessor)
-        self._include_reader.include_root = kwargs.get('include_root', None)
-        self._include_reader.include_dirs = kwargs.get('include_dirs', None)
-        self._include_reader.include_order = kwargs.get('include_order', None)
+        self._include_reader = IncludeReader(self._preprocessor, **kwargs)
         self._intrinsic_mods = kwargs.get('intrinsic_mods', None)
         self._external_mods = kwargs.get('external_mods', None)
         self._order_prereqs = kwargs.get('order_prereqs', None)

@@ -28,10 +28,7 @@ class Preprocessor:
                                          re.DOTALL)
 
     def __init__(self, stream, **kwargs):
-        self._include_reader = IncludeReader(stream)
-        self._include_reader.include_root = kwargs.get('include_root', None)
-        self._include_reader.include_dirs = kwargs.get('include_dirs', None)
-        self._include_reader.include_order = kwargs.get('include_order', None)
+        self._include_reader = IncludeReader(stream, **kwargs)
         self._try_eval_expr = kwargs.get('try_eval_expr', False)
         self._enable_debug = kwargs.get('debug', False)
 
@@ -65,7 +62,7 @@ class Preprocessor:
             if not line:
                 return line
 
-            # if(n)def statement
+            # if(n)def directive
             match = Preprocessor._re_ifdef.match(line)
             if match:
                 state = 0
@@ -80,7 +77,7 @@ class Preprocessor:
                 self._log_result_for_debug(line, state, eval_expr)
                 continue
 
-            # if statement
+            # if directive
             match = Preprocessor._re_if_expr.match(line)
             if match:
                 state = 0
@@ -95,7 +92,7 @@ class Preprocessor:
                 self._log_result_for_debug(line, state, eval_expr)
                 continue
 
-            # elif statement
+            # elif directive
             match = Preprocessor._re_elif.match(line)
             if match:
                 self._else()
@@ -112,13 +109,13 @@ class Preprocessor:
                 self._log_result_for_debug(line, state, eval_expr)
                 continue
 
-            # else statement
+            # else directive
             match = Preprocessor._re_else.match(line)
             if match:
                 self._else()
                 continue
 
-            # endif statement
+            # endif directive
             match = Preprocessor._re_endif.match(line)
             if match:
                 if self._if_state_stack:
@@ -130,22 +127,22 @@ class Preprocessor:
             if self._check_ignore_branch():
                 continue
 
-            # include statement
+            # include directive
             match = Preprocessor._re_include.match(line)
             if match:
                 self._include_reader.include(match.group(match.lastindex))
                 continue
 
-            # define statement
+            # define directive
             match = Preprocessor._re_define.match(line)
             if match:
                 self._define(*match.group(1, 2, 3))
                 continue
 
-            # undef statement
+            # undef directive
             match = Preprocessor._re_undef.match(line)
             if match:
-                self.undef(match.group(1))
+                self._undef(match.group(1))
                 continue
 
             return line
@@ -175,7 +172,7 @@ class Preprocessor:
         lines.append('#   Included files ("#include" directive):\n')
         if self._include_reader.included_files:
             lines.extend(['#     ',
-                          '\n#     '.join(self.included_files),
+                          '\n#     '.join(self._include_reader.included_files),
                           '\n'])
         else:
             lines.append('#     none')
@@ -200,7 +197,7 @@ class Preprocessor:
         if name != 'defined':
             self._defined_macros[name] = (args, '' if body is None else body)
 
-    def undef(self, name):
+    def _undef(self, name):
         self._defined_macros.pop(name, None)
 
     def _else(self):
