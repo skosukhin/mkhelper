@@ -1,6 +1,6 @@
 import os
 
-from depgen import open23
+from depgen import in_directory, open23
 
 
 class IncludeReader:
@@ -76,9 +76,8 @@ class IncludeReader:
             return
 
         if self.include_root:
-            inc_candidate_path = os.path.abspath(inc_candidate)
-            if not (inc_candidate_path.startswith(self.include_root) or
-                    inc_candidate_path.startswith(os.getcwd())):
+            if not (in_directory(inc_candidate, self.include_root) or
+                    in_directory(inc_candidate, os.getcwd())):
                 return
 
         self.included_files.add(inc_candidate)
