@@ -1,6 +1,7 @@
 import re
 
-from depgen import IncludeStack, IncludeFinder, file_in_dir, open23
+from depgen import IncludeStack, IncludeFinder, file_in_dir, open23, \
+    find_unquoted_string
 
 
 class Preprocessor:
@@ -23,9 +24,6 @@ class Preprocessor:
 
     _re_identifier = re.compile(
         r'(([a-zA-Z_]\w*)(\s*\(\s*(\w+(?:\s*,\s*\w+)*)?\s*\))?)')
-
-    _re_block_comments_init = re.compile(r'(?:("|\').*?(?<!\\)\1)|(/\*)',
-                                         re.DOTALL)
 
     def __init__(self, stream,
                  include_order=None,
@@ -69,6 +67,9 @@ class Preprocessor:
             line = self._remove_block_comments(line)
             if not line:
                 return line
+
+            if line.isspace():
+                continue
 
             # if(n)def directive
             match = Preprocessor._re_ifdef.match(line)
@@ -253,37 +254,28 @@ class Preprocessor:
         return line
 
     def _remove_block_comments(self, line):
-        rescan = True
-        while rescan:
-            rescan = False
-            for match_init in \
-                    Preprocessor._re_block_comments_init.finditer(line):
-                # Check whether the line contains an unquoted block comment
-                # initiator '/*':
-                if match_init.group(2):
-                    # Check whether the line contains a block comment
-                    # terminator '*/' (even if it is quoted):
-                    term_idx = line.find('*/', match_init.regs[2][1])
-                    while term_idx < 0:
-                        # The block is not terminated yet, read the next line:
-                        next_line = self._include_stack.readline()
-                        if not next_line:
-                            # We have an unterminated block,
-                            # return an empty line:
-                            line = ''
-                            break  # while term_idx < 0
-                        line += next_line
-                        term_idx = line.find('*/', match_init.regs[2][1])
-                    else:
-                        # Replace the block of comments with a single
-                        # space:
-                        line = line[:match_init.regs[2][0]] + \
-                               ' ' + line[term_idx + 2:]
-                        # We have removed the first block of comments,
-                        # check if there is more on the next iteration:
-                        rescan = True
-                        break  # for match_init in ...
-        return line
+        while True:
+            # Check whether the line contains an unquoted block comment
+            # initiator '/*':
+            start_idx = find_unquoted_string('/*', line)
+            if start_idx < 0:
+                return line
+            # Check whether the line contains a block comment
+            # terminator '*/' (even if it is quoted):
+            term_idx = line.find('*/', start_idx + 2)
+            while term_idx < 0:
+                # The block is not terminated yet, read the next line:
+                next_line = self._include_stack.readline()
+                line_length = len(line)
+                if next_line:
+                    line += next_line
+                    term_idx = line.find('*/', line_length)
+                else:
+                    term_idx = line_length
+            else:
+                # Replace the block of comments with a single
+                # space:
+                line = '%s %s' % (line[:start_idx], line[term_idx + 2:])
 
     def _evaluate_expr_to_state(self, expr):
         prev_expr = expr

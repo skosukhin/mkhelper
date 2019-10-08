@@ -9,13 +9,37 @@ def open23(name, mode='r'):
         return open(name, mode, encoding='latin-1')
 
 
-def file_in_dir(file, directory):
-    if directory:
-        file = os.path.abspath(file)
-        directory = os.path.abspath(directory) + os.path.sep
-        return file.startswith(directory)
+def file_in_dir(f, d):
+    if d:
+        return os.path.abspath(f).startswith(os.path.abspath(d) + os.path.sep)
     else:
         return True
+
+
+def find_unquoted_string(string, line, quotes='\'"'):
+    skip = 0
+    quote = None
+    while True:
+        idx = line.find(string, skip)
+        if idx < 0:
+            return idx
+
+        escaped = False
+        for c in line[skip:idx]:
+            if escaped:
+                escaped = False
+            elif c in quotes:
+                if quote is None:
+                    quote = c
+                elif quote == c:
+                    quote = None
+            elif c == '\\' and quote:
+                escaped = True
+
+        if quote:
+            skip = idx + len(string)
+        else:
+            return idx
 
 
 class IncludeFinder:

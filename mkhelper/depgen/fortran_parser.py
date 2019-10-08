@@ -1,15 +1,13 @@
 import re
 
-from depgen import IncludeFinder, IncludeStack, file_in_dir, open23
+from depgen import IncludeFinder, IncludeStack, file_in_dir, open23, \
+    find_unquoted_string
 
 
 class FortranParser:
     _re_include = re.compile(r'^\s*include\s+(\'|")(.*?)\1', re.I)
     _re_line_continue_start = re.compile(r'^(.*)&\s*$')
     _re_line_continue_end = re.compile(r'^\s*&')
-    _re_line_split = re.compile(
-        r'^((?:[^\'";]|(?:\'(?:\\\'|[^\'\\])*\')|(?:"(?:\\"|[^"\\])*"))*);'
-        r'(.*)$')
     _re_module_provide = re.compile(r'^\s*module\s+(?!procedure\s)(\w+)', re.I)
     _re_module_require = re.compile(
         r'^\s*use(?:\s+|(?:\s*,\s*((?:non_)?intrinsic))?\s*::\s*)(\w+)', re.I)
@@ -134,13 +132,15 @@ class FortranParser:
 
     @staticmethod
     def _split_semicolons(line):
-        result = []
-        match = FortranParser._re_line_split.match(line)
-        while match:
-            result.append(match.group(1) + '\n')
-            line = match.group(2) + '\n'
-            match = FortranParser._re_line_split.match(line)
-        else:
-            result.append(line)
-        return result
+        while True:
+            idx = find_unquoted_string(';', line)
+            if idx < 0:
+                if line and not line.isspace():
+                    yield line
+                break
+            else:
+                prefix = line[:idx]
+                if prefix and not prefix.isspace():
+                    yield prefix + '\n'
+                line = line[idx + 1:]
 
