@@ -601,6 +601,8 @@ DEFAULT_VERBOSITY
 FPP
 config_FCFLAGS
 FC_PP_DEF
+FC_INC_ORDER_PP_SYS_f90
+FC_INC_FLAG_PP_SYS_f90
 FC_INC_ORDER_PP_f90
 FC_INC_FLAG_PP_f90
 FC_INC_ORDER
@@ -3231,6 +3233,134 @@ $as_echo "$acx_cv_fc_pp_include_order" >&6; }
   FC_INC_ORDER_PP_f90=inc,flg
 else
   FC_INC_ORDER_PP_f90=$acx_cv_fc_pp_include_order
+fi
+
+
+
+      { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler flag needed to specify search paths for the angle-bracket form of the \"#include\" directive" >&5
+$as_echo_n "checking for Fortran compiler flag needed to specify search paths for the angle-bracket form of the \"#include\" directive... " >&6; }
+if ${acx_cv_fc_pp_sys_include_flag+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  acx_cv_fc_pp_sys_include_flag=unknown
+      as_dir=conftest.dir; as_fn_mkdir_p
+      cat > conftest.$ac_ext <<_ACEOF
+      program main
+
+      end
+_ACEOF
+      mv conftest.$ac_ext conftest.dir/conftest.inc
+      cat > conftest.$ac_ext <<_ACEOF
+#include <conftest.inc>
+
+_ACEOF
+      acx_save_FCFLAGS=$FCFLAGS
+      for acx_flag in -I '-I ' '-WF,-I' '-Wp,-I'; do
+        FCFLAGS="$acx_save_FCFLAGS ${acx_flag}conftest.dir"
+        if ac_fn_fc_try_link "$LINENO"; then :
+  acx_cv_fc_pp_sys_include_flag=$acx_flag
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext
+        test "x$acx_cv_fc_pp_sys_include_flag" != xunknown && break
+      done
+      FCFLAGS=$acx_save_FCFLAGS
+      rm -f conftest.$ac_ext
+      rm -rf conftest.dir
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_pp_sys_include_flag" >&5
+$as_echo "$acx_cv_fc_pp_sys_include_flag" >&6; }
+
+   if test "x$acx_cv_fc_pp_sys_include_flag" = xunknown; then :
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "unable to detect Fortran compiler flag needed to specify search paths for the angle-bracket form of the \"#include\" directive
+See \`config.log' for more details" "$LINENO" 5; }
+else
+  FC_INC_FLAG_PP_SYS_f90=$acx_cv_fc_pp_sys_include_flag
+
+fi
+      { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler search path order for the angle-bracket form of the \"#include\" directive" >&5
+$as_echo_n "checking for Fortran compiler search path order for the angle-bracket form of the \"#include\" directive... " >&6; }
+if ${acx_cv_fc_pp_sys_include_order+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  acx_cv_fc_pp_sys_include_order=
+      if test "x$cross_compiling" = xno; then :
+  as_dir=conftest.dir/src/inc; as_fn_mkdir_p
+         as_dir=conftest.dir/build; as_fn_mkdir_p
+         as_dir=conftest.dir/src/inc2; as_fn_mkdir_p
+         cat > conftest.$ac_ext <<_ACEOF
+      program main
+#include <conftest.inc>
+
+      end
+_ACEOF
+         cp conftest.$ac_ext conftest.dir/build/conftest.$ac_ext
+         mv conftest.$ac_ext conftest.dir/src/conftest.$ac_ext
+         cat > conftest.$ac_ext <<_ACEOF
+#include <conftest.write>
+
+_ACEOF
+         mv conftest.$ac_ext conftest.dir/src/inc2/conftest.inc
+         set "src" "/src/" "flg" "/src/inc/" "inc" "/src/inc2/" "cwd" "/build/"
+         while test $# != 0; do
+           cat > conftest.$ac_ext <<_ACEOF
+      write(*,"(a)") "${1}"
+_ACEOF
+           shift; mv conftest.$ac_ext conftest.dir${1}conftest.write; shift
+         done
+         cd conftest.dir/build
+         acx_save_FCFLAGS=$FCFLAGS
+         FCFLAGS="$FCFLAGS ${acx_cv_fc_pp_sys_include_flag}../src/inc ${acx_cv_fc_pp_sys_include_flag}../src/inc2"
+         acx_save_ac_link=$ac_link
+         ac_link=`$as_echo "$ac_link" | sed 's%conftest\.\$ac_ext%../src/&%'`
+         while :; do
+           if ac_fn_fc_try_link "$LINENO"; then :
+  acx_exec_result=`./conftest$ac_exeext`
+              if test $? -eq 0; then :
+  case $acx_exec_result in #(
+  src) :
+    rm -f ../src/conftest.write ;; #(
+  inc) :
+    rm -f ../src/inc2/conftest.write ;; #(
+  cwd) :
+    rm -f ./conftest.write ;; #(
+  flg) :
+    rm -f ../src/inc/conftest.write ../src/inc2/conftest.write ;; #(
+  *) :
+    break ;;
+esac
+                 if test -z "$acx_cv_fc_pp_sys_include_order"; then :
+  acx_cv_fc_pp_sys_include_order=$acx_exec_result
+else
+  as_fn_append acx_cv_fc_pp_sys_include_order ",$acx_exec_result"
+fi
+                 rm -f conftest$ac_exeext
+else
+  break
+fi
+else
+  break
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext
+         done
+         ac_link=$acx_save_ac_link
+         FCFLAGS=$acx_save_FCFLAGS
+         cd ../..
+         rm -rf conftest.dir
+fi
+      if test -z "$acx_cv_fc_pp_sys_include_order"; then :
+  acx_cv_fc_pp_sys_include_order=unknown
+fi
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_pp_sys_include_order" >&5
+$as_echo "$acx_cv_fc_pp_sys_include_order" >&6; }
+   if test "x$acx_cv_fc_pp_sys_include_order" = xunknown; then :
+  FC_INC_ORDER_PP_SYS_f90=flg
+else
+  FC_INC_ORDER_PP_SYS_f90=$acx_cv_fc_pp_sys_include_order
 fi
 
 
