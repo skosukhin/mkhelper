@@ -72,6 +72,13 @@ ACX_FC_INCLUDE_ORDER_PP(
   [FC_INC_ORDER_PP_f90=inc,flg])
 AC_SUBST([FC_INC_ORDER_PP_f90])
 
+ACX_FC_INCLUDE_FLAG_PP_SYS(
+  [AC_SUBST([FC_INC_FLAG_PP_SYS_f90], [$acx_cv_fc_pp_sys_include_flag])])
+ACX_FC_INCLUDE_ORDER_PP_SYS(
+  [FC_INC_ORDER_PP_SYS_f90=$acx_cv_fc_pp_sys_include_order],
+  [FC_INC_ORDER_PP_SYS_f90=flg])
+AC_SUBST([FC_INC_ORDER_PP_SYS_f90])
+
 ACX_LANG_MACRO_FLAG([AC_SUBST([FC_PP_DEF], [$acx_cv_fc_macro_flag])])
 
 AC_SUBST([config_FCFLAGS])

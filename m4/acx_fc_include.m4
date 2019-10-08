@@ -36,6 +36,26 @@ AC_DEFUN([ACX_FC_INCLUDE_FLAG_PP],
         [AC_MSG_FAILURE([unable to detect Fortran compiler flag needed to dnl
 specify search paths for _ACX_FC_INCLUDE_DESC([pp])])])], [$1])])
 
+# ACX_FC_INCLUDE_FLAG_PP_SYS([ACTION-IF-SUCCESS],
+#                            [ACTION-IF-FAILURE = FAILURE])
+# -----------------------------------------------------------------------------
+# Finds the compiler flag needed to specify search paths for the angle-bracket
+# form of the preprocessor "#include" directive. The result is either "unknown"
+# or the actual compiler flag, which may contain a significant trailing
+# whitespace.
+#
+# If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
+# (defaults to failing with an error message).
+#
+# The result is cached in the acx_cv_fc_pp_sys_include_flag variable.
+#
+AC_DEFUN([ACX_FC_INCLUDE_FLAG_PP_SYS],
+  [_ACX_FC_INCLUDE_FLAG_PP_SYS
+   AS_VAR_IF([acx_cv_fc_pp_sys_include_flag], [unknown],
+     [m4_default([$2],
+        [AC_MSG_FAILURE([unable to detect Fortran compiler flag needed to dnl
+specify search paths for _ACX_FC_INCLUDE_DESC([pp_sys])])])], [$1])])
+
 # ACX_FC_INCLUDE_ORDER([ACTION-IF-SUCCESS],
 #                      [ACTION-IF-FAILURE = FAILURE])
 # -----------------------------------------------------------------------------
@@ -71,6 +91,22 @@ AC_DEFUN([ACX_FC_INCLUDE_ORDER],
 #
 AC_DEFUN([ACX_FC_INCLUDE_ORDER_PP],
   [AC_REQUIRE([_ACX_FC_INCLUDE_FLAG_PP])_ACX_FC_INCLUDE_ORDER([pp],$@)])
+
+# ACX_FC_INCLUDE_ORDER_PP_SYS([ACTION-IF-SUCCESS],
+#                             [ACTION-IF-FAILURE = FAILURE])
+# -----------------------------------------------------------------------------
+# Finds the search path order for the angle-bracket form of the preprocessor
+# "#include" directive. See ACX_FC_INCLUDE_ORDER for the description of the
+# result.
+#
+# If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
+# (defaults to failing with an error message).
+#
+# The result is cached in the acx_cv_fc_pp_sys_include_order variable.
+#
+AC_DEFUN([ACX_FC_INCLUDE_ORDER_PP_SYS],
+  [AC_REQUIRE([_ACX_FC_INCLUDE_FLAG_PP_SYS])dnl
+_ACX_FC_INCLUDE_ORDER([pp_sys],$@)])
 
 # ACX_FC_INCLUDE_CHECK(HEADER-FILE,
 #                      [ACTION-IF-SUCCESS],
@@ -140,6 +176,13 @@ AC_DEFUN([_ACX_FC_INCLUDE_FLAG], [__ACX_FC_INCLUDE_FLAG([ftn])])
 # argument for AC_REQUIRE.
 #
 AC_DEFUN([_ACX_FC_INCLUDE_FLAG_PP], [__ACX_FC_INCLUDE_FLAG([pp])])
+
+# _ACX_FC_INCLUDE_FLAG_PP_SYS()
+# -----------------------------------------------------------------------------
+# A parameterless alias for __ACX_FC_INCLUDE_FLAG([pp_sys]) to be used as an
+# argument for AC_REQUIRE.
+#
+AC_DEFUN([_ACX_FC_INCLUDE_FLAG_PP_SYS], [__ACX_FC_INCLUDE_FLAG([pp_sys])])
 
 # __ACX_FC_INCLUDE_FLAG(HEADER-TYPE)
 # -----------------------------------------------------------------------------
