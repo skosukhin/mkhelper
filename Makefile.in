@@ -76,13 +76,17 @@ depend: $(depfiles)
 
 mostlyclean: $(bundled_subdirs)
 	rm -f main libmain.a $(patsubst $(srcdir)/%.f90, %.o, $(srcs)) $(moddir)/*.@FC_MOD_FILE_EXT@
+	rm -rf main.dSYM
 
 clean: mostlyclean
 	rm -rf deplist.debug
 
+# Delete python cache only if we are in the source directory, i.e.
+# do not try to delete files in the source tree if the out-of-source
+# building takes place.
 distclean: clean
 	rm -f $(depfiles) $(dirstamps) config.log config.status Makefile depgen.config
-	find -name '*.pyc' -delete -o -name '*.pyo' -delete -o -name '__pycache__' -delete
+	find . -name '*.pyc' -delete -o -name '*.pyo' -delete -o -name '__pycache__' -delete
 	@for dir in $(subdirs) $(bundled_subdirs) $(moddir) externals; do \
 	  if test -d "$$dir"; then \
 	    echo "find '$$dir' -type d -empty -delete"; \
