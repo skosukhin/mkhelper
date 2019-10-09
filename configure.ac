@@ -73,7 +73,11 @@ ACX_FC_INCLUDE_ORDER_PP(
 AC_SUBST([FC_INC_ORDER_PP_f90])
 
 ACX_FC_INCLUDE_FLAG_PP_SYS(
-  [AC_SUBST([FC_INC_FLAG_PP_SYS_f90], [$acx_cv_fc_pp_sys_include_flag])])
+  [AS_IF([test "x$acx_cv_fc_pp_sys_include_flag" != dnl
+"x$acx_cv_fc_pp_include_flag"],
+     [AC_MSG_ERROR([Different flags needed to specify search paths for the dnl
+quoted and the angle-bracket forms of the "#include" directive are not dnl
+supported])])])
 ACX_FC_INCLUDE_ORDER_PP_SYS(
   [FC_INC_ORDER_PP_SYS_f90=$acx_cv_fc_pp_sys_include_order],
   [FC_INC_ORDER_PP_SYS_f90=flg])

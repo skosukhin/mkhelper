@@ -5,6 +5,8 @@
 --pp-inc-flag=@FC_INC_FLAG_PP_f90@
 --pp-inc-order=@FC_INC_ORDER_PP_f90@
 --pp-macro-flag=@FC_PP_DEF@
+--pp-inc-sys
+--pp-inc-sys-order=@FC_INC_ORDER_PP_SYS_f90@
 --fc-enable
 --fc-mod-ext=@FC_MOD_FILE_EXT@
 --fc-mod-upper=@FC_MOD_FILE_UPPER@
