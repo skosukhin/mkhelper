@@ -2,7 +2,7 @@
 import os
 import sys
 
-from depgen import open23
+from depgen import StreamWrapper, open23
 
 try:
     import argparse
@@ -21,52 +21,50 @@ def parse_args():
     def comma_splitter(s):
         return list(filter(None, s.lower().split(',')))
 
+    def path_splitter(s):
+        return list(filter(None, s.split(':')))
+
     parser.add_argument(
         'input', metavar='INPUT',
-        help='input source file')
+        help='input source file; if equals to a single dash (-), the program '
+             'reads from the standard input stream')
     parser.add_argument(
         '--output', '-o', metavar='OUTPUT',
         help='output makefile with generated dependency rules; if not '
-             'specified, the program writes to the standard output')
+             'specified or equals to a single dash (-), the program writes to '
+             'the standard output stream')
     parser.add_argument(
-        '--debug-file', '-d', metavar='DEBUG_FILE',
-        help='dump debug information to DEBUG_FILE')
+        '--debug', '-d', action='store_true',
+        help='dump debug information to OUTPUT (commented with #)')
+    parser.add_argument(
+        '--src-name', metavar='SRC_NAME',
+        help='name of the source file, the prerequisite of the corresponding '
+             'compilation rule as it will appear in the OUTPUT; normally (and '
+             'by default) equals to the INPUT or to an empty string when the '
+             'latter is set to the standard input stream')
     parser.add_argument(
         '--obj-name', metavar='OBJ_NAME',
         help='name of the object file, the target of the corresponding '
              'compilation rule as it will appear in the OUTPUT; normally '
              'equals to the path to the object file that is supposed to be '
-             'generated as a result of compilation (by default, equals to the '
-             'name of the INPUT without the directory-part with the file '
-             'extension replaced with ".o")')
-    parser.add_argument(
-        '--src-name',
-        help='name of the source file, the prerequisite of the corresponding '
-             'compilation rule as it will appear in the OUTPUT; normally (and '
-             'by default) equals to the INPUT but can be overridden when, for '
-             'example, the source file needs to be referenced in the OUTPUT '
-             'without the directory-part (i.e. source files in the calling '
-             'Makefile are located using the vpath feature)')
+             'generated as a result of compilation (default: SRC_NAME '
+             'without the directory-part with the file extension replaced '
+             'with ".o")')
     parser.add_argument(
         '--dep-name',
         help='name of the generated makefile, the additional target of the'
-             'corresponding compilation rule (for auto-dependency generation) '
-             'as it will appear in the OUTPUT; normally (and by default) '
-             'equals to the OUTPUT but can be explicitly set when the latter '
-             'is not specified (i.e. writing to the standard output stream)')
+             'corresponding compilation rule (for automatic dependency '
+             'generation) as it will appear in the OUTPUT; normally (and by '
+             'default) equals to the OUTPUT or to an empty string when the '
+             'latter is set to the standard output stream)')
     parser.add_argument(
-        '--oo-prereqs', metavar='ORDER_ONLY_PREREQUISITE_LIST',
-        type=comma_splitter,
-        help='comma-separated list of additional order only prerequisites of '
-             'the OBJ_NAME')
-    parser.add_argument(
-        '--src-root', metavar='SRC_ROOT',
-        help='ignore dependencies on files that are not in SRC_ROOT or '
-             'its subdirectories; location of INPUT is not checked; '
-             'the current working directory (i.e. where the building takes '
-             'place) and its subdirectories are never ignored to allow for '
-             'dependencies of/on automatically generated files (i.e. '
-             'config.h)')
+        '--src-roots', metavar='SRC_ROOTS',
+        type=path_splitter,
+        help='colon-separated list of paths to directories; if specified and '
+             'not empty, dependencies on files that do not reside in one of '
+             'the specified directories will be ignored; applies only to '
+             'files included using the preprocessor "#include" directive or '
+             'the Fortran "include" statement')
     parser.add_argument(
         'flags', metavar='-- [$CPPFLAGS | $FCFLAGS]', nargs='?',
         default=argparse.SUPPRESS,
@@ -75,8 +73,8 @@ def parse_args():
              'following the double dash separator (--); the program searches '
              'these flags for (possibly multiple instances of) PP_INC_FLAG, '
              'PP_MACRO_FLAG, FC_INC_FLAG and FC_MOD_DIR_FLAG; any values '
-             'found are used in the dependency generation of OUTPUT (in the '
-             'case of FC_MOD_DIR_FLAG, only the last value found is used.')
+             'found are used in the dependency generation (in the case of '
+             'FC_MOD_DIR_FLAG, only the last value found is used)')
 
     pp_arg_group = parser.add_argument_group('preprocessor arguments')
     pp_arg_group.add_argument(
@@ -86,9 +84,10 @@ def parse_args():
     pp_arg_group.add_argument(
         '--pp-eval-expr', action='store_true',
         help='enable evaluation of expressions that appear in preprocessor '
-             'directives "#if" and "#elif"; if disabled (default) or '
-             'evaluation fails, both branches of the directives are included '
-             'by the preprocessing stage.')
+             'directives "#if" and "#elif" (does not apply to "#ifdef" and '
+             '"#ifndef"); if disabled (default) or evaluation fails, both '
+             'branches of the directives are included by the preprocessing '
+             'stage')
     pp_arg_group.add_argument(
         '--pp-inc-order', default='inc,flg', metavar='ORDER_LIST',
         type=comma_splitter,
@@ -100,17 +99,18 @@ def parse_args():
              'directories specified with PP_INC_FLAG compiler flag), "src" '
              '(for the directory containing the INPUT source file), and "inc" '
              '(for the directory containing the file with the "#include" '
-             'directive. Default: "%(default)s".')
+             'directive). Default: "%(default)s".')
     pp_arg_group.add_argument(
         '--pp-macro-flag', metavar='PP_MACRO_FLAG', default='-D',
         help='preprocessor flag used for macro definition; only flags '
-             'starting with a single dash (-) are currently supported '
-             '(default: %(default)s)')
+             'that start with a single dash (-) and have no more than a '
+             'single trailing whitespace are supported (default: %(default)s)')
     pp_arg_group.add_argument(
         '--pp-inc-flag', metavar='PP_INC_FLAG', default='-I',
         help='preprocessor flag used for setting search paths for the '
-             '"#include" directive; only flags starting with a single dash '
-             '(-) are currently supported (default: %(default)s)')
+             '"#include" directive; only flags that start with a single dash '
+             '(-) and have no more than a single trailing whitespace are '
+             'supported (default: %(default)s)')
 
     fc_arg_group = parser.add_argument_group('Fortran arguments')
     fc_arg_group.add_argument(
@@ -156,13 +156,15 @@ def parse_args():
     fc_arg_group.add_argument(
         '--fc-mod-dir-flag', metavar='FC_MOD_DIR_FLAG', default='-J',
         help='Fortran compiler flag used to specify the directory where '
-             'module files are saved; only flags starting with a single dash '
-             '(-) are currently supported (default: %(default)s)')
+             'module files are saved; only flags that start with a single '
+             'dash (-) and have no more than a single trailing whitespace are '
+             'supported (default: %(default)s)')
     fc_arg_group.add_argument(
         '--fc-inc-flag', metavar='FC_INC_FLAG', default='-I',
         help='preprocessor flag used for setting search paths for the '
-             'Fortran "include" statement; only flags starting with a single '
-             'dash (-) are currently supported (default: %(default)s)')
+             'Fortran "include" statement; only flags that start with a '
+             'single dash (-) and have no more than a single trailing '
+             'whitespace are supported (default: %(default)s)')
 
     unknown = []
     try:
@@ -172,66 +174,70 @@ def parse_args():
     except ValueError:
         args = parser.parse_args()
 
-    if not args.obj_name:
-        args.obj_name = os.path.splitext(
-            os.path.basename(args.input))[0] + '.o'
     if not args.src_name:
-        args.src_name = args.input
-    if not args.dep_name and args.output:
-        args.dep_name = args.output
-    if args.src_root:
-        args.src_root = os.path.abspath(args.src_root)
+        args.src_name = '' if args.input == '-' else args.input
 
-    compiler_args = dict(pp_inc_dirs=args.pp_inc_flag,
-                         pp_macros=args.pp_macro_flag,
-                         fc_inc_dirs=args.fc_inc_flag,
-                         fc_mod_dir=args.fc_mod_dir_flag)
+    if not args.obj_name:
+        src_no_ext_basename = os.path.splitext(
+            os.path.basename(args.src_name))[0]
+        if src_no_ext_basename:
+            args.obj_name = src_no_ext_basename + '.o'
+        else:
+            args.obj_name = ''
 
-    for dest, flag in compiler_args.items():
-        if not flag.startswith('-') or flag.endswith('  '):
-            parser.error('unsupported compiler/preprocessor flag ' + flag)
-        setattr(args, dest, None)
+    if not args.output:
+        args.output = '-'
 
-    enabled_compiler_args = []
+    if not args.dep_name:
+        args.dep_name = '' if args.output == '-' else args.output
+
+    compiler_arg_dests = dict()
 
     if args.pp_enable:
-        for dest in compiler_args.keys():
-            if dest.startswith('pp_'):
-                enabled_compiler_args.append(dest)
+        compiler_arg_dests.update(pp_inc_dirs=args.pp_inc_flag,
+                                  pp_macros=args.pp_macro_flag)
 
     if args.fc_enable:
-        for dest in compiler_args.keys():
-            if dest.startswith('fc_'):
-                enabled_compiler_args.append(dest)
-        args.fc_mod_upper = args.fc_mod_upper == 'yes'
+        compiler_arg_dests.update(fc_inc_dirs=args.fc_inc_flag,
+                                  fc_mod_dir=args.fc_mod_dir_flag)
 
-    if enabled_compiler_args:
-        compiler_flags = dict()
-        for dest in enabled_compiler_args:
-            flag = compiler_args[dest]
-            parse_result = compiler_flags.get(flag, None)
-            if parse_result is None:
-                parse_result = []
-                compiler_flags[flag] = parse_result
-            setattr(args, dest, parse_result)
+    if compiler_arg_dests:
+        compiler_args = dict()
+        for dest, flag in compiler_arg_dests.items():
+            if not flag.startswith('-') or flag.endswith('  '):
+                parser.error('unsupported compiler/preprocessor flag ' + flag)
+            # Several dests might share the same flag and we want them to share
+            # the same list of values in this the case:
+            val_list = compiler_args.get(flag, None)
+            if val_list is None:
+                val_list = []
+                compiler_args[flag] = val_list
+            setattr(args, dest, val_list)
 
-        appended_results = []
-        for compiler_arg in unknown:
-            if compiler_arg.startswith('-'):
-                appended_results[:] = []
-                compiler_arg_ws = compiler_arg + ' '
-                for flag, result in compiler_flags.items():
-                    if compiler_arg == flag or compiler_arg_ws == flag:
-                        appended_results.append(result)
-                    elif compiler_arg.startswith(flag):
-                        result.append(compiler_arg[len(flag):].strip())
-            else:
-                if appended_results:
-                    for result in appended_results:
-                        result.append(compiler_arg)
-                appended_results[:] = []
+        appended_val_lists = []
+        for arg in unknown:
+            if arg.startswith('-'):
+                appended_val_lists *= 0
+                arg_ws = arg + ' '
+                for flag, val_list in compiler_args.items():
+                    if flag == arg or flag == arg_ws:
+                        # If the current argument equals to a flag, which might
+                        # have a significant trailing whitespace, the next
+                        # argument on the command line is the flag's value:
+                        appended_val_lists.append(val_list)
+                    elif arg.startswith(flag):
+                        # If the current argument starts with a flag that does
+                        # not have a trailing whitespace, the suffix of the
+                        # argument is the flag's value:
+                        val_list.append(arg[len(flag):])
+            elif appended_val_lists:
+                for val_list in appended_val_lists:
+                    val_list.append(arg)
+                appended_val_lists *= 0
 
-        if args.fc_mod_dir and args.fc_mod_dir[-1]:
+    if args.fc_enable:
+        args.fc_mod_upper = (args.fc_mod_upper == 'yes')
+        if args.fc_mod_dir:
             args.fc_mod_dir = args.fc_mod_dir[-1]
         else:
             args.fc_mod_dir = None
@@ -242,66 +248,128 @@ def parse_args():
 def main():
     args = parse_args()
 
-    debug_file = None
-    if args.debug_file:
-        debug_file = open(args.debug_file, 'w')
-        debug_file.writelines([
-            '# Python version: ', sys.version.replace('\n', ' '), '\n',
-            '# Command:\n',
-            '  ', '\n    '.join(sys.argv), '\n',
-            '# Parsed arguments:\n ',
-            '\n '.join(
-                [k + '=' + str(v) for k, v in vars(args).items()]), '\n'])
+    input_stream = StreamWrapper(sys.stdin, '') if args.input == '-' \
+        else open23(args.input, 'r')
 
-    in_stream = open23(args.input, 'r')
+    parser = None
+
+    included_files = set()
+
+    def include_callback(filename):
+        included_files.add(filename)
+
+    provided_modules = set()
+
+    def module_callback(module):
+        provided_modules.add(module)
+
+    required_modules = set()
+
+    def use_module_callback(module):
+        required_modules.add(module)
+
+    pp_debug_info = None
+    ftn_debug_info = None
 
     if args.pp_enable:
-        from depgen.pp import Preprocessor
-        pp = Preprocessor(
-            in_stream,
-            include_root=args.src_root,
-            include_dirs=args.pp_inc_dirs,
-            include_order=args.pp_inc_order,
-            try_eval_expr=args.pp_eval_expr,
-            debug=(debug_file is not None))
+        from depgen.preprocessor import Preprocessor
 
-        for macro in args.pp_macros:
-            pp.define_from_cmd_line(macro)
-    else:
-        from depgen.pp_dummy import DummyPreprocessor
-        pp = DummyPreprocessor(in_stream)
+        pp = Preprocessor(input_stream,
+                          include_order=args.pp_inc_order,
+                          include_dirs=args.pp_inc_dirs,
+                          include_roots=args.src_roots,
+                          try_eval_expr=args.pp_eval_expr)
+        for pp_macro in args.pp_macros:
+            pp.define(pp_macro)
+
+        pp.include_callback = include_callback
+
+        def debug_callback(line, msg):
+            pp_debug_info.append('#  `%s`:\t%s\n' % (line[:-1], msg))
+
+        if args.debug:
+            pp_debug_info = ['#\n# Preprocessor:\n']
+            pp.debug_callback = debug_callback
+
+        input_stream = pp
+        parser = pp
 
     if args.fc_enable:
-        from depgen.gen_fortran import FortranGenerator
-        generator = FortranGenerator(
-            pp,
-            include_root=args.src_root,
-            include_dirs=args.fc_inc_dirs,
-            include_order=args.fc_inc_order,
-            intrinsic_mods=args.fc_intrinsic_mods,
-            external_mods=args.fc_external_mods,
-            mod_file_dir=args.fc_mod_dir,
-            mod_file_ext=args.fc_mod_ext,
-            mod_file_upper=args.fc_mod_upper,
-            debug=(debug_file is not None))
-    else:
-        from depgen.gen_pp import PpGenerator
-        generator = PpGenerator(pp)
+        from depgen.fortran_parser import FortranParser
+        ftn = FortranParser(input_stream,
+                            include_order=args.fc_inc_order,
+                            include_dirs=args.fc_inc_dirs,
+                            include_roots=args.src_roots,
+                            intrinsic_mods=args.fc_intrinsic_mods,
+                            external_mods=args.fc_external_mods)
 
-    generator.parse()
+        ftn.include_callback = include_callback
+        ftn.module_callback = module_callback
+        ftn.use_module_callback = use_module_callback
 
-    out_stream = open(args.output, 'w') if args.output else sys.stdout
+        def debug_callback(line, msg):
+            ftn_debug_info.append('#  `%s`:\t%s\n' % (line[:-1], msg))
 
-    out_stream.writelines(
-        generator.gen_dep_rules(
-            args.obj_name, args.dep_name, args.src_name,
-            extra_order_prereqs=args.oo_prereqs))
+        if args.debug:
+            ftn_debug_info = ['#\n# Fortran parser:\n']
+            ftn.debug_callback = debug_callback
 
-    out_stream.close()
+        parser = ftn
 
-    if debug_file:
-        generator.print_debug(debug_file)
-        debug_file.close()
+    if parser:
+        parser.parse()
+
+    input_stream.close()
+
+    output_stream = sys.stdout if args.output == '-' \
+        else open23(args.output, 'w')
+    output_lines = []
+    targets = ('%s %s' % (args.obj_name, args.dep_name)).strip()
+    if targets:
+        prereqs = ('%s %s' % (args.src_name, ' '.join(included_files))).strip()
+        if prereqs:
+            output_lines.append('%s: %s\n' % (targets, prereqs))
+    if provided_modules:
+        if args.obj_name:
+            targets = ' '.join(modulenames_to_filenames(
+                provided_modules, args.fc_mod_dir,
+                args.fc_mod_upper, args.fc_mod_ext))
+            output_lines.append('%s: %s\n' % (targets, args.obj_name))
+    # Do not depend on the modules that are provided in the same file:
+    required_modules -= provided_modules
+    if required_modules:
+        if args.obj_name:
+            prereqs = ' '.join(modulenames_to_filenames(
+                required_modules, args.fc_mod_dir,
+                args.fc_mod_upper, args.fc_mod_ext))
+            output_lines.append('%s: %s\n' % (args.obj_name, prereqs))
+    if args.debug:
+        if args.debug:
+            output_lines.extend([
+                '\n# Python version: ', sys.version.replace('\n', ' '),
+                '\n#\n',
+                '# Command:\n',
+                '#  ', ' '.join(sys.argv), '\n#\n',
+                '# Parsed arguments:\n#  ',
+                '\n#  '.join(
+                    [k + '=' + str(v) for k, v in vars(args).items()]), '\n'])
+            if pp_debug_info is not None:
+                output_lines.extend(pp_debug_info)
+            if ftn_debug_info is not None:
+                output_lines.extend(ftn_debug_info)
+    output_stream.writelines(output_lines)
+    output_stream.close()
+
+
+def modulenames_to_filenames(modules, directory, upprecase, extension):
+    result = modules
+    if upprecase:
+        result = map(lambda s: s.upper(), result)
+    if directory:
+        result = map(lambda s: os.path.join(directory, s), result)
+    if extension:
+        result = map(lambda s: '%s.%s' % (s, extension), result)
+    return result
 
 
 if __name__ == "__main__":

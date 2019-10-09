@@ -31,6 +31,9 @@ program main
   integer ncid, retval
 #endif
 
+  character(*), parameter :: string_with_semicolon = &
+                            & ";use non_existing_mod"
+
   print *, included_str
 
 #ifdef INCLUDE_A

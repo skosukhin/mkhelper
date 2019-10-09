@@ -78,7 +78,7 @@ mostlyclean: $(bundled_subdirs)
 	rm -f main libmain.a $(patsubst $(srcdir)/%.f90, %.o, $(srcs)) $(moddir)/*.@FC_MOD_FILE_EXT@
 
 clean: mostlyclean
-	rm -rf deplist.debug $(depfiles:.d=.debug)
+	rm -rf deplist.debug
 
 distclean: clean
 	rm -f $(depfiles) $(dirstamps) config.log config.status Makefile depgen.config
@@ -121,7 +121,7 @@ $(moddir)/%.@FC_MOD_FILE_EXT@:
 
 # Dependency generation rule:
 %.f90.d: %.f90 Makefile | $(dirstamps)
-	$(silent_DEPGEN)$(DEPGEN) @depgen.config -o $@ --obj-name $(@:.f90.d=.o) -d $(@:.d=.debug) $< -- @DEPGEN_DEFS@ $(config_FCFLAGS) $(FCFLAGS)
+	$(silent_DEPGEN)$(DEPGEN) @depgen.config -o $@ --obj-name $(@:.f90.d=.o) $< -- @DEPGEN_DEFS@ $(config_FCFLAGS) $(FCFLAGS)
 
 # Undetectable Fortran dependencies:
 src/program/main.o:| src/program/implicit_external.o
