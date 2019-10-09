@@ -27,17 +27,22 @@ class Preprocessor:
 
     def __init__(self, stream,
                  include_order=None,
+                 include_sys_order=None,
                  include_dirs=None,
                  include_roots=None,
-                 try_eval_expr=False):
+                 try_eval_expr=False,
+                 inc_sys=False):
         self.include_roots = include_roots
         self.try_eval_expr = try_eval_expr
+        self.inc_sys = inc_sys
 
         # Callbacks:
         self.include_callback = None
         self.debug_callback = None
 
         self._include_finder = IncludeFinder(include_order, include_dirs)
+        self._include_sys_finder = IncludeFinder(include_sys_order,
+                                                 include_dirs)
         self._include_stack = IncludeStack(stream)
 
         self._macros = dict()
@@ -173,11 +178,29 @@ class Preprocessor:
             match = Preprocessor._re_include.match(line)
             if match:
                 if not self._branch_is_dead():
-                    filename = match.group(match.lastindex)
-                    filepath = self._include_finder.find(
-                        filename,
-                        self._include_stack.root_name,
-                        self._include_stack.current_name)
+
+                    if match.lastindex == 1:  # quoted form
+                        filepath = self._include_finder.find(
+                            match.group(1),
+                            self._include_stack.root_name,
+                            self._include_stack.current_name)
+                    elif match.lastindex == 2:  # angle-bracket form
+                        if self.inc_sys:
+                            filepath = self._include_sys_finder.find(
+                                match.group(2),
+                                self._include_stack.root_name,
+                                self._include_stack.current_name)
+                        else:
+                            if self.debug_callback:
+                                self.debug_callback(line,
+                                                    'ignored (system header)')
+                            continue
+                    else:
+                        if self.debug_callback:
+                            self.debug_callback(line,
+                                                'ignored (internal error)')
+                        continue
+
                     if filepath:
                         if not self.include_roots or any(
                                 [file_in_dir(filepath, d)
