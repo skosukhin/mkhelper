@@ -1,6 +1,6 @@
 import re
 
-from depgen import IncludeStack, IncludeFinder, file_in_dir, open23, \
+from depgen import IncludeFinder, StreamStack, file_in_dir, open23, \
     find_unquoted_string
 
 
@@ -16,8 +16,6 @@ class Preprocessor:
     _re_define = re.compile(r'^#\s*define\s+([a-zA-Z_]\w*)(\(.*\))?\s+(.*)$')
     _re_undef = re.compile(r'^#\s*undef\s+([a-zA-Z_]\w*)')
 
-    _re_cmd_line_define = re.compile(r'^=*([a-zA-Z_]\w*)(\(.*\))?(?:=(.+))?$')
-
     # matches "defined MACRO_NAME" and "defined (MACRO_NAME)"
     _re_defined_call = re.compile(
         r'(defined\s*(\(\s*)?([a-zA-Z_]\w*)(?(2)\s*\)))')
@@ -25,13 +23,15 @@ class Preprocessor:
     _re_identifier = re.compile(
         r'(([a-zA-Z_]\w*)(\s*\(\s*(\w+(?:\s*,\s*\w+)*)?\s*\))?)')
 
-    def __init__(self, stream,
+    def __init__(self,
+                 stream,
                  include_order=None,
                  include_sys_order=None,
                  include_dirs=None,
                  include_roots=None,
                  try_eval_expr=False,
-                 inc_sys=False):
+                 inc_sys=False,
+                 predefined_macros=None):
         self.include_roots = include_roots
         self.try_eval_expr = try_eval_expr
         self.inc_sys = inc_sys
@@ -43,9 +43,13 @@ class Preprocessor:
         self._include_finder = IncludeFinder(include_order, include_dirs)
         self._include_sys_finder = IncludeFinder(include_sys_order,
                                                  include_dirs)
-        self._include_stack = IncludeStack(stream)
+        self._include_stack = StreamStack()
+        self._include_stack.add(stream)
 
-        self._macros = dict()
+        if predefined_macros:
+            self._macros = dict(predefined_macros)
+        else:
+            self._macros = dict()
 
         # Stack of #if-#else blocks holds one of the following:
         # 1 - keep current branch and ignore another
@@ -197,7 +201,7 @@ class Preprocessor:
                         if not self.include_roots or any(
                                 [file_in_dir(filepath, d)
                                  for d in self.include_roots]):
-                            self._include_stack.include(open23(filepath, 'r'))
+                            self._include_stack.add(open23(filepath, 'r'))
                             if self.include_callback:
                                 self.include_callback(filepath)
                             if self.debug_callback:
@@ -219,23 +223,12 @@ class Preprocessor:
 
             return line
 
-    def parse(self):
-        while self.readline():
-            pass
-
-    def close(self):
-        self._include_stack.close()
-
     @property
     def name(self):
         return self._include_stack.root_name
 
-    def define(self, cmd_line_macro_def):
-        match = Preprocessor._re_cmd_line_define.match(cmd_line_macro_def)
-        if match:
-            name, args = match.group(1, 2)
-            body = match.group(3) if match.group(3) else '1'
-            self._define(name, args, body)
+    def close(self):
+        self._include_stack.clear()
 
     def _define(self, name, args=None, body=None):
         if name != 'defined':

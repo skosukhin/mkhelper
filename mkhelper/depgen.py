@@ -2,7 +2,7 @@
 import os
 import sys
 
-from depgen import StreamWrapper, open23
+from depgen import open23, map23, StdStreamWrapper, DummyParser
 
 try:
     import argparse
@@ -24,26 +24,33 @@ def parse_args():
     def path_splitter(s):
         return list(filter(None, s.split(':')))
 
+    def default_obj_name(src_name):
+        if src_name:
+            src_no_ext_basename = os.path.splitext(
+                os.path.basename(src_name))[0]
+            if src_no_ext_basename:
+                return src_no_ext_basename + '.o'
+        return ''
+
     parser.add_argument(
-        'input', metavar='INPUT',
-        help='input source file; if equals to a single dash (-), the program '
-             'reads from the standard input stream')
+        '--input', '-i', metavar='INPUT', nargs='+',
+        help='input source file; if not specified, the program reads from the '
+             'standard input stream')
     parser.add_argument(
-        '--output', '-o', metavar='OUTPUT',
+        '--output', '-o', metavar='OUTPUT', nargs='+',
         help='output makefile with generated dependency rules; if not '
-             'specified or equals to a single dash (-), the program writes to '
-             'the standard output stream')
+             'specified, the program writes to the standard output stream')
     parser.add_argument(
         '--debug', '-d', action='store_true',
         help='dump debug information to OUTPUT (commented with `#`)')
     parser.add_argument(
-        '--src-name', metavar='SRC_NAME',
+        '--src-name', metavar='SRC_NAME', nargs='+',
         help='name of the source file, the prerequisite of the corresponding '
              'compilation rule as it will appear in the OUTPUT; normally (and '
              'by default) equals to the INPUT or to an empty string when the '
              'latter is set to the standard input stream')
     parser.add_argument(
-        '--obj-name', metavar='OBJ_NAME',
+        '--obj-name', metavar='OBJ_NAME', nargs='+',
         help='name of the object file, the target of the corresponding '
              'compilation rule as it will appear in the OUTPUT; normally '
              'equals to the path to the object file that is supposed to be '
@@ -51,7 +58,7 @@ def parse_args():
              'without the directory-part and the file extension replaced '
              'with `.o`)')
     parser.add_argument(
-        '--dep-name',
+        '--dep-name', metavar='DEP_NAME', nargs='+',
         help='name of the generated makefile, the additional target of the '
              'corresponding compilation rule (for automatic dependency '
              'generation) as it will appear in the OUTPUT; normally (and by '
@@ -193,22 +200,32 @@ def parse_args():
     except ValueError:
         args = parser.parse_args()
 
+    if not args.input:
+        args.input = [None]
+
     if not args.src_name:
-        args.src_name = '' if args.input == '-' else args.input
+        args.src_name = args.input
+    elif len(args.src_name) != len(args.input):
+        parser.error('number of SRC_NAME values is not equal to the number of '
+                     'INPUT values')
 
     if not args.obj_name:
-        src_no_ext_basename = os.path.splitext(
-            os.path.basename(args.src_name))[0]
-        if src_no_ext_basename:
-            args.obj_name = src_no_ext_basename + '.o'
-        else:
-            args.obj_name = ''
+        args.obj_name = map23(default_obj_name, args.src_name)
+    elif len(args.obj_name) != len(args.input):
+        parser.error('number of OBJ_NAME values is not equal to the number of '
+                     'INPUT values')
 
     if not args.output:
-        args.output = '-'
+        args.output = [None] * len(args.input)
+    elif len(args.output) != len(args.input):
+        parser.error('number of OUTPUT values is not equal to the number of '
+                     'INPUT values')
 
     if not args.dep_name:
-        args.dep_name = '' if args.output == '-' else args.output
+        args.dep_name = args.output
+    elif len(args.dep_name) != len(args.input):
+        parser.error('number of DEP_NAME values is not equal to the number of '
+                     'INPUT values')
 
     compiler_arg_dests = dict()
 
@@ -254,6 +271,18 @@ def parse_args():
                     val_list.append(arg)
                 appended_val_lists *= 0
 
+    if args.pp_enable and args.pp_macros:
+        import re
+        predefined_macros = dict()
+        for m in args.pp_macros:
+            match = re.match(r'^=*([a-zA-Z_]\w*)(\(.*\))?(?:=(.+))?$', m)
+            if match:
+                name = match.group(1)
+                if name != 'defined':
+                    body = match.group(3) if match.group(3) else '1'
+                    predefined_macros[name] = (match.group(2), body)
+        args.pp_macros = predefined_macros
+
     if args.fc_enable:
         args.fc_mod_upper = (args.fc_mod_upper == 'yes')
         if args.fc_mod_dir:
@@ -266,11 +295,6 @@ def parse_args():
 
 def main():
     args = parse_args()
-
-    input_stream = StreamWrapper(sys.stdin, '') if args.input == '-' \
-        else open23(args.input, 'r')
-
-    parser = None
 
     included_files = set()
 
@@ -290,35 +314,10 @@ def main():
     pp_debug_info = None
     ftn_debug_info = None
 
-    if args.pp_enable:
-        from depgen.preprocessor import Preprocessor
-
-        pp = Preprocessor(input_stream,
-                          include_order=args.pp_inc_order,
-                          include_sys_order=args.pp_inc_sys_order,
-                          include_dirs=args.pp_inc_dirs,
-                          include_roots=args.src_roots,
-                          try_eval_expr=args.pp_eval_expr,
-                          inc_sys=args.pp_inc_sys)
-        for pp_macro in args.pp_macros:
-            pp.define(pp_macro)
-
-        pp.include_callback = include_callback
-
-        def debug_callback(line, msg):
-            pp_debug_info.append('#  `%s`:\t%s\n' % (line[:-1], msg))
-
-        if args.debug:
-            pp_debug_info = ['#\n# Preprocessor:\n']
-            pp.debug_callback = debug_callback
-
-        input_stream = pp
-        parser = pp
-
+    parser = None
     if args.fc_enable:
         from depgen.fortran_parser import FortranParser
-        ftn = FortranParser(input_stream,
-                            include_order=args.fc_inc_order,
+        ftn = FortranParser(include_order=args.fc_inc_order,
                             include_dirs=args.fc_inc_dirs,
                             include_roots=args.src_roots,
                             intrinsic_mods=args.fc_intrinsic_mods,
@@ -337,36 +336,58 @@ def main():
 
         parser = ftn
 
-    if parser:
-        parser.parse()
+    elif args.pp_enable:
+        parser = DummyParser()
 
-    input_stream.close()
+    for inp, out, src_name, obj_name, dep_name in zip(args.input,
+                                                      args.output,
+                                                      args.src_name,
+                                                      args.obj_name,
+                                                      args.dep_name):
+        in_stream = StdStreamWrapper(sys.stdin, '') \
+            if inp is None else open23(inp)
 
-    output_stream = sys.stdout if args.output == '-' \
-        else open23(args.output, 'w')
-    output_lines = []
-    targets = ('%s %s' % (args.obj_name, args.dep_name)).strip()
-    if targets:
-        prereqs = ('%s %s' % (args.src_name, ' '.join(included_files))).strip()
-        if prereqs:
-            output_lines.append('%s: %s\n' % (targets, prereqs))
-    if provided_modules:
-        if args.obj_name:
-            targets = ' '.join(modulenames_to_filenames(
-                provided_modules, args.fc_mod_dir,
-                args.fc_mod_upper, args.fc_mod_ext))
-            output_lines.append('%s: %s\n' % (targets, args.obj_name))
-    # Do not depend on the modules that are provided in the same file:
-    required_modules -= provided_modules
-    if required_modules:
-        if args.obj_name:
-            prereqs = ' '.join(modulenames_to_filenames(
-                required_modules, args.fc_mod_dir,
-                args.fc_mod_upper, args.fc_mod_ext))
-            output_lines.append('%s: %s\n' % (args.obj_name, prereqs))
-    if args.debug:
+        if args.pp_enable:
+            from depgen.preprocessor import Preprocessor
+            pp = Preprocessor(in_stream,
+                              include_order=args.pp_inc_order,
+                              include_sys_order=args.pp_inc_sys_order,
+                              include_dirs=args.pp_inc_dirs,
+                              include_roots=args.src_roots,
+                              try_eval_expr=args.pp_eval_expr,
+                              inc_sys=args.pp_inc_sys,
+                              predefined_macros=args.pp_macros)
+
+            pp.include_callback = include_callback
+
+            def debug_callback(line, msg):
+                pp_debug_info.append('#  `%s`:\t%s\n' % (line[:-1], msg))
+
+            if args.debug:
+                pp_debug_info = ['#\n# Preprocessor:\n']
+                pp.debug_callback = debug_callback
+
+            in_stream = pp
+
+        if parser:
+            parser.parse(in_stream)
+            in_stream.close()
+
+        out_lines = gen_include_deps(src_name, obj_name, dep_name,
+                                     included_files)
+        included_files.clear()
+
+        if args.fc_enable:
+            out_lines.extend(gen_module_deps(obj_name, provided_modules,
+                                             required_modules,
+                                             args.fc_mod_dir,
+                                             args.fc_mod_upper,
+                                             args.fc_mod_ext))
+        provided_modules.clear()
+        required_modules.clear()
+
         if args.debug:
-            output_lines.extend([
+            out_lines.extend([
                 '\n# Python version: ', sys.version.replace('\n', ' '),
                 '\n#\n',
                 '# Command:\n',
@@ -375,11 +396,45 @@ def main():
                 '\n#  '.join(
                     [k + '=' + str(v) for k, v in vars(args).items()]), '\n'])
             if pp_debug_info is not None:
-                output_lines.extend(pp_debug_info)
+                out_lines.extend(pp_debug_info)
             if ftn_debug_info is not None:
-                output_lines.extend(ftn_debug_info)
-    output_stream.writelines(output_lines)
-    output_stream.close()
+                out_lines.extend(ftn_debug_info)
+            out_lines.append('\n')
+
+        out_stream = StdStreamWrapper(sys.stdout) \
+            if out is None else open23(out, 'w')
+        out_stream.writelines(out_lines)
+        out_stream.close()
+
+
+def gen_include_deps(src_name, obj_name, dep_name,
+                     included_files):
+    result = []
+    targets = ' '.join(filter(None, (obj_name, dep_name)))
+    if targets:
+        prereqs = ' '.join(filter(None, [src_name] + list(included_files)))
+        if prereqs:
+            result.append('%s: %s\n' % (targets, prereqs))
+    return result
+
+
+def gen_module_deps(obj_name,
+                    provided_modules, required_modules,
+                    mod_dir, mod_upper, mod_ext):
+    result = []
+    if obj_name:
+        if provided_modules:
+            targets = ' '.join(modulenames_to_filenames(
+                provided_modules, mod_dir, mod_upper, mod_ext))
+            result.append('%s: %s\n' % (targets, obj_name))
+
+        # Do not depend on the modules that are provided in the same file:
+        required_modules -= provided_modules
+        if required_modules:
+            prereqs = ' '.join(modulenames_to_filenames(
+                required_modules, mod_dir, mod_upper, mod_ext))
+            result.append('%s: %s\n' % (obj_name, prereqs))
+    return result
 
 
 def modulenames_to_filenames(modules, directory, upprecase, extension):

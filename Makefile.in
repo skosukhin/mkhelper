@@ -125,7 +125,7 @@ $(moddir)/%.@FC_MOD_FILE_EXT@:
 
 # Dependency generation rule:
 %.f90.d: %.f90 Makefile | $(dirstamps)
-	$(silent_DEPGEN)$(DEPGEN) @depgen.config -o $@ --obj-name $(@:.f90.d=.o) $< -- @DEPGEN_DEFS@ $(config_FCFLAGS) $(FCFLAGS)
+	$(silent_DEPGEN)$(DEPGEN) @depgen.config -o $@ --obj-name $(@:.f90.d=.o) -i $< -- @DEPGEN_DEFS@ $(config_FCFLAGS) $(FCFLAGS)
 
 # Undetectable Fortran dependencies:
 src/program/main.o:| src/program/implicit_external.o
