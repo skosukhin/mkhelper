@@ -9,6 +9,13 @@ def open23(name, mode='r'):
         return open(name, mode, encoding='latin-1')
 
 
+def map23(foo, iterable):
+    if sys.version_info < (3, 0, 0):
+        return map(foo, iterable)
+    else:
+        return list(map(foo, iterable))
+
+
 def file_in_dir(f, d):
     if d:
         return os.path.abspath(f).startswith(os.path.abspath(d) + os.path.sep)
@@ -72,38 +79,51 @@ class IncludeFinder:
         return None
 
 
-class IncludeStack:
-    def __init__(self, stream):
+class StreamStack:
+    def __init__(self):
         # Stack of file-like objects (i.e. objects implementing methods
         # readline, close, and a property name:
-        self._stack = [stream]
+        self._stream_stack = []
+        self._close_stack = []
 
-    def include(self, stream):
-        self._stack.append(stream)
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, exc_traceback):
+        self.clear()
 
     @property
     def root_name(self):
-        return self._stack[0].name if self._stack else None
+        return self._stream_stack[0].name if self._stream_stack else None
 
     @property
     def current_name(self):
-        return self._stack[-1].name if self._stack else None
+        return self._stream_stack[-1].name if self._stream_stack else None
+
+    def add(self, stream, close=True):
+        self._stream_stack.append(stream)
+        self._close_stack.append(close)
+
+    def clear(self):
+        for stream, close in zip(self._stream_stack, self._close_stack):
+            if close:
+                stream.close()
+        self._stream_stack *= 0
+        self._close_stack *= 0
 
     def readline(self):
-        while self._stack:
-            line = self._stack[-1].readline()
+        while self._stream_stack:
+            line = self._stream_stack[-1].readline()
             if line:
                 return line
             else:
-                self._stack.pop().close()
+                stream = self._stream_stack.pop()
+                if self._close_stack.pop():
+                    stream.close()
         return ''
 
-    def close(self):
-        while self._stack:
-            self._stack.pop().close()
 
-
-class StreamWrapper:
+class StdStreamWrapper:
     def __init__(self, stream, name=None):
         self._stream = stream
         self.name = stream.name if name is None else name
@@ -111,6 +131,19 @@ class StreamWrapper:
     def readline(self):
         return self._stream.readline()
 
-    def close(self):
-        self._stream.close()
+    def writelines(self, lines):
+        return self._stream.writelines(lines)
 
+    def close(self):
+        pass
+
+
+class DummyParser:
+    def __init__(self):
+        pass
+
+    def parse(self, stream):
+        while 1:
+            line = stream.readline()
+            if not line:
+                break
