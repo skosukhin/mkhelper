@@ -144,13 +144,14 @@ def _update_dep_graph(dep_graph, makefile, reverse, inc_order_only):
         return
 
     with open(makefile, 'r') as f:
-        while True:
-            line = f.readline()
-            if not line:
-                break
-
+        it = iter(f)
+        for line in it:
             while line.endswith('\\\n'):
-                line = line[:-2] + f.readline()
+                line = line[:-2]
+                try:
+                    line += next(it)
+                except StopIteration:
+                    break
 
             match = _re_rule.match(line)
             if match:
