@@ -40,15 +40,17 @@ class FortranParser:
         self._include_stack = IncludeStack(stream)
 
     def parse(self):
-        while True:
+        while 1:
             line = self._include_stack.readline()
             if not line:
                 break
 
             # delete comments
-            line = re.sub(r'!.*', '', line, 1)
-            if line.isspace():
-                continue
+            comment_idx = find_unquoted_string('!', line)
+            if comment_idx >= 0:
+                line = line[:comment_idx]
+                if line.isspace():
+                    continue
 
             # line continuation
             match = FortranParser._re_line_continue_start.match(line)
@@ -132,7 +134,7 @@ class FortranParser:
 
     @staticmethod
     def _split_semicolons(line):
-        while True:
+        while 1:
             idx = find_unquoted_string(';', line)
             if idx < 0:
                 if line and not line.isspace():
