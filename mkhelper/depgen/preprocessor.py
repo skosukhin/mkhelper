@@ -60,18 +60,10 @@ class Preprocessor:
         self._states_per_endif_stack = []
 
     def readline(self):
-        while True:
+        while 1:
             line = self._include_stack.readline()
-            if not line:
-                return line
-
             line = self._replace_continuation(line)
-            if not line:
-                return line
-
             line = self._remove_block_comments(line)
-            if not line:
-                return line
 
             if line.isspace():
                 continue
@@ -277,7 +269,7 @@ class Preprocessor:
         return line
 
     def _remove_block_comments(self, line):
-        while True:
+        while 1:
             # Check whether the line contains an unquoted block comment
             # initiator '/*':
             start_idx = find_unquoted_string('/*', line)
@@ -302,7 +294,7 @@ class Preprocessor:
 
     def _evaluate_expr_to_state(self, expr):
         prev_expr = expr
-        while True:
+        while 1:
             # replace calls to function "defined"
             defined_calls = re.findall(Preprocessor._re_defined_call, expr)
             for call in defined_calls:

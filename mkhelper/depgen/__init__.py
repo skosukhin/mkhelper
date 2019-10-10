@@ -19,7 +19,7 @@ def file_in_dir(f, d):
 def find_unquoted_string(string, line, quotes='\'"'):
     skip = 0
     quote = None
-    while True:
+    while 1:
         idx = line.find(string, skip)
         if idx < 0:
             return idx
