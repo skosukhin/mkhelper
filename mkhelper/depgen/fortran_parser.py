@@ -125,7 +125,8 @@ class FortranParser:
                                     self.include_callback(filepath)
                                 if self.debug_callback:
                                     self.debug_callback(
-                                        line, 'included file \'%s\'' % filepath)
+                                        line, 'included file \'%s\''
+                                              % filepath)
                             elif self.debug_callback:
                                 self.debug_callback(
                                     line,
