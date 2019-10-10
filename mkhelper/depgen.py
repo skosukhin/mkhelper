@@ -72,11 +72,11 @@ def parse_args():
              'the specified directories will be ignored; applies only to '
              'files included using the preprocessor `#include` directive or '
              'the Fortran `INCLUDE` statement')
-    # parser.add_argument(
-    #     '--lc-enable', action='store_true',
-    #     help='enable recognition of the preprocessor line control directives '
-    #          'and generation of additional dependencies based on the detected '
-    #          'filenames')
+    parser.add_argument(
+        '--lc-enable', action='store_true',
+        help='enable recognition of the preprocessor line control directives '
+             'and generation of additional dependencies based on the detected '
+             'filenames')
     parser.add_argument(
         'flags', metavar='-- [$CPPFLAGS | $FCFLAGS]', nargs='?',
         default=argparse.SUPPRESS,
@@ -296,6 +296,11 @@ def parse_args():
 def main():
     args = parse_args()
 
+    lc_files = set()
+
+    def lc_callback(filename):
+        lc_files.add(filename)
+
     included_files = set()
 
     def include_callback(filename):
@@ -311,6 +316,7 @@ def main():
     def use_module_callback(module):
         required_modules.add(module)
 
+    lc_debug_info = None
     pp_debug_info = None
     ftn_debug_info = None
 
@@ -336,7 +342,7 @@ def main():
 
         parser = ftn
 
-    elif args.pp_enable:
+    elif args.pp_enable or args.lc_enable:
         parser = DummyParser()
 
     for inp, out, src_name, obj_name, dep_name in zip(args.input,
@@ -346,6 +352,21 @@ def main():
                                                       args.dep_name):
         in_stream = StdStreamWrapper(sys.stdin, '') \
             if inp is None else open23(inp)
+
+        if args.lc_enable:
+            from depgen.line_control import LCProcessor
+            lc = LCProcessor(in_stream,
+                             include_roots=args.src_roots)
+            lc.lc_callback = lc_callback
+
+            def debug_callback(line, msg):
+                lc_debug_info.append('#  `%s`:\t%s\n' % (line[:-1], msg))
+
+            if args.debug:
+                lc_debug_info = ['#\n# Line control processor:\n']
+                lc.debug_callback = debug_callback
+
+            in_stream = lc
 
         if args.pp_enable:
             from depgen.preprocessor import Preprocessor
@@ -373,11 +394,14 @@ def main():
             parser.parse(in_stream)
             in_stream.close()
 
-        out_lines = gen_include_deps(src_name, obj_name, dep_name,
-                                     included_files)
+        out_lines = gen_lc_deps(src_name, lc_files)
+        lc_files.clear()
+
+        out_lines.extend(gen_include_deps(src_name, obj_name, dep_name,
+                                          included_files))
         included_files.clear()
 
-        if args.fc_enable:
+        if provided_modules or required_modules:
             out_lines.extend(gen_module_deps(obj_name, provided_modules,
                                              required_modules,
                                              args.fc_mod_dir,
@@ -395,6 +419,8 @@ def main():
                 '# Parsed arguments:\n#  ',
                 '\n#  '.join(
                     [k + '=' + str(v) for k, v in vars(args).items()]), '\n'])
+            if lc_debug_info is not None:
+                out_lines.extend(lc_debug_info)
             if pp_debug_info is not None:
                 out_lines.extend(pp_debug_info)
             if ftn_debug_info is not None:
@@ -405,6 +431,13 @@ def main():
             if out is None else open23(out, 'w')
         out_stream.writelines(out_lines)
         out_stream.close()
+
+
+def gen_lc_deps(src_name, lc_files):
+    result = []
+    if src_name and lc_files:
+        result.append('%s: %s\n' % (src_name, ' '.join(lc_files)))
+    return result
 
 
 def gen_include_deps(src_name, obj_name, dep_name,
