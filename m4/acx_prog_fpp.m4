@@ -50,35 +50,11 @@
 #   Intel: "$FC -E $ac_fcflags_srcext" (the same as for gfortran but the
 #          variable $ac_fcflags_srcext is usually set to '-fpp');
 #
-#   NAGWare: "$FC -o - -Wp,-w,-P -F $ac_fcflags_srcext" (the flag '-o -' tells
-#            the compiler to emit the output of the preprocessing to the
-#            standard output, the flag '-Wp,-w' prevents 'fpp', which is
-#            internally used by the compiler, from emitting warning messages,
-#            including the one that says
-#            "fpp: warning: bad option: - , ignored", and the flag '-Wp,-P'
-#            tells the preprocessor not to put the line numbering directives,
-#            which we prefer to have in general for other compilers, to the
-#            output because the compiler might not be able to compile the
-#            output otherwise, for example:
+#   NAGWare: "$SHELL ${acx_prog_fpp_wrapper_dir}/nag.sh $FC" or
+#            "$FC -o - -Wp,-w,-P -F $ac_fcflags_srcext" (see comments in the
+#             wrapper);
 #
-#              $ cat ./conftest.f90
-#              program main
-#                print *, ("A very very very very very very very very very very very very long line of code. We need more than 132 characters on this line. &
-#              &Finally!")
-#              end program
-#              $ nagfor -o - -Wp,-w -F -fpp ./conftest.f90 > ./conftest_preprocessed.f90
-#              $ nagfor -fpp ./conftest_preprocessed.f90
-#              NAG Fortran Compiler Release 6.2(Chiyoda) Build 6223
-#              Error: conftest.f90, line 5: Invalid continuation
-#              Error: conftest.f90, line 5: Syntax error
-#              Error: conftest.f90, line 3: Invalid continuation
-#              [NAG Fortran Compiler pass 1 error termination, 3 errors]
-#
-#            however, 'nagfor ./conftest_preprocessed.f90' works but removing
-#            the flag '-fpp' from the compilation command might not always fit
-#            the needs);
-#
-#   Cray: "$SHELL ${acx_prog_fpp_wrapper_dir}/cray-fpp.sh $FC" (uses the
+#   Cray: "$SHELL ${acx_prog_fpp_wrapper_dir}/cray.sh $FC" (uses the
 #         wrapper);
 #
 #   PGI: "$FC -E" (the compiler does not need $ac_fcflags_srcext when called
@@ -133,8 +109,9 @@ _ACEOF
          acx_prog_fpp_wrapper_dir=dnl
 "${ac_abs_top_srcdir}/m4_default([$6], [fpp-wrappers])"
          set dummy "$FC -E" "$FC -E $ac_fcflags_srcext" \
+                   "$SHELL ${acx_prog_fpp_wrapper_dir}/nag.sh $FC" \
                    "$FC -o - -Wp,-w,-P -F $ac_fcflags_srcext" \
-                   "$SHELL ${acx_prog_fpp_wrapper_dir}/cray-fpp.sh $FC" \
+                   "$SHELL ${acx_prog_fpp_wrapper_dir}/cray.sh $FC" \
                    "$FC -F" "$FC -F $ac_fcflags_srcext"])
       shift
       acx_prog_fpp_include_flag=m4_default([$4], [-I])
