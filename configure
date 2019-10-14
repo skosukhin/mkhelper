@@ -3451,8 +3451,9 @@ ac_abs_srcdir=$ac_abs_top_srcdir$ac_dir_suffix
 
          acx_prog_fpp_wrapper_dir="${ac_abs_top_srcdir}/fpp-wrappers"
          set dummy "$FC -E" "$FC -E $ac_fcflags_srcext" \
+                   "$SHELL ${acx_prog_fpp_wrapper_dir}/nag.sh $FC" \
                    "$FC -o - -Wp,-w,-P -F $ac_fcflags_srcext" \
-                   "$SHELL ${acx_prog_fpp_wrapper_dir}/cray-fpp.sh $FC" \
+                   "$SHELL ${acx_prog_fpp_wrapper_dir}/cray.sh $FC" \
                    "$FC -F" "$FC -F $ac_fcflags_srcext"
 fi
       shift
