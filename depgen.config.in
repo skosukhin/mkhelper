@@ -8,7 +8,7 @@
 --pp-inc-sys
 --pp-inc-sys-order=@FC_INC_ORDER_PP_SYS_f90@
 --fc-enable
---fc-mod-ext=@FC_MOD_FILE_EXT@
+--fc-mod-ext=@FC_MOD_FILE_EXT@.proxy
 --fc-mod-upper=@FC_MOD_FILE_UPPER@
 --fc-inc-flag=@FC_INC_FLAG@
 --fc-inc-order=@FC_INC_ORDER@

@@ -34,6 +34,7 @@ AR= @AR@
 PYTHON= @PYTHON@
 DEPLIST= $(PYTHON) $(srcdir)/mkhelper/deplist.py -d deplist.debug
 DEPGEN= $(PYTHON) $(srcdir)/mkhelper/depgen.py
+MODCMP= $(PYTHON) $(srcdir)/mkhelper/fortmodcmp.py
 
 # Silent rule prefixes:
 V= @DEFAULT_VERBOSITY@
@@ -75,7 +76,7 @@ all: main
 depend: $(depfiles)
 
 mostlyclean: $(bundled_subdirs)
-	rm -f main libmain.a $(patsubst $(srcdir)/%.f90, %.o, $(srcs)) $(moddir)/*.@FC_MOD_FILE_EXT@
+	rm -f main libmain.a $(patsubst $(srcdir)/%.f90, %.o, $(srcs)) $(moddir)/*.@FC_MOD_FILE_EXT@ $(moddir)/*.@FC_MOD_FILE_EXT@.proxy
 	rm -rf main.dSYM
 
 clean: mostlyclean
@@ -112,11 +113,17 @@ libmain.a: $(shell $(DEPLIST) -t $(rootobj) -p '*.o' --inc-oo -f $(depfiles) Mak
 	$(silent_FC)$(BUILD_ENV) $(FC) -o $@ -c $(config_FCFLAGS) $(FCFLAGS) @FCFLAGS_f90@ $<
 
 # Fortran module file tracking rule:
-$(moddir)/%.@FC_MOD_FILE_EXT@:
+$(moddir)/%.@FC_MOD_FILE_EXT@.proxy:
 	@if test -z $<; then \
-	  echo "Cannot find Fortran source file providing module '$(basename $(@F))'." >&2; \
-	elif test ! -f $@; then \
-	  rm -f $<; $(MAKE) $<; \
+	  echo "Cannot find Fortran source file providing module '$(basename $(@F:.proxy=))'." >&2; \
+	  exit 0; \
+	elif test ! -f '$(@:.proxy=)'; then \
+	  rm -f '$<'; $(MAKE) '$<'; \
+	fi; \
+	if cmp '$@' '$(@:.proxy=)' >/dev/null 2>&1 || $(MODCMP) '$@' '$(@:.proxy=)' @FC_VENDOR@ 2>/dev/null; then \
+	  true; \
+	else \
+	  cp '$(@:.proxy=)' '$@' 2>/dev/null; \
 	fi
 
 # Directory generation rule:

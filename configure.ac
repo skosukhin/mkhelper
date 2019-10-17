@@ -23,6 +23,7 @@ AC_PROG_FC
 AC_LANG([Fortran])
 ACX_FC_PP_SRCEXT([f90])
 ACX_COMPILER_FC_VERSION
+AC_SUBST([FC_VENDOR], [$acx_cv_fc_compiler_vendor])
 
 AS_VAR_IF([enable_rpaths], [yes],
   [ACX_SHLIB_FC_RPATH_FLAG

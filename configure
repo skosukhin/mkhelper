@@ -613,6 +613,7 @@ FC_MOD_IN
 DEPGEN_EXTERNAL_MODS
 DEPGEN_INTRINSIC_MODS
 DEPGEN_DEFS
+FC_VENDOR
 FCFLAGS_f90
 OBJEXT
 EXEEXT
@@ -2577,6 +2578,8 @@ fi ;; #(
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_compiler_version" >&5
 $as_echo "$acx_cv_fc_compiler_version" >&6; }
+
+FC_VENDOR=$acx_cv_fc_compiler_vendor
 
 
 if test "x$enable_rpaths" = xyes; then :
