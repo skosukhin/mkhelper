@@ -64,7 +64,7 @@ vpath %.f90 $(srcdir)
 # Disable built-in suffix rules:
 .SUFFIXES:
 # Targets not associated with files:
-.PHONY: all depend mostlyclean clean distclean maintainer-clean install dummy-depfiles
+.PHONY: all depend mostlyclean clean distclean maintainer-clean install dummy-depfiles sanitize-mod-proxies
 # Call make inside the subdirectories unconditionally:
 .PHONY: $(bundled_subdirs)
 # Keep sentinel files of created directories:
@@ -112,18 +112,20 @@ libmain.a: $(shell $(DEPLIST) -t $(rootobj) -p '*.o' --inc-oo -f $(depfiles) Mak
 %.o: %.f90 | $(dirstamps) $(bundled_subdirs)
 	$(silent_FC)$(BUILD_ENV) $(FC) -o $@ -c $(config_FCFLAGS) $(FCFLAGS) @FCFLAGS_f90@ $<
 
+# Deletes all Fortran module proxy files that do not have an existing module to
+# be a proxy of, i.e. if <filename>.proxy exists but <filename> does not,
+# delete <filename>.proxy:
+sanitize-mod-proxies:
+	@rm -f $(filter-out $(addsuffix .proxy,$(wildcard $(moddir)/*.@FC_MOD_FILE_EXT@)),$(wildcard $(moddir)/*.@FC_MOD_FILE_EXT@.proxy))
+
 # Fortran module file tracking rule:
-$(moddir)/%.@FC_MOD_FILE_EXT@.proxy:
-	@if test -z $<; then \
+$(moddir)/%.@FC_MOD_FILE_EXT@.proxy: | sanitize-mod-proxies
+	@if test -z '$<'; then \
 	  echo "Cannot find Fortran source file providing module '$(basename $(@F:.proxy=))'." >&2; \
-	  exit 0; \
-	elif test ! -f '$(@:.proxy=)'; then \
-	  rm -f '$<'; $(MAKE) '$<'; \
-	fi; \
-	if cmp '$@' '$(@:.proxy=)' >/dev/null 2>&1 || $(MODCMP) '$@' '$(@:.proxy=)' @FC_VENDOR@ 2>/dev/null; then \
-	  true; \
 	else \
-	  cp '$(@:.proxy=)' '$@' 2>/dev/null; \
+	  if test ! -f '$(@:.proxy=)'; then rm -f '$<'; $(MAKE) '$<'; fi; \
+	  if cmp '$@' '$(@:.proxy=)' >/dev/null 2>&1 || $(MODCMP) '$@' '$(@:.proxy=)' @FC_VENDOR@ 2>/dev/null; then :; \
+	  else cp '$(@:.proxy=)' '$@' 2>/dev/null; fi; \
 	fi
 
 # Directory generation rule:
