@@ -56,6 +56,17 @@ def mods_differ(filename1, filename2, compiler_name=None):
                     if not (skip_sequence(stream1, magic_sequence) and
                             skip_sequence(stream2, magic_sequence)):
                         return True
+            elif compiler_name == "portland":
+                for _ in range(2):  # the first two lines must be identical
+                    if stream1.readline(BUF_MAX_SIZE) != \
+                            stream2.readline(BUF_MAX_SIZE):
+                        return True
+                # The next line is a timestamp followed by the sequence
+                # '\nenduse\n':
+                magic_sequence = b'\x0A\x65\x6E\x64\x75\x73\x65\x0A'
+                if not (skip_sequence(stream1, magic_sequence) and
+                        skip_sequence(stream2, magic_sequence)):
+                    return True
             # Compare the rest (or everything for unknown compilers):
             while 1:
                 buf1 = stream1.read(BUF_MAX_SIZE)
