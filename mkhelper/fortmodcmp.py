@@ -32,36 +32,38 @@ def mods_differ(filename1, filename2, compiler_name=None):
     module files for the same source file (e.g. the module files might contain
     timestamps). This implementation is inspired by CMake.
     """
-    with open(filename1, 'rb') as stream1, open(filename2, 'rb') as stream2:
-        if compiler_name == "intel":
-            # The first byte encodes the version of the module file format:
-            if stream1.read(1) != stream2.read(1):
-                return True
-            # The block before the following magic sequence contains might
-            # change from compilation to compilation, probably due to a second
-            # resolution timestamp in it:
-            magic_sequence = b'\x0A\x00'  # the same as \n\0
-            if not (skip_sequence(stream1, magic_sequence) and
-                    skip_sequence(stream2, magic_sequence)):
-                return True
-        elif compiler_name == "gnu":
-            magic_sequence = b'\x1F\x8b'  # the magic number of gzip
-            if stream1.read(2) == magic_sequence:  # gfortran 4.9 or later
-                stream1.seek(0)
-            else:  # gfortran 4.8 or older
-                # Skip the first line in the text file containing a timestamp:
-                magic_sequence = b'\x0A'  # the same as \n
+    with open(filename1, 'rb') as stream1:
+        with open(filename2, 'rb') as stream2:
+            if compiler_name == "intel":
+                # The first byte encodes the version of the module file format:
+                if stream1.read(1) != stream2.read(1):
+                    return True
+                # The block before the following magic sequence contains might
+                # change from compilation to compilation, probably due to a
+                # second resolution timestamp in it:
+                magic_sequence = b'\x0A\x00'  # the same as \n\0
                 if not (skip_sequence(stream1, magic_sequence) and
                         skip_sequence(stream2, magic_sequence)):
                     return True
-        # Compare the rest (or everything for unknown compilers):
-        while 1:
-            buf1 = stream1.read(BUF_MAX_SIZE)
-            buf2 = stream2.read(BUF_MAX_SIZE)
-            if buf1 != buf2:
-                return True
-            if not buf1:
-                return False
+            elif compiler_name == "gnu":
+                magic_sequence = b'\x1F\x8b'  # the magic number of gzip
+                if stream1.read(2) == magic_sequence:  # gfortran 4.9 or later
+                    stream1.seek(0)
+                else:  # gfortran 4.8 or older
+                    # Skip the first line in the text file containing a
+                    # timestamp:
+                    magic_sequence = b'\x0A'  # the same as \n
+                    if not (skip_sequence(stream1, magic_sequence) and
+                            skip_sequence(stream2, magic_sequence)):
+                        return True
+            # Compare the rest (or everything for unknown compilers):
+            while 1:
+                buf1 = stream1.read(BUF_MAX_SIZE)
+                buf2 = stream2.read(BUF_MAX_SIZE)
+                if buf1 != buf2:
+                    return True
+                if not buf1:
+                    return False
 
 
 # We try to make this as fast as possible, therefore we do not parse arguments
