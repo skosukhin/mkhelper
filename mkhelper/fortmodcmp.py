@@ -1,43 +1,48 @@
 #!/usr/bin/env python
 import sys
 
+BUF_MAX_SIZE = 512
 
-def find_magic(stream, string):
+
+def skip_sequence(stream, sequence):
     """
-    Finds the first occurrence of a sequence of bytes in a binary stream.
-    Returns True if the sequence is found and False otherwise, The file's
-    current position is set right after the sequence.
+    Finds the first occurrence of a sequence of bytes in a binary stream and
+    sets the streams's current position right after it. Returns True if the
+    sequence is found and False otherwise, The length of the sequence must not
+    exceed BUF_MAX_SIZE.
     """
-    string_size = len(string)
-    buf_max_size = string_size * 256
+    sequence_size = len(sequence)
     while 1:
-        buf = stream.read(buf_max_size)
-        buf_size = len(buf)
-        idx = buf.find(string)
+        buf = stream.read(BUF_MAX_SIZE)
+        idx = buf.find(sequence)
         if idx < 0:
-            if buf_size < buf_max_size:
+            if len(buf) < BUF_MAX_SIZE:
                 return False
+            else:
+                stream.seek(1 - sequence_size, 1)
         else:
-            stream.seek(idx + string_size - buf_size, 1)
+            stream.seek(idx + sequence_size - len(buf), 1)
             return True
 
 
 def mods_differ(filename1, filename2, compiler_name=None):
     """
-    Check whether two Fortran module files are essentially different. Some
+    Checks whether two Fortran module files are essentially different. Some
     compiler-specific logic is required for compilers that generate different
     module files for the same source file (e.g. the module files might contain
     timestamps). This implementation is inspired by CMake.
     """
     with open(filename1, 'rb') as stream1, open(filename2, 'rb') as stream2:
         if compiler_name == "intel":
-            # The first byte encodes the version of the module file format,
-            # skip it:
-            stream1.read(1)
-            stream2.read(1)
+            # The first byte encodes the version of the module file format:
+            if stream1.read(1) != stream2.read(1):
+                return True
+            # The block before the following magic sequence contains might
+            # change from compilation to compilation, probably due to a second
+            # resolution timestamp in it:
             magic_sequence = b'\x0A\x00'  # the same as \n\0
-            if not (find_magic(stream1, magic_sequence) and
-                    find_magic(stream2, magic_sequence)):
+            if not (skip_sequence(stream1, magic_sequence) and
+                    skip_sequence(stream2, magic_sequence)):
                 return True
         elif compiler_name == "gnu":
             magic_sequence = b'\x1F\x8b'  # the magic number of gzip
@@ -46,14 +51,13 @@ def mods_differ(filename1, filename2, compiler_name=None):
             else:  # gfortran 4.8 or older
                 # Skip the first line in the text file containing a timestamp:
                 magic_sequence = b'\x0A'  # the same as \n
-                if not (find_magic(stream1, magic_sequence) and
-                        find_magic(stream2, magic_sequence)):
+                if not (skip_sequence(stream1, magic_sequence) and
+                        skip_sequence(stream2, magic_sequence)):
                     return True
         # Compare the rest (or everything for unknown compilers):
-        buf_max_size = 512
         while 1:
-            buf1 = stream1.read(buf_max_size)
-            buf2 = stream2.read(buf_max_size)
+            buf1 = stream1.read(BUF_MAX_SIZE)
+            buf2 = stream2.read(BUF_MAX_SIZE)
             if buf1 != buf2:
                 return True
             if not buf1:
