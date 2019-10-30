@@ -108,8 +108,7 @@ m4_define([ACX_LANG_LIB_SEARCH()],
   [m4_pushdef([acx_cache_var],
      [acx_cv_[]_AC_LANG_ABBREV[]_lib_func_[]AS_TR_SH([$2])])dnl
    AC_MSG_CHECKING([for linker flags enabling _AC_LANG function $2])
-   AS_VAR_SET_IF([acx_cache_var],
-     [AS_ECHO_N(["(cached) "]) >&AS_MESSAGE_FD],
+   AC_CACHE_VAL([acx_cache_var],
      [AC_LANG_CONFTEST([m4_default([$6], [AC_LANG_CALL([], [$2])])])
       acx_save_LIBS=$LIBS
       AS_VAR_SET_IF([$1], [set dummy "AS_VAR_GET([$1])"], [set dummy '' $3])

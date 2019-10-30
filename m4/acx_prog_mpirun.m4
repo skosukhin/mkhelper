@@ -79,8 +79,7 @@ AC_DEFUN([ACX_PROG_MPIRUN_FC_HEADER],
 m4_define([_ACX_PROG_MPIRUN],
   [AC_MSG_CHECKING([for MPI launch program])
    acx_tmp=
-   AS_VAR_SET_IF([acx_cv_prog_mpirun],
-     [AS_ECHO_N(["(cached) "]) >&AS_MESSAGE_FD],
+   AC_CACHE_VAL([acx_cv_prog_mpirun],
      [AC_LINK_IFELSE([$1],
         [m4_ifval([$2],
            [AS_VAR_SET_IF([$2],
