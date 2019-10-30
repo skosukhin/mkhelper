@@ -2483,6 +2483,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
       ac_fcflags_srcext=$acx_fcflags_srcext_save
       ac_ext=$acx_ext_save
 fi
+
    if test -n "$acx_cv_fc_pp_srcext_f90"; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_pp_srcext_f90" >&5
 $as_echo "$acx_cv_fc_pp_srcext_f90" >&6; }
@@ -2794,6 +2795,7 @@ rm -f core conftest.err conftest.$ac_objext
       rm -f conftest.$ac_ext
       FCFLAGS=$acx_save_FCFLAGS
 fi
+
    if test -n "$acx_cv_fc_line_length_unlimited"; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_line_length_unlimited" >&5
 $as_echo "$acx_cv_fc_line_length_unlimited" >&6; }
@@ -3534,6 +3536,7 @@ fi
       cd ..
       rm -rf conftest.dir
 fi
+
    if ${acx_cv_prog_fpp+:} false; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_prog_fpp" >&5
 $as_echo "$acx_cv_prog_fpp" >&6; }
@@ -3609,6 +3612,7 @@ rm -f core conftest.err conftest.$ac_objext \
       rm -f conftest.$ac_ext
       FCFLAGS=$acx_save_FCFLAGS
 fi
+
    if test -n "$acx_cv_fc_openmp_flag"; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_openmp_flag" >&5
 $as_echo "$acx_cv_fc_openmp_flag" >&6; }
@@ -3877,6 +3881,7 @@ fi
       rm -f conftest.$ac_ext
       LIBS=$acx_save_LIBS
 fi
+
    if { as_var=acx_cv_fc_lib_func_`$as_echo "$acx_fc_lib_search" | $as_tr_sh`; eval \${$as_var+:} false; }; then :
   if test -n "`eval 'as_val=${'acx_cv_fc_lib_func_\`$as_echo "$acx_fc_lib_search" | $as_tr_sh\`'};$as_echo "$as_val"'`"; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: `eval 'as_val=${'acx_cv_fc_lib_func_\`$as_echo "$acx_fc_lib_search" | $as_tr_sh\`'};$as_echo "$as_val"'`" >&5
@@ -3937,6 +3942,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 fi
       done
 fi
+
    if ${acx_cv_prog_AR+:} false; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_prog_AR" >&5
 $as_echo "$acx_cv_prog_AR" >&6; }
@@ -3975,6 +3981,7 @@ fi
 fi
       done
 fi
+
    if ${acx_cv_prog_PYTHON+:} false; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_prog_PYTHON" >&5
 $as_echo "$acx_cv_prog_PYTHON" >&6; }

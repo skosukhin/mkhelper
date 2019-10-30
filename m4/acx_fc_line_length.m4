@@ -39,8 +39,7 @@ AC_DEFUN([ACX_FC_LINE_LENGTH],
    m4_pushdef([acx_cache_var], [acx_cv_fc_line_length_$1])dnl
    AC_MSG_CHECKING([for fortran flag needed to accept dnl
 m4_default([$1], [132]) column source lines])
-   AS_VAR_SET_IF([acx_cache_var],
-     [AS_ECHO_N(["(cached) "]) >&AS_MESSAGE_FD],
+   AC_CACHE_VAL([acx_cache_var],
      [acx_cache_var=unknown
       m4_case(m4_default([$1], [132]),
         [unlimited],

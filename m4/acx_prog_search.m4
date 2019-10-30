@@ -24,8 +24,7 @@ AC_DEFUN([ACX_PROG_SEARCH],
      [AC_MSG_CHECKING([for m4_tolower([$1])])],
      [acx_tmp=`AS_ECHO(["$1"]) | tr 'm4_cr_LETTERS' 'm4_cr_letters'`
       AC_MSG_CHECKING([for $acx_tmp])])
-   AS_VAR_SET_IF([acx_cache_var],
-     [AS_ECHO_N(["(cached) "]) >&AS_MESSAGE_FD],
+   AC_CACHE_VAL([acx_cache_var],
      [AS_VAR_SET_IF([$1], [set dummy "AS_VAR_GET([$1])"], [set dummy $2])
       shift
       for acx_candidate in "$[@]"; do

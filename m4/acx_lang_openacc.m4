@@ -34,8 +34,7 @@ AC_DEFUN([ACX_LANG_OPENACC_FLAG],
   [m4_pushdef([acx_cache_var], [acx_cv_[]_AC_LANG_ABBREV[]_openacc_flag])dnl
    AC_MSG_CHECKING([for _AC_LANG compiler flag needed to enable OpenACC dnl
 support])
-   AS_VAR_SET_IF([acx_cache_var],
-     [AS_ECHO_N(["(cached) "]) >&AS_MESSAGE_FD],
+   AC_CACHE_VAL([acx_cache_var],
      [acx_cache_var=unknown
       acx_save_[]_AC_LANG_PREFIX[]FLAGS=$[]_AC_LANG_PREFIX[]FLAGS
       AC_LANG_CONFTEST([_ACX_LANG_OPENACC])

@@ -75,8 +75,7 @@ AC_DEFUN([ACX_PROG_FPP],
         [ACX_PROG_FPP requires calling the Fortran compiler with a ]dnl
 [preprocessor but no call to AC_FC_PP_SRCEXT is detected])])dnl
    AC_MSG_CHECKING([for Fortran preprocessor command])
-   AS_VAR_SET_IF([acx_cv_prog_fpp],
-     [AS_ECHO_N(["(cached) "]) >&AS_MESSAGE_FD],
+   AC_CACHE_VAL([acx_cv_prog_fpp],
      [AS_MKDIR_P([conftest.dir/sub])
       cd conftest.dir
       cat > sub/conftest.fpp_inc <<_ACEOF

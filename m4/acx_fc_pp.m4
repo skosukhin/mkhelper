@@ -44,8 +44,7 @@ AC_DEFUN([ACX_FC_PP_SRCEXT],
    m4_pushdef([acx_cache_var], [acx_cv_fc_pp_srcext_$1])dnl
    AC_MSG_CHECKING([for Fortran compiler flag needed to compile dnl
 preprocessed .$1 files])
-   AS_VAR_SET_IF([acx_cache_var],
-     [AS_ECHO_N(["(cached) "]) >&AS_MESSAGE_FD],
+   AC_CACHE_VAL([acx_cache_var],
      [acx_cache_var=unknown
       acx_ext_save=$ac_ext
       acx_fcflags_srcext_save=$ac_fcflags_srcext
