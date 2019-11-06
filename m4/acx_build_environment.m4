@@ -18,18 +18,50 @@ AC_DEFUN([ACX_BUILD_ENVIRONMENT],
         [AC_MSG_ERROR(
            [\$BUILD_ENV does not end with a semicolon: '$BUILD_ENV'])])
       AC_MSG_CHECKING([whether \$BUILD_ENV is accepted by '$SHELL -c'])
-      acx_BUILD_ENV=$BUILD_ENV
-      ASX_ESCAPE_SINGLE_QUOTE([acx_BUILD_ENV])
-      _AS_ECHO_LOG([$SHELL -c '$acx_BUILD_ENV'])
-      eval \$SHELL -c "'$acx_BUILD_ENV'" >&AS_MESSAGE_LOG_FD 2>&1
+      acx_build_env_quoted=$BUILD_ENV
+      ASX_ESCAPE_SINGLE_QUOTE([acx_build_env_quoted])
+      _AS_ECHO_LOG([$SHELL -c '$acx_build_env_quoted'])
+      eval \$SHELL -c "'$acx_build_env_quoted'" >&AS_MESSAGE_LOG_FD 2>&1
       AS_IF([test $? -eq 0],
         [AC_MSG_RESULT([yes])
+dnl Check that $BUILD_ENV does not change variables that have been set on the
+dnl command line:
+         acx_build_env_vars_to_check=
+         eval "set dummy $ac_configure_args"; shift
+         for acx_arg; do
+           AS_CASE([$acx_arg],
+             [-*], [],
+             [*=*], [dnl
+dnl The configure script has already checked that all arguments matching
+dnl pattern '*=*' have valid shell variable names on the left-hand side.
+            acx_arg_name=`expr "x$acx_arg" : 'x\(@<:@^=@:>@*\)='`
+            acx_arg_cmd_value=`expr "x$acx_arg" : '@<:@^=@:>@*=\(.*\)'`
+            AS_VAR_COPY([acx_arg_${acx_arg_name}], [$acx_arg_name])
+dnl Check only those variables that have not been modified since they were set
+dnl on the command line (otherwise, it is responsibility of the configure
+dnl script developers):
+            AS_VAR_IF(
+              [acx_arg_cmd_value], ["AS_VAR_GET([acx_arg_${acx_arg_name}])"],
+              [AS_VAR_APPEND([acx_build_env_vars_to_check],
+                 [" $acx_arg_name"])],
+              [AS_UNSET([acx_arg_${acx_arg_name}])])])
+         done
          AC_MSG_CHECKING(
            [whether \$BUILD_ENV is accepted by the current shell])
          _AS_ECHO_LOG([$BUILD_ENV])
          eval "$BUILD_ENV" >&AS_MESSAGE_LOG_FD 2>&1
          AS_IF([test $? -eq 0],
            [AC_MSG_RESULT([yes])
+            AS_IF([test -n "$acx_build_env_vars_to_check"],
+              [for acx_arg_name in $acx_build_env_vars_to_check; do
+                 AS_IF([test x"AS_VAR_GET([$acx_arg_name])" != \
+x"AS_VAR_GET([acx_arg_${acx_arg_name}])"],
+                   [AC_MSG_WARN([\$BUILD_ENV has modified variable dnl
+'$acx_arg_name', which was set on the command line to dnl
+"AS_VAR_GET([acx_arg_${acx_arg_name}])": new value of the variable is dnl
+"AS_VAR_GET([$acx_arg_name])"])])
+                 AS_UNSET([acx_arg_${acx_arg_name}])
+               done])
             AC_CONFIG_COMMANDS_PRE(
               [BUILD_ENV=`echo "$BUILD_ENV" | sed 's/\\$/$$/g'`])],
            [AC_MSG_RESULT([no])])],
