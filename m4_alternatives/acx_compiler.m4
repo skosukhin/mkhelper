@@ -61,7 +61,8 @@ AC_DEFUN([ACX_COMPILER_FC_VERSION],
         [acx_cache_var=`AS_VAR_GET([_AC_CC]) -V 2>&1 | dnl
 [sed -n 's/.*ersion \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`]],
         [gnu],
-        [acx_cache_var=`AS_VAR_GET([_AC_CC]) -dumpversion 2>/dev/null`],
+        [acx_cache_var=`AS_VAR_GET([_AC_CC]) -dumpfullversion 2>/dev/null dnl
+|| AS_VAR_GET([_AC_CC]) -dumpversion 2>/dev/null`],
         [acx_cache_var=unknown])])
    m4_popdef([acx_cache_var])])
 
@@ -124,6 +125,7 @@ AC_DEFUN([ACX_COMPILER_CC_VERSION],
         [acx_cache_var=`AS_VAR_GET([_AC_CC]) -V 2>&1 | dnl
 [sed -n 's/.*ersion \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`]],
         [gnu],
-        [acx_cache_var=`AS_VAR_GET([_AC_CC]) -dumpversion 2>/dev/null`],
+        [acx_cache_var=`AS_VAR_GET([_AC_CC]) -dumpfullversion 2>/dev/null dnl
+|| AS_VAR_GET([_AC_CC]) -dumpversion 2>/dev/null`],
         [acx_cache_var=unknown])])
    m4_popdef([acx_cache_var])])
