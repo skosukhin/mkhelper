@@ -18,13 +18,8 @@
 # in _ACX_COMPILER_KNOWN_VENDORS(C), the version of NAG is checked the same way
 # in the case of Fortran and C, respectively.
 #
-# TODO: split _ACX_COMPILER_KNOWN_VENDORS(C)() into
-#             _ACX_COMPILER_KNOWN_VENDORS(C)() and
-#             _ACX_COMPILER_KNOWN_VENDORS(C++)()
-#
-# If these macros look like an overkill to you, consider using ACX2_COMPILER_*
-# macros from
-# https://github.com/skosukhin/mkhelper/tree/master/m4_alternatives/acx_compiler.m4
+# If these macros look like an overkill to you, consider using
+# ACX_COMPILER_*_SIMPLE macros (see below).
 
 # ACX_COMPILER_FC_VENDOR()
 # -----------------------------------------------------------------------------
@@ -42,18 +37,94 @@ AC_DEFUN([ACX_COMPILER_FC_VENDOR],
    AC_CACHE_CHECK([for Fortran compiler vendor], [acx_cv_fc_compiler_vendor],
      [_ACX_COMPILER_VENDOR])])
 
+# ACX_COMPILER_FC_VENDOR_SIMPLE()
+# -----------------------------------------------------------------------------
+# Detects the vendor of the Fortran compiler. The result is "intel", "nag",
+# "portland", "cray", "gnu" or "unknown".
+#
+# This is a simplified version ACX_COMPILER_FC_VENDOR, which tries to detect
+# the vendor based on the version output of the compiler, instead of checking
+# whether vendor-specific macros are defined.
+#
+# The result is cached in the acx_cv_fc_compiler_vendor variable.
+#
+AC_DEFUN([ACX_COMPILER_FC_VENDOR_SIMPLE],
+  [AC_LANG_ASSERT([Fortran])dnl
+   m4_provide([ACX_COMPILER_FC_VENDOR])dnl
+   m4_pushdef([acx_cache_var],
+     [acx_cv_[]_AC_LANG_ABBREV[]_compiler_vendor])dnl
+   AC_CACHE_CHECK([for _AC_LANG compiler vendor], [acx_cache_var],
+     [AS_IF(
+        [AS_VAR_GET([_AC_CC]) --version 2>/dev/null | dnl
+grep '^ifort (IFORT)' >/dev/null 2>&1],
+        [acx_cache_var=intel],
+        [AS_VAR_GET([_AC_CC]) -V 2>&1 | dnl
+grep '^NAG Fortran Compiler Release' >/dev/null 2>&1],
+        [acx_cache_var=nag],
+        [AS_VAR_GET([_AC_CC]) -V 2>/dev/null| dnl
+grep '^Copyright.*\(The Protland Group\|NVIDIA CORPORATION\)' >/dev/null 2>&1],
+        [acx_cache_var=portland],
+        [AS_VAR_GET([_AC_CC]) -V 2>&1 | grep '^Cray Fortran' >/dev/null 2>&1],
+        [acx_cache_var=cray],
+        [AS_VAR_GET([_AC_CC]) --version 2>/dev/null | dnl
+grep '^GNU Fortran' >/dev/null 2>&1],
+        [acx_cache_var=gnu],
+        [acx_cache_var=unknown])])
+   m4_popdef([acx_cache_var])])
+
 # ACX_COMPILER_FC_VERSION()
 # -----------------------------------------------------------------------------
-# Detects the version of the Fortran compiler. The result is either "unknown"
-# or a string in the form "epoch:major.minor.patchversion", where "epoch:" is
-# an optional prefix used in order to have an increasing version number in case
-# of marketing change.
+# Detects the version of the C compiler. The result is either "unknown"
+# or a string in the form "[epoch:]major[.minor[.patchversion]]", where
+# "epoch:" is an optional prefix used in order to have an increasing version
+# number in case of marketing change.
 #
 # The result is cached in the acx_cv_fc_compiler_version variable.
 #
 AC_DEFUN([ACX_COMPILER_FC_VERSION],
   [AC_LANG_ASSERT([Fortran])dnl
    AC_REQUIRE([ACX_COMPILER_FC_VENDOR])_ACX_COMPILER_VERSION])
+
+# ACX_COMPILER_FC_VERSION_SIMPLE()
+# -----------------------------------------------------------------------------
+# Detects the version of the C compiler. The result is either "unknown"
+# or a string in the form "[epoch:]major[.minor[.patchversion]]", where
+# "epoch:" is an optional prefix used in order to have an increasing version
+# number in case of marketing change.
+#
+# This is a simplified version ACX_COMPILER_FC_VERSION, which tries to detect
+# the version based on the version output of the compiler, instead of checking
+# for the values of vendor-specific macros.
+#
+# The result is cached in the acx_cv_fc_compiler_version variable.
+#
+AC_DEFUN([ACX_COMPILER_FC_VERSION_SIMPLE],
+  [AC_LANG_ASSERT([Fortran])dnl
+   AC_REQUIRE([ACX_COMPILER_FC_VENDOR])dnl
+   m4_provide([ACX_COMPILER_FC_VERSION])dnl
+   m4_pushdef([acx_cache_var],
+     [acx_cv_[]_AC_LANG_ABBREV[]_compiler_version])dnl
+   AC_CACHE_CHECK([for _AC_LANG compiler version], [acx_cache_var],
+     [AS_CASE([AS_VAR_GET([acx_cv_[]_AC_LANG_ABBREV[]_compiler_vendor])],
+        [intel],
+        [acx_cache_var=`AS_VAR_GET([_AC_CC]) --version 2>/dev/null | dnl
+[sed -n 's/^ifort (IFORT) \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`]],
+        [nag],
+        [acx_cache_var=`AS_VAR_GET([_AC_CC]) -V 2>&1 | dnl
+[sed -n 's/^NAG Fortran Compiler Release \([0-9][0-9]*\.[0-9][0-9]*\).*]dnl
+[Build \([0-9][0-9]*\)/\1.\2/p'`]],
+        [portland],
+        [acx_cache_var=`AS_VAR_GET([_AC_CC]) -V | dnl
+[sed -n 's/pgfortran \([0-9][0-9]*\.[0-9][0-9]*\)-\([0-9][0-9]*\).*/\1.\2/p'`]],
+        [cray],
+        [acx_cache_var=`AS_VAR_GET([_AC_CC]) -V 2>&1 | dnl
+[sed -n 's/.*ersion \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`]],
+        [gnu],
+        [acx_cache_var=`AS_VAR_GET([_AC_CC]) -dumpfullversion 2>/dev/null dnl
+|| AS_VAR_GET([_AC_CC]) -dumpversion 2>/dev/null`],
+        [acx_cache_var=unknown])
+      AS_IF([test -z "$acx_cache_var"], [acx_cache_var=unknown])])
+   m4_popdef([acx_cache_var])])
 
 # ACX_COMPILER_CC_VENDOR()
 # -----------------------------------------------------------------------------
@@ -70,18 +141,102 @@ grep '^NAG Fortran Compiler Release' >/dev/null 2>&1],
         [acx_cv_c_compiler_vendor=nag],
         [_ACX_COMPILER_VENDOR])])])
 
+# ACX_COMPILER_CC_VENDOR_SIMPLE()
+# -----------------------------------------------------------------------------
+# Detects the vendor of the C compiler. The result is  "intel", "nag",
+# "portland", "cray", "gnu" or "unknown".
+#
+# This is a simplified version ACX_COMPILER_CC_VENDOR, which tries to detect
+# the vendor based on the version output of the compiler, instead of checking
+# whether vendor-specific macros are defined.
+#
+# The result is cached in the acx_cv_c_compiler_vendor variable.
+#
+AC_DEFUN([ACX_COMPILER_CC_VENDOR_SIMPLE],
+  [AC_LANG_ASSERT([C])dnl
+   m4_provide([ACX_COMPILER_CC_VENDOR])dnl
+   m4_pushdef([acx_cache_var],
+     [acx_cv_[]_AC_LANG_ABBREV[]_compiler_vendor])dnl
+   AC_CACHE_CHECK([for _AC_LANG compiler vendor], [acx_cache_var],
+     [AS_IF(
+        [AS_VAR_GET([_AC_CC]) --version 2>/dev/null | dnl
+grep '^icc (ICC)' >/dev/null 2>&1],
+        [acx_cache_var=intel],
+        [AS_VAR_GET([_AC_CC]) -V 2>&1 | dnl
+grep '^NAG Fortran Compiler Release' >/dev/null 2>&1],
+        [acx_cache_var=nag],
+        [AS_VAR_GET([_AC_CC]) -V 2>/dev/null| dnl
+grep '^Copyright.*\(The Protland Group\|NVIDIA CORPORATION\)' >/dev/null 2>&1],
+        [acx_cache_var=portland],
+        [AS_VAR_GET([_AC_CC]) -V 2>&1 | grep '^Cray C' >/dev/null 2>&1],
+        [acx_cache_var=cray],
+        [AS_VAR_GET([_AC_CC]) --version 2>&1 | dnl
+grep '^Cray clang' >/dev/null 2>&1],
+        [acx_cache_var=cray],
+        [AS_VAR_GET([_AC_CC]) --version | grep '^gcc' >/dev/null 2>&1],
+        [acx_cache_var=gnu],
+        [acx_cache_var=unknown])])
+   m4_popdef([acx_cache_var])])
+
 # ACX_COMPILER_CC_VERSION()
 # -----------------------------------------------------------------------------
 # Detects the version of the C compiler. The result is either "unknown"
-# or a string in the form "epoch:major.minor.patchversion", where "epoch:" is
-# an optional prefix used in order to have an increasing version number in case
-# of marketing change.
+# or a string in the form "[epoch:]major[.minor[.patchversion]]", where
+# "epoch:" is an optional prefix used in order to have an increasing version
+# number in case of marketing change.
 #
 # The result is cached in the acx_cv_c_compiler_version variable.
 #
 AC_DEFUN([ACX_COMPILER_CC_VERSION],
-  [AC_LANG_ASSERT([Fortran])dnl
+  [AC_LANG_ASSERT([C])dnl
    AC_REQUIRE([ACX_COMPILER_CC_VENDOR])_ACX_COMPILER_VERSION])
+
+# ACX_COMPILER_CC_VERSION_SIMPLE()
+# -----------------------------------------------------------------------------
+# Detects the version of the C compiler. The result is either "unknown"
+# or a string in the form "[epoch:]major[.minor[.patchversion]]", where
+# "epoch:" is an optional prefix used in order to have an increasing version
+# number in case of marketing change.
+#
+# This is a simplified version ACX_COMPILER_CC_VERSION, which tries to detect
+# the version based on the version output of the compiler, instead of checking
+# for the values of vendor-specific macros.
+#
+# The result is cached in the acx_cv_c_compiler_version variable.
+#
+AC_DEFUN([ACX_COMPILER_CC_VERSION_SIMPLE],
+  [AC_LANG_ASSERT([C])dnl
+   AC_REQUIRE([ACX_COMPILER_CC_VENDOR])dnl
+   m4_provide([ACX_COMPILER_CC_VERSION])dnl
+   m4_pushdef([acx_cache_var],
+     [acx_cv_[]_AC_LANG_ABBREV[]_compiler_version])dnl
+   AC_CACHE_CHECK([for _AC_LANG compiler version], [acx_cache_var],
+     [AS_CASE([AS_VAR_GET([acx_cv_[]_AC_LANG_ABBREV[]_compiler_vendor])],
+        [intel],
+        [acx_cache_var=`AS_VAR_GET([_AC_CC]) --version 2>/dev/null | dnl
+[sed -n 's/^icc (ICC) \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`]],
+        [nag],
+        [acx_cache_var=`AS_VAR_GET([_AC_CC]) -V 2>&1 | dnl
+[sed -n 's/^NAG Fortran Compiler Release \([0-9][0-9]*\.[0-9][0-9]*\).*]dnl
+[Build \([0-9][0-9]*\)/\1.\2/p'`]],
+        [portland],
+        [acx_cache_var=`AS_VAR_GET([_AC_CC]) -V | dnl
+[sed -n 's/pgcc \([0-9][0-9]*\.[0-9][0-9]*\)-\([0-9][0-9]*\).*/\1.\2/p'`]],
+        [cray],
+        [acx_cache_var=`AS_VAR_GET([_AC_CC]) -V 2>&1 | dnl
+[sed -n 's/.*ersion \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`]
+         AS_IF([test -z "$acx_cache_var"],
+           [acx_cache_var=`AS_VAR_GET([_AC_CC]) --version | dnl
+[sed -n 's/.*version \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p']`
+            AS_IF([test -n "$acx_cache_var"],
+              [acx_cache_var="clang:${acx_cache_var}"])],
+           [acx_cache_var="classic:${acx_cache_var}"])],
+        [gnu],
+        [acx_cache_var=`AS_VAR_GET([_AC_CC]) -dumpfullversion 2>/dev/null dnl
+|| AS_VAR_GET([_AC_CC]) -dumpversion 2>/dev/null`],
+        [acx_cache_var=unknown])
+      AS_IF([test -z "$acx_cache_var"], [acx_cache_var=unknown])])
+   m4_popdef([acx_cache_var])])
 
 # ACX_COMPILER_CXX_VENDOR()
 # -----------------------------------------------------------------------------
@@ -97,10 +252,10 @@ AC_DEFUN([ACX_COMPILER_CXX_VENDOR],
 
 # ACX_COMPILER_CXX_VERSION()
 # -----------------------------------------------------------------------------
-# Detects the version of the C++ compiler. The result is either "unknown"
-# or a string in the form "epoch:major.minor.patchversion", where "epoch:" is
-# an optional prefix used in order to have an increasing version number in case
-# of marketing change.
+# Detects the version of the C compiler. The result is either "unknown"
+# or a string in the form "[epoch:]major[.minor[.patchversion]]", where
+# "epoch:" is an optional prefix used in order to have an increasing version
+# number in case of marketing change.
 #
 # The result is cached in the acx_cv_cxx_compiler_version variable.
 #
@@ -140,7 +295,7 @@ m4_define([_ACX_COMPILER_KNOWN_VENDORS(Fortran)],
 #
 m4_define([_ACX_COMPILER_KNOWN_VENDORS(C)],
 [[[intel, [__ICC,__ECC,__INTEL_COMPILER]],
-  [cray, [_CRAYC]],
+  [cray, [_CRAYC,__cray__]],
   [portland, [__PGI]],
   [ibm, [__xlc__,__xlC__,__IBMC__,__IBMCPP__]],
   [pathscale, [__PATHCC__,__PATHSCALE__]],
@@ -242,26 +397,25 @@ m4_define([_ACX_COMPILER_VERSION],
 # language that supports AC_COMPUTE_INT) compiler version.
 #
 m4_define([_ACX_COMPILER_VERSION_FROM_MACROS],
-  [acx_compiler_version_from_macros_result=
-   AC_COMPUTE_INT([acx_compiler_version_major],
-     [$1], [], [acx_compiler_version_from_macros_result=unknown])
-   AS_IF([test x"$acx_compiler_version_from_macros_result" != xunknown],
-     [AC_COMPUTE_INT([acx_compiler_version_minor],
-        [$2], [], [acx_compiler_version_from_macros_result=unknown])])
-   AS_IF([test x"$acx_compiler_version_from_macros_result" != xunknown],
-     [AC_COMPUTE_INT([acx_compiler_version_patch],
-        [$3], [], [acx_compiler_version_patch='x'])])
-   AS_VAR_IF([acx_compiler_version_from_macros_result], [unknown],
-     [acx_cache_var=unknown],
-     [acx_cache_var="$acx_compiler_version_major.dnl
-$acx_compiler_version_minor.$acx_compiler_version_patch"])])
+  [acx_cache_var=unknown
+   AC_COMPUTE_INT([acx_compiler_version_value],
+     [$1], [], [acx_compiler_version_value=])
+   AS_IF([test -n "$acx_compiler_version_value"],
+     [acx_cache_var=$acx_compiler_version_value
+      AC_COMPUTE_INT([acx_compiler_version_value],
+        [$2], [], [acx_compiler_version_value=])
+      AS_IF([test -n "$acx_compiler_version_value"],
+        [AS_VAR_APPEND([acx_cache_var], [".$acx_compiler_version_value"])
+         AC_COMPUTE_INT([acx_compiler_version_value],
+           [$3], [], [acx_compiler_version_value=])
+         AS_IF([test -n "$acx_compiler_version_value"],
+           [AS_VAR_APPEND([acx_cache_var],
+              [".$acx_compiler_version_value"])])])])])
 
 # for GNU
 m4_define([_ACX_COMPILER_VERSION_GNU(C)],
   [_ACX_COMPILER_VERSION_FROM_MACROS(
-     [__GNUC__],
-     [__GNUC_MINOR__],
-     [__GNUC_PATCHLEVEL__])])
+     [__GNUC__], [__GNUC_MINOR__], [__GNUC_PATCHLEVEL__])])
 m4_copy([_ACX_COMPILER_VERSION_GNU(C)], [_ACX_COMPILER_VERSION_GNU(C++)])
 m4_define([_ACX_COMPILER_VERSION_GNU(Fortran)],
   [acx_cache_var=`AS_VAR_GET([_AC_CC]) -dumpversion 2>/dev/null`
@@ -272,8 +426,7 @@ m4_define([_ACX_COMPILER_VERSION_GNU(Fortran)],
 # for Intel
 m4_define([_ACX_COMPILER_VERSION_INTEL(C)],
   [_ACX_COMPILER_VERSION_FROM_MACROS(
-     [__INTEL_COMPILER/100],
-     [__INTEL_COMPILER%100],
+     [__INTEL_COMPILER/100], [__INTEL_COMPILER%100],
      [__INTEL_COMPILER_UPDATE])])
 m4_copy([_ACX_COMPILER_VERSION_INTEL(C)], [_ACX_COMPILER_VERSION_INTEL(C++)])
 m4_define([_ACX_COMPILER_VERSION_INTEL(Fortran)],
@@ -294,10 +447,18 @@ m4_define([_ACX_COMPILER_VERSION_NAG],
 
 # for Cray
 m4_define([_ACX_COMPILER_VERSION_CRAY(C)],
-  [_ACX_COMPILER_VERSION_FROM_MACROS(
-     [_RELEASE_MAJOR],
-     [_RELEASE_MINOR],
-     [_RELEASE_PATCHLEVEL])])
+  [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([], [[#ifdef __cray__
+#else
+      choke me
+#endif]])],
+     [acx_compiler_version_epoch='clang'
+      _ACX_COMPILER_VERSION_FROM_MACROS(
+        [__cray_major__], [__cray_minor__], [__cray_patchlevel__])],
+     [acx_compiler_version_epoch='classic'
+      _ACX_COMPILER_VERSION_FROM_MACROS(
+        [_RELEASE_MAJOR], [_RELEASE_MINOR], [_RELEASE_PATCHLEVEL])])
+   AS_IF([test "x$acx_cache_var" != xunknown],
+     [acx_cache_var="${acx_compiler_version_epoch}:${acx_cache_var}"])])
 m4_copy([_ACX_COMPILER_VERSION_CRAY(C)], [_ACX_COMPILER_VERSION_CRAY(C++)])
 m4_define([_ACX_COMPILER_VERSION_CRAY(Fortran)],
   [acx_cache_var=`AS_VAR_GET([_AC_CC]) -V 2>&1 | dnl
@@ -309,9 +470,7 @@ m4_define([_ACX_COMPILER_VERSION_CRAY(Fortran)],
 # for PGI
 m4_define([_ACX_COMPILER_VERSION_PORTLAND(C)],
   [_ACX_COMPILER_VERSION_FROM_MACROS(
-     [__PGIC__],
-     [__PGIC_MINOR__],
-     [__PGIC_PATCHLEVEL__])])
+     [__PGIC__], [__PGIC_MINOR__], [__PGIC_PATCHLEVEL__])])
 m4_copy([_ACX_COMPILER_VERSION_PORTLAND(C)],
   [_ACX_COMPILER_VERSION_PORTLAND(C++)])
 m4_define([_ACX_COMPILER_VERSION_PORTLAND(Fortran)],
@@ -324,14 +483,10 @@ m4_define([_ACX_COMPILER_VERSION_PORTLAND(Fortran)],
 # for LLVM
 m4_define([_ACX_COMPILER_VERSION_CLANG(C)],
   [_ACX_COMPILER_VERSION_FROM_MACROS(
-     [__clang_major__],
-     [__clang_minor__],
-     [__clang_patchlevel__])])
+     [__clang_major__], [__clang_minor__], [__clang_patchlevel__])])
 m4_copy([_ACX_COMPILER_VERSION_CLANG(C)], [_ACX_COMPILER_VERSION_CLANG(C++)])
 
 # for Tiny CC
 m4_define([_ACX_COMPILER_VERSION_TCC(C)],
   [_ACX_COMPILER_VERSION_FROM_MACROS(
-     [__TINYC__/10000],
-     [(__TINYC__%10000)/100],
-     [__TINYC__%100])])
+     [__TINYC__/10000], [(__TINYC__%10000)/100], [__TINYC__%100])])
