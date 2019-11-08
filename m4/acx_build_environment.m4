@@ -14,15 +14,18 @@
 #
 AC_DEFUN([ACX_BUILD_ENVIRONMENT],
   [AC_ARG_VAR([BUILD_ENV],
-     [initialization code to set up the building environment (must end ]dnl
-[with a semicolon), e.g. 'LICENSE=file.lic; export LICENSE;'])dnl
+     [initialization code to set up the building environment (must be a ]dnl
+[single line ending with a semicolon), e.g. ]dnl
+['LICENSE=file.lic; export LICENSE;'])dnl
    AC_SUBST([BUILD_ENV_MAKE])
    AS_IF([test -n "$BUILD_ENV"],
-     [BUILD_ENV_MAKE=`echo "$BUILD_ENV" | sed 's/\\$/$$/g'`
-      AS_IF([AS_ECHO(["$BUILD_ENV"]) | grep ';@<:@ @:>@*$' >/dev/null 2>&1],
+     [AS_IF([AS_ECHO(["$BUILD_ENV"]) | grep ';@<:@ @:>@*$' >/dev/null 2>&1],
         [],
         [AC_MSG_ERROR(
            [\$BUILD_ENV does not end with a semicolon: '$BUILD_ENV'])])
+      AS_CASE([$BUILD_ENV], [*${as_nl}*],
+        [AC_MSG_ERROR([\$BUILD_ENV contains a newline: '$BUILD_ENV'])])
+      BUILD_ENV_MAKE=`echo "$BUILD_ENV" | sed 's/\\$/$$/g'`
       AC_MSG_CHECKING([whether \$BUILD_ENV is accepted by '$SHELL -c'])
       acx_build_env_quoted=$BUILD_ENV
       ASX_ESCAPE_SINGLE_QUOTE([acx_build_env_quoted])

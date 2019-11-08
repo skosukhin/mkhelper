@@ -1330,8 +1330,9 @@ Optional Packages:
   --with-netcdf-lib=DIR   search path for NetCDF libraries [NETCDF_ROOT/lib]
 
 Some influential environment variables:
-  BUILD_ENV   initialization code to set up the building environment (must end
-              with a semicolon), e.g. 'LICENSE=file.lic; export LICENSE;'
+  BUILD_ENV   initialization code to set up the building environment (must be
+              a single line ending with a semicolon), e.g. 'LICENSE=file.lic;
+              export LICENSE;'
   FC          Fortran compiler command
   FCFLAGS     Fortran compiler flags
   LDFLAGS     linker flags, e.g. -L<lib dir> if you have libraries in a
@@ -1972,12 +1973,18 @@ case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
 
 
    if test -n "$BUILD_ENV"; then :
-  BUILD_ENV_MAKE=`echo "$BUILD_ENV" | sed 's/\\$/$$/g'`
-      if $as_echo "$BUILD_ENV" | grep ';[ ]*$' >/dev/null 2>&1; then :
+  if $as_echo "$BUILD_ENV" | grep ';[ ]*$' >/dev/null 2>&1; then :
 
 else
   as_fn_error $? "\$BUILD_ENV does not end with a semicolon: '$BUILD_ENV'" "$LINENO" 5
 fi
+      case $BUILD_ENV in #(
+  *${as_nl}*) :
+    as_fn_error $? "\$BUILD_ENV contains a newline: '$BUILD_ENV'" "$LINENO" 5 ;; #(
+  *) :
+     ;;
+esac
+      BUILD_ENV_MAKE=`echo "$BUILD_ENV" | sed 's/\\$/$$/g'`
       { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether \$BUILD_ENV is accepted by '$SHELL -c'" >&5
 $as_echo_n "checking whether \$BUILD_ENV is accepted by '$SHELL -c'... " >&6; }
       acx_build_env_quoted=$BUILD_ENV
