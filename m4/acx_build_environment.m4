@@ -8,12 +8,18 @@
 # contents of BUILD_ENV inside the configure script fail, the expanded script
 # fails the configuration.
 #
+# Additionally, the macro declares an output variable BUILD_ENV_MAKE, which
+# holds a value of BUILD_ENV modified to conform with Makefile syntax (e.g.
+# each dollar sign "$" is duplicated).
+#
 AC_DEFUN([ACX_BUILD_ENVIRONMENT],
   [AC_ARG_VAR([BUILD_ENV],
      [initialization code to set up the building environment (must end ]dnl
 [with a semicolon), e.g. 'LICENSE=file.lic; export LICENSE;'])dnl
+   AC_SUBST([BUILD_ENV_MAKE])
    AS_IF([test -n "$BUILD_ENV"],
-     [AS_IF([AS_ECHO(["$BUILD_ENV"]) | grep ';@<:@ @:>@*$' >/dev/null 2>&1],
+     [BUILD_ENV_MAKE=`echo "$BUILD_ENV" | sed 's/\\$/$$/g'`
+      AS_IF([AS_ECHO(["$BUILD_ENV"]) | grep ';@<:@ @:>@*$' >/dev/null 2>&1],
         [],
         [AC_MSG_ERROR(
            [\$BUILD_ENV does not end with a semicolon: '$BUILD_ENV'])])
@@ -61,9 +67,7 @@ x"AS_VAR_GET([acx_arg_${acx_arg_name}])"],
 "AS_VAR_GET([acx_arg_${acx_arg_name}])": new value of the variable is dnl
 "AS_VAR_GET([$acx_arg_name])"])])
                  AS_UNSET([acx_arg_${acx_arg_name}])
-               done])
-            AC_CONFIG_COMMANDS_PRE(
-              [BUILD_ENV=`echo "$BUILD_ENV" | sed 's/\\$/$$/g'`])],
+               done])],
            [AC_MSG_RESULT([no])])],
         [AC_MSG_RESULT([no])
          acx_failMsg="failed to initialize '$SHELL' with the provided dnl
