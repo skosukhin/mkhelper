@@ -16,7 +16,7 @@ moddir= mod
 
 # Shell and environment:
 SHELL= @SHELL@
-BUILD_ENV= @BUILD_ENV@
+BUILD_ENV= @BUILD_ENV_MAKE@
 
 # Compilers and flags:
 FC= @FC@

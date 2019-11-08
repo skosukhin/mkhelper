@@ -621,6 +621,7 @@ ac_ct_FC
 LDFLAGS
 FCFLAGS
 FC
+BUILD_ENV_MAKE
 BUILD_ENV
 host_os
 host_vendor
@@ -1969,8 +1970,10 @@ case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
 
 
 
+
    if test -n "$BUILD_ENV"; then :
-  if $as_echo "$BUILD_ENV" | grep ';[ ]*$' >/dev/null 2>&1; then :
+  BUILD_ENV_MAKE=`echo "$BUILD_ENV" | sed 's/\\$/$$/g'`
+      if $as_echo "$BUILD_ENV" | grep ';[ ]*$' >/dev/null 2>&1; then :
 
 else
   as_fn_error $? "\$BUILD_ENV does not end with a semicolon: '$BUILD_ENV'" "$LINENO" 5
@@ -2025,7 +2028,6 @@ fi
                  { eval acx_arg_${acx_arg_name}=; unset acx_arg_${acx_arg_name};}
                done
 fi
-
 else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
@@ -4371,7 +4373,6 @@ LIBOBJS=$ac_libobjs
 LTLIBOBJS=$ac_ltlibobjs
 
 
-BUILD_ENV=`echo "$BUILD_ENV" | sed 's/\\$/$$/g'`
 if test "x$no_recursion" = xyes; then :
   subdirs_extra=
 else
