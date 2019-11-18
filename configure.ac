@@ -8,6 +8,7 @@ AC_CONFIG_MACRO_DIR([m4])
 AC_PREFIX_DEFAULT(["`pwd`/install"])
 
 AC_CANONICAL_HOST
+ACX_HOST_FQDN([AC_SUBST([host_fqdn], [$acx_cv_host_fqdn])])
 
 ACX_BUILD_ENVIRONMENT
 
