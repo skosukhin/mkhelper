@@ -623,6 +623,7 @@ FCFLAGS
 FC
 BUILD_ENV_MAKE
 BUILD_ENV
+host_fqdn
 host_os
 host_vendor
 host_cpu
@@ -1970,6 +1971,32 @@ IFS=$ac_save_IFS
 case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
 
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for the fully qualified domain name of the host" >&5
+$as_echo_n "checking for the fully qualified domain name of the host... " >&6; }
+if ${acx_cv_host_fqdn+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+        acx_cv_host_fqdn=`hostname -f 2>/dev/null`
+      if test $? -ne 0 || test -z "$acx_cv_host_fqdn"; then :
+  acx_cv_host_fqdn=unknown
+         acx_hostname=`(hostname || uname -n) 2>/dev/null | sed 1q`
+         test -n "$acx_hostname" || acx_hostname=$HOSTNAME
+         test -n "$acx_hostname" || acx_hostname=`cat /proc/sys/kernel/hostname 2>/dev/null`
+         test -n "$acx_hostname" && acx_cv_host_fqdn=`host "$acx_hostname" 2>/dev/null | awk '/has address/ {print $1}' 2>/dev/null`
+fi
+      test -n "$acx_cv_host_fqdn" || acx_cv_host_fqdn=unknown
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_host_fqdn" >&5
+$as_echo "$acx_cv_host_fqdn" >&6; }
+   if test "x$acx_cv_host_fqdn" = xunknown; then :
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "unable to detect the fully qualified domain name of the host
+See \`config.log' for more details" "$LINENO" 5; }
+else
+  host_fqdn=$acx_cv_host_fqdn
+
+fi
 
 
    if test -n "$BUILD_ENV"; then :
