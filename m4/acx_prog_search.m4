@@ -45,42 +45,62 @@ AC_DEFUN([ACX_PROG_SEARCH],
             AC_MSG_FAILURE([unable to find $acx_tmp])])])])
    AS_VAR_POPDEF([acx_cache_var])])
 
-# ACX_PROG_SEARCH_PATH(PROG-TO-CHECK-FOR,
-#                      [ACTION-IF-SUCCESS],
-#                      [ACTION-IF-FAILURE = FAILURE],
-#                      [PATH = $PATH])
+# ACX_PROG_SEARCH_ABSPATH(PROG-TO-CHECK-FOR,
+#                         [ACTION-IF-SUCCESS],
+#                         [ACTION-IF-FAILURE = FAILURE],
+#                         [PATH = $PATH])
 # -----------------------------------------------------------------------------
-# Originally taken from the master branch of Autoconf where it is known as
-# _AC_PATH_PROG.
-# -----------------------------------------------------------------------------
-# Searches for the path to the PROG-TO-CHECK-FOR program in the list of
-# directories stored in the PATH (defaults to the value of the $PATH shell
-# variable) as a list separated with the value of the $PATH_SEPARATOR shell
-# variable, which is set by the configure script during the initialization (the
-# usual value is ':'). The result is either "unknown" or PROG-TO-CHECK-FOR
-# prepended with the path to the first word in PROG-TO-CHECK-FOR.
+# Searches for the absolute path to the PROG-TO-CHECK-FOR executable. If
+# PROG-TO-CHECK-FOR contains slashes (i.e. specified as either absolute or
+# relative path), the macro checks whether it is an executable and returns an
+# absolute path to it (not necessarily in the canonical form). If the specified
+# path is not a path to executable, the result is "unknown". If
+# PROG-TO-CHECK-FOR does not contain slashes, the macro tries to find the
+# executable in the list of directories stored in the PATH (defaults to the
+# value of the $PATH shell variable). The value of the variable is interpreted
+# as a list separated with the value of the $PATH_SEPARATOR shell variable,
+# which is set by the configure script during the initialization (the usual
+# value is ':'). If the path that contains PROG-TO-CHECK-FOR is a relative one,
+# it will be converted to the absolute one. If PROG-TO-CHECK-FOR contains
+# arguments, they will be preserved in the result.
 #
 # If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
 # (defaults to failing with an error message).
 #
-# The result is stored in the acx_prog_search_path shell variable.
+# The result is stored in the acx_prog_search_abspath shell variable.
 #
-AC_DEFUN([ACX_PROG_SEARCH_PATH],
-  [acx_prog_search_path=unknown
-   set dummy $1; acx_tmp=$[2]
-   AC_MSG_CHECKING([for the path to $acx_tmp])
-   AS_CASE(["$acx_tmp"],
-     [[[\\/]]* | ?:[[\\/]]*],
-     [AS_IF([AS_EXECUTABLE_P(["$acx_tmp"])],
-        [acx_prog_search_path="$1"
-         AC_MSG_RESULT([$acx_tmp])])],
+AC_DEFUN([ACX_PROG_SEARCH_ABSPATH],
+  [acx_prog_search_abspath=unknown
+   set dummy $1; shift; acx_prog_exec=$[1]; shift; acx_prog_args="$[@]"
+   AC_MSG_CHECKING([for the absolute path to $acx_prog_exec])
+   AS_CASE([$acx_prog_exec],
+     [*[[\\/]]*],
+     [AS_IF([AS_EXECUTABLE_P([$acx_prog_exec])],
+        [acx_prog_search_abspath=$acx_prog_exec])],
      [_AS_PATH_WALK([$4],
-        [AS_IF([AS_EXECUTABLE_P(["$as_dir/$acx_tmp"])],
-           [acx_prog_search_path="$as_dir/$1"
-            AC_MSG_RESULT([$as_dir/$acx_tmp])
-            break])])])
-   AS_VAR_IF([acx_prog_search_path], [unknown],
-     [AC_MSG_RESULT([unknown])
-      m4_default([$3],
-        [AC_MSG_FAILURE([unable to find the path to $acx_tmp])])],
-     [$2])])
+        [AS_IF([AS_EXECUTABLE_P(["$as_dir/$acx_prog_exec"])],
+           [acx_prog_search_abspath="$as_dir/$acx_prog_exec"; break])])])
+dnl If acx_prog_search_abspath is not "unknown", it is a path to an executable
+dnl (without arguments).
+   AS_CASE([$acx_prog_search_abspath],
+     [unknown], [],
+     [[[\\/]]* | ?:[[\\/]]*], [],
+     [asx_dir=`echo "$acx_prog_search_abspath" | dnl
+sed 's%/@<:@^/@:>@*$%%' 2>/dev/null`
+      asx_file=`echo "$acx_prog_search_abspath" | sed 's%.*/%%' 2>/dev/null`
+      asx_dir=`cd "$asx_dir" >/dev/null 2>&1 && pwd 2>/dev/null`
+dnl Set the result to unknown until we make sure that we can provide a correct
+dnl one.
+      acx_prog_search_abspath=unknown
+      AS_CASE([$asx_dir],
+        [[[\\/]]* | ?:[[\\/]]*],
+        [AS_IF([AS_EXECUTABLE_P(["$asx_dir/$asx_file"])],
+           [acx_prog_search_abspath="$asx_dir/$asx_file"])])])
+   AC_MSG_RESULT([$acx_prog_search_abspath])
+   AS_VAR_IF([acx_prog_search_abspath], [unknown],
+     [m4_default([$3],
+        [AC_MSG_FAILURE(
+           [unable to find the absolute path to $acx_prog_exec])])],
+     [AS_IF([test -n "$acx_prog_args"],
+        [AS_VAR_APPEND([acx_prog_search_abspath], [" $acx_prog_args"])])
+      $2])])
