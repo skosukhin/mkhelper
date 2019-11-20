@@ -175,7 +175,7 @@ AC_PROG_INSTALL
 AC_PROG_MKDIR_P
 
 acx_some_prog='true -a -b -c'
-ACX_PROG_SEARCH_PATH([$acx_some_prog], [], [:])
+ACX_PROG_SEARCH_ABSPATH([$acx_some_prog], [], [:])
 
 ACX_CONFIG_SUBDIR([dummy_subdir],
   [[FCFLAGS=*|CFLAGS=*],

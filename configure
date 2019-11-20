@@ -4168,16 +4168,14 @@ $as_echo "$MKDIR_P" >&6; }
 
 
 acx_some_prog='true -a -b -c'
-acx_prog_search_path=unknown
-   set dummy $acx_some_prog; acx_tmp=$2
-   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for the path to $acx_tmp" >&5
-$as_echo_n "checking for the path to $acx_tmp... " >&6; }
-   case "$acx_tmp" in #(
-  [\\/]* | ?:[\\/]*) :
-    if as_fn_executable_p "$acx_tmp"; then :
-  acx_prog_search_path="$acx_some_prog"
-         { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_tmp" >&5
-$as_echo "$acx_tmp" >&6; }
+acx_prog_search_abspath=unknown
+   set dummy $acx_some_prog; shift; acx_prog_exec=$1; shift; acx_prog_args="$@"
+   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for the absolute path to $acx_prog_exec" >&5
+$as_echo_n "checking for the absolute path to $acx_prog_exec... " >&6; }
+   case $acx_prog_exec in #(
+  *[\\/]*) :
+    if as_fn_executable_p $acx_prog_exec; then :
+  acx_prog_search_abspath=$acx_prog_exec
 fi ;; #(
   *) :
     as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
@@ -4185,20 +4183,41 @@ for as_dir in $PATH
 do
   IFS=$as_save_IFS
   test -z "$as_dir" && as_dir=.
-    if as_fn_executable_p "$as_dir/$acx_tmp"; then :
-  acx_prog_search_path="$as_dir/$acx_some_prog"
-            { $as_echo "$as_me:${as_lineno-$LINENO}: result: $as_dir/$acx_tmp" >&5
-$as_echo "$as_dir/$acx_tmp" >&6; }
-            break
+    if as_fn_executable_p "$as_dir/$acx_prog_exec"; then :
+  acx_prog_search_abspath="$as_dir/$acx_prog_exec"; break
 fi
   done
 IFS=$as_save_IFS
  ;;
 esac
-   if test "x$acx_prog_search_path" = xunknown; then :
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: unknown" >&5
-$as_echo "unknown" >&6; }
-      :
+   case $acx_prog_search_abspath in #(
+  unknown) :
+     ;; #(
+  [\\/]* | ?:[\\/]*) :
+     ;; #(
+  *) :
+    asx_dir=`echo "$acx_prog_search_abspath" | sed 's%/[^/]*$%%' 2>/dev/null`
+      asx_file=`echo "$acx_prog_search_abspath" | sed 's%.*/%%' 2>/dev/null`
+      asx_dir=`cd "$asx_dir" >/dev/null 2>&1 && pwd 2>/dev/null`
+      acx_prog_search_abspath=unknown
+      case $asx_dir in #(
+  [\\/]* | ?:[\\/]*) :
+    if as_fn_executable_p "$asx_dir/$asx_file"; then :
+  acx_prog_search_abspath="$asx_dir/$asx_file"
+fi ;; #(
+  *) :
+     ;;
+esac ;;
+esac
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_prog_search_abspath" >&5
+$as_echo "$acx_prog_search_abspath" >&6; }
+   if test "x$acx_prog_search_abspath" = xunknown; then :
+  :
+else
+  if test -n "$acx_prog_args"; then :
+  as_fn_append acx_prog_search_abspath " $acx_prog_args"
+fi
+
 fi
 
    acx_config_subdir_args_dummy_subdir=
