@@ -4544,6 +4544,10 @@ $as_echo "$as_me: running $SHELL $acx_config_subdir_script $acx_config_subdir_ar
 fi
               cd "$acx_config_subdir_popdir"
             done
+            if test -n "$subdirs_extra"; then :
+  $as_echo "===" >&6
+               $as_echo "$as_me:${as_lineno-$LINENO}: ===" >&5
+fi
 fi
 acx_exec_result=`$as_echo @LIBRT@ | "dummy_subdir/config.status" -q --file=- 2>/dev/null`
    if test $? -eq 0; then :
