@@ -110,7 +110,10 @@ $acx_config_subdir_args])
 $acx_config_subdir_args" || dnl
 AC_MSG_ERROR([$acx_config_subdir_script failed for $acx_config_subdir])])
               cd "$acx_config_subdir_popdir"
-            done])])])dnl
+            done
+            AS_IF([test -n "$subdirs_extra"],
+              [_AS_ECHO([===])
+               _AS_ECHO_LOG([===])])])])])dnl
    m4_define([ACX_CONFIG_SUBDIR_COMMANDS_DEFINED])])
 
 # ACX_CONFIG_SUBDIR_PATTERN_ENABLE(FEATURE)
