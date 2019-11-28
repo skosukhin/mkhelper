@@ -2747,7 +2747,7 @@ fi
    { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether Fortran compiler accepts the automatically generated RPATH flags" >&5
 $as_echo_n "checking whether Fortran compiler accepts the automatically generated RPATH flags... " >&6; }
    acx_save_LDFLAGS=$LDFLAGS
-   LDFLAGS="$mkhelper_rpath_flags $LDFLAGS"
+      LDFLAGS="$mkhelper_rpath_flags $LDFLAGS"
    cat > conftest.$ac_ext <<_ACEOF
       program main
 
