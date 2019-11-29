@@ -47,11 +47,9 @@ class FortranParser:
                     break
 
                 # delete comments
-                comment_idx = find_unquoted_string('!', line)
-                if comment_idx >= 0:
-                    line = line[:comment_idx]
-                    if line.isspace():
-                        continue
+                line = FortranParser._delete_comments(line)
+                if line.isspace():
+                    continue
 
                 # line continuation
                 match = FortranParser._re_line_continue_start.match(line)
@@ -59,6 +57,14 @@ class FortranParser:
                     next_line = s.readline()
                     if not next_line:
                         break
+
+                    next_line = FortranParser._delete_comments(next_line)
+
+                    # If the line contains only comments, we need the next one
+                    # TODO: implement a separate class FortranPrepcocessor
+                    if next_line.isspace():
+                        continue
+
                     line = match.group(1) + re.sub(
                         FortranParser._re_line_continue_end, '', next_line)
 
@@ -150,4 +156,11 @@ class FortranParser:
                 if prefix and not prefix.isspace():
                     yield prefix + '\n'
                 line = line[idx + 1:]
+
+    @staticmethod
+    def _delete_comments(line):
+        comment_idx = find_unquoted_string('!', line)
+        if comment_idx >= 0:
+            line = line[:comment_idx]
+        return line
 
