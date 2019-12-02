@@ -69,7 +69,8 @@ grep '^Copyright.*\(The Protland Group\|NVIDIA CORPORATION\)' >/dev/null 2>&1],
         [AS_VAR_GET([_AC_CC]) --version 2>/dev/null | dnl
 grep '^GNU Fortran' >/dev/null 2>&1],
         [acx_cache_var=gnu],
-        [acx_cache_var=unknown])])
+        [acx_cache_var=unknown])
+      rm -f a.out a.out.dSYM a.exe b.out])
    m4_popdef([acx_cache_var])])
 
 # ACX_COMPILER_FC_VERSION()
@@ -124,6 +125,7 @@ AC_DEFUN([ACX_COMPILER_FC_VERSION_SIMPLE],
          AS_IF([test $? -ne 0 || test -z "$acx_cache_var"],
            [acx_cache_var=`AS_VAR_GET([_AC_CC]) -dumpversion 2>/dev/null`])],
         [acx_cache_var=unknown])
+      rm -f a.out a.out.dSYM a.exe b.out
       AS_IF([test -z "$acx_cache_var"], [acx_cache_var=unknown])])
    m4_popdef([acx_cache_var])])
 
@@ -176,7 +178,8 @@ grep '^Cray clang' >/dev/null 2>&1],
         [acx_cache_var=cray],
         [AS_VAR_GET([_AC_CC]) --version | grep '^gcc' >/dev/null 2>&1],
         [acx_cache_var=gnu],
-        [acx_cache_var=unknown])])
+        [acx_cache_var=unknown])
+      rm -f a.out a.out.dSYM a.exe b.out])
    m4_popdef([acx_cache_var])])
 
 # ACX_COMPILER_CC_VERSION()
@@ -237,6 +240,7 @@ AC_DEFUN([ACX_COMPILER_CC_VERSION_SIMPLE],
          AS_IF([test $? -ne 0 || test -z "$acx_cache_var"],
            [acx_cache_var=`AS_VAR_GET([_AC_CC]) -dumpversion 2>/dev/null`])],
         [acx_cache_var=unknown])
+      rm -f a.out a.out.dSYM a.exe b.out
       AS_IF([test -z "$acx_cache_var"], [acx_cache_var=unknown])])
    m4_popdef([acx_cache_var])])
 
