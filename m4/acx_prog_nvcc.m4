@@ -17,6 +17,9 @@ ac_compile='$NVCC -c $NVCFLAGS conftest.$ac_ext >&AS_MESSAGE_LOG_FD'
 ac_link='$NVCC -o conftest$ac_exeext $NVCFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&AS_MESSAGE_LOG_FD'
 ac_compiler_gnu=$acx_cv_nvcc_compiler_gnu
 ])
+dnl Avoid mixing definitions that are relevant for C or C++ compiler and might
+dnl be irrelevant for CUDA:
+m4_copy_force([AC_LANG_CONFTEST()], [AC_LANG_CONFTEST(CUDA)])
 AC_DEFUN([AC_LANG_COMPILER(CUDA)], [AC_REQUIRE([ACX_PROG_NVCC])])
 
 # ACX_LANG_CUDA()
@@ -103,7 +106,7 @@ AC_DEFUN([ACX_PROG_NVCC_CXX11],
     void operator() (T elem) {}
   };
 }]],
-        [[test::SomeClass<int> some_class();
+        [[test::SomeClass<int> some_class = test::SomeClass<int>();
 int* dev_nvalid = nullptr;]])])
       acx_save_NVCFLAGS=$NVCFLAGS
       for acx_flag in '' '-std=c++11'; do
