@@ -2,8 +2,8 @@
 #                     [ACTION-IF-FAILURE = FAILURE])
 # -----------------------------------------------------------------------------
 # Checks whether the Fortran compiler can link objects compiled with the C
-# compiler. First, tries to compile a simple C code with the C compiler and to
-# link the resulting object into a Fortran program with the Fortran compiler.
+# compiler. Tries to compile a simple C code with the C compiler and to link the
+$ resulting object into a Fortran program with the Fortran compiler.
 #
 # The implementation implies that the Fortran compiler supports the BIND(C)
 # attribute.
@@ -59,8 +59,8 @@ void conftest_foo()
   MPI_Get_processor_name(processor_name, &name_len);
   MPI_Finalize(); }]],
         [AC_TRY_COMMAND([m4_default([$1], [true]) -n 1 ./conftest$ac_exeext dnl
->&AS_MESSAGE_LOG_FD])
-         AS_IF([test $? -eq 0], [acx_cv_fc_c_compatible_mpi=yes])])])
+>&AS_MESSAGE_LOG_FD])])
+      acx_cv_fc_c_compatible_mpi=$acx_fc_c_compatiable])
    AS_VAR_IF([acx_cv_fc_c_compatible_mpi], [yes], [$2],
      [m4_default([$3],
         [AC_MSG_FAILURE([Fortran and C MPI libraries are not compatible])])])])
@@ -93,18 +93,19 @@ void conftest_foo () {omp_get_num_threads();}]])
         [AC_MSG_FAILURE(
            [Fortran compiler cannot link C code that uses OpenMP])])])])
 
-# _ACX_FC_C_COMPATIBLE([FOO-C-CODE = "void conftest_foo(){}"],
-#                      [ACTION-IF-SUCCESS])
+# _ACX_FC_C_COMPATIBLE([FOO-C-CODE = "void conftest_foo(){}"]
+#                      [EXTRA-ACTIONS])
 # -----------------------------------------------------------------------------
 # Checks whether the Fortran compiler can link a program that makes a call to
 # a parameterless C function "conftest_foo", which returns void, using the
 # ISO_C_BINDING module. First, tries to compile FOO-C-CODE (defaults to a dummy
 # function "conftest_foo") with the C compiler and to link the resulting object
 # into a Fortran program with the Fortran compiler. The result is either "yes"
-# or "no".
-#
-# If successful, runs ACTION-IF-SUCCESS before deleting the executable of the
-# program.
+# or "no". If you need to run extra commands upon successful linking (e.g. you
+# need to run the result of the linking, i.e. "./conftest$ac_exeext"), you can
+# put them as EXTRA-ACTIONS argument. In that case the result of the macro will
+# be "yes" only if the exit code of the last command listed in EXTRA-ACTIONS is
+# zero.
 #
 # The result is stored in the acx_fc_c_compatiable variable.
 #
@@ -128,8 +129,11 @@ m4_define([_ACX_FC_C_COMPATIBLE],
       end interface
       call conftest_foo()
       end program]])],
-        [LIBS=$acx_save_LIBS
-         acx_fc_c_compatiable=yes
-         $2],
-        [LIBS=$acx_save_LIBS])
-      rm -f conftest_c.$ac_objext])])
+        [m4_ifval([$2],
+           [$2
+            AS_IF([test $? -eq 0], [acx_fc_c_compatiable=yes])],
+           [acx_fc_c_compatiable=yes])])
+      LIBS=$acx_save_LIBS
+      rm -f conftest_c.$ac_objext
+      AC_LANG_PUSH([C])])
+   AC_LANG_POP([C])])
