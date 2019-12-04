@@ -115,7 +115,7 @@ AC_DEFUN([ACX_COMPILER_FC_VERSION_SIMPLE],
 [sed -n 's/^NAG Fortran Compiler Release \([0-9][0-9]*\.[0-9][0-9]*\).*]dnl
 [Build \([0-9][0-9]*\)/\1.\2/p'`]],
         [portland],
-        [acx_cache_var=`AS_VAR_GET([_AC_CC]) -V | dnl
+        [acx_cache_var=`AS_VAR_GET([_AC_CC]) -V 2>/dev/null | dnl
 [sed -n 's/\(pgfortran\|pgf90\) \([0-9][0-9]*\.[0-9][0-9]*\)-\([0-9][0-9]*\).*/\2.\3/p'`]],
         [cray],
         [acx_cache_var=`AS_VAR_GET([_AC_CC]) -V 2>&1 | dnl
@@ -224,7 +224,7 @@ AC_DEFUN([ACX_COMPILER_CC_VERSION_SIMPLE],
 [sed -n 's/^NAG Fortran Compiler Release \([0-9][0-9]*\.[0-9][0-9]*\).*]dnl
 [Build \([0-9][0-9]*\)/\1.\2/p'`]],
         [portland],
-        [acx_cache_var=`AS_VAR_GET([_AC_CC]) -V | dnl
+        [acx_cache_var=`AS_VAR_GET([_AC_CC]) -V 2>/dev/null | dnl
 [sed -n 's/pgcc \([0-9][0-9]*\.[0-9][0-9]*\)-\([0-9][0-9]*\).*/\1.\2/p'`]],
         [cray],
         [acx_cache_var=`AS_VAR_GET([_AC_CC]) -V 2>&1 | dnl
