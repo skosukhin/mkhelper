@@ -17,131 +17,75 @@ _meta_root = 0
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(
-        description='Reads a set of makefiles and returns a list of all '
-                    'direct and indirect dependencies or dependants of the '
-                    'TARGET(s).')
+    class ArgumentParser(argparse.ArgumentParser):
+        # Allow for comments in the argument file:
+        def convert_arg_line_to_args(self, arg_line):
+            if arg_line.startswith('#'):
+                return []
+            return arg_line.split()
+
+    parser = ArgumentParser(
+        fromfile_prefix_chars='@',
+        description='Reads a set of makefiles and prints a recursive list of '
+                    'prerequisites of the TARGET.')
 
     parser.add_argument(
         '-d', '--debug-file',
         help='dump debug information to DEBUG_FILE')
     parser.add_argument(
-        '-t', '--target', nargs='*',
-        help='names of the make targets (or prerequisites, see --reverse); if '
-             'not specified, all targets (or prerequisites) found in '
-             'MAKEFILE(s) are considered as children of a meta target, which '
-             'is the default value of the argument')
-    parser.add_argument(
-        '-p', '--pattern', action='append',
-        help='shell-like pattern to filter the list of '
-             'dependencies/dependants (default: %(default)s)')
+        '-t', '--target',
+        help='name of the makefile target; if not specified, all targets and '
+             'prerequisites found in the makefiles are sent to the output')
     parser.add_argument(
         '--inc-oo', action='store_true',
-        help='include order-only dependencies')
+        help='include order-only dependencies in the dependency graph')
     parser.add_argument(
-        '-l', '--max-level', type=int,
-        help='positive integer, maximum recursion level when traversing the '
-             'dependency graph: 1 - to consider only children, 2 - to '
-             'consider children and their children, etc.; if not specified, '
-             'all descendants of the TARGET(s) are considered')
+        '--check-unique', action='append', nargs=2, metavar='PATTERN',
+        help='pair of shell-like wildcards; the option enables additional '
+             'consistency checks of the dependency graph: each target that '
+             'matches the first pattern of the pair is checked whether it has '
+             'no more than one immediate prerequisite matching the second '
+             'pattern; if the check fails, a warning message is emitted to the '
+             'standard error stream')
     parser.add_argument(
-        '-r', '--reverse', action='store_true',
-        help='reverse the dependency graph: makefile targets become children '
-             'of their prerequisites')
+        # Unfortunately, we cannot set nargs to 'two or more', therefore we
+        # set nargs to 'one or more':
+        '--check-exists', action='append', nargs='+', metavar='PATTERN',
+        help='list of two or more shell-like wildcards; the option enables '
+             'additional consistency checks of the dependency graph: each '
+             'target that matches the first pattern of the list is checked '
+             'whether it has at least one immediate prerequisite matching any '
+             'of the rest of the patterns; if the check fails, a warning '
+             'message is emitted to the standard error stream')
+    parser.add_argument(
+        '--check-cycles', action='store_true',
+        help='check whether the dependency graph is acyclic, e.g. there is no '
+             'circular dependencies; if a cycle is found, a warning message is '
+             'emitted to the standard output')
+    parser.add_argument(
+        '--check-colour', action='store_true',
+        help='colour the message output of the checks using ANSI escape '
+             'sequences; the argument is ignored if the standard error stream '
+             'is not associated with a terminal device')
     parser.add_argument(
         '-f', '--makefile', nargs='*',
         help='paths to makefiles')
 
     args = parser.parse_args()
 
-    if not args.target:
-        args.target = [_meta_root]
+    if args.check_exists:
+        for pattern_list in args.check_exists:
+            if len(pattern_list) < 2:
+                parser.error('argument --check-exists: expected 2 or more '
+                             'arguments')
+
+    args.check_colour = args.check_colour and sys.stderr.isatty()
 
     return args
 
 
-def get_descendants(dep_graph, roots, max_level=None):
-    result = set()
-    for root in roots:
-        descendants = _get_descendants(dep_graph, root, max_level, set())
-        if descendants:
-            result.update(descendants)
-    return result
-
-
-def build_dep_graph(makefiles, reverse=False, inc_order_only=False):
+def read_makefile(makefile, inc_order_only):
     result = dict()
-    for f in makefiles:
-        _update_dep_graph(result, f, reverse, inc_order_only)
-    result[_meta_root] = set(result.keys())
-    return result
-
-
-def main():
-    args = parse_args()
-
-    if args.debug_file:
-        with open(args.debug_file, 'w') as debug_file:
-            debug_file.writelines([
-                '# Python version: ', sys.version.replace('\n', ' '), '\n',
-                '# Command:\n',
-                '  ', '\n    '.join(sys.argv), '\n',
-                '# Parsed arguments:\n ',
-                '\n '.join(
-                    [k + '=' + str(v) for k, v in vars(args).items()]), '\n'])
-
-    if args.makefile is None:
-        return
-
-    dep_graph = build_dep_graph(args.makefile, args.reverse, args.inc_oo)
-
-    if not dep_graph:
-        return
-
-    descendants = get_descendants(dep_graph, args.target, args.max_level)
-
-    if not args.pattern:
-        print('\n'.join(descendants))
-    elif len(args.pattern) == 1:
-        print('\n'.join(fnmatch.filter(descendants, args.pattern[0])))
-    else:
-        print('\n'.join(
-            [descendant
-             for descendant in descendants if any(
-                [fnmatch.fnmatch(descendant, pattern)
-                 for pattern in args.pattern])]))
-
-
-def _get_descendants(dep_graph, root, max_level, visited):
-    if max_level is not None:
-        if max_level < 1:
-            return None
-        else:
-            max_level -= 1
-
-    children = dep_graph.get(root, None)
-    if children is None:
-        return None
-
-    visited.add(root)
-
-    result = children - visited
-
-    if max_level is not None and max_level < 1:
-        return result
-
-    for child in children:
-        if child not in visited:
-            new_descendants = _get_descendants(
-                dep_graph, child, max_level, visited)
-            if new_descendants:
-                result.update(new_descendants)
-    return result
-
-
-def _update_dep_graph(dep_graph, makefile, reverse, inc_order_only):
-    if not os.path.isfile(makefile):
-        return
 
     with open(makefile, 'r') as f:
         it = iter(f)
@@ -155,27 +99,182 @@ def _update_dep_graph(dep_graph, makefile, reverse, inc_order_only):
 
             match = _re_rule.match(line)
             if match:
-                parents = set(match.group(1).split())
-                new_children = set()
+                targets = set(match.group(1).split())
+                prereqs = []
 
                 if match.group(2):
-                    new_children.update(match.group(2).split())
+                    prereqs.extend(match.group(2).split())
 
                 if match.group(3) and inc_order_only:
-                    new_children.update(match.group(3).split())
+                    prereqs.extend(match.group(3).split())
 
-                if not new_children:
-                    continue
+                for target in targets:
+                    if target not in result:
+                        result[target] = set()
+                    result[target].update(prereqs)
+    return result
 
-                if reverse:
-                    parents, new_children = new_children, parents
 
-                for p in parents:
-                    known_children = dep_graph.get(p, None)
-                    if known_children:
-                        known_children.update(new_children)
-                    else:
-                        dep_graph[p] = new_children
+def visit_dfs(dep_graph, vertex,
+              visited=None,
+              start_visit_cb_list=None,
+              finish_visit_cb_list=None,
+              skip_visit_cb_list=None):
+    if visited is None:
+        visited = set()
+
+    if vertex in visited:
+        if skip_visit_cb_list:
+            for skip_visit_cb in skip_visit_cb_list:
+                skip_visit_cb(vertex)
+        return
+
+    if start_visit_cb_list:
+        for start_visit_cb in start_visit_cb_list:
+            start_visit_cb(vertex)
+
+    visited.add(vertex)
+
+    if vertex in dep_graph:
+        for child in dep_graph[vertex]:
+            visit_dfs(dep_graph, child, visited,
+                      start_visit_cb_list,
+                      finish_visit_cb_list,
+                      skip_visit_cb_list)
+
+    if finish_visit_cb_list:
+        for finish_visit_cb in finish_visit_cb_list:
+            finish_visit_cb(vertex)
+
+
+def warn(msg, colour=False):
+    sys.stderr.write("%s%s: WARNING: %s%s\n" % ('\033[93m' if colour else '',
+                                                os.path.basename(__file__),
+                                                msg,
+                                                '\033[0m' if colour else ''))
+
+
+def main():
+    args = parse_args()
+
+    if args.debug_file:
+        with open(args.debug_file, 'w') as debug_file:
+            debug_file.writelines([
+                '# Python version: ', sys.version.replace('\n', ' '), '\n',
+                '#\n',
+                '# Command:\n',
+                '#  ', ' '.join(sys.argv), '\n',
+                '#\n',
+                '# Parsed arguments:\n',
+                '#  ', '\n#  '.join(
+                    [k + '=' + str(v) for k, v in vars(args).items()]), '\n'])
+
+    if args.makefile is None:
+        return
+
+    # Read makefiles:
+    dep_graph = dict()
+    for mkf in args.makefile:
+        if not os.path.isfile(mkf):
+            continue
+
+        mkf_dict = read_makefile(mkf, args.inc_oo)
+
+        for target, prereqs in mkf_dict.items():
+            if target not in dep_graph:
+                dep_graph[target] = set()
+            dep_graph[target].update(prereqs)
+
+    if not dep_graph:
+        return
+
+    # Insert _meta_root, which will be the starting-point for the dependency
+    # graph traverse:
+    if args.target:
+        dep_graph[_meta_root] = set()
+        if args.target in dep_graph:
+            dep_graph[_meta_root].add(args.target)
+    else:
+        dep_graph[_meta_root] = set(dep_graph.keys())
+
+    # Visitor callbacks:
+    start_visit_cb_list = []
+    finish_visit_cb_list = []
+    skip_visit_cb_list = []
+
+    if args.check_unique:
+        def check_unique_start_visit_cb(vertex):
+            # Skip if the vertex is _meta_root or does not have descendants:
+            if vertex == _meta_root or vertex not in dep_graph:
+                return
+            for pattern_list in args.check_unique:
+                if fnmatch.fnmatch(vertex, pattern_list[0]):
+                    vertex_prereqs = dep_graph[vertex]
+                    for prereq_pattern in pattern_list[1:]:
+                        matching_prereqs = fnmatch.filter(vertex_prereqs,
+                                                          prereq_pattern)
+                        if len(matching_prereqs) > 1:
+                            warn("'%s' has more than one immediate "
+                                 "prerequisite matching pattern '%s':\n\t%s"
+                                 % (vertex,
+                                    prereq_pattern,
+                                    "\n\t".join(matching_prereqs)),
+                                 args.check_colour)
+
+        start_visit_cb_list.append(check_unique_start_visit_cb)
+
+    if args.check_exists:
+        def check_exists_start_visit_cb(vertex):
+            # Skip if the vertex is _meta_root:
+            if vertex == _meta_root:
+                return
+            for pattern_list in args.check_exists:
+                if fnmatch.fnmatch(vertex, pattern_list[0]):
+                    vertex_prereqs = dep_graph.get(vertex, set())
+                    prereq_patterns = pattern_list[1:]
+                    if not any([fnmatch.filter(vertex_prereqs, prereq_pattern)
+                                for prereq_pattern in prereq_patterns]):
+                        warn("'%s' does not have an immediate prerequisite "
+                             "matching any of the patterns: '%s'"
+                             % (vertex,
+                                "', '".join(prereq_patterns)),
+                             args.check_colour)
+
+        start_visit_cb_list.append(check_exists_start_visit_cb)
+
+    if args.check_cycles:
+        path = []
+
+        def check_cycles_start_visit_cb(vertex):
+            path.append(vertex)
+
+        def check_cycles_skip_visit_cb(vertex):
+            if vertex in path:
+                start_cycle_idx = path.index(vertex)
+
+                msg_lines = (path[1:start_cycle_idx] +
+                             [path[start_cycle_idx] + ' <- start of cycle'] +
+                             path[start_cycle_idx + 1:] +
+                             [vertex + ' <- end of cycle'])
+
+                warn('the dependency graph has a cycle:\n\t%s'
+                     % '\n\t'.join(msg_lines), args.check_colour)
+
+        def check_cycles_finish_visit_cb(vertex):
+            path.pop()
+
+        start_visit_cb_list.append(check_cycles_start_visit_cb)
+        skip_visit_cb_list.append(check_cycles_skip_visit_cb)
+        finish_visit_cb_list.append(check_cycles_finish_visit_cb)
+
+    visited = set()
+    visit_dfs(dep_graph, _meta_root, visited,
+              start_visit_cb_list=start_visit_cb_list,
+              finish_visit_cb_list=finish_visit_cb_list,
+              skip_visit_cb_list=skip_visit_cb_list)
+    visited.discard(_meta_root)
+
+    print('\n'.join(visited))
 
 
 if __name__ == "__main__":

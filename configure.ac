@@ -137,6 +137,15 @@ AS_VAR_IF([enable_module_nature_test], [yes],
   [AS_VAR_APPEND([config_FCFLAGS],
      [" ${acx_cv_fc_macro_flag}TEST_MODULE_NATURE"])])
 
+AC_ARG_ENABLE([invalid-test],
+  [AC_HELP_STRING([--enable-invalid-test],
+     [enable the test for invalid dependency tree, which fails the building ]dnl
+[@<:@default: no@:>@])],
+  [], [enable_invalid_test=no])
+AS_VAR_IF([enable_invalid_test], [yes],
+  [AS_VAR_APPEND([config_FCFLAGS],
+     [" ${acx_cv_fc_macro_flag}TEST_INVALID"])])
+
 ACX_LANG_PACKAGE_INIT([NetCDF],
   [$acx_cv_fc_ftn_include_flag],
   [-L "$acx_cv_fc_rpath_flag"])
@@ -188,7 +197,7 @@ AC_CONFIG_COMMANDS_PRE(
   [ACX_CONFIG_SUBDIR_VAR([DUMMY_LIBRT], [dummy_subdir], [@LIBRT@])
    LIBS="$DUMMY_LIBRT $LIBS"])
 
-AC_CONFIG_FILES([Makefile depgen.config])
+AC_CONFIG_FILES([Makefile depgen.config deplist.config])
 
 AC_CONFIG_COMMANDS([depfiles],
   [${MAKE-make} -f Makefile dummy-depfiles >/dev/null 2>&AS_MESSAGE_LOG_FD

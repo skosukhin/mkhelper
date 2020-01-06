@@ -32,7 +32,7 @@ INSTALL= @INSTALL@
 INSTALL_DATA=@INSTALL_DATA@
 AR= @AR@
 PYTHON= @PYTHON@
-DEPLIST= $(PYTHON) $(srcdir)/mkhelper/deplist.py -d deplist.debug
+DEPLIST= $(PYTHON) $(srcdir)/mkhelper/deplist.py @deplist.config
 DEPGEN= $(PYTHON) $(srcdir)/mkhelper/depgen.py
 MODCMP= $(PYTHON) $(srcdir)/mkhelper/fortmodcmp.py
 
@@ -47,24 +47,31 @@ silent_AR=     @echo "  AR      " $@;
 endif
 
 # Source files:
-srcs= $(shell find $(addprefix $(srcdir)/, $(subdirs)) -name '*.f90')
+srcs= $(shell find $(addprefix $(srcdir)/,$(subdirs)) -name '*.f90')
 
 # Stamp files of the build directories:
-dirstamps= $(patsubst $(srcdir)/%, %.dirstamp, $(sort $(dir $(srcs)))) $(moddir)/.dirstamp
+dirstamps= $(patsubst $(srcdir)/%,%.dirstamp,$(sort $(dir $(srcs)))) $(moddir)/.dirstamp
 
 # Dependency files:
-depfiles= $(patsubst $(srcdir)/%, %.d, $(srcs))
+depfiles= $(patsubst $(srcdir)/%,%.d,$(srcs)) extra_f90.d
 
 # Root object file:
 rootobj= src/program/main.o
+
+# Object files:
+libobjs= $(filter-out $(rootobj),$(filter %.o,$(shell $(DEPLIST) -t $(rootobj) -f $(depfiles))))
 
 # Source file selective search paths:
 vpath %.f90 $(srcdir)
 
 # Disable built-in suffix rules:
 .SUFFIXES:
+# Delete partially updated files:
+.DELETE_ON_ERROR:
 # Targets not associated with files:
 .PHONY: all depend mostlyclean clean distclean maintainer-clean install dummy-depfiles sanitize-mod-proxies
+# Targets that do not need the inclusion of the dependency files:
+NO_INC_TARGETS:= depend mostlyclean clean distclean maintainer-clean dummy-depfiles
 # Call make inside the subdirectories unconditionally:
 .PHONY: $(bundled_subdirs)
 # Keep sentinel files of created directories:
@@ -76,7 +83,7 @@ all: main
 depend: $(depfiles)
 
 mostlyclean: $(bundled_subdirs)
-	rm -f main libmain.a $(patsubst $(srcdir)/%.f90, %.o, $(srcs)) $(moddir)/*.@FC_MOD_FILE_EXT@ $(moddir)/*.@FC_MOD_FILE_EXT@.proxy
+	rm -f main libmain.a $(patsubst $(srcdir)/%.f90,%.o,$(srcs)) $(moddir)/*.@FC_MOD_FILE_EXT@ $(moddir)/*.@FC_MOD_FILE_EXT@.proxy
 	rm -rf main.dSYM
 
 clean: mostlyclean
@@ -86,7 +93,7 @@ clean: mostlyclean
 # do not try to delete files in the source tree if the out-of-source
 # building takes place.
 distclean: clean
-	rm -f $(depfiles) $(dirstamps) config.log config.status Makefile depgen.config
+	rm -f $(depfiles) $(dirstamps) config.log config.status Makefile depgen.config deplist.config
 	find . -name '*.pyc' -delete -o -name '*.pyo' -delete -o -name '__pycache__' -delete
 	@for dir in $(subdirs) $(bundled_subdirs) $(moddir) externals; do \
 	  if test -d "$$dir"; then \
@@ -106,7 +113,7 @@ install: all
 main: $(rootobj) libmain.a
 	$(silent_FCLD)$(BUILD_ENV) $(FC) -o $@ $(config_FCFLAGS) $(FCFLAGS) $(LDFLAGS) $^ $(config_LIBS) $(LIBS)
 
-libmain.a: $(shell $(DEPLIST) -t $(rootobj) -p '*.o' --inc-oo -f $(depfiles) Makefile)
+libmain.a: $(libobjs)
 	$(silent_AR)$(BUILD_ENV) rm -f $@ && $(AR) cru $@ $^
 
 %.o: %.f90 | $(dirstamps) $(bundled_subdirs)
@@ -136,15 +143,18 @@ $(moddir)/%.@FC_MOD_FILE_EXT@.proxy: | sanitize-mod-proxies
 %.f90.d: %.f90 Makefile | $(dirstamps)
 	$(silent_DEPGEN)$(DEPGEN) @depgen.config -o $@ --obj-name $(@:.f90.d=.o) -i $< -- @DEPGEN_DEFS@ $(config_FCFLAGS) $(FCFLAGS)
 
-# Undetectable Fortran dependencies:
-src/program/main.o:| src/program/implicit_external.o
+# Dependency generation rule for undetectable Fortran dependencies:
+extra_f90.d: Makefile
+	$(silent_DEPGEN):;{ \
+	  echo 'src/program/main.o:| src/program/implicit_external.o'; \
+	} >$@
 
 # Make bundled libraries:
 $(bundled_subdirs):
 	@if test -f '$@/Makefile'; then \
-	  $(MAKE) -C $@ $(filter all mostlyclean clean distclean, $(MAKECMDGOALS)) V=$(V); \
+	  $(MAKE) -C $@ $(filter all mostlyclean clean distclean,$(MAKECMDGOALS)) V=$(V); \
 	else \
-	  test xdistclean = x$(filter distclean, $(MAKECMDGOALS)); \
+	  test xdistclean = x$(filter distclean,$(MAKECMDGOALS)); \
 	fi
 
 # Dummy dependency file generation rule (called by config.status):
@@ -153,6 +163,12 @@ dummy-depfiles: | $(dirstamps)
 	  test -e "$$file" || touch "$$file"; \
 	done
 
-ifeq (,$(filter $(MAKECMDGOALS), depend mostlyclean clean distclean maintainer-clean dummy-depfiles))
+# Include dependencies if required:
+current_targets:= $(strip $(MAKECMDGOALS))
+ifeq (,$(current_targets))
+current_targets:= all
+endif
+
+ifneq (,$(filter-out $(NO_INC_TARGETS),$(current_targets)))
 include $(depfiles)
 endif
