@@ -2,6 +2,10 @@
 
 program main
 
+#ifdef TEST_INVALID
+  use mo_invalid
+#endif
+
 #ifdef TEST_MODULE_NATURE
   use mod_test_module_nature_intrinsic
   use mod_test_module_nature_non_intrinsic

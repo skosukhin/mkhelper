@@ -678,6 +678,7 @@ enable_silent_rules
 enable_additional_mods
 enable_openmp
 enable_module_nature_test
+enable_invalid_test
 with_netcdf_root
 with_netcdf_include
 with_netcdf_lib
@@ -1320,6 +1321,8 @@ Optional Features:
                           enable the test of special treatment for intrinsic
                           Fortran modules, which might fail for some compilers
                           [default: yes]
+  --enable-invalid-test   enable the test for invalid dependency tree, which
+                          fails the building [default: no]
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -3804,6 +3807,17 @@ if test "x$enable_module_nature_test" = xyes; then :
   as_fn_append config_FCFLAGS " ${acx_cv_fc_macro_flag}TEST_MODULE_NATURE"
 fi
 
+# Check whether --enable-invalid-test was given.
+if test "${enable_invalid_test+set}" = set; then :
+  enableval=$enable_invalid_test;
+else
+  enable_invalid_test=no
+fi
+
+if test "x$enable_invalid_test" = xyes; then :
+  as_fn_append config_FCFLAGS " ${acx_cv_fc_macro_flag}TEST_INVALID"
+fi
+
 
 # Check whether --with-netcdf-root was given.
 if test "${with_netcdf_root+set}" = set; then :
@@ -4275,7 +4289,7 @@ esac
 
 
 
-ac_config_files="$ac_config_files Makefile depgen.config"
+ac_config_files="$ac_config_files Makefile depgen.config deplist.config"
 
 
 ac_config_commands="$ac_config_commands depfiles"
@@ -5094,6 +5108,7 @@ do
   case $ac_config_target in
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "depgen.config") CONFIG_FILES="$CONFIG_FILES depgen.config" ;;
+    "deplist.config") CONFIG_FILES="$CONFIG_FILES deplist.config" ;;
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;

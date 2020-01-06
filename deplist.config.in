@@ -1,0 +1,11 @@
+--debug deplist.debug
+--inc-oo
+--check-colour
+# Check whether the dependency graph is acyclic:
+--check-cycles
+# Check that each Fortran module is defined:
+--check-exists *.@FC_MOD_FILE_EXT@.proxy *.@OBJEXT@
+# Check that each Fortran module is defined only once:
+--check-unique *.@FC_MOD_FILE_EXT@.proxy *.@OBJEXT@
+# Check that every object file can be produced from a source file:
+--check-exists *.@OBJEXT@ *.f90
