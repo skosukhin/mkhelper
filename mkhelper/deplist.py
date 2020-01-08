@@ -26,8 +26,8 @@ def parse_args():
 
     parser = ArgumentParser(
         fromfile_prefix_chars='@',
-        description='Reads a set of makefiles and prints a recursive list of '
-                    'prerequisites of the TARGET.')
+        description='Reads a set of makefiles and prints a topologically '
+                    'sorted list of prerequisites of the TARGET.')
 
     parser.add_argument(
         '-d', '--debug-file',
@@ -110,8 +110,8 @@ def read_makefile(makefile, inc_order_only):
 
                 for target in targets:
                     if target not in result:
-                        result[target] = set()
-                    result[target].update(prereqs)
+                        result[target] = []
+                    result[target].extend(prereqs)
     return result
 
 
@@ -147,6 +147,34 @@ def visit_dfs(dep_graph, vertex,
             finish_visit_cb(vertex)
 
 
+# To make sure that the output is reproducible, we need to work with lists and
+# not with sets. This helper function removes duplicates from a list while
+# preserving the order.
+def remove_duplicates(l):
+    seen = set()
+    return [x for x in l if not (x in seen or seen.add(x))]
+
+
+def build_graph(makefiles, inc_oo=False):
+    # Read makefiles:
+    result = dict()
+    for mkf in makefiles:
+        if not os.path.isfile(mkf):
+            continue
+
+        mkf_dict = read_makefile(mkf, inc_oo)
+
+        for target, prereqs in mkf_dict.items():
+            if target not in result:
+                result[target] = []
+            result[target].extend(prereqs)
+
+    for target in result.keys():
+        result[target] = remove_duplicates(result[target])
+
+    return result
+
+
 def warn(msg, colour=False):
     sys.stderr.write("%s%s: WARNING: %s%s\n" % ('\033[93m' if colour else '',
                                                 os.path.basename(__file__),
@@ -172,18 +200,7 @@ def main():
     if args.makefile is None:
         return
 
-    # Read makefiles:
-    dep_graph = dict()
-    for mkf in args.makefile:
-        if not os.path.isfile(mkf):
-            continue
-
-        mkf_dict = read_makefile(mkf, args.inc_oo)
-
-        for target, prereqs in mkf_dict.items():
-            if target not in dep_graph:
-                dep_graph[target] = set()
-            dep_graph[target].update(prereqs)
+    dep_graph = build_graph(args.makefile, args.inc_oo)
 
     if not dep_graph:
         return
@@ -191,11 +208,10 @@ def main():
     # Insert _meta_root, which will be the starting-point for the dependency
     # graph traverse:
     if args.target:
-        dep_graph[_meta_root] = set()
-        if args.target in dep_graph:
-            dep_graph[_meta_root].add(args.target)
+        dep_graph[_meta_root] = \
+            [args.target] if args.target in dep_graph else []
     else:
-        dep_graph[_meta_root] = set(dep_graph.keys())
+        dep_graph[_meta_root] = sorted(dep_graph.keys())
 
     # Visitor callbacks:
     start_visit_cb_list = []
@@ -267,14 +283,18 @@ def main():
         skip_visit_cb_list.append(check_cycles_skip_visit_cb)
         finish_visit_cb_list.append(check_cycles_finish_visit_cb)
 
-    visited = set()
-    visit_dfs(dep_graph, _meta_root, visited,
+    toposort = []
+
+    def toposort_finish_visit_cb(vertex):
+        toposort.append(vertex)
+    finish_visit_cb_list.append(toposort_finish_visit_cb)
+
+    visit_dfs(dep_graph, _meta_root,
               start_visit_cb_list=start_visit_cb_list,
               finish_visit_cb_list=finish_visit_cb_list,
               skip_visit_cb_list=skip_visit_cb_list)
-    visited.discard(_meta_root)
 
-    print('\n'.join(visited))
+    print('\n'.join(toposort[-2::-1]))
 
 
 if __name__ == "__main__":
