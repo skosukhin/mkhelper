@@ -69,7 +69,8 @@ def parse_args():
              'is not associated with a terminal device')
     parser.add_argument(
         '-f', '--makefile', nargs='*',
-        help='paths to makefiles')
+        help='paths to makefiles; a single dash (-) triggers reading from '
+             'the standard input stream')
 
     args = parser.parse_args()
 
@@ -87,31 +88,40 @@ def parse_args():
 def read_makefile(makefile, inc_order_only):
     result = dict()
 
-    with open(makefile, 'r') as f:
-        it = iter(f)
-        for line in it:
-            while line.endswith('\\\n'):
-                line = line[:-2]
-                try:
-                    line += next(it)
-                except StopIteration:
-                    break
+    if makefile == '-':
+        stream = sys.stdin
+    elif not os.path.isfile(makefile):
+        return result
+    else:
+        stream = open(makefile, 'r')
 
-            match = _re_rule.match(line)
-            if match:
-                targets = set(match.group(1).split())
-                prereqs = []
+    it = iter(stream)
 
-                if match.group(2):
-                    prereqs.extend(match.group(2).split())
+    for line in it:
+        while line.endswith('\\\n'):
+            line = line[:-2]
+            try:
+                line += next(it)
+            except StopIteration:
+                break
 
-                if match.group(3) and inc_order_only:
-                    prereqs.extend(match.group(3).split())
+        match = _re_rule.match(line)
+        if match:
+            targets = set(match.group(1).split())
+            prereqs = []
 
-                for target in targets:
-                    if target not in result:
-                        result[target] = []
-                    result[target].extend(prereqs)
+            if match.group(2):
+                prereqs.extend(match.group(2).split())
+
+            if match.group(3) and inc_order_only:
+                prereqs.extend(match.group(3).split())
+
+            for target in targets:
+                if target not in result:
+                    result[target] = []
+                result[target].extend(prereqs)
+
+    stream.close()
     return result
 
 
@@ -159,9 +169,6 @@ def build_graph(makefiles, inc_oo=False):
     # Read makefiles:
     result = dict()
     for mkf in makefiles:
-        if not os.path.isfile(mkf):
-            continue
-
         mkf_dict = read_makefile(mkf, inc_oo)
 
         for target, prereqs in mkf_dict.items():
