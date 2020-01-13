@@ -10,9 +10,9 @@ except ImportError:
     import _argparse as argparse
 
 _re_rule = re.compile(
-    r'^[ ]*([-\w./]+(?:[ ]+[-\w./]+)*)[ ]*'  # targets
-    r':(?:[ ]*([-\w./]+(?:[ ]+[-\w./]+)*))?[ ]*'  # normal prerequisites
-    r'(?:\|[ ]*([-\w./]+(?:[ ]+[-\w./]+)*))?')  # order-only prerequisites
+    r'^[ ]*([-+\w./]+(?:[ ]+[-+\w./]+)*)[ ]*'  # targets
+    r':(?:[ ]*([-+\w./]+(?:[ ]+[-+\w./]+)*))?[ ]*'  # normal prerequisites
+    r'(?:\|[ ]*([-+\w./]+(?:[ ]+[-+\w./]+)*))?')  # order-only prerequisites
 _meta_root = 0
 
 
