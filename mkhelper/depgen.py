@@ -11,7 +11,14 @@ except ImportError:
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(
+    class ArgumentParser(argparse.ArgumentParser):
+        # Allow for comments in the argument file:
+        def convert_arg_line_to_args(self, arg_line):
+            if arg_line.startswith('#'):
+                return []
+            return arg_line.split()
+
+    parser = ArgumentParser(
         fromfile_prefix_chars='@',
         description='Generates OUTPUT makefile containing dependency rules '
                     'for the INPUT source file. Recognizes preprocessor '
