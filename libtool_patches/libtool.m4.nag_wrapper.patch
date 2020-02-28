@@ -1,6 +1,6 @@
 --- a/config/ltmain.sh
 +++ b/config/ltmain.sh
-@@ -8903,7 +8903,8 @@ func_mode_link ()
+@@ -8881,7 +8881,8 @@ func_mode_link ()
  	  xlcverstring="$wl-compatibility_version $wl$minor_current $wl-current_version $wl$minor_current.$revision"
  	  verstring="-compatibility_version $minor_current -current_version $minor_current.$revision"
            # On Darwin other compilers
