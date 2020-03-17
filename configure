@@ -3480,6 +3480,48 @@ else
 fi
 
 
+      { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler flag needed to allow routines to be called with different argument types" >&5
+$as_echo_n "checking for Fortran compiler flag needed to allow routines to be called with different argument types... " >&6; }
+   if ${acx_cv_fc_mismatch_flag+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  acx_cv_fc_mismatch_flag=unknown
+      acx_save_FCFLAGS=$FCFLAGS
+      cat > conftest.$ac_ext <<_ACEOF
+      program main
+      implicit none
+      integer a
+      real b
+      character c
+      call foo1(a)
+      call foo1(b)
+      call foo1(c)
+      end
+_ACEOF
+      for acx_flag in '' -mismatch; do
+        FCFLAGS="${acx_save_FCFLAGS} $acx_flag"
+        if ac_fn_fc_try_compile "$LINENO"; then :
+  acx_cv_fc_mismatch_flag=$acx_flag
+fi
+rm -f core conftest.err conftest.$ac_objext
+        test "x$acx_cv_fc_mismatch_flag" != xunknown && break
+      done
+      rm -f conftest.$ac_ext
+      FCFLAGS=$acx_save_FCFLAGS
+fi
+
+   if test -n "$acx_cv_fc_mismatch_flag"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_mismatch_flag" >&5
+$as_echo "$acx_cv_fc_mismatch_flag" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: none needed" >&5
+$as_echo "none needed" >&6; }
+fi
+   if test "x$acx_cv_fc_mismatch_flag" = xunknown; then :
+  :
+fi
+
+
 
 
 
