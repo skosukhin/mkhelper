@@ -696,7 +696,7 @@ NETCDF_FCFLAGS
 NETCDF_FCLIBS
 AR
 PYTHON'
-
+ac_subdirs_all='dummy_subdir'
 
 # Initialize some variables set by options.
 ac_init_help=
@@ -4327,6 +4327,7 @@ esac
         as_fn_append acx_config_subdir_args_dummy_subdir " '$acx_config_subdir_arg'"
       done
       subdirs_extra="dummy_subdir"
+
 
 
 
