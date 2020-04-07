@@ -194,7 +194,7 @@ ACX_CONFIG_SUBDIR([dummy_subdir],
    [ACX_CONFIG_SUBDIR_PATTERN_WITH([netcdf-root])],
    [ACX_CONFIG_SUBDIR_PATTERN_ENABLE([always])]],
   [[FCFLAGS=], [CFLAGS='-g'],
-   [--enable-always=yes]])
+   [--enable-always=yes]], [yes])
 AC_CONFIG_COMMANDS_PRE(
   [ACX_CONFIG_SUBDIR_VAR([DUMMY_LIBRT], [dummy_subdir], [@LIBRT@])
    LIBS="$DUMMY_LIBRT $LIBS"])

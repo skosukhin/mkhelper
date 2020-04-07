@@ -1,6 +1,7 @@
 # ACX_CONFIG_SUBDIR(SUBDIR,
 #                   [REMOVE-PATTERNS],
-#                   [EXTRA-ARGS])
+#                   [EXTRA-ARGS],
+#                   [SHOW-RECURSIVE-HELP = no])
 # -----------------------------------------------------------------------------
 # Originally taken from Autoconf Archive where it is known as
 # AX_SUBDIRS_CONFIGURE.
@@ -18,6 +19,12 @@
 # This macro also sets the output variable subdirs_extra to the list of
 # directories recorded with ACX_CONFIG_SUBDIR. This variable can be used in
 # Makefile rules or substituted in configured files.
+#
+# If SHOW-RECURSIVE-HELP (defaults to no) is set to yes, the help message of the
+# configure script in SUBDIR is shown together with the help message of the top
+# level configure script when the latter is called with the argument
+# '--help=recursive'. In that case, SUBDIR should be provided literally, without
+# using shell variables.
 #
 # Consider calling AC_DISABLE_OPTION_CHECKING in you main configure.ac.
 #
@@ -114,7 +121,18 @@ AC_MSG_ERROR([$acx_config_subdir_script failed for $acx_config_subdir])])
             AS_IF([test -n "$subdirs_extra"],
               [_AS_ECHO([===])
                _AS_ECHO_LOG([===])])])])])dnl
-   m4_define([ACX_CONFIG_SUBDIR_COMMANDS_DEFINED])])
+   m4_define([ACX_CONFIG_SUBDIR_COMMANDS_DEFINED])dnl
+   m4_case(m4_default([$4], [no]),
+     [yes],
+     [AS_LITERAL_IF([$1], [],
+        [m4_warn([syntax],
+           [Argument SUBDIR of macro ACX_CONFIG_SUBDIR is given a ]dnl
+[non-literal value: '$1'])])
+      m4_append([_AC_LIST_SUBDIRS], [$1], [
+])],
+     [no], [],
+     [m4_fatal(
+        [Invalid SHOW-RECURSIVE-HELP argument for ACX_CONFIG_SUBDIR: '$4'])])])
 
 # ACX_CONFIG_SUBDIR_PATTERN_ENABLE(FEATURE)
 # -----------------------------------------------------------------------------
