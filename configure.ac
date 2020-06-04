@@ -47,7 +47,10 @@ AS_VAR_IF([enable_rpaths], [yes],
 ACX_COMPILER_CROSS_CHECK_NOW
 ACX_FC_LINE_LENGTH([unlimited])
 
-AC_SUBST([DEPGEN_DEFS])
+dnl Additional macro definitions to aid the dependency generator,
+dnl e.g. compiler intrinsic macros:
+AC_SUBST([DEPGEN_FCFLAGS], [''])
+
 AC_SUBST([DEPGEN_INTRINSIC_MODS],
   [[iso_c_binding,iso_fortran_env,ieee_exceptions,ieee_arithmetic,]dnl
 [ieee_features,omp_lib,omp_lib_kinds,openacc]])
@@ -123,7 +126,7 @@ AS_VAR_IF([enable_openmp], [yes],
       AS_VAR_IF([acx_macro_value], [unknown],
         [AC_MSG_FAILURE([unable to detect the value of the Fortran dnl
 preprocessor macro _OPENMP])],
-        [AS_VAR_APPEND([DEPGEN_DEFS],
+        [AS_VAR_APPEND([DEPGEN_FCFLAGS],
            [" ${acx_cv_fc_macro_flag}_OPENMP=$acx_macro_value"])])])],
   [ACX_LANG_MACRO_CHECK_DEFINED([_OPENMP])
    AS_VAR_IF([acx_macro_defined], [yes],
@@ -166,13 +169,15 @@ AS_VAR_IF([acx_NETCDF_found], [no],
    NETCDF_FCFLAGS=;NETCDF_FCLIBS=])
 
 AC_ARG_VAR([AR], [the archiver command])dnl
+AC_ARG_VAR([ARFLAGS], [archiver flags])dnl
+ARFLAGS=${ARFLAGS-cr}
 ACX_PROG_SEARCH([AR], [ar],
   [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([], [])],
-     [acx_ar_try='$acx_candidate cru libconftest.a conftest.$ac_objext dnl
->&AS_MESSAGE_LOG_FD'
-      AC_TRY_EVAL([acx_ar_try])
+     [acx_ar_try="$acx_candidate ${ARFLAGS} libconftest.a dnl
+conftest.$ac_objext >&AS_MESSAGE_LOG_FD"
+      _AC_DO_VAR([acx_ar_try])
       rm -f libconftest.a])
-   test "$ac_status" -eq 0],
+   test "$ac_status" -eq 0 >/dev/null 2>&1],
   [AR=$acx_candidate])
 
 AC_ARG_VAR([PYTHON],
@@ -188,16 +193,22 @@ AC_PROG_MKDIR_P
 acx_some_prog='true -a -b -c'
 ACX_PROG_SEARCH_ABSPATH([$acx_some_prog], [], [:])
 
-ACX_CONFIG_SUBDIR([dummy_subdir],
-  [[FCFLAGS=*|CFLAGS=*],
+dnl A list of flags enabling location of the include files of the enabled
+dnl bundled libraries:
+AC_SUBST([BUNDLED_FCFLAGS], [''])
+
+dnl A list of library files (i.e. *.a files) of the enabled bundled libraries:
+AC_SUBST([BUNDLED_LIBFILES], [''])
+
+dnl Configure a bundled library that is very picky on the provided configure
+dnl options:
+ACX_CONFIG_SUBDIR([bundled/picky],
+  [[FCFLAGS=*],
    [ACX_CONFIG_SUBDIR_PATTERN_ENABLE([silent-rules])],
    [ACX_CONFIG_SUBDIR_PATTERN_WITH([netcdf-root])],
    [ACX_CONFIG_SUBDIR_PATTERN_ENABLE([always])]],
-  [[FCFLAGS=], [CFLAGS='-g'],
-   [--enable-always=yes]], [yes])
-AC_CONFIG_COMMANDS_PRE(
-  [ACX_CONFIG_SUBDIR_VAR([DUMMY_LIBRT], [dummy_subdir], [@LIBRT@])
-   LIBS="$DUMMY_LIBRT $LIBS"])
+  [[--enable-always=yes]],
+  [yes])
 
 AC_CONFIG_FILES([
   Makefile
@@ -207,7 +218,7 @@ AC_CONFIG_FILES([
 ])
 
 AC_CONFIG_COMMANDS([depfiles],
-  [${MAKE-make} -f mkhelper.mk dummy-depfiles >/dev/null 2>&AS_MESSAGE_LOG_FD
+  [${MAKE-make} -f mkhelper.mk dummy-depend >/dev/null 2>&AS_MESSAGE_LOG_FD
    sleep 1
    touch mkhelper.mk])
 

@@ -2,6 +2,8 @@
 
 program main
 
+  use mo_mkhelper, only: print_hello
+
 #ifdef TEST_INVALID
   use mo_invalid
 #endif
@@ -15,7 +17,7 @@ program main
   use mod_a
 #endif
 
-#ifdef INCLUDE_A
+#ifdef INCLUDE_B
   use mod_b
 #endif
 
@@ -72,5 +74,7 @@ program main
 #endif
 
   call implicit_external()
+
+  call print_hello()
 
 end program main

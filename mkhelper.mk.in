@@ -1,39 +1,47 @@
-# Source file root directory:
-srcdir= @srcdir@
+# Path to the root source directory:
+srcdir:= @srcdir@
 
-# Source file subdirectories:
-subdirs= src
+# Relative paths to the directories with the source files:
+subdirs:= src
 
-# Bundled subdirectories:
-bundled_subdirs= @subdirs_extra@
+# Relative paths to the directories of the bundled packages:
+bundled_subdirs:= @subdirs_extra@
 
-# Installation directories:
+# Path to the directory with the Fortran module files:
+moddir:= mod
+
+# Paths to the installation directories:
 prefix= @prefix@
 exec_prefix= @exec_prefix@
 
-# Fortran module file directory:
-moddir= mod
-
-# Shell and environment:
+# Compilers and utilities:
+AR= @AR@
+DEPGEN= ${PYTHON} $(srcdir)/mkhelper/depgen.py
+DEPLIST= ${PYTHON} $(srcdir)/mkhelper/deplist.py
+FC= @FC@
+INSTALL= @INSTALL@
+INSTALL_DATA= @INSTALL_DATA@
+MODCMP= ${PYTHON} $(srcdir)/mkhelper/fortmodcmp.py
+PYTHON= @PYTHON@
 SHELL= @SHELL@
 
-# Compilers and flags:
-FC= @FC@
-FPP= @FPP@
+# Fortran compiler flags:
 FCFLAGS= @FCFLAGS@
+makefile_FCFLAGS= @FC_MOD_IN@$(moddir) @FC_MOD_OUT@$(moddir) @FC_INC_FLAG@$(srcdir)/src/include @FC_INC_FLAG_PP_f90@$(srcdir)/src/include @config_FCFLAGS@ @BUNDLED_FCFLAGS@ @NETCDF_FCFLAGS@
+
+# Archiver flags:
+ARFLAGS= @ARFLAGS@
+
+# Linker flags and libraries:
+BUNDLED_LIBFILES= @BUNDLED_LIBFILES@
 LDFLAGS= @LDFLAGS@
 LIBS= @LIBS@
-config_FCFLAGS= @FC_MOD_IN@$(moddir) @FC_MOD_OUT@$(moddir) @FC_INC_FLAG@$(srcdir)/src/include @FC_INC_FLAG_PP_f90@$(srcdir)/src/include @NETCDF_FCFLAGS@ @config_FCFLAGS@
-config_LIBS= @NETCDF_FCLIBS@
+makefile_LIBS= @NETCDF_FCLIBS@
 
-# Other utilities:
-INSTALL= @INSTALL@
-INSTALL_DATA=@INSTALL_DATA@
-AR= @AR@
-PYTHON= @PYTHON@
-DEPLIST= $(PYTHON) $(srcdir)/mkhelper/deplist.py @deplist.config
-DEPGEN= $(PYTHON) $(srcdir)/mkhelper/depgen.py
-MODCMP= $(PYTHON) $(srcdir)/mkhelper/fortmodcmp.py
+# Dependency generator flags:
+DEPGEN_FCFLAGS= @DEPGEN_FCFLAGS@
+DEPGEN_args= @depgen.config
+DEPLIST_args= @deplist.config
 
 # Silent rule prefixes:
 V= @DEFAULT_VERBOSITY@
@@ -45,22 +53,31 @@ silent_DEPGEN= @echo "  DEPGEN  " $@;
 silent_AR=     @echo "  AR      " $@;
 endif
 
-# Source files:
-srcs= $(shell find $(addprefix $(srcdir)/,$(subdirs)) -name '*.f90')
+# Path suffixes (i.e. without $(srcdir) prefix) of the source files:
+src_roots:= $(addprefix $(srcdir)/,$(subdirs))
+src_files:= $(patsubst $(srcdir)/%,%,$(shell find $(src_roots) -name '*.f90'))
 
-# Stamp files of the build directories:
-dirstamps= $(patsubst $(srcdir)/%,%.dirstamp,$(sort $(dir $(srcs)))) $(moddir)/.dirstamp
+# Libraries:
+lib_files:= libmkhelper.a
 
-# Dependency files:
-depfiles= $(patsubst $(srcdir)/%,%.d,$(srcs)) extra_f90.d
+# For each library we need a list of source files implementing them:
+libmkhelper_src_files= $(filter src/library/%,$(src_files))
 
-# Root object file:
-rootobj= src/program/main.o
+# Executables:
+exe_files:= main@EXEEXT@
 
-# Object files:
-libobjs= $(filter-out $(rootobj),$(filter %.o,$(shell $(DEPLIST) -t $(rootobj) -f $(depfiles))))
+# For each executable we need the root object file:
+main_obj_file:= src/program/main.@OBJEXT@
 
-# Source file selective search paths:
+# Two distjoint sets of dependency files: one for the libraries and one for
+# executables:
+lib_dep_files= $(addsuffix .d,$(libmkhelper_src_files))
+exe_dep_files= $(filter-out $(lib_dep_files),$(addsuffix .d,$(src_files))) extra_f90.d
+
+# List of directories that need to be created:
+dir_files= $(filter-out ./.dirstamp,$(addsuffix .dirstamp,$(sort $(dir $(lib_dep_files) $(exe_dep_files))) $(moddir)/))
+
+# Selective search paths:
 vpath %.f90 $(srcdir)
 
 # Disable built-in suffix rules:
@@ -68,61 +85,72 @@ vpath %.f90 $(srcdir)
 # Delete partially updated files:
 .DELETE_ON_ERROR:
 # Targets not associated with files:
-.PHONY: all depend mostlyclean clean distclean maintainer-clean install dummy-depfiles sanitize-mod-proxies
+.PHONY: all depend dummy-depend mostlyclean clean distclean \
+        install install-libs install-mods install-exes \
+        sanitize-mod-proxies
 # Targets that do not need the inclusion of the dependency files:
-NO_INC_TARGETS:= depend mostlyclean clean distclean maintainer-clean dummy-depfiles
+NO_INC_TARGETS:= depend dummy-depend mostlyclean clean distclean
 # Call make inside the subdirectories unconditionally:
 .PHONY: $(bundled_subdirs)
 # Keep sentinel files of created directories:
-.PRECIOUS: $(dirstamps)
+.PRECIOUS: $(dir_files)
 
-# User interface rules:
-all: main
+# Default rule:
+all: $(lib_files) $(exe_files)
 
-depend: $(depfiles)
+# Explicit dependency generation rule:
+depend: $(lib_dep_files) $(exe_dep_files)
 
+# Delete the results of compilation and linking:
 mostlyclean: $(bundled_subdirs)
-	rm -f main libmain.a $(patsubst $(srcdir)/%.f90,%.o,$(srcs)) $(moddir)/*.@FC_MOD_FILE_EXT@ $(moddir)/*.@FC_MOD_FILE_EXT@.proxy
-	rm -rf main.dSYM
+	rm -f $(src_files:.f90=.@OBJEXT@)
+	rm -f $(moddir)/*.@FC_MOD_FILE_EXT@ $(moddir)/*.@FC_MOD_FILE_EXT@.proxy
+	rm -f $(lib_files) $(exe_files) $(exe_files:=.dSYM)
 
+# Delete files generated at the building stage:
 clean: mostlyclean
-	rm -rf deplist.debug
 
-# Delete python cache only if we are in the source directory, i.e.
-# do not try to delete files in the source tree if the out-of-source
-# building takes place.
+# Delete everything generated at the configure stage (and clean the created
+# directories if they are empty):
 distclean: clean
-	rm -f $(depfiles) $(dirstamps) config.log config.status mkhelper.mk depgen.config deplist.config
-	find . -name '*.pyc' -delete -o -name '*.pyo' -delete -o -name '__pycache__' -delete
-	@for dir in $(subdirs) $(bundled_subdirs) $(moddir) externals; do \
+	rm -f config.log config.status depgen.config deplist.config
+	rm -f $(lib_dep_files) $(exe_dep_files)
+	rm -f $(dir_files)
+	@for dir in $(moddir); do \
 	  if test -d "$$dir"; then \
 	    echo "find '$$dir' -type d -empty -delete"; \
 	    find "$$dir" -type d -empty -delete; \
 	  fi; \
 	done
+	@test '.' = '$(srcdir)' || \
+	  for dir in $(subdirs) $(bundled_subdirs) bundled; do \
+	    if test -d "$$dir"; then \
+	      echo "find '$$dir' -type d -empty -delete"; \
+	      find "$$dir" -type d -empty -delete; \
+	    fi; \
+	  done
+	find . -name '*.pyc' -delete -o -name '*.pyo' -delete -o -name '__pycache__' -delete
+	rm -f mkhelper.mk
 
-maintainer-clean: distclean
-	rm -rf autom4te.cache
+# Installation rule:
+install: install-libs install-mods install-exes
 
-install: all
-	$(INSTALL) -d $(DESTDIR)@bindir@ && $(INSTALL) main $(DESTDIR)@bindir@/main
-	$(INSTALL) -d $(DESTDIR)@libdir@ && $(INSTALL_DATA) libmain.a $(DESTDIR)@libdir@/libmain.a
+# Library archiving rules:
+libmkhelper.a: $(libmkhelper_src_files:.f90=.@OBJEXT@)
 
-# Main building rules:
-main: $(rootobj) libmain.a
-	$(silent_FCLD)$(FC) -o $@ $(config_FCFLAGS) $(FCFLAGS) $(LDFLAGS) $^ $(config_LIBS) $(LIBS)
+$(lib_files): | $(dir_files)
+	$(silent_AR)rm -f $@ && $(AR) $(ARFLAGS) $@ $+
 
-libmain.a: $(libobjs)
-	$(silent_AR)rm -f $@ && $(AR) cru $@ $^
+# Executable linking rules:
+main@EXEEXT@: $(filter %.@OBJEXT@,$(shell $(DEPLIST) $(DEPLIST_args) -t $(main_obj_file) -f $(exe_dep_files))) $(lib_files) $(BUNDLED_LIBFILES)
 
-%.o: %.f90 | $(dirstamps) $(bundled_subdirs)
-	$(silent_FC)$(FC) -o $@ -c $(config_FCFLAGS) $(FCFLAGS) @FCFLAGS_f90@ $<
+$(exe_files): | $(dir_files)
+	$(silent_FCLD)$(FC) -o $@ $(makefile_FCFLAGS) $(FCFLAGS) $(LDFLAGS) $+ $(makefile_LIBS) $(LIBS)
 
-# Deletes all Fortran module proxy files that do not have an existing module to
-# be a proxy of, i.e. if <filename>.proxy exists but <filename> does not,
-# delete <filename>.proxy:
-sanitize-mod-proxies:
-	@rm -f $(filter-out $(addsuffix .proxy,$(wildcard $(moddir)/*.@FC_MOD_FILE_EXT@)),$(wildcard $(moddir)/*.@FC_MOD_FILE_EXT@.proxy))
+# Fortran compilation rule:
+%.@OBJEXT@: %.f90 | $(dir_files) $(bundled_subdirs)
+	$(silent_FC)$(FC) -o $@ -c $(makefile_FCFLAGS) $(FCFLAGS) @FCFLAGS_f90@ $<
+
 
 # Fortran module file tracking rule:
 $(moddir)/%.@FC_MOD_FILE_EXT@.proxy: | sanitize-mod-proxies
@@ -134,13 +162,19 @@ $(moddir)/%.@FC_MOD_FILE_EXT@.proxy: | sanitize-mod-proxies
 	  else cp '$(@:.proxy=)' '$@' 2>/dev/null; fi; \
 	fi
 
-# Directory generation rule:
+# Deletes all Fortran module proxy files that do not have an existing module to
+# be a proxy of, i.e. if <filename>.proxy exists but <filename> does not,
+# delete <filename>.proxy:
+sanitize-mod-proxies:
+	@rm -f $(filter-out $(addsuffix .proxy,$(wildcard $(moddir)/*.@FC_MOD_FILE_EXT@)),$(wildcard $(moddir)/*.@FC_MOD_FILE_EXT@.proxy))
+
+# Directory creation rule:
 %/.dirstamp:
 	$(silent_MKDIR)@MKDIR_P@ $(@D) && touch $@
 
-# Dependency generation rule:
-%.f90.d: %.f90 mkhelper.mk | $(dirstamps)
-	$(silent_DEPGEN)$(DEPGEN) @depgen.config -o $@ --obj-name $(@:.f90.d=.o) -i $< -- @DEPGEN_DEFS@ $(config_FCFLAGS) $(FCFLAGS)
+# Fortran dependency generation rule:
+%.f90.d: %.f90 mkhelper.mk | $(dir_files)
+	$(silent_DEPGEN)$(DEPGEN) $(DEPGEN_args) -o $@ --obj-name $(@:.f90.d=.@OBJEXT@) -i $< -- $(DEPGEN_FCFLAGS) $(makefile_FCFLAGS) $(FCFLAGS)
 
 # Dependency generation rule for undetectable Fortran dependencies:
 extra_f90.d: mkhelper.mk
@@ -156,11 +190,27 @@ $(bundled_subdirs):
 	  test xdistclean = x$(filter distclean,$(MAKECMDGOALS)); \
 	fi
 
+# Relink executables if any of the source files of the bundled libraries
+# is updated (the semicolon is required to support parallel rebuild):
+$(BUNDLED_LIBFILES): $(bundled_subdirs);
+
 # Dummy dependency file generation rule (called by config.status):
-dummy-depfiles: | $(dirstamps)
-	@for file in $(depfiles); do \
+dummy-depend: | $(dir_files)
+	@for file in $(lib_dep_files) $(exe_dep_files); do \
 	  test -e "$$file" || touch "$$file"; \
 	done
+
+# Library installation rule:
+install-libs: $(lib_files)
+	$(INSTALL) -d $(DESTDIR)@libdir@ && $(INSTALL_DATA) $^ $(DESTDIR)@libdir@
+
+# Fortran module installation rule:
+install-mods: $(filter %.@FC_MOD_FILE_EXT@.proxy,$(shell $(DEPLIST) $(DEPLIST_args) -f $(lib_dep_files)))
+	$(INSTALL) -d $(DESTDIR)@includedir@ && $(INSTALL_DATA) $(basename $^) $(DESTDIR)@includedir@
+
+# Executable installation rule:
+install-exes: $(exe_files)
+	$(INSTALL) -d $(DESTDIR)@bindir@ && $(INSTALL) $^ $(DESTDIR)@bindir@
 
 # Include dependencies if required:
 current_targets:= $(strip $(MAKECMDGOALS))
@@ -168,6 +218,6 @@ ifeq (,$(current_targets))
 current_targets:= all
 endif
 
-ifneq (,$(filter-out $(NO_INC_TARGETS),$(current_targets)))
-include $(depfiles)
+ifneq (,$(filter-out $(NO_INC_TARGETS),$(MAKECMDGOALS)))
+include $(lib_dep_files) $(exe_dep_files)
 endif
