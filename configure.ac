@@ -199,11 +199,16 @@ AC_CONFIG_COMMANDS_PRE(
   [ACX_CONFIG_SUBDIR_VAR([DUMMY_LIBRT], [dummy_subdir], [@LIBRT@])
    LIBS="$DUMMY_LIBRT $LIBS"])
 
-AC_CONFIG_FILES([Makefile depgen.config deplist.config])
+AC_CONFIG_FILES([
+  Makefile
+  depgen.config
+  deplist.config
+  mkhelper.mk
+])
 
 AC_CONFIG_COMMANDS([depfiles],
-  [${MAKE-make} -f Makefile dummy-depfiles >/dev/null 2>&AS_MESSAGE_LOG_FD
+  [${MAKE-make} -f mkhelper.mk dummy-depfiles >/dev/null 2>&AS_MESSAGE_LOG_FD
    sleep 1
-   touch Makefile])
+   touch mkhelper.mk])
 
 AC_OUTPUT

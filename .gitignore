@@ -16,6 +16,7 @@
 /deplist.config
 /deplist.debug
 /extra_f90.d
+/mkhelper.mk
 
 # Build stage files
 *.a

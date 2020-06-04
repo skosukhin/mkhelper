@@ -4362,7 +4362,7 @@ esac
 
 
 
-ac_config_files="$ac_config_files Makefile depgen.config deplist.config"
+ac_config_files="$ac_config_files Makefile depgen.config deplist.config mkhelper.mk"
 
 
 ac_config_commands="$ac_config_commands depfiles"
@@ -5182,6 +5182,7 @@ do
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "depgen.config") CONFIG_FILES="$CONFIG_FILES depgen.config" ;;
     "deplist.config") CONFIG_FILES="$CONFIG_FILES deplist.config" ;;
+    "mkhelper.mk") CONFIG_FILES="$CONFIG_FILES mkhelper.mk" ;;
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
@@ -5612,9 +5613,9 @@ $as_echo "$as_me: executing $ac_file commands" >&6;}
 
 
   case $ac_file$ac_mode in
-    "depfiles":C) ${MAKE-make} -f Makefile dummy-depfiles >/dev/null 2>&5
+    "depfiles":C) ${MAKE-make} -f mkhelper.mk dummy-depfiles >/dev/null 2>&5
    sleep 1
-   touch Makefile ;;
+   touch mkhelper.mk ;;
 
   esac
 done # for ac_tag
