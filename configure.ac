@@ -173,9 +173,9 @@ AC_ARG_VAR([ARFLAGS], [archiver flags])dnl
 ARFLAGS=${ARFLAGS-cr}
 ACX_PROG_SEARCH([AR], [ar],
   [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([], [])],
-     [acx_ar_try="$acx_candidate ${ARFLAGS} libconftest.a dnl
+     [mkhelper_ar_try="$acx_candidate ${ARFLAGS} libconftest.a dnl
 conftest.$ac_objext >&AS_MESSAGE_LOG_FD"
-      _AC_DO_VAR([acx_ar_try])
+      _AC_DO_VAR([mkhelper_ar_try])
       rm -f libconftest.a])
    test "$ac_status" -eq 0 >/dev/null 2>&1],
   [AR=$acx_candidate])
@@ -183,15 +183,16 @@ conftest.$ac_objext >&AS_MESSAGE_LOG_FD"
 AC_ARG_VAR([PYTHON],
   [Python interpreter command (used for Fortran dependency generation)])dnl
 ACX_PROG_SEARCH([PYTHON], [python python3],
-  [acx_depgen_try='$acx_candidate $srcdir/mkhelper/depgen.py -h > /dev/null'
-   AC_TRY_EVAL([acx_depgen_try])],
+  [mkhelper_depgen_try='$acx_candidate dnl
+$srcdir/mkhelper/depgen.py -h > /dev/null'
+   AC_TRY_EVAL([mkhelper_depgen_try])],
   [PYTHON=$acx_candidate])
 
 AC_PROG_INSTALL
 AC_PROG_MKDIR_P
 
-acx_some_prog='true -a -b -c'
-ACX_PROG_SEARCH_ABSPATH([$acx_some_prog], [], [:])
+mkhelper_some_prog='true -a -b -c'
+ACX_PROG_SEARCH_ABSPATH([$mkhelper_some_prog], [], [:])
 
 dnl A list of flags enabling location of the include files of the enabled
 dnl bundled libraries:
@@ -209,6 +210,47 @@ ACX_CONFIG_SUBDIR([bundled/picky],
    [ACX_CONFIG_SUBDIR_PATTERN_ENABLE([always])]],
   [[--enable-always=yes]],
   [yes])
+
+dnl Configure a libtool-based bundled library that depends on POSIX Threads:
+ACX_CONFIG_SUBDIR([bundled/threaded_hello],
+  [[ACX_CONFIG_SUBDIR_PATTERN_ENABLE([static])],
+   [ACX_CONFIG_SUBDIR_PATTERN_ENABLE([shared])],
+   [ACX_CONFIG_SUBDIR_PATTERN_ENABLE([maintainer-mode])],
+   [ACX_CONFIG_SUBDIR_PATTERN_ENABLE([silent-rules])]],
+  [[--enable-static], [--disable-shared], [--disable-maintainer-mode],
+   [--enable-silent-rules="$enable_silent_rules"]],
+  [yes])
+AS_VAR_APPEND([BUNDLED_FCFLAGS], ["${FC_MOD_IN}bundled/threaded_hello "])
+BUNDLED_LIBFILES="bundled/threaded_hello/.libs/libthreaded_hello_f.a dnl
+$BUNDLED_LIBFILES"
+AS_VAR_APPEND([DEPGEN_EXTERNAL_MODS], [',mo_threaded_hello'])
+
+dnl Collect compiler and linker flags required for linking to the library:
+AC_CONFIG_COMMANDS_PRE(
+  [ACX_CONFIG_SUBDIR_VAR([mkhelper_LDFLAGS],
+     [bundled/threaded_hello], [@LDFLAGS@])
+   ACX_CONFIG_SUBDIR_VAR([mkhelper_LIBS],
+     [bundled/threaded_hello], [@LIBS@])
+   AS_IF([test -n "$mkhelper_LDFLAGS"],
+     [AS_VAR_APPEND([LDFLAGS], [" $mkhelper_LDFLAGS"])])
+   AS_IF([test -n "$mkhelper_LDFLAGS"], [LIBS="$mkhelper_LIBS $LIBS"])
+dnl Except for RPATH flags:
+   AS_VAR_IF([enable_rpaths], [yes],
+     [ASX_EXTRACT_ARGS([mkhelper_libdirs],
+        ["$mkhelper_LDFLAGS $mkhelper_LIBS"], ['-L@<:@ @:>@*'])
+      for mkhelper_libdir in $mkhelper_libdirs; do
+        AS_IF([test -d "$mkhelper_libdir"],
+          [ASX_VAR_APPEND_UNIQ([LDFLAGS],
+             ["$acx_cv_fc_rpath_flag$mkhelper_libdir"], [' '])])
+      done])
+dnl We need to link to pthread library, which might require PTHREAD_CFLAGS
+   ACX_CONFIG_SUBDIR_VAR([mkhelper_PTHREAD_CFLAGS],
+     [bundled/threaded_hello], [' @PTHREAD_CFLAGS@'])
+   AS_IF([test -n "$mkhelper_PTHREAD_CFLAGS"],
+     [AS_VAR_IF([FC_VENDOR], [nag],
+        [mkhelper_PTHREAD_CFLAGS=`AS_ECHO([" $mkhelper_PTHREAD_CFLAGS"]) | dnl
+sed 's/ -pthread/ -Wl,-pthread/g'`])
+      AS_VAR_APPEND([LDFLAGS], ["$mkhelper_PTHREAD_CFLAGS"])])])
 
 AC_CONFIG_FILES([
   Makefile

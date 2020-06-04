@@ -3,6 +3,7 @@
 program main
 
   use mo_mkhelper, only: print_hello
+  use mo_threaded_hello, only: print_threaded_hello => print_hello
 
 #ifdef TEST_INVALID
   use mo_invalid
@@ -34,8 +35,10 @@ program main
 
 #ifndef NO_NETCDF
   include "netcdf.inc"
-  integer ncid, retval
+  integer ncid
 #endif
+
+  integer retval
 
   character(*), parameter :: string_with_semicolon = &
                             & ";use non_existing_mod"
@@ -77,4 +80,9 @@ program main
 
   call print_hello()
 
+  print *, "Running threaded bundled library..."
+  retval = print_threaded_hello()
+  if (retval .ne. 0) stop 2
+
+  print *, "Success!"
 end program main
