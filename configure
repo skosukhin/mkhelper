@@ -589,11 +589,14 @@ ac_default_prefix="`pwd`/install"
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
 subdirs_extra
+BUNDLED_LIBFILES
+BUNDLED_FCFLAGS
 MKDIR_P
 INSTALL_DATA
 INSTALL_SCRIPT
 INSTALL_PROGRAM
 PYTHON
+ARFLAGS
 AR
 NETCDF_FCLIBS
 NETCDF_FCFLAGS
@@ -612,7 +615,7 @@ FC_MOD_OUT
 FC_MOD_IN
 DEPGEN_EXTERNAL_MODS
 DEPGEN_INTRINSIC_MODS
-DEPGEN_DEFS
+DEPGEN_FCFLAGS
 FC_VENDOR
 FCFLAGS_f90
 OBJEXT
@@ -695,8 +698,9 @@ FPP
 NETCDF_FCFLAGS
 NETCDF_FCLIBS
 AR
+ARFLAGS
 PYTHON'
-ac_subdirs_all='dummy_subdir'
+ac_subdirs_all='bundled/picky'
 
 # Initialize some variables set by options.
 ac_init_help=
@@ -1349,6 +1353,7 @@ Some influential environment variables:
               exact linker flags enabling NetCDF when linking with Fortran
               compiler
   AR          the archiver command
+  ARFLAGS     archiver flags
   PYTHON      Python interpreter command (used for Fortran dependency
               generation)
 
@@ -2883,6 +2888,8 @@ fi
 fi
 
 
+DEPGEN_FCFLAGS=''
+
 
 DEPGEN_INTRINSIC_MODS=iso_c_binding,iso_fortran_env,ieee_exceptions,ieee_arithmetic,ieee_features,omp_lib,omp_lib_kinds,openacc
 
@@ -3821,7 +3828,7 @@ $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
 as_fn_error $? "unable to detect the value of the Fortran preprocessor macro _OPENMP
 See \`config.log' for more details" "$LINENO" 5; }
 else
-  as_fn_append DEPGEN_DEFS " ${acx_cv_fc_macro_flag}_OPENMP=$acx_macro_value"
+  as_fn_append DEPGEN_FCFLAGS " ${acx_cv_fc_macro_flag}_OPENMP=$acx_macro_value"
 fi
 fi
 
@@ -4029,6 +4036,7 @@ if test "x$acx_NETCDF_found" = xno; then :
    NETCDF_FCFLAGS=;NETCDF_FCLIBS=
 fi
 
+ARFLAGS=${ARFLAGS-cr}
    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for ar" >&5
 $as_echo_n "checking for ar... " >&6; }
    if ${acx_cv_prog_AR+:} false; then :
@@ -4047,16 +4055,22 @@ fi
       end
 _ACEOF
 if ac_fn_fc_try_compile "$LINENO"; then :
-  acx_ar_try='$acx_candidate cru libconftest.a conftest.$ac_objext >&5'
-      { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$acx_ar_try\""; } >&5
-  (eval $acx_ar_try) 2>&5
+  acx_ar_try="$acx_candidate ${ARFLAGS} libconftest.a conftest.$ac_objext >&5"
+      { { ac_try="$acx_ar_try"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval ac_try_echo="\"\$as_me:${as_lineno-$LINENO}: $ac_try_echo\""
+$as_echo "$ac_try_echo"; } >&5
+  (eval "$acx_ar_try") 2>&5
   ac_status=$?
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }
       rm -f libconftest.a
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-   test "$ac_status" -eq 0
+   test "$ac_status" -eq 0 >/dev/null 2>&1
         if test $? -eq 0; then :
   acx_cv_prog_AR=$acx_candidate
            break
@@ -4306,7 +4320,13 @@ fi
 
 fi
 
-   acx_config_subdir_args_dummy_subdir=
+BUNDLED_FCFLAGS=''
+
+
+BUNDLED_LIBFILES=''
+
+
+   acx_config_subdir_args_bundled_picky=
    acx_config_subdir_ignore_arg=no
    eval "set dummy $ac_configure_args"; shift
    for acx_config_subdir_arg; do
@@ -4324,7 +4344,7 @@ fi
            -prefix=*|--prefix=*|--prefi=*|--pref=*|--pre=*|--pr=*|--p=*| \
            --disable-option-checking) :
      ;; #(
-  FCFLAGS=*|CFLAGS=*) :
+  FCFLAGS=*) :
      ;; #(
   -enable-silent-rules|-enable-silent-rules=*|--enable-silent-rules|--enable-silent-rules=*|-disable-silent-rules|--disable-silent-rules) :
      ;; #(
@@ -4340,13 +4360,13 @@ fi
   *) :
      ;;
 esac
-            as_fn_append acx_config_subdir_args_dummy_subdir " '$acx_config_subdir_arg'" ;;
+            as_fn_append acx_config_subdir_args_bundled_picky " '$acx_config_subdir_arg'" ;;
 esac
 else
   acx_config_subdir_ignore_arg=no
 fi
    done
-   set dummy FCFLAGS= CFLAGS='-g' --enable-always=yes ; shift
+   set dummy --enable-always=yes ; shift
       for acx_config_subdir_arg; do
         case $acx_config_subdir_arg in #(
   *\'*) :
@@ -4354,10 +4374,9 @@ fi
   *) :
      ;;
 esac
-        as_fn_append acx_config_subdir_args_dummy_subdir " '$acx_config_subdir_arg'"
+        as_fn_append acx_config_subdir_args_bundled_picky " '$acx_config_subdir_arg'"
       done
-      subdirs_extra="dummy_subdir"
-
+      subdirs_extra="bundled/picky"
 
 
 
@@ -4606,13 +4625,6 @@ fi
                $as_echo "$as_me:${as_lineno-$LINENO}: ===" >&5
 fi
 fi
-acx_exec_result=`$as_echo @LIBRT@ | "dummy_subdir/config.status" -q --file=- 2>/dev/null`
-   if test $? -eq 0; then :
-  DUMMY_LIBRT=$acx_exec_result
-else
-  as_fn_error $? "unable to run 'dummy_subdir/config.status'" "$LINENO" 5
-fi
-   LIBS="$DUMMY_LIBRT $LIBS"
 
 : "${CONFIG_STATUS=./config.status}"
 ac_write_fail=0
@@ -5613,7 +5625,7 @@ $as_echo "$as_me: executing $ac_file commands" >&6;}
 
 
   case $ac_file$ac_mode in
-    "depfiles":C) ${MAKE-make} -f mkhelper.mk dummy-depfiles >/dev/null 2>&5
+    "depfiles":C) ${MAKE-make} -f mkhelper.mk dummy-depend >/dev/null 2>&5
    sleep 1
    touch mkhelper.mk ;;
 
