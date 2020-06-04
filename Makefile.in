@@ -1,174 +1,31 @@
-# Source file root directory:
-srcdir= @srcdir@
+# This makefile sets up the building environment and calls mkhelper.mk.
 
-# Source file subdirectories:
-subdirs= src
-
-# Bundled subdirectories:
-bundled_subdirs= @subdirs_extra@
-
-# Installation directories:
-prefix= @prefix@
-exec_prefix= @exec_prefix@
-
-# Fortran module file directory:
-moddir= mod
-
-# Shell and environment:
 SHELL= @SHELL@
 BUILD_ENV= @BUILD_ENV_MAKE@
 
-# Compilers and flags:
-FC= @FC@
-FPP= @FPP@
-FCFLAGS= @FCFLAGS@
-LDFLAGS= @LDFLAGS@
-LIBS= @LIBS@
-config_FCFLAGS= @FC_MOD_IN@$(moddir) @FC_MOD_OUT@$(moddir) @FC_INC_FLAG@$(srcdir)/src/include @FC_INC_FLAG_PP_f90@$(srcdir)/src/include @NETCDF_FCFLAGS@ @config_FCFLAGS@
-config_LIBS= @NETCDF_FCLIBS@
+DELEGATEE_FILE= mkhelper.mk
 
-# Other utilities:
-INSTALL= @INSTALL@
-INSTALL_DATA=@INSTALL_DATA@
-AR= @AR@
-PYTHON= @PYTHON@
-DEPLIST= $(PYTHON) $(srcdir)/mkhelper/deplist.py @deplist.config
-DEPGEN= $(PYTHON) $(srcdir)/mkhelper/depgen.py
-MODCMP= $(PYTHON) $(srcdir)/mkhelper/fortmodcmp.py
-
-# Silent rule prefixes:
-V= @DEFAULT_VERBOSITY@
-ifeq ($(V), 0)
-silent_FCLD=   @echo "  FCLD    " $@;
-silent_FC=     @echo "  FC      " $@;
-silent_MKDIR=  @echo "  MKDIR   " $(@D);
-silent_DEPGEN= @echo "  DEPGEN  " $@;
-silent_AR=     @echo "  AR      " $@;
-endif
-
-# Source files:
-srcs= $(shell find $(addprefix $(srcdir)/,$(subdirs)) -name '*.f90')
-
-# Stamp files of the build directories:
-dirstamps= $(patsubst $(srcdir)/%,%.dirstamp,$(sort $(dir $(srcs)))) $(moddir)/.dirstamp
-
-# Dependency files:
-depfiles= $(patsubst $(srcdir)/%,%.d,$(srcs)) extra_f90.d
-
-# Root object file:
-rootobj= src/program/main.o
-
-# Object files:
-libobjs= $(filter-out $(rootobj),$(filter %.o,$(shell $(DEPLIST) -t $(rootobj) -f $(depfiles))))
-
-# Source file selective search paths:
-vpath %.f90 $(srcdir)
-
-# Disable built-in suffix rules:
 .SUFFIXES:
-# Delete partially updated files:
-.DELETE_ON_ERROR:
-# Targets not associated with files:
-.PHONY: all depend mostlyclean clean distclean maintainer-clean install dummy-depfiles sanitize-mod-proxies
-# Targets that do not need the inclusion of the dependency files:
-NO_INC_TARGETS:= depend mostlyclean clean distclean maintainer-clean dummy-depfiles
-# Call make inside the subdirectories unconditionally:
-.PHONY: $(bundled_subdirs)
-# Keep sentinel files of created directories:
-.PRECIOUS: $(dirstamps)
+.NOTPARALLEL:
+.PHONY: all distclean force-delegate
 
-# User interface rules:
-all: main
+# Default target:
+all:
+	@$(BUILD_ENV) $(MAKE) -f $(DELEGATEE_FILE) $@
 
-depend: $(depfiles)
+# A rule for targets that are unknown to this makefile. The dependency on a
+# phony target 'force-delegate' enforces running make with $(DELEGATEE_FILE)
+# even if the requested target already exists. The fact that the rule is
+# terminal (i.e. declared with double colon) allows for building targets that
+# are normally not matched by "match-anything" pattern rules (e.g. generated
+# source files):
+%:: force-delegate
+	@$(BUILD_ENV) $(MAKE) -f $(DELEGATEE_FILE) $@
 
-mostlyclean: $(bundled_subdirs)
-	rm -f main libmain.a $(patsubst $(srcdir)/%.f90,%.o,$(srcs)) $(moddir)/*.@FC_MOD_FILE_EXT@ $(moddir)/*.@FC_MOD_FILE_EXT@.proxy
-	rm -rf main.dSYM
+# Disable attempts to build this makefile with the previous
+# "match-anything" pattern rule:
+Makefile:;
 
-clean: mostlyclean
-	rm -rf deplist.debug
-
-# Delete python cache only if we are in the source directory, i.e.
-# do not try to delete files in the source tree if the out-of-source
-# building takes place.
-distclean: clean
-	rm -f $(depfiles) $(dirstamps) config.log config.status Makefile depgen.config deplist.config
-	find . -name '*.pyc' -delete -o -name '*.pyo' -delete -o -name '__pycache__' -delete
-	@for dir in $(subdirs) $(bundled_subdirs) $(moddir) externals; do \
-	  if test -d "$$dir"; then \
-	    echo "find '$$dir' -type d -empty -delete"; \
-	    find "$$dir" -type d -empty -delete; \
-	  fi; \
-	done
-
-maintainer-clean: distclean
-	rm -rf autom4te.cache
-
-install: all
-	$(INSTALL) -d $(DESTDIR)@bindir@ && $(INSTALL) main $(DESTDIR)@bindir@/main
-	$(INSTALL) -d $(DESTDIR)@libdir@ && $(INSTALL_DATA) libmain.a $(DESTDIR)@libdir@/libmain.a
-
-# Main building rules:
-main: $(rootobj) libmain.a
-	$(silent_FCLD)$(BUILD_ENV) $(FC) -o $@ $(config_FCFLAGS) $(FCFLAGS) $(LDFLAGS) $^ $(config_LIBS) $(LIBS)
-
-libmain.a: $(libobjs)
-	$(silent_AR)$(BUILD_ENV) rm -f $@ && $(AR) cru $@ $^
-
-%.o: %.f90 | $(dirstamps) $(bundled_subdirs)
-	$(silent_FC)$(BUILD_ENV) $(FC) -o $@ -c $(config_FCFLAGS) $(FCFLAGS) @FCFLAGS_f90@ $<
-
-# Deletes all Fortran module proxy files that do not have an existing module to
-# be a proxy of, i.e. if <filename>.proxy exists but <filename> does not,
-# delete <filename>.proxy:
-sanitize-mod-proxies:
-	@rm -f $(filter-out $(addsuffix .proxy,$(wildcard $(moddir)/*.@FC_MOD_FILE_EXT@)),$(wildcard $(moddir)/*.@FC_MOD_FILE_EXT@.proxy))
-
-# Fortran module file tracking rule:
-$(moddir)/%.@FC_MOD_FILE_EXT@.proxy: | sanitize-mod-proxies
-	@if test -z '$<'; then \
-	  echo "Cannot find Fortran source file providing module '$(basename $(@F:.proxy=))'." >&2; \
-	else \
-	  if test ! -f '$(@:.proxy=)'; then rm -f '$<'; $(MAKE) '$<'; fi; \
-	  if cmp '$@' '$(@:.proxy=)' >/dev/null 2>&1 || $(MODCMP) '$@' '$(@:.proxy=)' @FC_VENDOR@ 2>/dev/null; then :; \
-	  else cp '$(@:.proxy=)' '$@' 2>/dev/null; fi; \
-	fi
-
-# Directory generation rule:
-%/.dirstamp:
-	$(silent_MKDIR)@MKDIR_P@ $(@D) && touch $@
-
-# Dependency generation rule:
-%.f90.d: %.f90 Makefile | $(dirstamps)
-	$(silent_DEPGEN)$(DEPGEN) @depgen.config -o $@ --obj-name $(@:.f90.d=.o) -i $< -- @DEPGEN_DEFS@ $(config_FCFLAGS) $(FCFLAGS)
-
-# Dependency generation rule for undetectable Fortran dependencies:
-extra_f90.d: Makefile
-	$(silent_DEPGEN):;{ \
-	  echo 'src/program/main.o:| src/program/implicit_external.o'; \
-	} >$@
-
-# Make bundled libraries:
-$(bundled_subdirs):
-	@if test -f '$@/Makefile'; then \
-	  $(MAKE) -C $@ $(filter all mostlyclean clean distclean,$(MAKECMDGOALS)) V=$(V); \
-	else \
-	  test xdistclean = x$(filter distclean,$(MAKECMDGOALS)); \
-	fi
-
-# Dummy dependency file generation rule (called by config.status):
-dummy-depfiles: | $(dirstamps)
-	@for file in $(depfiles); do \
-	  test -e "$$file" || touch "$$file"; \
-	done
-
-# Include dependencies if required:
-current_targets:= $(strip $(MAKECMDGOALS))
-ifeq (,$(current_targets))
-current_targets:= all
-endif
-
-ifneq (,$(filter-out $(NO_INC_TARGETS),$(current_targets)))
-include $(depfiles)
-endif
+distclean:
+	@$(BUILD_ENV) $(MAKE) -f $(DELEGATEE_FILE) $@
+	rm -f Makefile
