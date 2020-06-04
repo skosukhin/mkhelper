@@ -3868,6 +3868,11 @@ if test "x$enable_invalid_test" = xyes; then :
   as_fn_append config_FCFLAGS " ${acx_cv_fc_macro_flag}TEST_INVALID"
 fi
 
+mkhelper_linker_flags="'-L'"
+if test "x$enable_rpaths" = xyes; then :
+  as_fn_append mkhelper_linker_flags " '$acx_cv_fc_rpath_flag'"
+fi
+eval "set dummy $mkhelper_linker_flags; shift"
 
 # Check whether --with-netcdf-root was given.
 if test "${with_netcdf_root+set}" = set; then :
@@ -3910,7 +3915,7 @@ fi
 
 
       if ${with_netcdf_lib+:} false; then :
-  for acx_flag in -L "$acx_cv_fc_rpath_flag"; do
+  for acx_flag in "$@"; do
            case " "$acx_fc_NetCDF_lib_search_args" " in #(
   *" ""${acx_flag}${with_netcdf_lib}"" "*) :
      ;; #(
