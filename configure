@@ -700,7 +700,8 @@ NETCDF_FCLIBS
 AR
 ARFLAGS
 PYTHON'
-ac_subdirs_all='bundled/picky'
+ac_subdirs_all='bundled/picky
+bundled/threaded_hello'
 
 # Initialize some variables set by options.
 ac_init_help=
@@ -4025,15 +4026,15 @@ fi
       end
 _ACEOF
 if ac_fn_fc_try_compile "$LINENO"; then :
-  acx_ar_try="$acx_candidate ${ARFLAGS} libconftest.a conftest.$ac_objext >&5"
-      { { ac_try="$acx_ar_try"
+  mkhelper_ar_try="$acx_candidate ${ARFLAGS} libconftest.a conftest.$ac_objext >&5"
+      { { ac_try="$mkhelper_ar_try"
 case "(($ac_try" in
   *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
   *) ac_try_echo=$ac_try;;
 esac
 eval ac_try_echo="\"\$as_me:${as_lineno-$LINENO}: $ac_try_echo\""
 $as_echo "$ac_try_echo"; } >&5
-  (eval "$acx_ar_try") 2>&5
+  (eval "$mkhelper_ar_try") 2>&5
   ac_status=$?
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }
@@ -4074,9 +4075,9 @@ else
 fi
       shift
       for acx_candidate in "$@"; do
-        acx_depgen_try='$acx_candidate $srcdir/mkhelper/depgen.py -h > /dev/null'
-   { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$acx_depgen_try\""; } >&5
-  (eval $acx_depgen_try) 2>&5
+        mkhelper_depgen_try='$acx_candidate $srcdir/mkhelper/depgen.py -h > /dev/null'
+   { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$mkhelper_depgen_try\""; } >&5
+  (eval $mkhelper_depgen_try) 2>&5
   ac_status=$?
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }
@@ -4237,9 +4238,9 @@ fi
 $as_echo "$MKDIR_P" >&6; }
 
 
-acx_some_prog='true -a -b -c'
+mkhelper_some_prog='true -a -b -c'
 acx_prog_search_abspath=unknown
-   set dummy $acx_some_prog; shift; acx_prog_exec=$1; shift; acx_prog_args="$@"
+   set dummy $mkhelper_some_prog; shift; acx_prog_exec=$1; shift; acx_prog_args="$@"
    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for the absolute path to $acx_prog_exec" >&5
 $as_echo_n "checking for the absolute path to $acx_prog_exec... " >&6; }
    case $acx_prog_exec in #(
@@ -4348,6 +4349,64 @@ esac
       done
       subdirs_extra="bundled/picky"
 
+
+
+
+   acx_config_subdir_args_bundled_threaded_hello=
+   acx_config_subdir_ignore_arg=no
+   eval "set dummy $ac_configure_args"; shift
+   for acx_config_subdir_arg; do
+     if test "x$acx_config_subdir_ignore_arg" = xno; then :
+  case $acx_config_subdir_arg in #(
+  -cache-file|--cache-file|--cache-fil|--cache-fi| \
+           --cache-f|--cache-|--cache|--cach|--cac|--ca|--c| \
+           -srcdir|--srcdir|--srcdi|--srcd|--src|--sr| \
+           -prefix|--prefix|--prefi|--pref|--pre|--pr|--p) :
+    acx_config_subdir_ignore_arg=yes ;; #(
+  -cache-file=*|--cache-file=*|--cache-fil=*|--cache-fi=*| \
+           --cache-f=*|--cache-=*|--cache=*|--cach=*|--cac=*|--ca=*|--c=*| \
+           --config-cache|-C| \
+           -srcdir=*|--srcdir=*|--srcdi=*|--srcd=*|--src=*|--sr=*| \
+           -prefix=*|--prefix=*|--prefi=*|--pref=*|--pre=*|--pr=*|--p=*| \
+           --disable-option-checking) :
+     ;; #(
+  -enable-static|-enable-static=*|--enable-static|--enable-static=*|-disable-static|--disable-static) :
+     ;; #(
+  -enable-shared|-enable-shared=*|--enable-shared|--enable-shared=*|-disable-shared|--disable-shared) :
+     ;; #(
+  -enable-maintainer-mode|-enable-maintainer-mode=*|--enable-maintainer-mode|--enable-maintainer-mode=*|-disable-maintainer-mode|--disable-maintainer-mode) :
+     ;; #(
+  -enable-silent-rules|-enable-silent-rules=*|--enable-silent-rules|--enable-silent-rules=*|-disable-silent-rules|--disable-silent-rules) :
+     ;; #(
+  *) :
+
+           case $acx_config_subdir_arg in #(
+  *\'*) :
+    acx_config_subdir_arg=`$as_echo "$acx_config_subdir_arg" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+  *) :
+     ;;
+esac
+            as_fn_append acx_config_subdir_args_bundled_threaded_hello " '$acx_config_subdir_arg'" ;;
+esac
+else
+  acx_config_subdir_ignore_arg=no
+fi
+   done
+   set dummy --enable-static --disable-shared --disable-maintainer-mode --enable-silent-rules="$enable_silent_rules" ; shift
+      for acx_config_subdir_arg; do
+        case $acx_config_subdir_arg in #(
+  *\'*) :
+    acx_config_subdir_arg=`$as_echo "$acx_config_subdir_arg" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+  *) :
+     ;;
+esac
+        as_fn_append acx_config_subdir_args_bundled_threaded_hello " '$acx_config_subdir_arg'"
+      done
+      as_fn_append subdirs_extra " bundled/threaded_hello"
+
+as_fn_append BUNDLED_FCFLAGS "${FC_MOD_IN}bundled/threaded_hello "
+BUNDLED_LIBFILES="bundled/threaded_hello/.libs/libthreaded_hello_f.a $BUNDLED_LIBFILES"
+as_fn_append DEPGEN_EXTERNAL_MODS ',mo_threaded_hello'
 
 
 
@@ -4594,6 +4653,62 @@ fi
   $as_echo "===" >&6
                $as_echo "$as_me:${as_lineno-$LINENO}: ===" >&5
 fi
+fi
+acx_exec_result=`$as_echo @LDFLAGS@ | "bundled/threaded_hello/config.status" -q --file=- 2>/dev/null`
+   if test $? -eq 0; then :
+  mkhelper_LDFLAGS=$acx_exec_result
+else
+  as_fn_error $? "unable to run 'bundled/threaded_hello/config.status'" "$LINENO" 5
+fi
+   acx_exec_result=`$as_echo @LIBS@ | "bundled/threaded_hello/config.status" -q --file=- 2>/dev/null`
+   if test $? -eq 0; then :
+  mkhelper_LIBS=$acx_exec_result
+else
+  as_fn_error $? "unable to run 'bundled/threaded_hello/config.status'" "$LINENO" 5
+fi
+   if test -n "$mkhelper_LDFLAGS"; then :
+  as_fn_append LDFLAGS " $mkhelper_LDFLAGS"
+fi
+   if test -n "$mkhelper_LDFLAGS"; then :
+  LIBS="$mkhelper_LIBS $LIBS"
+fi
+   if test "x$enable_rpaths" = xyes; then :
+  mkhelper_libdirs=
+   asx_extract_args_args="$mkhelper_LDFLAGS $mkhelper_LIBS"
+   asx_extract_args_args=`$as_echo "$asx_extract_args_args" | sed 's%''-L[ ]*''%_ASX_EXTRACT_ARGS_MARKER_%g'`
+   for asx_extract_args_arg in $asx_extract_args_args; do
+     case $asx_extract_args_arg in #(
+  _ASX_EXTRACT_ARGS_MARKER_*) :
+    asx_extract_args_value=`$as_echo "$asx_extract_args_arg" | sed 's%^_ASX_EXTRACT_ARGS_MARKER_%%'`
+        as_fn_append mkhelper_libdirs " $asx_extract_args_value" ;; #(
+  *) :
+     ;;
+esac
+   done
+      for mkhelper_libdir in $mkhelper_libdirs; do
+        if test -d "$mkhelper_libdir"; then :
+  case ' '$LDFLAGS' ' in #(
+  *' '"$acx_cv_fc_rpath_flag$mkhelper_libdir"' '*) :
+     ;; #(
+  ' '' ') :
+    as_fn_append LDFLAGS "$acx_cv_fc_rpath_flag$mkhelper_libdir" ;; #(
+  *) :
+    as_fn_append LDFLAGS ' '; as_fn_append LDFLAGS "$acx_cv_fc_rpath_flag$mkhelper_libdir" ;;
+esac
+fi
+      done
+fi
+   acx_exec_result=`$as_echo ' @PTHREAD_CFLAGS@' | "bundled/threaded_hello/config.status" -q --file=- 2>/dev/null`
+   if test $? -eq 0; then :
+  mkhelper_PTHREAD_CFLAGS=$acx_exec_result
+else
+  as_fn_error $? "unable to run 'bundled/threaded_hello/config.status'" "$LINENO" 5
+fi
+   if test -n "$mkhelper_PTHREAD_CFLAGS"; then :
+  if test "x$FC_VENDOR" = xnag; then :
+  mkhelper_PTHREAD_CFLAGS=`$as_echo " $mkhelper_PTHREAD_CFLAGS" | sed 's/ -pthread/ -Wl,-pthread/g'`
+fi
+      as_fn_append LDFLAGS "$mkhelper_PTHREAD_CFLAGS"
 fi
 
 : "${CONFIG_STATUS=./config.status}"

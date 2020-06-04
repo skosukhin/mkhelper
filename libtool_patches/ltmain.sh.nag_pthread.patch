@@ -28,11 +28,11 @@
 +      # better not to revert the changes, otherwise, uncomment the following
 +      # lines.
 +
-+      # func_cc_basename $CC
-+      # case $func_cc_basename_result in
-+      #   nagfor*)
-+      #     new_inherited_linker_flags=`$ECHO " $new_inherited_linker_flags" | $SED 's% -Wl,-pthread% -pthread%g'` ;;
-+      # esac
++      func_cc_basename $CC
++      case $func_cc_basename_result in
++        nagfor*)
++          new_inherited_linker_flags=`$ECHO " $new_inherited_linker_flags" | $SED 's% -Wl,-pthread% -pthread%g'` ;;
++      esac
 +
        # move library search paths that coincide with paths to not yet
        # installed libraries to the beginning of the library search list
