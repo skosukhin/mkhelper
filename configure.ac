@@ -151,9 +151,11 @@ AS_VAR_IF([enable_invalid_test], [yes],
   [AS_VAR_APPEND([config_FCFLAGS],
      [" ${acx_cv_fc_macro_flag}TEST_INVALID"])])
 
-ACX_LANG_PACKAGE_INIT([NetCDF],
-  [$acx_cv_fc_ftn_include_flag],
-  [-L "$acx_cv_fc_rpath_flag"])
+mkhelper_linker_flags="'-L'"
+AS_VAR_IF([enable_rpaths], [yes],
+  [AS_VAR_APPEND([mkhelper_linker_flags], [" '$acx_cv_fc_rpath_flag'"])])
+eval "set dummy $mkhelper_linker_flags; shift"
+ACX_LANG_PACKAGE_INIT([NetCDF], [$acx_cv_fc_ftn_include_flag], ["$@"])
 acx_NETCDF_found=no
 acx_save_FCFLAGS=$FCFLAGS
 NETCDF_FCFLAGS=${NETCDF_FCFLAGS-$acx_fc_NetCDF_inc_search_args}
