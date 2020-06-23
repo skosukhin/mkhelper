@@ -40,7 +40,7 @@ AC_DEFUN([ACX_COMPILER_FC_VENDOR],
 # ACX_COMPILER_FC_VENDOR_SIMPLE()
 # -----------------------------------------------------------------------------
 # Detects the vendor of the Fortran compiler. The result is "intel", "nag",
-# "portland", "cray", "gnu" or "unknown".
+# "portland", "cray", "nec", "gnu" or "unknown".
 #
 # This is a simplified version ACX_COMPILER_FC_VENDOR, which tries to detect
 # the vendor based on the version output of the compiler, instead of checking
@@ -66,6 +66,9 @@ grep '^Copyright.*\(The Portland Group\|NVIDIA CORPORATION\)' >/dev/null 2>&1],
         [acx_cache_var=portland],
         [AS_VAR_GET([_AC_CC]) -V 2>&1 | grep '^Cray Fortran' >/dev/null 2>&1],
         [acx_cache_var=cray],
+        [AS_VAR_GET([_AC_CC]) --version 2>&1 | dnl
+grep '^Copyright.*NEC Corporation' >/dev/null 2>&1],
+        [acx_cache_var=nec],
         [AS_VAR_GET([_AC_CC]) --version 2>/dev/null | dnl
 grep '^GNU Fortran' >/dev/null 2>&1],
         [acx_cache_var=gnu],
@@ -120,6 +123,9 @@ AC_DEFUN([ACX_COMPILER_FC_VERSION_SIMPLE],
         [cray],
         [acx_cache_var=`AS_VAR_GET([_AC_CC]) -V 2>&1 | dnl
 [sed -n 's/.*ersion \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`]],
+        [nec],
+        [acx_cache_var=`AS_VAR_GET([_AC_CC]) --version 2>&1 | dnl
+[sed -n 's/^nfort (NFORT) \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`]],
         [gnu],
         [acx_cache_var=`AS_VAR_GET([_AC_CC]) -dumpfullversion 2>/dev/null`
          AS_IF([test $? -ne 0 || test -z "$acx_cache_var"],
@@ -147,7 +153,7 @@ grep '^NAG Fortran Compiler Release' >/dev/null 2>&1],
 # ACX_COMPILER_CC_VENDOR_SIMPLE()
 # -----------------------------------------------------------------------------
 # Detects the vendor of the C compiler. The result is  "intel", "nag",
-# "portland", "cray", "gnu" or "unknown".
+# "portland", "cray", "nec", "gnu" or "unknown".
 #
 # This is a simplified version ACX_COMPILER_CC_VENDOR, which tries to detect
 # the vendor based on the version output of the compiler, instead of checking
@@ -176,7 +182,11 @@ grep '^Copyright.*\(The Portland Group\|NVIDIA CORPORATION\)' >/dev/null 2>&1],
         [AS_VAR_GET([_AC_CC]) --version 2>&1 | dnl
 grep '^Cray clang' >/dev/null 2>&1],
         [acx_cache_var=cray],
-        [AS_VAR_GET([_AC_CC]) --version | grep '^gcc' >/dev/null 2>&1],
+        [AS_VAR_GET([_AC_CC]) --version 2>&1 | dnl
+grep '^Copyright.*NEC Corporation' >/dev/null 2>&1],
+        [acx_cache_var=nec],
+        [AS_VAR_GET([_AC_CC]) --version 2>/dev/null | dnl
+grep '^gcc' >/dev/null 2>&1],
         [acx_cache_var=gnu],
         [acx_cache_var=unknown])
       rm -f a.out a.out.dSYM a.exe b.out])
@@ -235,6 +245,9 @@ AC_DEFUN([ACX_COMPILER_CC_VERSION_SIMPLE],
             AS_IF([test -n "$acx_cache_var"],
               [acx_cache_var="clang:${acx_cache_var}"])],
            [acx_cache_var="classic:${acx_cache_var}"])],
+        [nec],
+        [acx_cache_var=`AS_VAR_GET([_AC_CC]) --version 2>&1 | dnl
+[sed -n 's/^ncc (NCC) \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`]],
         [gnu],
         [acx_cache_var=`AS_VAR_GET([_AC_CC]) -dumpfullversion 2>/dev/null`
          AS_IF([test $? -ne 0 || test -z "$acx_cache_var"],
@@ -289,6 +302,7 @@ m4_define([_ACX_COMPILER_KNOWN_VENDORS],
 m4_define([_ACX_COMPILER_KNOWN_VENDORS(Fortran)],
 [[[intel, [__INTEL_COMPILER]],
   [cray, [_CRAYFTN]],
+  [nec, [__NEC__]],
   [portland, [__PGI]],
   [nag, [NAGFOR]],
   [sun, [__SUNPRO_F95]],
@@ -302,6 +316,7 @@ m4_define([_ACX_COMPILER_KNOWN_VENDORS(Fortran)],
 m4_define([_ACX_COMPILER_KNOWN_VENDORS(C)],
 [[[intel, [__ICC,__ECC,__INTEL_COMPILER]],
   [cray, [_CRAYC,__cray__]],
+  [nec, [__NEC__]],
   [portland, [__PGI]],
   [ibm, [__xlc__,__xlC__,__IBMC__,__IBMCPP__]],
   [pathscale, [__PATHCC__,__PATHSCALE__]],
@@ -496,3 +511,16 @@ m4_copy([_ACX_COMPILER_VERSION_CLANG(C)], [_ACX_COMPILER_VERSION_CLANG(C++)])
 m4_define([_ACX_COMPILER_VERSION_TCC(C)],
   [_ACX_COMPILER_VERSION_FROM_MACROS(
      [__TINYC__/10000], [(__TINYC__%10000)/100], [__TINYC__%100])])
+
+# for NEC
+m4_define([_ACX_COMPILER_VERSION_NEC(C)],
+  [_ACX_COMPILER_VERSION_FROM_MACROS(
+     [__NEC_VERSION__/10000], [(__NEC_VERSION__%10000)/100],
+     [__NEC_VERSION__%100])])
+m4_copy([_ACX_COMPILER_VERSION_NEC(C)], [_ACX_COMPILER_VERSION_NEC(C++)])
+m4_define([_ACX_COMPILER_VERSION_NEC(Fortran)],
+  [acx_cache_var=`AS_VAR_GET([_AC_CC]) --version 2>&1 | dnl
+[sed -n 's/^nfort (NFORT) \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`]
+   AS_IF([test dnl
+"`echo $acx_cache_var | sed 's/@<:@0-9@:>@//g' 2>/dev/null`" != '..'],
+     [acx_cache_var=unknown])])
