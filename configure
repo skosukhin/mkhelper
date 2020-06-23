@@ -2588,6 +2588,7 @@ if ${acx_cv_fc_compiler_vendor+:} false; then :
 else
   acx_compiler_vendor_options="intel: __INTEL_COMPILER
 cray: _CRAYFTN
+nec: __NEC__
 portland: __PGI
 nag: NAGFOR
 sun: __SUNPRO_F95
@@ -2632,6 +2633,10 @@ else
   acx_cv_fc_compiler_version=unknown
 fi ;; #(
         cray) acx_cv_fc_compiler_version=`$FC -V 2>&1 | sed -n 's/.*ersion \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`
+   if test "`echo $acx_cv_fc_compiler_version | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
+  acx_cv_fc_compiler_version=unknown
+fi ;; #(
+        nec) acx_cv_fc_compiler_version=`$FC --version 2>&1 | sed -n 's/^nfort (NFORT) \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`
    if test "`echo $acx_cv_fc_compiler_version | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
   acx_cv_fc_compiler_version=unknown
 fi ;; #(
