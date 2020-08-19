@@ -73,9 +73,9 @@ ACX_FC_INCLUDE_ORDER_PP(
   [FC_INC_ORDER_PP_f90=inc,flg])
 AC_SUBST([FC_INC_ORDER_PP_f90])
 
-AC_SUBST([config_FCFLAGS])
-
 ACX_LANG_MACRO_FLAG([AC_SUBST([FC_PP_DEF], [$acx_cv_fc_macro_flag])])
+
+AC_SUBST([config_FCFLAGS])
 
 AC_ARG_ENABLE([silent-rules],
   [AC_HELP_STRING([--enable-silent-rules],

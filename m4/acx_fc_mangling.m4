@@ -23,11 +23,11 @@ AC_DEFUN([ACX_FC_MANGLING_GLOBAL],
      [acx_cache_var],
      [acx_cache_var=unknown
       acx_save_LIBS=$LIBS; LIBS="./conftest_c.$ac_objext $LIBS"
-      AC_LANG_CONFTEST([AC_LANG_SOURCE([[      subroutine funcname
+      AC_LANG_CONFTEST([AC_LANG_SOURCE(
+[[      subroutine funcname
       end subroutine
       program main
-      end program
-]])])
+      end program]])])
       AC_LANG_PUSH([C])
       acx_success=no
       for acx_name_case in 'funcname' 'FUNCNAME'; do
@@ -53,8 +53,7 @@ AC_DEFUN([ACX_FC_MANGLING_GLOBAL],
 [[      subroutine func_name
       end subroutine
       program main
-      end program
-]])])
+      end program]])])
          AC_LANG_PUSH([C])
          acx_success=no
          for acx_extra_underscore in '' '_'; do

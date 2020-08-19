@@ -598,8 +598,8 @@ AR
 NETCDF_FCLIBS
 NETCDF_FCFLAGS
 DEFAULT_VERBOSITY
-FC_PP_DEF
 config_FCFLAGS
+FC_PP_DEF
 FC_INC_ORDER_PP_f90
 FC_INC_FLAG_PP_f90
 FC_INC_ORDER
@@ -3166,8 +3166,6 @@ fi
 
 
 
-
-
    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler flag needed to define a preprocessor macro" >&5
 $as_echo_n "checking for Fortran compiler flag needed to define a preprocessor macro... " >&6; }
 if ${acx_cv_fc_macro_flag+:} false; then :
@@ -3206,6 +3204,8 @@ else
   FC_PP_DEF=$acx_cv_fc_macro_flag
 
 fi
+
+
 
 
 # Check whether --enable-silent-rules was given.
