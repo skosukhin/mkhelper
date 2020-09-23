@@ -439,7 +439,9 @@ m4_define([_ACX_COMPILER_VERSION_GNU(C)],
      [__GNUC__], [__GNUC_MINOR__], [__GNUC_PATCHLEVEL__])])
 m4_copy([_ACX_COMPILER_VERSION_GNU(C)], [_ACX_COMPILER_VERSION_GNU(C++)])
 m4_define([_ACX_COMPILER_VERSION_GNU(Fortran)],
-  [acx_cache_var=`AS_VAR_GET([_AC_CC]) -dumpversion 2>/dev/null`
+  [acx_cache_var=`AS_VAR_GET([_AC_CC]) -dumpfullversion 2>/dev/null`
+   AS_IF([test $? -ne 0 || test -z "$acx_cache_var"],
+     [acx_cache_var=`AS_VAR_GET([_AC_CC]) -dumpversion 2>/dev/null`])
    AS_IF([test dnl
 "`echo $acx_cache_var | sed 's/@<:@0-9@:>@//g' 2>/dev/null`" != '..'],
      [acx_cache_var=unknown])])
@@ -495,8 +497,8 @@ m4_define([_ACX_COMPILER_VERSION_PORTLAND(C)],
 m4_copy([_ACX_COMPILER_VERSION_PORTLAND(C)],
   [_ACX_COMPILER_VERSION_PORTLAND(C++)])
 m4_define([_ACX_COMPILER_VERSION_PORTLAND(Fortran)],
-  [acx_cache_var=`AS_VAR_GET([_AC_CC]) -V | dnl
-[sed -n 's/pgfortran \([0-9][0-9]*\.[0-9][0-9]*\)-\([0-9][0-9]*\).*/\1.\2/p'`]
+  [acx_cache_var=`AS_VAR_GET([_AC_CC]) -V 2>/dev/null | dnl
+[sed -n 's/\(pgfortran\|pgf90\) \([0-9][0-9]*\.[0-9][0-9]*\)-\([0-9][0-9]*\).*/\2.\3/p'`]
    AS_IF([test dnl
 "`echo $acx_cache_var | sed 's/@<:@0-9@:>@//g' 2>/dev/null`" != '..'],
      [acx_cache_var=unknown])])
