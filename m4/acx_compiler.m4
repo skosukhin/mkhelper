@@ -235,7 +235,7 @@ AC_DEFUN([ACX_COMPILER_CC_VERSION_SIMPLE],
 [Build \([0-9][0-9]*\)/\1.\2/p'`]],
         [portland],
         [acx_cache_var=`AS_VAR_GET([_AC_CC]) -V 2>/dev/null | dnl
-[sed -n 's/pgcc \([0-9][0-9]*\.[0-9][0-9]*\)-\([0-9][0-9]*\).*/\1.\2/p'`]],
+[sed -n 's/pgcc \((.*) \)\?\([0-9][0-9]*\.[0-9][0-9]*\)-\([0-9][0-9]*\).*/\2.\3/p'`]],
         [cray],
         [acx_cache_var=`AS_VAR_GET([_AC_CC]) -V 2>&1 | dnl
 [sed -n 's/.*ersion \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`]
