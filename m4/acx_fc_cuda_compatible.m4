@@ -64,8 +64,12 @@ void conftest_foo();
 #ifdef __cplusplus
 }
 #endif
+
+/* An attempt to write a function that would keep the dependency on the
+   standard C++ library even with a high optimization level, i.e. -O3 */
+volatile void* p;
 void conftest_foo() {
-  std::vector<int> b = std::vector<int>();
+  std::vector<int> b = *(std::vector<int>*)p;
   b.push_back(1);
 }]])
       acx_cv_fc_cuda_stdcxx_compatible=$acx_fc_cuda_compatiable])
