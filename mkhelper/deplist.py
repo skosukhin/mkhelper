@@ -43,9 +43,8 @@ def parse_args():
         '-d', '--debug-file',
         help='dump debug information to DEBUG_FILE')
     parser.add_argument(
-        '-t', '--target',
-        help='name of the makefile target; if not specified, all targets and '
-             'prerequisites found in the makefiles are sent to the output')
+        '-t', '--target', default='*',
+        help='shell-like wildcard of the makefile target')
     parser.add_argument(
         '--inc-oo', action='store_true',
         help='include order-only dependencies in the dependency graph')
@@ -224,13 +223,14 @@ def main():
     if not dep_graph:
         return
 
+    targets = fnmatch.filter(sorted(dep_graph.keys()), args.target)
+
+    if not targets:
+        return
+
     # Insert _meta_root, which will be the starting-point for the dependency
     # graph traverse:
-    if args.target:
-        dep_graph[_meta_root] = \
-            [args.target] if args.target in dep_graph else []
-    else:
-        dep_graph[_meta_root] = sorted(dep_graph.keys())
+    dep_graph[_meta_root] = targets
 
     # Visitor callbacks:
     start_visit_cb_list = []
