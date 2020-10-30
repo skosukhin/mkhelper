@@ -1,5 +1,5 @@
 --inc-oo
---check-colour
+--check-colour yellow
 # Check whether the dependency graph is acyclic:
 --check-cycles
 # Check that each Fortran module is defined only once:
