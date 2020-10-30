@@ -14,6 +14,16 @@ _re_rule = re.compile(
     r':(?:[ ]*([-+\w./]+(?:[ ]+[-+\w./]+)*))?[ ]*'  # normal prerequisites
     r'(?:\|[ ]*([-+\w./]+(?:[ ]+[-+\w./]+)*))?')  # order-only prerequisites
 _meta_root = 0
+_term_colors = {
+    'black': 90,
+    'red': 91,
+    'green': 92,
+    'yellow': 93,
+    'blue': 94,
+    'magenta': 95,
+    'cyan': 96,
+    'white': 97
+}
 
 
 def parse_args():
@@ -63,7 +73,7 @@ def parse_args():
              'circular dependencies; if a cycle is found, a warning message is '
              'emitted to the standard output')
     parser.add_argument(
-        '--check-colour', action='store_true',
+        '--check-colour', choices=_term_colors.keys(),
         help='colour the message output of the checks using ANSI escape '
              'sequences; the argument is ignored if the standard error stream '
              'is not associated with a terminal device')
@@ -80,7 +90,8 @@ def parse_args():
                 parser.error('argument --check-exists: expected 2 or more '
                              'arguments')
 
-    args.check_colour = args.check_colour and sys.stderr.isatty()
+    if not sys.stderr.isatty():
+        args.check_colour = None
 
     return args
 
@@ -182,11 +193,12 @@ def build_graph(makefiles, inc_oo=False):
     return result
 
 
-def warn(msg, colour=False):
-    sys.stderr.write("%s%s: WARNING: %s%s\n" % ('\033[93m' if colour else '',
-                                                os.path.basename(__file__),
-                                                msg,
-                                                '\033[0m' if colour else ''))
+def warn(msg, colour=None):
+    sys.stderr.write("%s%s: WARNING: %s%s\n"
+                     % (('\033[%dm' % _term_colors[colour]) if colour else '',
+                        os.path.basename(__file__),
+                        msg,
+                        '\033[0m' if colour else ''))
 
 
 def main():
