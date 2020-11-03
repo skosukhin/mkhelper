@@ -401,21 +401,48 @@ def main():
             parser.parse(in_stream)
             in_stream.close()
 
-        out_lines = gen_lc_deps(src_name, lc_files)
-        lc_files.clear()
+        out_lines = []
 
-        out_lines.extend(gen_include_deps(src_name, obj_name, dep_name,
-                                          included_files))
-        included_files.clear()
+        src_name_prereqs = list(lc_files)
+        obj_name_prereqs = []
+        if src_name:
+            if src_name_prereqs:
+                out_lines.append('%s: %s\n' % (src_name,
+                                               ' '.join(src_name_prereqs)))
+            obj_name_prereqs.append(src_name)
+        elif src_name_prereqs:
+            obj_name_prereqs.extend(src_name_prereqs)
 
-        if provided_modules or required_modules:
-            out_lines.extend(gen_module_deps(obj_name, provided_modules,
-                                             required_modules,
-                                             args.fc_mod_dir,
-                                             args.fc_mod_upper,
-                                             args.fc_mod_ext))
-        provided_modules.clear()
-        required_modules.clear()
+        obj_name_prereqs.extend(included_files)
+
+        if dep_name and obj_name_prereqs:
+            out_lines.append('%s: %s\n' % (dep_name,
+                                           ' '.join(obj_name_prereqs)))
+        if required_modules:
+            obj_name_prereqs.extend(
+                modulenames_to_filenames(
+                    required_modules - provided_modules,
+                    args.fc_mod_dir,
+                    args.fc_mod_upper,
+                    args.fc_mod_ext))
+
+        provided_modules_prereqs = []
+        if obj_name:
+            if obj_name_prereqs:
+                out_lines.append('%s: %s\n' % (obj_name,
+                                               ' '.join(obj_name_prereqs)))
+            provided_modules_prereqs.append(obj_name)
+        elif obj_name_prereqs:
+            provided_modules_prereqs.extend(obj_name_prereqs)
+
+        if provided_modules and provided_modules_prereqs:
+            out_lines.append('%s: %s\n' %
+                             (' '.join(modulenames_to_filenames(
+                                 provided_modules,
+                                 args.fc_mod_dir,
+                                 args.fc_mod_upper,
+                                 args.fc_mod_ext)),
+                              ' '.join(provided_modules_prereqs)))
 
         if args.debug:
             out_lines.extend([
@@ -438,43 +465,6 @@ def main():
             if out is None else open23(out, 'w')
         out_stream.writelines(out_lines)
         out_stream.close()
-
-
-def gen_lc_deps(src_name, lc_files):
-    result = []
-    if src_name and lc_files:
-        result.append('%s: %s\n' % (src_name, ' '.join(lc_files)))
-    return result
-
-
-def gen_include_deps(src_name, obj_name, dep_name,
-                     included_files):
-    result = []
-    targets = ' '.join(filter(None, (obj_name, dep_name)))
-    if targets:
-        prereqs = ' '.join(filter(None, [src_name] + list(included_files)))
-        if prereqs:
-            result.append('%s: %s\n' % (targets, prereqs))
-    return result
-
-
-def gen_module_deps(obj_name,
-                    provided_modules, required_modules,
-                    mod_dir, mod_upper, mod_ext):
-    result = []
-    if obj_name:
-        if provided_modules:
-            targets = ' '.join(modulenames_to_filenames(
-                provided_modules, mod_dir, mod_upper, mod_ext))
-            result.append('%s: %s\n' % (targets, obj_name))
-
-        # Do not depend on the modules that are provided in the same file:
-        required_modules -= provided_modules
-        if required_modules:
-            prereqs = ' '.join(modulenames_to_filenames(
-                required_modules, mod_dir, mod_upper, mod_ext))
-            result.append('%s: %s\n' % (obj_name, prereqs))
-    return result
 
 
 def modulenames_to_filenames(modules, directory, upprecase, extension):
