@@ -183,6 +183,7 @@ def parse_args():
     fc_arg_group.add_argument(
         '--fc-external-mods', metavar='EXTERNAL_MODS_LIST',
         type=comma_splitter,
+        action='append',
         help='comma-separated list of external (to the project) Fortran '
              'modules that need to be unconditionally ignored when generating '
              'dependency rules (see also `--fc-intrinsic-mods`)')
@@ -292,10 +293,17 @@ def parse_args():
 
     if args.fc_enable:
         args.fc_mod_upper = (args.fc_mod_upper == 'yes')
-        if args.fc_mod_dir:
-            args.fc_mod_dir = args.fc_mod_dir[-1]
-        else:
-            args.fc_mod_dir = None
+        args.fc_mod_dir = args.fc_mod_dir[-1] if args.fc_mod_dir else None
+        if args.fc_external_mods:
+            external_mod_set = set()
+            for m in [m for sublist in args.fc_external_mods for m in sublist]:
+                if m == '!':
+                    external_mod_set.clear()
+                elif m.startswith('!'):
+                    external_mod_set.discard(m[1:])
+                else:
+                    external_mod_set.add(m)
+            args.fc_external_mods = external_mod_set
 
     return args
 
