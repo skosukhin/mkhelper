@@ -112,20 +112,20 @@ AC_DEFUN([ACX_COMPILER_FC_VERSION_SIMPLE],
      [AS_CASE([AS_VAR_GET([acx_cv_[]_AC_LANG_ABBREV[]_compiler_vendor])],
         [intel],
         [acx_cache_var=`AS_VAR_GET([_AC_CC]) --version 2>/dev/null | dnl
-[sed -n 's/^ifort (IFORT) \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`]],
+[sed -n 's/^ifort (IFORT) \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p']`],
         [nag],
         [acx_cache_var=`AS_VAR_GET([_AC_CC]) -V 2>&1 | dnl
 [sed -n 's/^NAG Fortran Compiler Release \([0-9][0-9]*\.[0-9][0-9]*\).*]dnl
-[Build \([0-9][0-9]*\)/\1.\2/p'`]],
+[Build \([0-9][0-9]*\)/\1.\2/p']`],
         [portland],
         [acx_cache_var=`AS_VAR_GET([_AC_CC]) -V 2>/dev/null | dnl
-[sed -n 's/\(pgfortran\|pgf90\) \([0-9][0-9]*\.[0-9][0-9]*\)-\([0-9][0-9]*\).*/\2.\3/p'`]],
+[sed -n 's/\(pgfortran\|pgf90\) \([0-9][0-9]*\.[0-9][0-9]*\)-\([0-9][0-9]*\).*/\2.\3/p']`],
         [cray],
         [acx_cache_var=`AS_VAR_GET([_AC_CC]) -V 2>&1 | dnl
-[sed -n 's/.*ersion \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`]],
+[sed -n 's/.*ersion \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p']`],
         [nec],
         [acx_cache_var=`AS_VAR_GET([_AC_CC]) --version 2>&1 | dnl
-[sed -n 's/^nfort (NFORT) \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`]],
+[sed -n 's/^nfort (NFORT) \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p']`],
         [gnu],
         [acx_cache_var=`AS_VAR_GET([_AC_CC]) -dumpfullversion 2>/dev/null`
          AS_IF([test $? -ne 0 || test -z "$acx_cache_var"],
@@ -228,17 +228,17 @@ AC_DEFUN([ACX_COMPILER_CC_VERSION_SIMPLE],
      [AS_CASE([AS_VAR_GET([acx_cv_[]_AC_LANG_ABBREV[]_compiler_vendor])],
         [intel],
         [acx_cache_var=`AS_VAR_GET([_AC_CC]) --version 2>/dev/null | dnl
-[sed -n 's/^icc (ICC) \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`]],
+[sed -n 's/^icc (ICC) \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p']`],
         [nag],
         [acx_cache_var=`AS_VAR_GET([_AC_CC]) -V 2>&1 | dnl
 [sed -n 's/^NAG Fortran Compiler Release \([0-9][0-9]*\.[0-9][0-9]*\).*]dnl
-[Build \([0-9][0-9]*\)/\1.\2/p'`]],
+[Build \([0-9][0-9]*\)/\1.\2/p']`],
         [portland],
         [acx_cache_var=`AS_VAR_GET([_AC_CC]) -V 2>/dev/null | dnl
-[sed -n 's/pgcc \((.*) \)\?\([0-9][0-9]*\.[0-9][0-9]*\)-\([0-9][0-9]*\).*/\2.\3/p'`]],
+[sed -n 's/pgcc \((.*) \)\?\([0-9][0-9]*\.[0-9][0-9]*\)-\([0-9][0-9]*\).*/\2.\3/p']`],
         [cray],
         [acx_cache_var=`AS_VAR_GET([_AC_CC]) -V 2>&1 | dnl
-[sed -n 's/.*ersion \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`]
+[sed -n 's/.*ersion \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p']`
          AS_IF([test -z "$acx_cache_var"],
            [acx_cache_var=`AS_VAR_GET([_AC_CC]) --version | dnl
 [sed -n 's/.*version \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p']`
@@ -247,7 +247,7 @@ AC_DEFUN([ACX_COMPILER_CC_VERSION_SIMPLE],
            [acx_cache_var="classic:${acx_cache_var}"])],
         [nec],
         [acx_cache_var=`AS_VAR_GET([_AC_CC]) --version 2>&1 | dnl
-[sed -n 's/^ncc (NCC) \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`]],
+[sed -n 's/^ncc (NCC) \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p']`],
         [gnu],
         [acx_cache_var=`AS_VAR_GET([_AC_CC]) -dumpfullversion 2>/dev/null`
          AS_IF([test $? -ne 0 || test -z "$acx_cache_var"],
@@ -454,7 +454,7 @@ m4_define([_ACX_COMPILER_VERSION_INTEL(C)],
 m4_copy([_ACX_COMPILER_VERSION_INTEL(C)], [_ACX_COMPILER_VERSION_INTEL(C++)])
 m4_define([_ACX_COMPILER_VERSION_INTEL(Fortran)],
   [acx_cache_var=`AS_VAR_GET([_AC_CC]) --version 2>/dev/null | dnl
-[sed -n 's/^ifort (IFORT) \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`]
+[sed -n 's/^ifort (IFORT) \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p']`
    AS_IF([test dnl
 "`echo $acx_cache_var | sed 's/@<:@0-9@:>@//g' 2>/dev/null`" != '..'],
      [acx_cache_var=unknown])])
@@ -463,7 +463,7 @@ m4_define([_ACX_COMPILER_VERSION_INTEL(Fortran)],
 m4_define([_ACX_COMPILER_VERSION_NAG],
   [acx_cache_var=`AS_VAR_GET([_AC_CC]) -V 2>&1 | dnl
 [sed -n 's/^NAG Fortran Compiler Release \([0-9][0-9]*\.[0-9][0-9]*\).*]dnl
-[Build \([0-9][0-9]*\)/\1.\2/p'`]
+[Build \([0-9][0-9]*\)/\1.\2/p']`
    AS_IF([test dnl
 "`echo $acx_cache_var | sed 's/@<:@0-9@:>@//g' 2>/dev/null`" != '..'],
      [acx_cache_var=unknown])])
@@ -485,7 +485,7 @@ m4_define([_ACX_COMPILER_VERSION_CRAY(C)],
 m4_copy([_ACX_COMPILER_VERSION_CRAY(C)], [_ACX_COMPILER_VERSION_CRAY(C++)])
 m4_define([_ACX_COMPILER_VERSION_CRAY(Fortran)],
   [acx_cache_var=`AS_VAR_GET([_AC_CC]) -V 2>&1 | dnl
-[sed -n 's/.*ersion \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`]
+[sed -n 's/.*ersion \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p']`
    AS_IF([test dnl
 "`echo $acx_cache_var | sed 's/@<:@0-9@:>@//g' 2>/dev/null`" != '..'],
      [acx_cache_var=unknown])])
@@ -498,7 +498,7 @@ m4_copy([_ACX_COMPILER_VERSION_PORTLAND(C)],
   [_ACX_COMPILER_VERSION_PORTLAND(C++)])
 m4_define([_ACX_COMPILER_VERSION_PORTLAND(Fortran)],
   [acx_cache_var=`AS_VAR_GET([_AC_CC]) -V 2>/dev/null | dnl
-[sed -n 's/\(pgfortran\|pgf90\) \([0-9][0-9]*\.[0-9][0-9]*\)-\([0-9][0-9]*\).*/\2.\3/p'`]
+[sed -n 's/\(pgfortran\|pgf90\) \([0-9][0-9]*\.[0-9][0-9]*\)-\([0-9][0-9]*\).*/\2.\3/p']`
    AS_IF([test dnl
 "`echo $acx_cache_var | sed 's/@<:@0-9@:>@//g' 2>/dev/null`" != '..'],
      [acx_cache_var=unknown])])
@@ -522,7 +522,7 @@ m4_define([_ACX_COMPILER_VERSION_NEC(C)],
 m4_copy([_ACX_COMPILER_VERSION_NEC(C)], [_ACX_COMPILER_VERSION_NEC(C++)])
 m4_define([_ACX_COMPILER_VERSION_NEC(Fortran)],
   [acx_cache_var=`AS_VAR_GET([_AC_CC]) --version 2>&1 | dnl
-[sed -n 's/^nfort (NFORT) \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`]
+[sed -n 's/^nfort (NFORT) \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p']`
    AS_IF([test dnl
 "`echo $acx_cache_var | sed 's/@<:@0-9@:>@//g' 2>/dev/null`" != '..'],
      [acx_cache_var=unknown])])
