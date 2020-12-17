@@ -2594,6 +2594,7 @@ nag: NAGFOR
 sun: __SUNPRO_F95
 gnu: __GFORTRAN__
 ibm: __xlC__
+flang: __FLANG,__flang__
 unknown: CHOKEME"
       acx_success=no
       for acx_compiler_vendor_test in $acx_compiler_vendor_options; do
@@ -2640,7 +2641,7 @@ fi ;; #(
    if test "`echo $acx_cv_fc_compiler_version | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
   acx_cv_fc_compiler_version=unknown
 fi ;; #(
-        portland) acx_cv_fc_compiler_version=`$FC -V | sed -n 's/pgfortran \([0-9][0-9]*\.[0-9][0-9]*\)-\([0-9][0-9]*\).*/\1.\2/p'`
+        portland) acx_cv_fc_compiler_version=`$FC -V 2>/dev/null | sed -n 's/\(pgfortran\|pgf90\) \([0-9][0-9]*\.[0-9][0-9]*\)-\([0-9][0-9]*\).*/\2.\3/p'`
    if test "`echo $acx_cv_fc_compiler_version | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
   acx_cv_fc_compiler_version=unknown
 fi ;; #(
@@ -2648,8 +2649,23 @@ fi ;; #(
    if test "`echo $acx_cv_fc_compiler_version | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
   acx_cv_fc_compiler_version=unknown
 fi ;; #(
-        gnu) acx_cv_fc_compiler_version=`$FC -dumpversion 2>/dev/null`
+        gnu) acx_cv_fc_compiler_version=`$FC -dumpfullversion 2>/dev/null`
+   if test $? -ne 0 || test -z "$acx_cv_fc_compiler_version"; then :
+  acx_cv_fc_compiler_version=`$FC -dumpversion 2>/dev/null`
+fi
    if test "`echo $acx_cv_fc_compiler_version | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
+  acx_cv_fc_compiler_version=unknown
+fi ;; #(
+        flang) acx_cv_fc_compiler_version=`$FC -V 2>&1 | sed -n 's/.*version \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\)/\1/p'`
+   if test $? -ne 0 || test -z "$acx_cv_fc_compiler_version"; then :
+  acx_cv_fc_compiler_version=`$FC --version | sed -n 's/.*version \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`
+      if test $? -eq 0 && test -n "$acx_cv_fc_compiler_version"; then :
+  acx_cv_fc_compiler_version="classic:${acx_cv_fc_compiler_version}"
+fi
+else
+  acx_cv_fc_compiler_version="f18:${acx_cv_fc_compiler_version}"
+fi
+   if test "`echo $acx_cv_fc_compiler_version | sed 's/^.*://' | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
   acx_cv_fc_compiler_version=unknown
 fi ;; #(
 
