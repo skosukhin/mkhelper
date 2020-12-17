@@ -3011,21 +3011,36 @@ else
       end module
 _ACEOF
 if ac_fn_fc_try_compile "$LINENO"; then :
-  acx_cv_fc_module_naming_ext=`ls | sed -n 's,conftest_module\.,,p'`
-         if ${acx_cv_fc_module_naming_ext:+false} :; then :
-  acx_cv_fc_module_naming_ext=`ls | sed -n 's,CONFTEST_MODULE\.,,p'`
-            if ${acx_cv_fc_module_naming_ext:+false} :; then :
-  acx_cv_fc_module_naming_ext=unknown
+  case "$acx_cv_fc_module_naming_upper" in #(
+  yes) :
+    acx_tmp='CONFTEST_MODULE.*'
+            acx_cv_fc_module_naming_ext=unknown ;; #(
+  no) :
+    acx_tmp='conftest_module.*'
+            acx_cv_fc_module_naming_ext=unknown ;; #(
+  *) :
+    if ${acx_cv_fc_module_naming_ext+:} false; then :
+  acx_tmp="CONFTEST_MODULE.$acx_cv_fc_module_naming_ext conftest_module.$acx_cv_fc_module_naming_ext"
                acx_cv_fc_module_naming_upper=unknown
 else
-  acx_cv_fc_module_naming_upper=yes
+  acx_tmp='CONFTEST_MODULE.* conftest_module.*'
+               acx_cv_fc_module_naming_upper=unknown
+               acx_cv_fc_module_naming_ext=unknown
+fi ;;
+esac
+         acx_tmp=`ls $acx_tmp 2>/dev/null`
+         if test 1 -eq `$as_echo "$acx_tmp" | wc -l` 2>/dev/null; then :
+  case "$acx_tmp" in #(
+  CONFTEST_MODULE.*) :
+    acx_cv_fc_module_naming_upper=yes
+               acx_cv_fc_module_naming_ext=`echo $acx_tmp | sed -n 's,CONFTEST_MODULE\.,,p'` ;; #(
+  conftest_module.*) :
+    acx_cv_fc_module_naming_upper=no
+               acx_cv_fc_module_naming_ext=`echo $acx_tmp | sed -n 's,conftest_module\.,,p'` ;; #(
+  *) :
+     ;;
+esac
 fi
-else
-  acx_cv_fc_module_naming_upper=no
-fi
-else
-  acx_cv_fc_module_naming_ext=unknown
-         acx_cv_fc_module_naming_upper=unknown
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
       cd ..
