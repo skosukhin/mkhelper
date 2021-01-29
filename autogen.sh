@@ -11,7 +11,7 @@ script_dir=`cd "$script_dir"; pwd`
 
 ( dir="$script_dir/bundled/threaded_hello"
   echo "Running autoreconf in '$dir'..." && cd "$dir" && autoreconf -fvi || exit $?
-  patch --forward --no-backup-if-mismatch -p1 -r - -i "$script_dir/libtool_patches/libtool.m4.nag_wrapper.patch"
+  patch --forward --no-backup-if-mismatch -p1 -r - -i "$script_dir/libtool_patches/libtool.m4.mpi_wrappers.patch"
 
   # The program 'patch' exits with exitcode=1 if the patch has already been applied.
   # Consider this a normal scenario:
