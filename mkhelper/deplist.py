@@ -3,6 +3,7 @@ import os
 import re
 import sys
 import fnmatch
+import collections
 
 try:
     import argparse
@@ -108,7 +109,7 @@ def parse_args():
 
 
 def read_makefile(makefile, inc_order_only):
-    result = dict()
+    result = collections.defaultdict(list)
 
     if makefile == '-':
         stream = sys.stdin
@@ -139,8 +140,6 @@ def read_makefile(makefile, inc_order_only):
                 prereqs.extend(match.group(3).split())
 
             for target in targets:
-                if target not in result:
-                    result[target] = []
                 result[target].extend(prereqs)
 
     stream.close()
@@ -189,13 +188,11 @@ def remove_duplicates(l):
 
 def build_graph(makefiles, inc_oo=False):
     # Read makefiles:
-    result = dict()
+    result = collections.defaultdict(list)
     for mkf in makefiles:
         mkf_dict = read_makefile(mkf, inc_oo)
 
         for target, prereqs in mkf_dict.items():
-            if target not in result:
-                result[target] = []
             result[target].extend(prereqs)
 
     for target in result.keys():
