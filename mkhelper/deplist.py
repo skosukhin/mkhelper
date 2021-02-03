@@ -48,15 +48,15 @@ def parse_args():
 
     parser = ArgumentParser(
         fromfile_prefix_chars='@',
-        description='Reads a set of makefiles and prints a topologically '
-                    'sorted list of prerequisites of the TARGET.')
+        description='Reads a set of MAKEFILEs and prints a topologically '
+                    'sorted list of TARGETs together with their prerequisites.')
 
     parser.add_argument(
         '-d', '--debug-file',
         help='dump debug information to DEBUG_FILE')
     parser.add_argument(
-        '-t', '--target',
-        help='name of the makefile target; if not specified, all targets and '
+        '-t', '--target', nargs='*',
+        help='names of the makefile targets; if not specified, all targets and '
              'prerequisites found in the makefiles are sent to the output')
     parser.add_argument(
         '--inc-oo', action='store_true',
@@ -235,8 +235,7 @@ def main():
     # Insert _meta_root, which will be the starting-point for the dependency
     # graph traverse:
     if args.target:
-        dep_graph[_meta_root] = \
-            [args.target] if args.target in dep_graph else []
+        dep_graph[_meta_root] = [t for t in args.target if t in dep_graph]
     else:
         dep_graph[_meta_root] = sorted(dep_graph.keys())
 
