@@ -90,6 +90,8 @@ AC_SUBST([FC_INC_ORDER_PP_SYS_f90])
 
 ACX_LANG_MACRO_FLAG([AC_SUBST([FC_PP_DEF], [$acx_cv_fc_macro_flag])])
 
+ACX_FC_PP_COMMENTS([], [:])
+
 ACX_FC_MISMATCH([], [:])
 
 AC_SUBST([config_FCFLAGS])

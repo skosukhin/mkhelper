@@ -3524,6 +3524,39 @@ else
 fi
 
 
+      { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether Fortran compiler supports C-style comments" >&5
+$as_echo_n "checking whether Fortran compiler supports C-style comments... " >&6; }
+if ${acx_cv_fc_pp_comments+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  acx_cv_fc_pp_comments=no
+      cat > conftest.$ac_ext <<_ACEOF
+      program main
+/* block
+comment */
+#define CONFTEST_MACRO1 // single line comment
+#define CONFTEST_MACRO2 /* block comment */
+#ifndef CONFTEST_MACRO1
+      choke me
+#endif
+#ifndef CONFTEST_MACRO2
+      choke me
+#endif
+      end
+_ACEOF
+if ac_fn_fc_try_compile "$LINENO"; then :
+  acx_cv_fc_pp_comments=yes
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_pp_comments" >&5
+$as_echo "$acx_cv_fc_pp_comments" >&6; }
+   if test "x$acx_cv_fc_pp_comments" = xyes; then :
+
+else
+  :
+fi
+
       { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler flag needed to allow routines to be called with different argument types" >&5
 $as_echo_n "checking for Fortran compiler flag needed to allow routines to be called with different argument types... " >&6; }
    if ${acx_cv_fc_mismatch_flag+:} false; then :
