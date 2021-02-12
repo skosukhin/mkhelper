@@ -212,8 +212,9 @@ ACX_CONFIG_SUBDIR([bundled/picky],
    [ACX_CONFIG_SUBDIR_PATTERN_ENABLE([silent-rules])],
    [ACX_CONFIG_SUBDIR_PATTERN_WITH([netcdf-root])],
    [ACX_CONFIG_SUBDIR_PATTERN_ENABLE([always])]],
-  [[--enable-always=yes]],
-  [yes])
+  [], [yes])
+ACX_CONFIG_SUBDIR_APPEND_ARGS([bundled/picky],
+  [[--enable-always=yes]])
 
 dnl Configure a libtool-based bundled library that depends on POSIX Threads:
 ACX_CONFIG_SUBDIR([bundled/threaded_hello],

@@ -4401,7 +4401,7 @@ BUNDLED_FCFLAGS=''
 BUNDLED_LIBFILES=''
 
 
-   acx_config_subdir_args_bundled_picky=
+      acx_config_subdir_args_bundled_picky=
    acx_config_subdir_ignore_arg=no
    eval "set dummy $ac_configure_args"; shift
    for acx_config_subdir_arg; do
@@ -4441,7 +4441,11 @@ else
   acx_config_subdir_ignore_arg=no
 fi
    done
-   set dummy --enable-always=yes ; shift
+
+      subdirs_extra="bundled/picky"
+
+
+      set dummy --enable-always=yes ; shift
       for acx_config_subdir_arg; do
         case $acx_config_subdir_arg in #(
   *\'*) :
@@ -4451,12 +4455,9 @@ fi
 esac
         as_fn_append acx_config_subdir_args_bundled_picky " '$acx_config_subdir_arg'"
       done
-      subdirs_extra="bundled/picky"
 
 
-
-
-   acx_config_subdir_args_bundled_threaded_hello=
+      acx_config_subdir_args_bundled_threaded_hello=
    acx_config_subdir_ignore_arg=no
    eval "set dummy $ac_configure_args"; shift
    for acx_config_subdir_arg; do
@@ -4496,7 +4497,7 @@ else
   acx_config_subdir_ignore_arg=no
 fi
    done
-   set dummy --enable-static --disable-shared --disable-maintainer-mode --enable-silent-rules="$enable_silent_rules" ; shift
+         set dummy --enable-static --disable-shared --disable-maintainer-mode --enable-silent-rules="$enable_silent_rules" ; shift
       for acx_config_subdir_arg; do
         case $acx_config_subdir_arg in #(
   *\'*) :
@@ -4507,7 +4508,6 @@ esac
         as_fn_append acx_config_subdir_args_bundled_threaded_hello " '$acx_config_subdir_arg'"
       done
       as_fn_append subdirs_extra " bundled/threaded_hello"
-
 as_fn_append BUNDLED_FCFLAGS "${FC_MOD_IN}bundled/threaded_hello "
 BUNDLED_LIBFILES="bundled/threaded_hello/.libs/libthreaded_hello_f.a $BUNDLED_LIBFILES"
 as_fn_append DEPGEN_EXTERNAL_MODS ',mo_threaded_hello'

@@ -7,14 +7,14 @@
 # AX_SUBDIRS_CONFIGURE.
 # -----------------------------------------------------------------------------
 # Runs the configure script inside directory SUBDIR with the arguments of the
-# parent script modified in the following way (in that order):
+# parent script modified in the following way (in the designated order):
 #     1) all arguments that match any of the shell case patterns listed in
 #        the comma-separated list REMOVE-PATTERNS are removed; if the configure
 #        script inside SUBDIR defines an option with either AC_ARG_ENABLE or
 #        AC_ARG_WITH and you want to filter-out all arguments that might affect
 #        this option, consider using ACX_CONFIG_SUBDIR_PATTERN_ENABLE and
 #        ACX_CONFIG_SUBDIR_PATTERN_WITH, respectively.
-#     2) all arguments from the comma-separated list ARGS-TO-ADD are appended.
+#     2) all arguments from the comma-separated list EXTRA-ARGS are appended.
 #
 # This macro also sets the output variable subdirs_extra to the list of
 # directories recorded with ACX_CONFIG_SUBDIR. This variable can be used in
@@ -23,14 +23,14 @@
 # If SHOW-RECURSIVE-HELP (defaults to no) is set to yes, the help message of the
 # configure script in SUBDIR is shown together with the help message of the top
 # level configure script when the latter is called with the argument
-# '--help=recursive'. In that case, SUBDIR should be provided literally, without
+# '--help=recursive'. In that case, SUBDIR must be provided literally, without
 # using shell variables.
 #
 # Consider calling AC_DISABLE_OPTION_CHECKING in you main configure.ac.
 #
 AC_DEFUN([ACX_CONFIG_SUBDIR],
-  [m4_pushdef([acx_config_subdir_args],
-     [acx_config_subdir_args_[]AS_TR_SH([$1])])dnl
+  [m4_define([ACX_CONFIG_SUBDIR_FOR_$1])dnl
+   m4_pushdef([acx_config_subdir_args], [_ACX_CONFIG_SUBDIR_ARG_VAR([$1])])dnl
    AS_VAR_SET([acx_config_subdir_args])
    acx_config_subdir_ignore_arg=no
    eval "set dummy $ac_configure_args"; shift
@@ -54,14 +54,8 @@ AC_DEFUN([ACX_CONFIG_SUBDIR],
               [" '$acx_config_subdir_arg'"])])],
        [acx_config_subdir_ignore_arg=no])
    done
-   m4_ifnblank([$3],
-     [set dummy m4_normalize(m4_foreach([opt], [$3], [opt ])) ; shift
-      for acx_config_subdir_arg; do
-        ASX_ESCAPE_SINGLE_QUOTE([acx_config_subdir_arg])
-        AS_VAR_APPEND([acx_config_subdir_args],
-          [" '$acx_config_subdir_arg'"])
-      done])
    m4_popdef([acx_config_subdir_args])dnl
+   _ACX_CONFIG_SUBDIR_APPEND_ARGS([$1], [$3])dnl
    m4_ifdef([ACX_CONFIG_SUBDIR_COMMANDS_DEFINED],
      [AS_VAR_APPEND([subdirs_extra], [" $1"])],
      [AC_SUBST([subdirs_extra], ["$1"])
@@ -92,7 +86,7 @@ script found])
                  acx_config_subdir_script=])
               AS_IF([test -n "$acx_config_subdir_script"],
                 [AS_VAR_COPY([acx_config_subdir_args],
-                   [acx_config_subdir_args_[]AS_TR_SH([$acx_config_subdir])])
+                   [_ACX_CONFIG_SUBDIR_ARG_VAR([$acx_config_subdir])])
                  AS_IF([test /dev/null != "$cache_file"],
                    [AS_CASE([$cache_file],
                       [[[\\/]]* | ?:[[\\/]]*],
@@ -124,15 +118,13 @@ AC_MSG_ERROR([$acx_config_subdir_script failed for $acx_config_subdir])])
    m4_define([ACX_CONFIG_SUBDIR_COMMANDS_DEFINED])dnl
    m4_case(m4_default([$4], [no]),
      [yes],
-     [AS_LITERAL_IF([$1], [],
-        [m4_warn([syntax],
-           [Argument SUBDIR of macro ACX_CONFIG_SUBDIR is given a ]dnl
-[non-literal value: '$1'])])
-      m4_append([_AC_LIST_SUBDIRS], [$1], [
+     [AS_LITERAL_IF([$1],
+        [m4_append([_AC_LIST_SUBDIRS], [$1], [
 ])],
+        [m4_fatal([Invalid SHOW-RECURSIVE-HELP argument for $0: '$4' in ]dnl
+[combination with a non-literal value for SUBDIR ('$1')])])],
      [no], [],
-     [m4_fatal(
-        [Invalid SHOW-RECURSIVE-HELP argument for ACX_CONFIG_SUBDIR: '$4'])])])
+     [m4_fatal([Invalid SHOW-RECURSIVE-HELP argument for $0: '$4'])])])
 
 # ACX_CONFIG_SUBDIR_PATTERN_ENABLE(FEATURE)
 # -----------------------------------------------------------------------------
@@ -150,6 +142,22 @@ AC_DEFUN([ACX_CONFIG_SUBDIR_PATTERN_ENABLE],
 #
 AC_DEFUN([ACX_CONFIG_SUBDIR_PATTERN_WITH],
   [[-with-$1|-with-$1=*|--with-$1|--with-$1=*|-without-$1|--without-$1]])
+
+# ACX_CONFIG_SUBDIR_APPEND_ARGS(SUBDIR,
+#                               [EXTRA-ARGS])
+# -----------------------------------------------------------------------------
+# Appends arguments from the comma-separated list EXTRA-ARGS to the command
+# that runs the configure script inside directory SUBDIR. Expansion of the
+# macro must by expansion of ACX_CONFIG_SUBDIR with the same value for SUBDIR.
+#
+AC_DEFUN([ACX_CONFIG_SUBDIR_APPEND_ARGS],
+  [AS_LITERAL_IF([$1],
+     [m4_ifndef([ACX_CONFIG_SUBDIR_FOR_$1],
+        [m4_fatal([$0($1) must be expanded after ACX_CONFIG_SUBDIR($1)])])],
+     [m4_warn([syntax],
+        [Undefined behaviour for $0: argument SUBDIR is given a ]dnl
+[non-literal value: '$1'])])dnl
+   _ACX_CONFIG_SUBDIR_APPEND_ARGS($@)])
 
 # ACX_CONFIG_SUBDIR_VAR(VARIABLE,
 #                       SUBDIR,
@@ -174,3 +182,28 @@ AC_DEFUN([ACX_CONFIG_SUBDIR_VAR],
    AS_IF([test $? -eq 0],
      [AS_VAR_COPY([$1], [acx_exec_result])],
      [AC_MSG_ERROR([unable to run '$2/config.status'])])])
+
+# _ACX_CONFIG_SUBDIR_ARG_VAR(SUBDIR)
+# -----------------------------------------------------------------------------
+# Expands to the name of shell variable that holds arguments of the configure
+# script inside directory SUBDIR.
+#
+m4_define([_ACX_CONFIG_SUBDIR_ARG_VAR],
+  [acx_config_subdir_args_[]AS_TR_SH([$1])])
+
+# _ACX_CONFIG_SUBDIR_APPEND_ARGS(SUBDIR,
+#                                [EXTRA-ARGS])
+# -----------------------------------------------------------------------------
+# Implementation of the core logic that appends arguments from the
+# comma-separated list EXTRA-ARGS to the command that runs the configure script
+# inside directory SUBDIR.
+#
+m4_define([_ACX_CONFIG_SUBDIR_APPEND_ARGS],
+  [m4_pushdef([acx_config_subdir_args], [_ACX_CONFIG_SUBDIR_ARG_VAR([$1])])dnl
+   m4_ifnblank([$2],
+     [set dummy m4_normalize(m4_foreach([opt], [$2], [opt ])) ; shift
+      for acx_config_subdir_arg; do
+        ASX_ESCAPE_SINGLE_QUOTE([acx_config_subdir_arg])
+        AS_VAR_APPEND([acx_config_subdir_args], [" '$acx_config_subdir_arg'"])
+      done])
+   m4_popdef([acx_config_subdir_args])])
