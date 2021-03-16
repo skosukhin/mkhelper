@@ -95,7 +95,7 @@ CUDA compiler that require C++ standard library])])])])
 #
 m4_define([_ACX_FC_CUDA_COMPATIBLE],
   [AC_LANG_ASSERT([Fortran])dnl
-   AC_REQUIRE([ACX_PROG_NVCC])dnl
+   AC_REQUIRE([ACX_PROG_CUDACXX])dnl
    AC_LANG_PUSH([CUDA])
    acx_fc_cuda_compatiable=no
    AC_COMPILE_IFELSE([AC_LANG_SOURCE([$1])],
