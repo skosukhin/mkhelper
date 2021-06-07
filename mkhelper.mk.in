@@ -62,6 +62,7 @@ lib_files:= libmkhelper.a
 
 # For each library we need a list of source files implementing them:
 libmkhelper_src_files= $(filter src/library/%,$(src_files))
+@INVALID_DISABLED@libmkhelper_src_files:= $(filter-out src/library/invalid/%,$(libmkhelper_src_files))
 
 # Executables:
 exe_files:= main@EXEEXT@
@@ -70,7 +71,7 @@ exe_files:= main@EXEEXT@
 main_obj_file:= src/program/main.@OBJEXT@
 
 # Two distjoint sets of dependency files: one for the libraries and one for
-# executables:
+# the executables:
 lib_dep_files= $(addsuffix .d,$(libmkhelper_src_files))
 exe_dep_files= $(filter-out $(lib_dep_files),$(addsuffix .d,$(src_files))) extra_f90.d
 
@@ -139,7 +140,7 @@ install: install-libs install-mods install-exes
 libmkhelper.a: $(libmkhelper_src_files:.f90=.@OBJEXT@)
 
 $(lib_files): | $(dir_files)
-	$(silent_AR)rm -f $@ && $(AR) $(ARFLAGS) $@ $+
+	$(silent_AR)rm -f $@ && $(AR) $(ARFLAGS) $@ $^
 
 # Executable linking rules:
 main@EXEEXT@: $(filter %.@OBJEXT@,$(shell $(DEPLIST) $(DEPLIST_args) -t $(main_obj_file) -f $(exe_dep_files))) $(lib_files) $(BUNDLED_LIBFILES)

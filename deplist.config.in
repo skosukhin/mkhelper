@@ -6,3 +6,5 @@
 --check-unique-prereq *.@FC_MOD_FILE_EXT@.proxy *.@OBJEXT@
 # Check that every object file can be produced from a source file:
 --check-exists-prereq *.@OBJEXT@ *.f90
+# Check that all object files in the library have unique basenames:
+--check-unique-basename src/library/*.@OBJEXT@

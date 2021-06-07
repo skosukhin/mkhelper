@@ -1,0 +1,2 @@
+module mo_mkhelper_same_basename
+end module mo_mkhelper_same_basename
