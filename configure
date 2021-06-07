@@ -600,6 +600,7 @@ ARFLAGS
 AR
 NETCDF_FCLIBS
 NETCDF_FCFLAGS
+INVALID_DISABLED
 DEFAULT_VERBOSITY
 FPP
 config_FCFLAGS
@@ -3973,6 +3974,11 @@ fi
 
 if test "x$enable_invalid_test" = xyes; then :
   as_fn_append config_FCFLAGS " ${acx_cv_fc_macro_flag}TEST_INVALID"
+   INVALID_DISABLED='#'
+
+else
+  INVALID_DISABLED=''
+
 fi
 
 mkhelper_linker_flags="'-L'"

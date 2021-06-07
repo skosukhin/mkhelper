@@ -151,7 +151,9 @@ AC_ARG_ENABLE([invalid-test],
   [], [enable_invalid_test=no])
 AS_VAR_IF([enable_invalid_test], [yes],
   [AS_VAR_APPEND([config_FCFLAGS],
-     [" ${acx_cv_fc_macro_flag}TEST_INVALID"])])
+     [" ${acx_cv_fc_macro_flag}TEST_INVALID"])
+   AC_SUBST([INVALID_DISABLED], ['#'])],
+  [AC_SUBST([INVALID_DISABLED], [''])])
 
 mkhelper_linker_flags="'-L'"
 AS_VAR_IF([enable_rpaths], [yes],

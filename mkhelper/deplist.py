@@ -70,6 +70,14 @@ def parse_args():
              'the check fails, a warning message is emitted to the standard '
              'error stream')
     parser.add_argument(
+        '--check-unique-basename', action='append', nargs='+',
+        metavar='PATTERN',
+        help='list of shell-like wildcards; the option enables additional '
+             'consistency checks of the dependency graph; all targets that '
+             'match at least one the patterns are checked whether none of them '
+             'have the same basename; if the check fails, a warning message is '
+             'emitted to the standard error stream')
+    parser.add_argument(
         # Unfortunately, we cannot set nargs to 'two or more', therefore we
         # set nargs to 'one or more':
         '--check-exists-prereq', action='append', nargs='+', metavar='PATTERN',
@@ -244,6 +252,9 @@ def main():
     finish_visit_cb_list = []
     skip_visit_cb_list = []
 
+    # Callbacks that are called once the graph is traversed:
+    postprocess_cb_list = []
+
     if args.check_unique_prereq:
         def check_unique_prereq_start_visit_cb(vertex):
             # Skip if the vertex is _meta_root or does not have descendants:
@@ -264,6 +275,32 @@ def main():
                                  args.check_colour)
 
         start_visit_cb_list.append(check_unique_prereq_start_visit_cb)
+
+    if args.check_unique_basename:
+        basenames = [collections.defaultdict(set) for _ in
+                     range(len(args.check_unique_basename))]
+
+        def check_unique_basename_start_visit_cb(vertex):
+            # Skip if the vertex is _meta_root:
+            if vertex == _meta_root:
+                return
+            for i, pattern_list in enumerate(args.check_unique_basename):
+                for pattern in pattern_list:
+                    if fnmatch.fnmatch(vertex, pattern):
+                        basenames[i][os.path.basename(vertex)].add(vertex)
+
+        start_visit_cb_list.append(check_unique_basename_start_visit_cb)
+
+        def check_unique_basename_postprocess_cb():
+            for basename_group in basenames:
+                for basename, paths in basename_group.items():
+                    if len(paths) > 1 and basename:
+                        warn("the dependency graph contains more than one "
+                             "target with basename '%s':\n\t%s"
+                             % (basename, '\n\t'.join(paths)),
+                             args.check_colour)
+
+        postprocess_cb_list.append(check_unique_basename_postprocess_cb)
 
     if args.check_exists_prereq:
         def check_exists_prereq_start_visit_cb(vertex):
@@ -319,6 +356,9 @@ def main():
               start_visit_cb_list=start_visit_cb_list,
               finish_visit_cb_list=finish_visit_cb_list,
               skip_visit_cb_list=skip_visit_cb_list)
+
+    for postprocess_cb in postprocess_cb_list:
+        postprocess_cb()
 
     # The last element of toposort is _meta_root:
     print('\n'.join(toposort[-2::-1]))
