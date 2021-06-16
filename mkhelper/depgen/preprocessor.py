@@ -66,6 +66,10 @@ class Preprocessor:
     def readline(self):
         while 1:
             line = self._include_stack.readline()
+
+            if not line:
+                return line
+
             line = self._replace_continuation(line)
             line = self._remove_block_comments(line)
 
