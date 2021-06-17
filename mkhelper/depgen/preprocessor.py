@@ -5,16 +5,16 @@ from depgen import IncludeFinder, StreamStack, file_in_dir, open23, \
 
 
 class Preprocessor:
-    _re_ifdef = re.compile(r'^#\s*if(n)?def\s+([a-zA-Z_]\w*)')
-    _re_if_expr = re.compile(r'^#\s*if((?:\s|\().*)')
+    _re_ifdef = re.compile(r'^\s*#\s*if(n)?def\s+([a-zA-Z_]\w*)')
+    _re_if_expr = re.compile(r'^\s*#\s*if((?:\s|\().*)')
 
-    _re_elif = re.compile(r'^#\s*elif((?:\s|\().*)')
-    _re_else = re.compile(r'^#\s*else(?:\s.*)')
-    _re_endif = re.compile(r'^#\s*endif(?:\s.*)')
+    _re_elif = re.compile(r'^\s*#\s*elif((?:\s|\().*)')
+    _re_else = re.compile(r'^\s*#\s*else(?:\s.*)')
+    _re_endif = re.compile(r'^\s*#\s*endif(?:\s.*)')
 
-    _re_include = re.compile(r'^#\s*include\s+(?:"(.*?)"|<(.*?)>)')
-    _re_define = re.compile(r'^#\s*define\s+([a-zA-Z_]\w*)(\(.*\))?\s+(.*)$')
-    _re_undef = re.compile(r'^#\s*undef\s+([a-zA-Z_]\w*)')
+    _re_include = re.compile(r'^\s*#\s*include\s+(?:"(.*?)"|<(.*?)>)')
+    _re_define = re.compile(r'^\s*#\s*define\s+([a-zA-Z_]\w*)(\(.*\))?\s+(.*)$')
+    _re_undef = re.compile(r'^\s*#\s*undef\s+([a-zA-Z_]\w*)')
 
     # matches "defined MACRO_NAME" and "defined (MACRO_NAME)"
     _re_defined_call = re.compile(
