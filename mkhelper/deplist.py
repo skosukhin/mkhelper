@@ -55,6 +55,9 @@ def parse_args():
         '-d', '--debug-file',
         help='dump debug information to DEBUG_FILE')
     parser.add_argument(
+        '--dot-file',
+        help='dump the dependency file in the GraphViz DOT format to DOT_FILE')
+    parser.add_argument(
         '-t', '--target', nargs='*',
         help='names of the makefile targets; if not specified, all targets and '
              'prerequisites found in the makefiles are sent to the output')
@@ -352,7 +355,8 @@ def main():
         toposort.append(vertex)
     finish_visit_cb_list.append(toposort_finish_visit_cb)
 
-    visit_dfs(dep_graph, _meta_root,
+    visited = set()
+    visit_dfs(dep_graph, _meta_root, visited,
               start_visit_cb_list=start_visit_cb_list,
               finish_visit_cb_list=finish_visit_cb_list,
               skip_visit_cb_list=skip_visit_cb_list)
@@ -362,6 +366,91 @@ def main():
 
     # The last element of toposort is _meta_root:
     print('\n'.join(toposort[-2::-1]))
+
+    if args.dot_file:
+        meta_root_name = "start"
+        dot_graph = collections.defaultdict(set)
+
+        # Take only visited nodes:
+        for tgt, prqs in dep_graph.items():
+            if tgt in visited:
+                tgt = meta_root_name if tgt == _meta_root else tgt
+                visited_prqs = dot_graph[tgt]
+                for prq in prqs:
+                    if prq in visited:
+                        visited_prqs.add(prq)
+
+        accepted_patterns = ['*.o']
+        while 1:
+            last_pass = True
+            for tgt, prqs in dot_graph.items():
+                to_remove = set()
+                to_add = set()
+                for prq in prqs:
+                    if not any(fnmatch.fnmatch(prq, pattern)
+                               for pattern in accepted_patterns):
+                        to_remove.add(prq)
+                        prq_prqs = dot_graph.get(prq, None)
+                        if prq_prqs:
+                            to_add |= prq_prqs
+                prqs -= to_remove
+                prqs |= to_add
+                if to_add:
+                    last_pass = False
+            if last_pass:
+                to_remove = set()
+                for tgt, prqs in dot_graph.items():
+                    if not any(fnmatch.fnmatch(tgt, pattern)
+                               for pattern in accepted_patterns):
+                        to_remove.add(tgt)
+                to_remove.remove(meta_root_name)
+                for t in to_remove:
+                    del dot_graph[t]
+                break
+
+        dot_subgraphs = collections.defaultdict(set)
+        for tgt, prqs in dot_graph.items():
+            dot_subgraphs[os.path.dirname(tgt)].add(tgt)
+            for prq in prqs:
+                dot_subgraphs[os.path.dirname(prq)].add(prq)
+
+        lines = ['digraph all {\n\n']
+
+        for subgraph in sorted(dot_subgraphs.keys()):
+            lines.extend(['\tsubgraph "cluster {0}" {{\n'.format(subgraph),
+                          '\t\tlabel = "{0}";\n'.format(subgraph)])
+            subgraph_elements = dot_subgraphs[subgraph]
+
+            for tgt in subgraph_elements:
+                prqs = dot_graph[tgt]
+                internal_prqs = set()
+                for prq in prqs:
+                    if prq in subgraph_elements:
+                        internal_prqs.add(prq)
+                if internal_prqs:
+                    lines.append('\t\t"{0}" -> {{{1}}};\n'.format(
+                        tgt,
+                        ';'.join('"{0}"'.format(p)
+                                 for p in sorted(internal_prqs))))
+                    prqs -= internal_prqs
+                else:
+                    lines.append('\t\t"{0}";\n'.format(tgt))
+            lines.append('\t}\n\n')
+
+        for tgt in sorted(dot_graph.keys()):
+            prqs = dot_graph[tgt]
+            if prqs:
+                lines.append('\t"{0}" -> {{{1}}};\n'.format(
+                    tgt,
+                    ';'.join('"{0}"'.format(p)
+                             for p in sorted(prqs))))
+
+        lines.append('\t"{0}" [shape = Mdiamond];\n'.format(meta_root_name))
+
+        lines.append('}\n')
+
+        with open(args.dot_file, 'w') as dot_file:
+            dot_file.writelines(lines)
 
 
 if __name__ == "__main__":
