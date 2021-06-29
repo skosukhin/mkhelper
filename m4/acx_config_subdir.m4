@@ -148,7 +148,8 @@ AC_DEFUN([ACX_CONFIG_SUBDIR_PATTERN_WITH],
 # -----------------------------------------------------------------------------
 # Appends arguments from the comma-separated list EXTRA-ARGS to the command
 # that runs the configure script inside directory SUBDIR. Expansion of the
-# macro must by expansion of ACX_CONFIG_SUBDIR with the same value for SUBDIR.
+# macro must be preceded by expansion of ACX_CONFIG_SUBDIR with the same value
+# for SUBDIR.
 #
 AC_DEFUN([ACX_CONFIG_SUBDIR_APPEND_ARGS],
   [AS_LITERAL_IF([$1],
