@@ -160,6 +160,25 @@ AC_DEFUN([ACX_CONFIG_SUBDIR_APPEND_ARGS],
 [non-literal value: '$1'])])dnl
    _ACX_CONFIG_SUBDIR_APPEND_ARGS($@)])
 
+# ACX_CONFIG_SUBDIR_IFELSE(SUBDIR,
+#                          [ACTION-IF-CONFIGURED],
+#                          [ACTION-IF-NOT-CONFIGURED])
+# -----------------------------------------------------------------------------
+# Checks whether SUBDIR was actually configured and runs ACTION-IF-CONFIGURED
+# if that is the case. Otherwise, runs ACTION-IF-NOT-CONFIGURED.
+#
+# For example, the top-level configure script needs to run 'some-command'
+# inside AC_CONFIG_COMMANDS_PRE but only if 'subdir/configure' was actually
+# run. A way to implement that is to expand the following:
+#
+# AS_IF([some_complex_condition],
+#   [ACX_CONFIG_SUBDIR([subdir])])
+# AC_CONFIG_COMMANDS_PRE(
+#   [ACX_CONFIG_SUBDIR_IFELSE([subdir], [some-command])])
+#
+AC_DEFUN([ACX_CONFIG_SUBDIR_IFELSE],
+  [AS_CASE([" $subdirs_extra "], [*' $1 '*], [$2], [$3])])
+
 # ACX_CONFIG_SUBDIR_VAR(VARIABLE,
 #                       SUBDIR,
 #                       TEMPLATE)
@@ -169,8 +188,8 @@ AC_DEFUN([ACX_CONFIG_SUBDIR_APPEND_ARGS],
 # inside directory SUBDIR. The macro provides means of getting the results of
 # the configure script from the subdirectory to the top-level configure script.
 #
-# For example, if 'subdir/configure' sets an output variable 'LIBM' and the
-# value needs to be known in the top-level configure script, the way to do it
+# For example, 'subdir/configure' sets an output variable 'LIBM' and its value
+# needs to be known in the top-level configure script. A way to implement that
 # is to expand the following:
 #
 # ACX_CONFIG_SUBDIR([subdir])
