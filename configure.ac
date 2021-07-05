@@ -184,7 +184,7 @@ conftest.$ac_objext >&AS_MESSAGE_LOG_FD"
       _AC_DO_VAR([mkhelper_ar_try])
       rm -f libconftest.a])
    test "$ac_status" -eq 0 >/dev/null 2>&1],
-  [AR=$acx_candidate])
+  [AR=$acx_cv_prog_AR])
 
 AC_ARG_VAR([PYTHON],
   [Python interpreter command (used for Fortran dependency generation)])dnl
@@ -192,7 +192,7 @@ ACX_PROG_SEARCH([PYTHON], [python python3],
   [mkhelper_depgen_try='$acx_candidate dnl
 $srcdir/mkhelper/depgen.py -h > /dev/null'
    AC_TRY_EVAL([mkhelper_depgen_try])],
-  [PYTHON=$acx_candidate])
+  [PYTHON=$acx_cv_prog_PYTHON])
 
 AC_PROG_INSTALL
 AC_PROG_MKDIR_P
