@@ -4140,7 +4140,7 @@ fi
    if ${acx_cv_prog_AR+:} false; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_prog_AR" >&5
 $as_echo "$acx_cv_prog_AR" >&6; }
-      AR=$acx_candidate
+      AR=$acx_cv_prog_AR
 else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: unknown" >&5
 $as_echo "unknown" >&6; }
@@ -4179,7 +4179,7 @@ fi
    if ${acx_cv_prog_PYTHON+:} false; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_prog_PYTHON" >&5
 $as_echo "$acx_cv_prog_PYTHON" >&6; }
-      PYTHON=$acx_candidate
+      PYTHON=$acx_cv_prog_PYTHON
 else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: unknown" >&5
 $as_echo "unknown" >&6; }
