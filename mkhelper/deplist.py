@@ -62,6 +62,9 @@ def parse_args():
         '--inc-oo', action='store_true',
         help='include order-only prerequisites in the dependency graph')
     parser.add_argument(
+        '-r', '--reverse', action='store_true',
+        help='print the output list in the reversed order')
+    parser.add_argument(
         '--check-unique-prereq', action='append', nargs=2, metavar='PATTERN',
         help='pair of shell-like wildcards; the option enables additional '
              'consistency checks of the dependency graph: each target that '
@@ -361,7 +364,7 @@ def main():
         postprocess_cb()
 
     # The last element of toposort is _meta_root:
-    print('\n'.join(toposort[-2::-1]))
+    print('\n'.join(toposort[-2::-1] if args.reverse else toposort[:-1]))
 
 
 if __name__ == "__main__":
