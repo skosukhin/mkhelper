@@ -245,10 +245,10 @@ def main():
 
     # Insert _meta_root, which will be the starting-point for the dependency
     # graph traverse:
-    if args.target:
-        dep_graph[_meta_root] = [t for t in args.target if t in dep_graph]
-    else:
+    if args.target is None:
         dep_graph[_meta_root] = sorted(dep_graph.keys())
+    else:
+        dep_graph[_meta_root] = [t for t in args.target if t in dep_graph]
 
     # Visitor callbacks:
     start_visit_cb_list = []
@@ -364,7 +364,9 @@ def main():
         postprocess_cb()
 
     # The last element of toposort is _meta_root:
-    print('\n'.join(toposort[-2::-1] if args.reverse else toposort[:-1]))
+    output = '\n'.join(toposort[-2::-1] if args.reverse else toposort[:-1])
+    if output:
+        print(output)
 
 
 if __name__ == "__main__":
