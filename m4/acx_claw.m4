@@ -190,8 +190,7 @@ module file extraction], [acx_cv_claw_supports_module_gen],
       AC_TRY_COMMAND(
         [$CLAW -f -o conftest.claw.$ac_ext --gen-mod-files dnl
 ${acx_cv_claw_module_out_flag}sub $CLAWFLAGS conftest.$ac_ext dnl
->&AS_MESSAGE_LOG_FD])
-      AC_TRY_COMMAND([test -f sub/conftest_module.xmod])
+>&AS_MESSAGE_LOG_FD && test -f sub/conftest_module.xmod])
       AS_IF([test $ac_status -eq 0], [acx_cv_claw_supports_module_gen=yes])
       cd ..
       rm -rf conftest.dir])
