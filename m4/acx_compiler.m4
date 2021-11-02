@@ -460,7 +460,8 @@ m4_define([_ACX_COMPILER_VERSION],
 
 # _ACX_COMPILER_VERSION_FROM_MACROS(MACRO_MAJOR,
 #                                   MACRO_MINOR,
-#                                   MACRO_PATCHLEVEL)
+#                                   MACRO_PATCHLEVEL,
+#                                   [PROLOGUE])
 # -----------------------------------------------------------------------------
 # Expands to a generic scripts that retrieves the C or C++ (or another
 # language that supports AC_COMPUTE_INT) compiler version.
@@ -468,15 +469,15 @@ m4_define([_ACX_COMPILER_VERSION],
 m4_define([_ACX_COMPILER_VERSION_FROM_MACROS],
   [acx_cache_var=unknown
    AC_COMPUTE_INT([acx_compiler_version_value],
-     [$1], [], [acx_compiler_version_value=])
+     [$1], [$4], [acx_compiler_version_value=])
    AS_IF([test -n "$acx_compiler_version_value"],
      [acx_cache_var=$acx_compiler_version_value
       AC_COMPUTE_INT([acx_compiler_version_value],
-        [$2], [], [acx_compiler_version_value=])
+        [$2], [$4], [acx_compiler_version_value=])
       AS_IF([test -n "$acx_compiler_version_value"],
         [AS_VAR_APPEND([acx_cache_var], [".$acx_compiler_version_value"])
          AC_COMPUTE_INT([acx_compiler_version_value],
-           [$3], [], [acx_compiler_version_value=])
+           [$3], [$4], [acx_compiler_version_value=])
          AS_IF([test -n "$acx_compiler_version_value"],
            [AS_VAR_APPEND([acx_cache_var],
               [".$acx_compiler_version_value"])])])])])
@@ -507,9 +508,20 @@ m4_define([_ACX_COMPILER_VERSION_INTEL(C)],
         [__INTEL_LLVM_COMPILER%100])],
      [acx_compiler_version_epoch='classic'
       _ACX_COMPILER_VERSION_FROM_MACROS(
-        [(__INTEL_COMPILER >= 2000)?(__INTEL_COMPILER):(__INTEL_COMPILER/100)],
-        [(__INTEL_COMPILER >= 2000)?(__INTEL_COMPILER_UPDATE):(__INTEL_COMPILER%100)],
-        [(__INTEL_COMPILER >= 2000)?(0):(__INTEL_COMPILER_UPDATE)])])
+        [ACX_MACRO_MAJOR], [ACX_MACRO_MINOR], [ACX_MACRO_PATCHLEVEL], [[
+#if __INTEL_COMPILER < 2021 || __INTEL_COMPILER == 202110 || __INTEL_COMPILER == 202111
+# define ACX_MACRO_MAJOR __INTEL_COMPILER/100
+# define ACX_MACRO_MINOR (__INTEL_COMPILER%100)/10
+# ifdef __INTEL_COMPILER_UPDATE
+#  define ACX_MACRO_PATCHLEVEL __INTEL_COMPILER_UPDATE
+# else
+#  define ACX_MACRO_PATCHLEVEL __INTEL_COMPILER%10
+# endif
+#else
+# define ACX_MACRO_MAJOR __INTEL_COMPILER
+# define ACX_MACRO_MINOR __INTEL_COMPILER_UPDATE
+# define ACX_MACRO_PATCHLEVEL 0
+#endif]])])
    AS_IF([test "x$acx_cache_var" != xunknown],
      [acx_cache_var="${acx_compiler_version_epoch}:${acx_cache_var}"])])
 m4_copy([_ACX_COMPILER_VERSION_INTEL(C)], [_ACX_COMPILER_VERSION_INTEL(C++)])
