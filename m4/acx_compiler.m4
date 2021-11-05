@@ -199,7 +199,7 @@ grep '^icc (ICC)' >/dev/null 2>&1],
         [acx_cache_var=intel],
         [AS_VAR_GET([_AC_CC]) --version 2>/dev/null | dnl
 grep '^Intel.*oneAPI.*Compiler' >/dev/null 2>&1],
-        [acx_cache_var=intel]
+        [acx_cache_var=intel],
         [AS_VAR_GET([_AC_CC]) -V 2>&1 | dnl
 grep '^NAG Fortran Compiler Release' >/dev/null 2>&1],
         [acx_cache_var=nag],
