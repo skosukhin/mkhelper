@@ -204,14 +204,6 @@ def visit_dfs(dep_graph, vertex,
             finish_visit_cb(vertex)
 
 
-# To make sure that the output is reproducible, we need to work with lists and
-# not with sets. This helper function removes duplicates from a list while
-# preserving the order.
-def remove_duplicates(l):
-    seen = set()
-    return [x for x in l if not (x in seen or seen.add(x))]
-
-
 def build_graph(makefiles, inc_oo):
     # Read makefiles:
     result = collections.defaultdict(list)
@@ -221,8 +213,18 @@ def build_graph(makefiles, inc_oo):
         for target, prereqs in mkf_dict.items():
             result[target].extend(prereqs)
 
+    # Remove duplicates (we do not use sets as values of the dictionary to keep
+    # the order of prerequisites):
     for target in result.keys():
-        result[target] = remove_duplicates(result[target])
+        seen = set()
+        result[target] = [prereq for prereq in result[target]
+                          if not (prereq in seen or seen.add(prereq))]
+
+    # Make leaves (i.e. prerequisites without any prerequisites) explicit nodes
+    # of the graph:
+    leaves = set(prereq for prereqs in result.values()
+                 for prereq in prereqs if prereq not in result)
+    result.update((prereq, result.default_factory()) for prereq in leaves)
 
     return result
 
@@ -232,6 +234,8 @@ def flip_edges(graph):
     for parent, children in graph.items():
         for child in children:
             result[child].append(parent)
+        else:
+            _ = result[parent]
     return result
 
 
