@@ -23,6 +23,9 @@ script_dir=`cd "$script_dir"; pwd`
   patch --forward --no-backup-if-mismatch -p1 -r - -i "$script_dir/libtool_patches/libtool.m4.nag_convenience.patch"
   exitcode=$?; test $exitcode -ne 0 && test $exitcode -ne 1 && exit $exitcode
 
+  patch --forward --no-backup-if-mismatch -p1 -r - -i "$script_dir/libtool_patches/libtool.m4.debian_no_overlink.patch"
+  exitcode=$?; test $exitcode -ne 0 && test $exitcode -ne 1 && exit $exitcode
+
   autoconf -f || exit $?
 
   # Reset libtool.m4 timestamps to avoid confusing make if the latter

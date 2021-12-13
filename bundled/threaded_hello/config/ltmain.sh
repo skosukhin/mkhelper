@@ -7568,7 +7568,10 @@ func_mode_link ()
 	case $pass in
 	dlopen) libs=$dlfiles ;;
 	dlpreopen) libs=$dlprefiles ;;
-	link) libs="$deplibs %DEPLIBS% $dependency_libs" ;;
+	link)
+	  libs="$deplibs %DEPLIBS%"
+	  test "X$link_all_deplibs" != Xno && libs="$libs $dependency_libs"
+	  ;;
 	esac
       fi
       if test lib,dlpreopen = "$linkmode,$pass"; then
@@ -7894,19 +7897,19 @@ func_mode_link ()
 	    # It is a libtool convenience library, so add in its objects.
 	    func_append convenience " $ladir/$objdir/$old_library"
 	    func_append old_convenience " $ladir/$objdir/$old_library"
+	    tmp_libs=
+	    for deplib in $dependency_libs; do
+	      deplibs="$deplib $deplibs"
+	      if $opt_preserve_dup_deps; then
+		case "$tmp_libs " in
+		*" $deplib "*) func_append specialdeplibs " $deplib" ;;
+		esac
+	      fi
+	      func_append tmp_libs " $deplib"
+	    done
 	  elif test prog != "$linkmode" && test lib != "$linkmode"; then
 	    func_fatal_error "'$lib' is not a convenience library"
 	  fi
-	  tmp_libs=
-	  for deplib in $dependency_libs; do
-	    deplibs="$deplib $deplibs"
-	    if $opt_preserve_dup_deps; then
-	      case "$tmp_libs " in
-	      *" $deplib "*) func_append specialdeplibs " $deplib" ;;
-	      esac
-	    fi
-	    func_append tmp_libs " $deplib"
-	  done
 	  continue
 	fi # $pass = conv
 
