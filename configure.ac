@@ -94,6 +94,8 @@ ACX_FC_PP_COMMENTS([], [:])
 
 ACX_FC_MISMATCH([], [:])
 
+ACX_FC_ENDIANNESS_REAL([], [], [:])
+
 AC_SUBST([config_FCFLAGS])
 
 AC_ARG_VAR([FPP], [Fortran preprocessor command])
