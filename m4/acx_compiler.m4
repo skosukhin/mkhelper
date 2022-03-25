@@ -35,12 +35,16 @@ AC_DEFUN([ACX_COMPILER_FC_VENDOR],
         [ACX_COMPILER_FC_VENDOR requires calling the Fortran compiler with ]dnl
 [a preprocessor but no call to AC_FC_PP_SRCEXT is detected])])dnl
    AC_CACHE_CHECK([for Fortran compiler vendor], [acx_cv_fc_compiler_vendor],
-     [_ACX_COMPILER_VENDOR])])
+     [AS_IF(
+        [AS_VAR_GET([_AC_CC]) --version 2>&1 | dnl
+grep '^AMD clang version' >/dev/null 2>&1],
+        [acx_cv_fc_compiler_vendor=amd],
+        [_ACX_COMPILER_VENDOR])])])
 
 # ACX_COMPILER_FC_VENDOR_SIMPLE()
 # -----------------------------------------------------------------------------
 # Detects the vendor of the Fortran compiler. The result is "intel", "nag",
-# "portland", "cray", "nec", "gnu", "flang" or "unknown".
+# "portland", "cray", "nec", "gnu", "amd", "flang" or "unknown".
 #
 # This is a simplified version ACX_COMPILER_FC_VENDOR, which tries to detect
 # the vendor based on the version output of the compiler, instead of checking
@@ -72,6 +76,9 @@ grep '^Copyright.*NEC Corporation' >/dev/null 2>&1],
         [AS_VAR_GET([_AC_CC]) --version 2>/dev/null | dnl
 grep '^GNU Fortran' >/dev/null 2>&1],
         [acx_cache_var=gnu],
+        [AS_VAR_GET([_AC_CC]) --version 2>&1 | dnl
+grep '^AMD clang version' >/dev/null 2>&1],
+        [acx_cache_var=amd],
         [AS_VAR_GET([_AC_CC]) -V 2>&1 | grep '^f18 compiler' >/dev/null 2>&1],
         [acx_cache_var=flang],
         [AS_VAR_GET([_AC_CC]) --version 2>&1 | dnl
@@ -147,11 +154,14 @@ AC_DEFUN([ACX_COMPILER_FC_VERSION_SIMPLE],
         [acx_cache_var=`AS_VAR_GET([_AC_CC]) -dumpfullversion 2>/dev/null`
          AS_IF([test $? -ne 0 || test -z "$acx_cache_var"],
            [acx_cache_var=`AS_VAR_GET([_AC_CC]) -dumpversion 2>/dev/null`])],
+        [amd],
+        [acx_cache_var=`AS_VAR_GET([_AC_CC]) --version 2>/dev/null | dnl
+[sed -n 's/.*AOCC_\([0-9][0-9]*\)[._]\([0-9][0-9]*\)[._]\([0-9][0-9]*\).*/\1.\2.\3/p']`],
         [flang],
         [acx_cache_var=`AS_VAR_GET([_AC_CC]) -V 2>&1 | dnl
 [sed -n 's/.*version \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\)/\1/p']`
          AS_IF([test -z "$acx_cache_var"],
-           [acx_cache_var=`AS_VAR_GET([_AC_CC]) --version | dnl
+           [acx_cache_var=`AS_VAR_GET([_AC_CC]) --version 2>/dev/null | dnl
 [sed -n 's/.*version \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p']`
             AS_IF([test -n "$acx_cache_var"],
               [acx_cache_var="classic:${acx_cache_var}"])],
@@ -171,15 +181,19 @@ AC_DEFUN([ACX_COMPILER_FC_VERSION_SIMPLE],
 AC_DEFUN([ACX_COMPILER_CC_VENDOR],
   [AC_LANG_ASSERT([C])dnl
    AC_CACHE_CHECK([for C compiler vendor], [acx_cv_c_compiler_vendor],
-     [AS_IF([AS_VAR_GET([_AC_CC]) -V 2>&1 | dnl
+     [AS_IF(
+        [AS_VAR_GET([_AC_CC]) -V 2>&1 | dnl
 grep '^NAG Fortran Compiler Release' >/dev/null 2>&1],
         [acx_cv_c_compiler_vendor=nag],
+        [AS_VAR_GET([_AC_CC]) --version 2>&1 | dnl
+grep '^AMD clang version' >/dev/null 2>&1],
+        [acx_cv_c_compiler_vendor=amd],
         [_ACX_COMPILER_VENDOR])])])
 
 # ACX_COMPILER_CC_VENDOR_SIMPLE()
 # -----------------------------------------------------------------------------
 # Detects the vendor of the C compiler. The result is  "intel", "nag",
-# "portland", "cray", "nec", "gnu", "clang" or "unknown".
+# "portland", "cray", "nec", "gnu", "amd", "clang" or "unknown".
 #
 # This is a simplified version ACX_COMPILER_CC_VENDOR, which tries to detect
 # the vendor based on the version output of the compiler, instead of checking
@@ -217,6 +231,9 @@ grep '^Copyright.*NEC Corporation' >/dev/null 2>&1],
         [AS_VAR_GET([_AC_CC]) --version 2>/dev/null | dnl
 grep '^gcc' >/dev/null 2>&1],
         [acx_cache_var=gnu],
+        [AS_VAR_GET([_AC_CC]) --version 2>&1 | dnl
+grep '^AMD clang version' >/dev/null 2>&1],
+        [acx_cache_var=amd],
         [AS_VAR_GET([_AC_CC]) --version 2>&1 | dnl
 grep '^clang version' >/dev/null 2>&1],
         [acx_cache_var=clang],
@@ -296,8 +313,11 @@ AC_DEFUN([ACX_COMPILER_CC_VERSION_SIMPLE],
         [acx_cache_var=`AS_VAR_GET([_AC_CC]) -dumpfullversion 2>/dev/null`
          AS_IF([test $? -ne 0 || test -z "$acx_cache_var"],
            [acx_cache_var=`AS_VAR_GET([_AC_CC]) -dumpversion 2>/dev/null`])],
+        [amd],
+        [acx_cache_var=`AS_VAR_GET([_AC_CC]) --version 2>/dev/null | dnl
+[sed -n 's/.*AOCC_\([0-9][0-9]*\)[._]\([0-9][0-9]*\)[._]\([0-9][0-9]*\).*/\1.\2.\3/p']`],
         [clang],
-        [acx_cache_var=`AS_VAR_GET([_AC_CC]) --version | dnl
+        [acx_cache_var=`AS_VAR_GET([_AC_CC]) --version 2>/dev/null | dnl
 [sed -n 's/.*version \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p']`],
         [acx_cache_var=unknown])
       rm -f a.out a.out.dSYM a.exe b.out
@@ -314,7 +334,11 @@ AC_DEFUN([ACX_COMPILER_CC_VERSION_SIMPLE],
 AC_DEFUN([ACX_COMPILER_CXX_VENDOR],
   [AC_LANG_ASSERT([C++])dnl
    AC_CACHE_CHECK([for C++ compiler vendor], [acx_cv_cxx_compiler_vendor],
-     [_ACX_COMPILER_VENDOR])])
+     [AS_IF(
+        [AS_VAR_GET([_AC_CC]) --version 2>&1 | dnl
+grep '^AMD clang version' >/dev/null 2>&1],
+        [acx_cv_cxx_compiler_vendor=amd],
+        [_ACX_COMPILER_VENDOR])])])
 
 # ACX_COMPILER_CXX_VERSION()
 # -----------------------------------------------------------------------------
@@ -355,6 +379,7 @@ m4_define([_ACX_COMPILER_KNOWN_VENDORS(Fortran)],
   [sun, [__SUNPRO_F95]],
   [gnu, [__GFORTRAN__]],
   [ibm, [__xlC__]],
+  [amd],
   [flang, [__FLANG,__flang__]]]])
 
 # _ACX_COMPILER_KNOWN_VENDORS(C)()
@@ -366,6 +391,7 @@ m4_define([_ACX_COMPILER_KNOWN_VENDORS(C)],
   [cray, [_CRAYC,__cray__]],
   [nec, [__NEC__]],
   [portland, [__PGI,__NVCOMPILER]],
+  [amd],
   [ibm, [__xlc__,__xlC__,__IBMC__,__IBMCPP__]],
   [pathscale, [__PATHCC__,__PATHSCALE__]],
   [clang, [__clang__]],
@@ -608,7 +634,7 @@ m4_define([_ACX_COMPILER_VERSION_FLANG(Fortran)],
   [acx_cache_var=`AS_VAR_GET([_AC_CC]) -V 2>&1 | dnl
 [sed -n 's/.*version \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\)/\1/p']`
    AS_IF([test $? -ne 0 || test -z "$acx_cache_var"],
-     [acx_cache_var=`AS_VAR_GET([_AC_CC]) --version | dnl
+     [acx_cache_var=`AS_VAR_GET([_AC_CC]) --version 2>/dev/null | dnl
 [sed -n 's/.*version \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p']`
       AS_IF([test $? -eq 0 && test -n "$acx_cache_var"],
         [acx_cache_var="classic:${acx_cache_var}"])],
@@ -631,6 +657,14 @@ m4_copy([_ACX_COMPILER_VERSION_NEC(C)], [_ACX_COMPILER_VERSION_NEC(C++)])
 m4_define([_ACX_COMPILER_VERSION_NEC(Fortran)],
   [acx_cache_var=`AS_VAR_GET([_AC_CC]) --version 2>&1 | dnl
 [sed -n 's/^nfort (NFORT) \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p']`
+   AS_IF([test dnl
+"`echo $acx_cache_var | sed 's/@<:@0-9@:>@//g' 2>/dev/null`" != '..'],
+     [acx_cache_var=unknown])])
+
+# for AMD (AOCC)
+m4_define([_ACX_COMPILER_VERSION_AMD],
+  [acx_cache_var=`AS_VAR_GET([_AC_CC]) --version 2>/dev/null | dnl
+[sed -n 's/.*AOCC_\([0-9][0-9]*\)[._]\([0-9][0-9]*\)[._]\([0-9][0-9]*\).*/\1.\2.\3/p']`
    AS_IF([test dnl
 "`echo $acx_cache_var | sed 's/@<:@0-9@:>@//g' 2>/dev/null`" != '..'],
      [acx_cache_var=unknown])])

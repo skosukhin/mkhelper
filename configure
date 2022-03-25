@@ -2587,6 +2587,9 @@ $as_echo_n "checking for Fortran compiler vendor... " >&6; }
 if ${acx_cv_fc_compiler_vendor+:} false; then :
   $as_echo_n "(cached) " >&6
 else
+  if $FC --version 2>&1 | grep '^AMD clang version' >/dev/null 2>&1; then :
+  acx_cv_fc_compiler_vendor=amd
+else
   acx_compiler_vendor_options="intel: __INTEL_COMPILER,__INTEL_LLVM_COMPILER
 cray: _CRAYFTN
 nec: __NEC__
@@ -2620,6 +2623,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
         test "x$acx_success" = xyes && break
       done
       acx_cv_fc_compiler_vendor=`echo $acx_compiler_vendor_candidate | cut -d: -f1`
+fi
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_compiler_vendor" >&5
 $as_echo "$acx_cv_fc_compiler_vendor" >&6; }
@@ -2673,9 +2677,13 @@ fi
    if test "`echo $acx_cv_fc_compiler_version | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
   acx_cv_fc_compiler_version=unknown
 fi ;; #(
+        amd) acx_cv_fc_compiler_version=`$FC --version 2>/dev/null | sed -n 's/.*AOCC_\([0-9][0-9]*\)[._]\([0-9][0-9]*\)[._]\([0-9][0-9]*\).*/\1.\2.\3/p'`
+   if test "`echo $acx_cv_fc_compiler_version | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
+  acx_cv_fc_compiler_version=unknown
+fi ;; #(
         flang) acx_cv_fc_compiler_version=`$FC -V 2>&1 | sed -n 's/.*version \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\)/\1/p'`
    if test $? -ne 0 || test -z "$acx_cv_fc_compiler_version"; then :
-  acx_cv_fc_compiler_version=`$FC --version | sed -n 's/.*version \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`
+  acx_cv_fc_compiler_version=`$FC --version 2>/dev/null | sed -n 's/.*version \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`
       if test $? -eq 0 && test -n "$acx_cv_fc_compiler_version"; then :
   acx_cv_fc_compiler_version="classic:${acx_cv_fc_compiler_version}"
 fi
