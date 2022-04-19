@@ -2512,24 +2512,26 @@ ac_link='$FC -o conftest$ac_exeext $FCFLAGS $LDFLAGS $ac_fcflags_srcext conftest
 ac_compiler_gnu=$ac_cv_fc_compiler_gnu
 
 
-         { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler flag needed to compile preprocessed .f90 files" >&5
+   acx_ext_save=$ac_ext
+               { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler flag needed to compile preprocessed .f90 files" >&5
 $as_echo_n "checking for Fortran compiler flag needed to compile preprocessed .f90 files... " >&6; }
-   if ${acx_cv_fc_pp_srcext_f90+:} false; then :
+if ${acx_cv_fc_pp_srcext_f90+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  acx_cv_fc_pp_srcext_f90=unknown
-      acx_ext_save=$ac_ext
-      acx_fcflags_srcext_save=$ac_fcflags_srcext
-      ac_ext=f90
-      case $acx_fc_pp_srcext_ext in #(
-  [fF]77) :
-    acx_fc_pp_srcext_try=f77-cpp-input ;; #(
-  *) :
-    acx_fc_pp_srcext_try=f95-cpp-input ;;
+  ac_ext=f90
+ac_fcflags_pp_srcext_save=$ac_fcflags_srcext
+ac_fcflags_srcext=
+acx_cv_fc_pp_srcext_f90=unknown
+case $ac_ext in #(
+  [fF]77) ac_try=f77-cpp-input;; #(
+  *) ac_try=f95-cpp-input;;
 esac
-      for ac_fcflags_srcext in '' -ftpp -fpp -Tf '-fpp -Tf' -xpp=fpp -Mpreprocess '-e T' '-e Z' -cpp -xpp=cpp -qsuffix=cpp=f90 "-x $acx_fc_pp_srcext_try" +cpp -Cpp; do
-        cat > conftest.$ac_ext <<_ACEOF
+for ac_flag in none -ftpp -fpp -Tf "-fpp -Tf" -xpp=fpp -Mpreprocess "-e T" "-e Z" \
+               -cpp -xpp=cpp -qsuffix=cpp=f90 "-x $ac_try" +cpp -Cpp; do
+  test "x$ac_flag" != xnone && ac_fcflags_srcext="$ac_flag"
+  cat > conftest.$ac_ext <<_ACEOF
       program main
+
 #if 0
 #include <ac_nonexistent.h>
       choke me
@@ -2539,6 +2541,7 @@ _ACEOF
 if ac_fn_fc_try_compile "$LINENO"; then :
   cat > conftest.$ac_ext <<_ACEOF
       program main
+
 #if 1
 #include <ac_nonexistent.h>
       choke me
@@ -2548,37 +2551,41 @@ _ACEOF
 if ac_fn_fc_try_compile "$LINENO"; then :
 
 else
-  acx_cv_fc_pp_srcext_f90=$ac_fcflags_srcext
+  acx_cv_fc_pp_srcext_f90=$ac_flag; break
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-        test "x$acx_cv_fc_pp_srcext_f90" != xunknown && break
-      done
-      ac_fcflags_srcext=$acx_fcflags_srcext_save
-      ac_ext=$acx_ext_save
-fi
+done
+rm -f conftest.$ac_objext conftest.f90
+ac_fcflags_srcext=$ac_fcflags_pp_srcext_save
 
-   if test -n "$acx_cv_fc_pp_srcext_f90"; then :
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_pp_srcext_f90" >&5
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_pp_srcext_f90" >&5
 $as_echo "$acx_cv_fc_pp_srcext_f90" >&6; }
+if test "x$acx_cv_fc_pp_srcext_f90" = xunknown; then
+  :
 else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: none needed" >&5
-$as_echo "none needed" >&6; }
+  ac_fc_srcext=f90
+  if test "x$acx_cv_fc_pp_srcext_f90" = xnone; then
+    ac_fcflags_srcext=""
+    FCFLAGS_f90=""
+  else
+    ac_fcflags_srcext=$acx_cv_fc_pp_srcext_f90
+    FCFLAGS_f90=$acx_cv_fc_pp_srcext_f90
+  fi
+
+
 fi
 
-   if test "x$acx_cv_fc_pp_srcext_f90" = xunknown; then :
-  ac_fcflags_srcext=
-      FCFLAGS_f90=$ac_fcflags_srcext
+            if test "x$acx_cv_fc_pp_srcext_f90" = xunknown; then :
+  ac_ext=$acx_ext_save
       { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
 as_fn_error $? "unable to detect Fortran compiler flag needed to compile preprocessed .f90 files
 See \`config.log' for more details" "$LINENO" 5; }
 else
-  ac_fcflags_srcext=$acx_cv_fc_pp_srcext_f90
-      FCFLAGS_f90=$ac_fcflags_srcext
-      ac_fc_srcext=f90
-      ac_ext=$ac_fc_srcext
+  ac_ext=$ac_fc_srcext
 
 fi
 
