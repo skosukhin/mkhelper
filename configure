@@ -1117,6 +1117,34 @@ if test -n "$ac_prev"; then
   as_fn_error $? "missing argument to $ac_option"
 fi
 
+acx_examples=
+acx_unrecognized_opts=
+acx_save_IFS=$IFS
+IFS=','
+for acx_opt in $ac_unrecognized_opts; do
+  IFS=$acx_save_IFS
+  acx_opt=`$as_echo "$acx_opt" | sed 's/^ //'`
+  acx_opt_recognized=no
+  case $acx_opt in #(
+  --disable-example-* | --enable-example-*) :
+         acx_opt_name=`expr "$acx_opt" : '--[^-]*able-example-\(.*\)'`
+          if test -n "$acx_opt_name"; then :
+  as_fn_append acx_examples " $acx_opt_name"
+        acx_opt_recognized=yes
+fi ;; #(
+  *) :
+     ;;
+esac
+  if test "x$acx_opt_recognized" = xno; then :
+  if test -n "$acx_unrecognized_opts"; then :
+  as_fn_append acx_unrecognized_opts ", $acx_opt"
+else
+  acx_unrecognized_opts=$acx_opt
+fi
+fi
+done
+IFS=$acx_save_IFS
+ac_unrecognized_opts=$acx_unrecognized_opts
 if test -n "$ac_unrecognized_opts"; then
   case $enable_option_checking in
     no) ;;
@@ -4180,6 +4208,35 @@ FCFLAGS=$acx_save_FCFLAGS
 if test "x$acx_NETCDF_found" = xno; then :
   as_fn_append config_FCFLAGS " ${acx_cv_fc_macro_flag}NO_NETCDF"
    NETCDF_FCFLAGS=;NETCDF_FCLIBS=
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for names of the polymorphic example options" >&5
+$as_echo_n "checking for names of the polymorphic example options... " >&6; }
+if test -n "$acx_examples"; then :
+  acx_seen_example_options=
+   for acx_option in $acx_examples; do
+     case ','$acx_seen_example_options',' in #(
+  *','$acx_option','*) :
+     ;; #(
+  ','',') :
+    as_fn_append acx_seen_example_options $acx_option ;; #(
+  *) :
+    as_fn_append acx_seen_example_options ','; as_fn_append acx_seen_example_options $acx_option ;;
+esac
+   done
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_seen_example_options" >&5
+$as_echo "$acx_seen_example_options" >&6; }
+   acx_save_IFS=$IFS
+   IFS=','
+   for acx_option in $acx_seen_example_options; do
+     IFS=$acx_save_IFS
+     { $as_echo "$as_me:${as_lineno-$LINENO}: $acx_option: `eval 'as_val=${'enable_example_$acx_option'};$as_echo "$as_val"'`" >&5
+$as_echo "$as_me: $acx_option: `eval 'as_val=${'enable_example_$acx_option'};$as_echo "$as_val"'`" >&6;}
+   done
+   IFS=$acx_save_IFS
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: none provided" >&5
+$as_echo "none provided" >&6; }
 fi
 
 ARFLAGS=${ARFLAGS-cr}

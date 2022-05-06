@@ -1,3 +1,5 @@
+ACX_POLYMORPHIC_OPTION([enable], [example-*], [acx_examples])
+
 AC_INIT([mkhelper], [1.0], [skosukhin@gmail.com])
 AC_PREREQ([2.69])
 
@@ -175,6 +177,22 @@ FCFLAGS=$acx_save_FCFLAGS
 AS_VAR_IF([acx_NETCDF_found], [no],
   [AS_VAR_APPEND([config_FCFLAGS], [" ${acx_cv_fc_macro_flag}NO_NETCDF"])
    NETCDF_FCFLAGS=;NETCDF_FCLIBS=])
+
+AC_MSG_CHECKING([for names of the polymorphic example options])
+AS_IF([test -n "$acx_examples"],
+  [acx_seen_example_options=
+   for acx_option in $acx_examples; do
+     ASX_VAR_APPEND_UNIQ([acx_seen_example_options], [$acx_option], [','])
+   done
+   AC_MSG_RESULT([$acx_seen_example_options])
+   acx_save_IFS=$IFS
+   IFS=','
+   for acx_option in $acx_seen_example_options; do
+     IFS=$acx_save_IFS
+     AC_MSG_NOTICE([$acx_option: AS_VAR_GET([enable_example_$acx_option])])
+   done
+   IFS=$acx_save_IFS],
+  [AC_MSG_RESULT([none provided])])
 
 AC_ARG_VAR([AR], [the archiver command])dnl
 AC_ARG_VAR([ARFLAGS], [archiver flags])dnl
