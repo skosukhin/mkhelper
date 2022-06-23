@@ -4437,7 +4437,7 @@ fi
       subdirs_extra="bundled/picky"
 
 
-      set dummy --enable-always=yes ; shift
+      set dummy FCFLAGS= --enable-always=yes ; shift
       for acx_config_subdir_arg; do
         case $acx_config_subdir_arg in #(
   *\'*) :

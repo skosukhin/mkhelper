@@ -216,7 +216,8 @@ ACX_CONFIG_SUBDIR([bundled/picky],
    [ACX_CONFIG_SUBDIR_PATTERN_ENABLE([always])]],
   [], [yes])
 ACX_CONFIG_SUBDIR_APPEND_ARGS([bundled/picky],
-  [[--enable-always=yes]])
+  [[FCFLAGS=],
+   [--enable-always=yes]])
 
 dnl Configure a libtool-based bundled library that depends on POSIX Threads:
 ACX_CONFIG_SUBDIR([bundled/threaded_hello],
