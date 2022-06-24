@@ -235,6 +235,9 @@ grep '^gcc' >/dev/null 2>&1],
 grep '^AMD clang version' >/dev/null 2>&1],
         [acx_cache_var=amd],
         [AS_VAR_GET([_AC_CC]) --version 2>&1 | dnl
+grep '^Apple \(LLVM\|clang\) version' >/dev/null 2>&1],
+        [acx_cache_var=apple],
+        [AS_VAR_GET([_AC_CC]) --version 2>&1 | dnl
 grep '^clang version' >/dev/null 2>&1],
         [acx_cache_var=clang],
         [acx_cache_var=unknown])
@@ -316,6 +319,9 @@ AC_DEFUN([ACX_COMPILER_CC_VERSION_SIMPLE],
         [amd],
         [acx_cache_var=`AS_VAR_GET([_AC_CC]) --version 2>/dev/null | dnl
 [sed -n 's/.*AOCC_\([0-9][0-9]*\)[._]\([0-9][0-9]*\)[._]\([0-9][0-9]*\).*/\1.\2.\3/p']`],
+        [apple],
+        [acx_cache_var=`AS_VAR_GET([_AC_CC]) --version 2>/dev/null | dnl
+[sed -E -n 's/^Apple (LLVM|clang) version ([0-9]+\.[0-9]+\.[0-9]+).*/\2/p']`],
         [clang],
         [acx_cache_var=`AS_VAR_GET([_AC_CC]) --version 2>/dev/null | dnl
 [sed -n 's/.*version \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p']`],
@@ -394,6 +400,7 @@ m4_define([_ACX_COMPILER_KNOWN_VENDORS(C)],
   [amd],
   [ibm, [__xlc__,__xlC__,__IBMC__,__IBMCPP__]],
   [pathscale, [__PATHCC__,__PATHSCALE__]],
+  [apple, [__apple_build_version__]],
   [clang, [__clang__]],
   [fujitsu, [__FUJITSU]],
   [sdcc, [SDCC,__SDCC]],
@@ -642,6 +649,10 @@ m4_define([_ACX_COMPILER_VERSION_FLANG(Fortran)],
    AS_IF([test dnl
 "`echo $acx_cache_var | sed 's/^.*://' | sed 's/@<:@0-9@:>@//g' 2>/dev/null`" != '..'],
      [acx_cache_var=unknown])])
+
+# for Apple Clang:
+m4_copy([_ACX_COMPILER_VERSION_CLANG(C)], [_ACX_COMPILER_VERSION_APPLE(C)])
+m4_copy([_ACX_COMPILER_VERSION_APPLE(C)], [_ACX_COMPILER_VERSION_APPLE(C++)])
 
 # for Tiny CC
 m4_define([_ACX_COMPILER_VERSION_TCC(C)],
