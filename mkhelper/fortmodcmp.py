@@ -127,6 +127,10 @@ def _mods_differ_omni(stream1, stream2):
             # The nodes have different tags:
             return True
 
+        if node1.text != node2.text:
+            # The nodes have different texts:
+            return True
+
         for ii, attr_group in enumerate(hash_attrs):
             type_map1 = type_maps1[ii]
             type_map2 = type_maps2[ii]
