@@ -31,6 +31,7 @@
 AC_DEFUN([ACX_LANG_MPI_CHECK],
   [for acx_prog_mpi_test_file in dnl
 m4_ifval([$2], ["$srcdir/$2"], ["$ac_aux_dir"])/*.$ac_ext; do
+     test -f "$acx_prog_mpi_test_file" || continue
      AS_VAR_PUSHDEF([acx_cache_var],
        [acx_cv_prog_${acx_prog_mpi_test_file}])dnl
      AC_CACHE_CHECK(
