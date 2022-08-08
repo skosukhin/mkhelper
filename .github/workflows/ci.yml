@@ -1,0 +1,27 @@
+name: Continuous Integration
+on: push
+
+jobs:
+  CI:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install dependencies
+      run: |
+        sudo apt-get update && sudo apt-get install libnetcdff-dev
+    - name: 'Configure #1'
+      run: ./configure --prefix=$(pwd)/install 'NETCDF_FCFLAGS=-I/usr/include' 'NETCDF_FCLIBS=-L/usr/lib/x86_64-linux-gnu -lnetcdff' || { cat ./config.log; exit 1; }
+    - name: 'Build #1'
+      run: make -j4
+    - name: Install
+      run: make -j4 install
+    - name: 'Run #1'
+      run: ./install/bin/main
+    - name: Distclean
+      run: make -j4 distclean
+    - name: 'Configure #2'
+      run: ./configure --disable-openmp --disable-silent-rules || { cat ./config.log; exit 1; }
+    - name: 'Build #2'
+      run: make -j4
+    - name: 'Run #2'
+      run: ./main
