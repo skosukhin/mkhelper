@@ -3130,7 +3130,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
       cd ..
       rm -rf conftest.dir
 fi
-   if test x"$acx_cv_fc_module_naming_upper" = xunknown || test x"$acx_cv_fc_module_naming_ext" = xunknown; then :
+   if test "x$acx_cv_fc_module_naming_upper" = xunknown || test "x$acx_cv_fc_module_naming_ext" = xunknown; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: unknown" >&5
 $as_echo "unknown" >&6; }
       { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5

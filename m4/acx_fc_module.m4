@@ -184,8 +184,8 @@ sed -n 's,CONFTEST_MODULE\.,,p'`],
 sed -n 's,conftest_module\.,,p'`])])])
       cd ..
       rm -rf conftest.dir])
-   AS_IF([test x"$acx_cv_fc_module_naming_upper" = xunknown || dnl
-test x"$acx_cv_fc_module_naming_ext" = xunknown],
+   AS_IF([test "x$acx_cv_fc_module_naming_upper" = xunknown || dnl
+test "x$acx_cv_fc_module_naming_ext" = xunknown],
      [AC_MSG_RESULT([unknown])
       m4_default([$2], [AC_MSG_FAILURE([unable to detect Fortran compiler dnl
 module file naming template])])],
