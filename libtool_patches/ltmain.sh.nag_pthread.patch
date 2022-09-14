@@ -8,7 +8,7 @@
 +	  # Additionally convert " -pthread" to " -Wl,-pthread" for nagfor
 +	  func_cc_basename $CC
 +	  case $func_cc_basename_result in
-+	    nagfor*) tmp_inherited_linker_flags=`$ECHO "$tmp_inherited_linker_flags" | $SED 's/ -pthread/ -Wl,-pthread/g'` ;;
++	    nagfor*) tmp_inherited_linker_flags=`$ECHO " $tmp_inherited_linker_flags" | $SED 's/ -pthread/ -Wl,-pthread/g'` ;;
 +	  esac
 +
  	  for tmp_inherited_linker_flag in $tmp_inherited_linker_flags; do
