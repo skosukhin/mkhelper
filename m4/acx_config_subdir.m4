@@ -1,7 +1,9 @@
 # ACX_CONFIG_SUBDIR(SUBDIR,
 #                   [REMOVE-PATTERNS],
 #                   [EXTRA-ARGS],
-#                   [SHOW-RECURSIVE-HELP = no])
+#                   [SHOW-RECURSIVE-HELP = no],
+#                   [RUN-BEFORE],
+#                   [RUN-AFTER])
 # -----------------------------------------------------------------------------
 # Originally taken from Autoconf Archive where it is known as
 # AX_SUBDIRS_CONFIGURE.
@@ -20,16 +22,48 @@
 # directories recorded with ACX_CONFIG_SUBDIR. This variable can be used in
 # Makefile rules or substituted in configured files.
 #
-# If SHOW-RECURSIVE-HELP (defaults to no) is set to yes, the help message of the
-# configure script in SUBDIR is shown together with the help message of the top
-# level configure script when the latter is called with the argument
+# If SHOW-RECURSIVE-HELP (defaults to no) is set to yes, the help message of
+# the configure script in SUBDIR is shown together with the help message of
+# the top level configure script when the latter is called with the argument
 # '--help=recursive'. In that case, SUBDIR must be provided literally, without
 # using shell variables.
+#
+# Runs RUN-BEFORE/RUN-AFTER before/after calling the configure script. Shell
+# commands of the arguments are run in the root build directory.
 #
 # Consider calling AC_DISABLE_OPTION_CHECKING in you main configure.ac.
 #
 AC_DEFUN([ACX_CONFIG_SUBDIR],
   [m4_define([ACX_CONFIG_SUBDIR_FOR_$1])dnl
+   m4_ifndef([ACX_CONFIG_SUBDIR_COMMANDS_DEFINED],
+     [acx_config_subdir_pre_post_fns=
+])dnl
+   m4_pushdef([acx_config_subdir_fn])dnl
+   m4_ifnblank([$5],
+     [m4_define([acx_config_subdir_fn],
+        [_ACX_CONFIG_SUBDIR_PRE_CMDS([$1])])dnl
+      AC_REQUIRE_SHELL_FN(acx_config_subdir_fn, [],
+        [acx_msg="=== running pre-configure commands for $acx_config_subdir dnl
+($acx_config_subdir_popdir/$acx_config_subdir)"
+         _AS_ECHO_LOG([$acx_msg])
+         _AS_ECHO([$acx_msg])
+         $5])dnl
+      AS_VAR_APPEND([acx_config_subdir_pre_post_fns],
+        [' acx_config_subdir_fn'])
+])dnl
+   m4_ifnblank([$6],
+     [m4_define([acx_config_subdir_fn],
+        [_ACX_CONFIG_SUBDIR_POST_CMDS([$1])])dnl
+      AC_REQUIRE_SHELL_FN(acx_config_subdir_fn, [],
+        [acx_msg="=== running post-configure commands for dnl
+$acx_config_subdir ($acx_config_subdir_popdir/$acx_config_subdir)"
+         _AS_ECHO_LOG([$acx_msg])
+         _AS_ECHO([$acx_msg])
+         $6])dnl
+      AS_VAR_APPEND([acx_config_subdir_pre_post_fns],
+        [' acx_config_subdir_fn'])
+])dnl
+   m4_popdef([acx_config_subdir_fn])dnl
    m4_pushdef([acx_config_subdir_args], [_ACX_CONFIG_SUBDIR_ARG_VAR([$1])])dnl
    AS_VAR_SET([acx_config_subdir_args])
    acx_config_subdir_ignore_arg=no
@@ -68,6 +102,12 @@ AC_DEFUN([ACX_CONFIG_SUBDIR],
                  [" '--silent'"])])
             acx_config_subdir_popdir=`pwd`
             for acx_config_subdir in $subdirs_extra; do
+              AS_VAR_SET([acx_config_subdir_fn],
+                [_ACX_CONFIG_SUBDIR_PRE_CMDS([$acx_config_subdir])])
+              AS_CASE([" $acx_config_subdir_pre_post_fns "],
+                [*" $acx_config_subdir_fn "*],
+                [eval "$acx_config_subdir_fn"
+                 cd "$acx_config_subdir_popdir"])
               acx_msg="=== configuring in $acx_config_subdir dnl
 ($acx_config_subdir_popdir/$acx_config_subdir)"
               _AS_ECHO_LOG([$acx_msg])
@@ -111,6 +151,12 @@ $acx_config_subdir_args])
 $acx_config_subdir_args" || dnl
 AC_MSG_ERROR([$acx_config_subdir_script failed for $acx_config_subdir])])
               cd "$acx_config_subdir_popdir"
+              AS_VAR_SET([acx_config_subdir_fn],
+                [_ACX_CONFIG_SUBDIR_POST_CMDS([$acx_config_subdir])])
+              AS_CASE([" $acx_config_subdir_pre_post_fns "],
+                [*" $acx_config_subdir_fn "*],
+                [eval "$acx_config_subdir_fn"
+                 cd "$acx_config_subdir_popdir"])
             done
             AS_IF([test -n "$subdirs_extra"],
               [_AS_ECHO([===])
@@ -210,6 +256,22 @@ AC_DEFUN([ACX_CONFIG_SUBDIR_VAR],
 #
 m4_define([_ACX_CONFIG_SUBDIR_ARG_VAR],
   [acx_config_subdir_args_[]AS_TR_SH([$1])])
+
+# _ACX_CONFIG_SUBDIR_PRE_CMDS(SUBDIR)
+# -----------------------------------------------------------------------------
+# Expands to the name of shell function that is run before configuring inside
+# directory SUBDIR.
+#
+m4_define([_ACX_CONFIG_SUBDIR_PRE_CMDS],
+  [acx_config_subdir_pre_cmds_[]AS_TR_SH([$1])])
+
+# _ACX_CONFIG_SUBDIR_POST_CMDS(SUBDIR)
+# -----------------------------------------------------------------------------
+# Expands to the name of shell function that is run after configuring inside
+# directory SUBDIR.
+#
+m4_define([_ACX_CONFIG_SUBDIR_POST_CMDS],
+  [acx_config_subdir_post_cmds_[]AS_TR_SH([$1])])
 
 # _ACX_CONFIG_SUBDIR_APPEND_ARGS(SUBDIR,
 #                                [EXTRA-ARGS])

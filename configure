@@ -4553,7 +4553,8 @@ BUNDLED_FCFLAGS=''
 BUNDLED_LIBFILES=''
 
 
-      acx_config_subdir_args_bundled_picky=
+   acx_config_subdir_pre_post_fns=
+                  acx_config_subdir_args_bundled_picky=
    acx_config_subdir_ignore_arg=no
    eval "set dummy $ac_configure_args"; shift
    for acx_config_subdir_arg; do
@@ -4609,7 +4610,7 @@ esac
       done
 
 
-      acx_config_subdir_args_bundled_threaded_hello=
+                     acx_config_subdir_args_bundled_threaded_hello=
    acx_config_subdir_ignore_arg=no
    eval "set dummy $ac_configure_args"; shift
    for acx_config_subdir_arg; do
@@ -4826,6 +4827,14 @@ else
 fi
             acx_config_subdir_popdir=`pwd`
             for acx_config_subdir in $subdirs_extra; do
+              acx_config_subdir_fn=acx_config_subdir_pre_cmds_`$as_echo "$acx_config_subdir" | $as_tr_sh`
+              case " $acx_config_subdir_pre_post_fns " in #(
+  *" $acx_config_subdir_fn "*) :
+    eval "$acx_config_subdir_fn"
+                 cd "$acx_config_subdir_popdir" ;; #(
+  *) :
+     ;;
+esac
               acx_msg="=== configuring in $acx_config_subdir ($acx_config_subdir_popdir/$acx_config_subdir)"
               $as_echo "$as_me:${as_lineno-$LINENO}: $acx_msg" >&5
               $as_echo "$acx_msg" >&6
@@ -4904,6 +4913,14 @@ $as_echo "$as_me: running $SHELL $acx_config_subdir_script $acx_config_subdir_ar
                  eval "\$SHELL \"$acx_config_subdir_script\" $acx_config_subdir_args" || as_fn_error $? "$acx_config_subdir_script failed for $acx_config_subdir" "$LINENO" 5
 fi
               cd "$acx_config_subdir_popdir"
+              acx_config_subdir_fn=acx_config_subdir_post_cmds_`$as_echo "$acx_config_subdir" | $as_tr_sh`
+              case " $acx_config_subdir_pre_post_fns " in #(
+  *" $acx_config_subdir_fn "*) :
+    eval "$acx_config_subdir_fn"
+                 cd "$acx_config_subdir_popdir" ;; #(
+  *) :
+     ;;
+esac
             done
             if test -n "$subdirs_extra"; then :
   $as_echo "===" >&6
