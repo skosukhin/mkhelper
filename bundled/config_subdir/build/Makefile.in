@@ -1,0 +1,11 @@
+.SUFFIXES:
+.PHONY: all mostlyclean clean distclean
+
+all:;
+
+mostlyclean:;
+
+clean:;
+
+distclean:
+	rm -f config.log config.status Makefile

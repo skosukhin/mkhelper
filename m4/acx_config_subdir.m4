@@ -137,7 +137,6 @@ script found])
                    [acx_sub_cache_file=$cache_file])
                  for acx_config_subdir_arg in \
                    "--cache-file=$acx_sub_cache_file" \
-                   "--srcdir=$ac_srcdir" \
                    "--prefix=$prefix"; do
                    ASX_ESCAPE_SINGLE_QUOTE([acx_config_subdir_arg])
                    AS_VAR_APPEND([acx_config_subdir_args],

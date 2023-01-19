@@ -239,6 +239,10 @@ ACX_CONFIG_SUBDIR_APPEND_ARGS([bundled/picky],
   [[FCFLAGS=],
    [--enable-always=yes]])
 
+dnl Configure a bundled library with the configure script residing in a
+dnl subdirectory of its root source directory.
+ACX_CONFIG_SUBDIR([bundled/config_subdir/build])
+
 dnl Configure a libtool-based bundled library that depends on POSIX Threads:
 ACX_CONFIG_SUBDIR([bundled/threaded_hello],
   [[ACX_CONFIG_SUBDIR_PATTERN_ENABLE([static])],

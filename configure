@@ -4610,6 +4610,41 @@ esac
       done
 
 
+                     acx_config_subdir_args_bundled_config_subdir_build=
+   acx_config_subdir_ignore_arg=no
+   eval "set dummy $ac_configure_args"; shift
+   for acx_config_subdir_arg; do
+     if test "x$acx_config_subdir_ignore_arg" = xno; then :
+  case $acx_config_subdir_arg in #(
+  -cache-file|--cache-file|--cache-fil|--cache-fi| \
+           --cache-f|--cache-|--cache|--cach|--cac|--ca|--c| \
+           -srcdir|--srcdir|--srcdi|--srcd|--src|--sr| \
+           -prefix|--prefix|--prefi|--pref|--pre|--pr|--p) :
+    acx_config_subdir_ignore_arg=yes ;; #(
+  -cache-file=*|--cache-file=*|--cache-fil=*|--cache-fi=*| \
+           --cache-f=*|--cache-=*|--cache=*|--cach=*|--cac=*|--ca=*|--c=*| \
+           --config-cache|-C| \
+           -srcdir=*|--srcdir=*|--srcdi=*|--srcd=*|--src=*|--sr=*| \
+           -prefix=*|--prefix=*|--prefi=*|--pref=*|--pre=*|--pr=*|--p=*| \
+           --disable-option-checking) :
+     ;; #(
+  *) :
+
+           case $acx_config_subdir_arg in #(
+  *\'*) :
+    acx_config_subdir_arg=`$as_echo "$acx_config_subdir_arg" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+  *) :
+     ;;
+esac
+            as_fn_append acx_config_subdir_args_bundled_config_subdir_build " '$acx_config_subdir_arg'" ;;
+esac
+else
+  acx_config_subdir_ignore_arg=no
+fi
+   done
+
+      as_fn_append subdirs_extra " bundled/config_subdir/build"
+
                      acx_config_subdir_args_bundled_threaded_hello=
    acx_config_subdir_ignore_arg=no
    eval "set dummy $ac_configure_args"; shift
@@ -4897,7 +4932,6 @@ else
 fi
                  for acx_config_subdir_arg in \
                    "--cache-file=$acx_sub_cache_file" \
-                   "--srcdir=$ac_srcdir" \
                    "--prefix=$prefix"; do
                    case $acx_config_subdir_arg in #(
   *\'*) :

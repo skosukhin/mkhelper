@@ -9,6 +9,9 @@ script_dir=`cd "$script_dir"; pwd`
 ( dir="$script_dir/bundled/picky"
   echo "Running autoreconf in '$dir'..." && cd "$dir" && autoreconf -fvi ) || exit $?
 
+( dir="$script_dir/bundled/config_subdir/build"
+  echo "Running autoreconf in '$dir'..." && cd "$dir" && autoreconf -fvi ) || exit $?
+
 ( dir="$script_dir/bundled/threaded_hello"
   echo "Running autoreconf in '$dir'..." && cd "$dir" && autoreconf -fvi || exit $?
   patch --forward --no-backup-if-mismatch -p1 -r - -i "$script_dir/libtool_patches/libtool.m4.mpi_wrappers.patch"
