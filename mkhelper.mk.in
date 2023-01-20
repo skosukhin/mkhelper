@@ -5,7 +5,9 @@ srcdir:= @srcdir@
 subdirs:= src
 
 # Relative paths to the directories of the bundled packages:
-bundled_subdirs:= @subdirs_extra@
+bundled_configured_subdirs:= @bundled_configured_subdirs@
+bundled_delayed_subdirs:= @bundled_delayed_subdirs@
+bundled_subdirs:= $(bundled_configured_subdirs) $(bundled_delayed_subdirs)
 
 # Path to the directory with the Fortran module files:
 moddir:= mod
@@ -46,11 +48,12 @@ DEPLIST_args= @deplist.config
 # Silent rule prefixes:
 V= @DEFAULT_VERBOSITY@
 ifeq ($(V), 0)
-silent_FCLD=   @echo "  FCLD    " $@;
-silent_FC=     @echo "  FC      " $@;
-silent_MKDIR=  @echo "  MKDIR   " $(@D);
-silent_DEPGEN= @echo "  DEPGEN  " $@;
 silent_AR=     @echo "  AR      " $@;
+silent_CONFIG= @echo "  CONFIG  " $(@D);
+silent_DEPGEN= @echo "  DEPGEN  " $@;
+silent_FC=     @echo "  FC      " $@;
+silent_FCLD=   @echo "  FCLD    " $@;
+silent_MKDIR=  @echo "  MKDIR   " $(@D);
 endif
 
 # Path suffixes (i.e. without $(srcdir) prefix) of the source files:
@@ -117,7 +120,7 @@ distclean: clean
 	rm -f config.log config.status depgen.config deplist.config
 	rm -f $(lib_dep_files) $(exe_dep_files)
 	rm -f $(dir_files)
-	@for dir in $(moddir); do \
+	@for dir in $(moddir) bundled/build; do \
 	  if test -d "$$dir"; then \
 	    echo "find '$$dir' -type d -empty -delete"; \
 	    find "$$dir" -type d -empty -delete; \
@@ -183,12 +186,22 @@ extra_f90.d: mkhelper.mk
 	  echo 'src/program/main.o:| src/program/implicit_external.o'; \
 	} >$@
 
+# Configure delayed bundled libraries:
+@DELAYED_CONFIG_RULES@
+
 # Make bundled libraries:
-$(bundled_subdirs):
+$(bundled_configured_subdirs):
 	@if test -f '$@/Makefile'; then \
 	  $(MAKE) -C $@ $(filter all mostlyclean clean distclean,$(MAKECMDGOALS)) V=$(V); \
 	else \
-	  test xdistclean = x$(filter distclean,$(MAKECMDGOALS)); \
+	  test -z '$(filter-out distclean,$(or $(MAKECMDGOALS),all))'; \
+	fi
+
+$(bundled_delayed_subdirs):
+	@if test -f '$@/Makefile'; then \
+	  $(MAKE) -C $@ $(filter all mostlyclean clean distclean,$(MAKECMDGOALS)) V=$(V); \
+	else \
+	  test -z '$(filter-out mostlyclean clean distclean,$(or $(MAKECMDGOALS),all))'; \
 	fi
 
 # Relink executables if any of the source files of the bundled libraries

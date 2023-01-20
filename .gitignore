@@ -8,7 +8,7 @@
 *.f90.d
 *.pyc
 .dirstamp
-/Makefile
+/bundled/build
 /config.cache*
 /config.log
 /config.status
@@ -17,6 +17,7 @@
 /deplist.debug
 /extra_f90.d
 /mkhelper.mk
+Makefile
 
 # Build stage files
 *.a

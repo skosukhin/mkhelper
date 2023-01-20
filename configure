@@ -586,9 +586,12 @@ PACKAGE_URL=''
 
 ac_unique_file="src/program/main.f90"
 ac_default_prefix="`pwd`/install"
+extra_src_subdirs=
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
-subdirs_extra
+bundled_delayed_subdirs
+bundled_configured_subdirs
+DELAYED_CONFIG_RULES
 BUNDLED_LIBFILES
 BUNDLED_FCFLAGS
 MKDIR_P
@@ -686,6 +689,7 @@ enable_invalid_test
 with_netcdf_root
 with_netcdf_include
 with_netcdf_lib
+enable_delayed_config
 '
       ac_precious_vars='build_alias
 host_alias
@@ -701,8 +705,8 @@ NETCDF_FCLIBS
 AR
 ARFLAGS
 PYTHON'
-ac_subdirs_all='bundled/picky
-bundled/threaded_hello'
+ac_subdirs_all='bundled/threaded_hello
+bundled/delayed'
 
 # Initialize some variables set by options.
 ac_init_help=
@@ -1357,6 +1361,8 @@ Optional Features:
                           [default: yes]
   --enable-invalid-test   enable the test for invalid dependency tree, which
                           fails the building [default: no]
+  --enable-delayed-config enable the delayed (build-time) configuration of the
+                          bundled/picky subdirectory [default: yes]
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -1550,6 +1556,112 @@ fi
   as_fn_set_status $ac_retval
 
 } # ac_fn_fc_try_link
+
+acx_subdir_srcdirs_fn ()
+{
+ac_builddir=.
+
+case "$1" in
+.) ac_dir_suffix= ac_top_builddir_sub=. ac_top_build_prefix= ;;
+*)
+  ac_dir_suffix=/`$as_echo "$1" | sed 's|^\.[\\/]||'`
+  # A ".." for each directory in $ac_dir_suffix.
+  ac_top_builddir_sub=`$as_echo "$ac_dir_suffix" | sed 's|/[^\\/]*|/..|g;s|/||'`
+  case $ac_top_builddir_sub in
+  "") ac_top_builddir_sub=. ac_top_build_prefix= ;;
+  *)  ac_top_build_prefix=$ac_top_builddir_sub/ ;;
+  esac ;;
+esac
+ac_abs_top_builddir=$ac_pwd
+ac_abs_builddir=$ac_pwd$ac_dir_suffix
+# for backward compatibility:
+ac_top_builddir=$ac_top_build_prefix
+
+case $srcdir in
+  .)  # We are building in place.
+    ac_srcdir=.
+    ac_top_srcdir=$ac_top_builddir_sub
+    ac_abs_top_srcdir=$ac_pwd ;;
+  [\\/]* | ?:[\\/]* )  # Absolute name.
+    ac_srcdir=$srcdir$ac_dir_suffix;
+    ac_top_srcdir=$srcdir
+    ac_abs_top_srcdir=$srcdir ;;
+  *) # Relative name.
+    ac_srcdir=$ac_top_build_prefix$srcdir$ac_dir_suffix
+    ac_top_srcdir=$ac_top_build_prefix$srcdir
+    ac_abs_top_srcdir=$ac_pwd/$srcdir ;;
+esac
+ac_abs_srcdir=$ac_abs_top_srcdir$ac_dir_suffix
+
+} # acx_subdir_srcdirs_fn
+
+acx_subdir_pre_adjust_config_args ()
+{
+if ${acx_subdir_pre_adjusted_config_args+:} false; then :
+
+else
+  acx_subdir_pre_adjusted_config_args=$ac_configure_args
+            eval "set dummy $acx_subdir_pre_adjusted_config_args"; shift
+   acx_subdir_pre_adjusted_config_args=
+   while test $# != 0; do
+     acx_tmp=$1
+     case $acx_tmp in #(
+  -cache-file|--cache-file|--cache-fil|--cache-fi|--cache-f|--cache-|--cache|--cach|--cac|--ca|--c| \
+                -srcdir|--srcdir|--srcdi|--srcd|--src|--sr| \
+                -prefix|--prefix|--prefi|--pref|--pre|--pr|--p) :
+    test 2 -gt $# || shift;  ;; #(
+  -cache-file=*|--cache-file=*|--cache-fil=*|--cache-fi=*|--cache-f=*|--cache-=*|--cache=*|--cach=*|--cac=*|--ca=*|--c=*| \
+                -srcdir=*|--srcdir=*|--srcdi=*|--srcd=*|--src=*|--sr=*| \
+                -prefix=*|--prefix=*|--prefi=*|--pref=*|--pre=*|--pr=*|--p=*| \
+                --config-cache|-C| \
+                -enable-option-checking|-enable-option-checking=*|--enable-option-checking|--enable-option-checking=*|-disable-option-checking|--disable-option-checking) :
+     ;; #(
+  *) :
+           case $acx_tmp in #(
+  *\'*) :
+    acx_tmp=`$as_echo "$acx_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+  *) :
+     ;;
+esac
+        as_fn_append acx_subdir_pre_adjusted_config_args " '$acx_tmp'" ;;
+esac
+     shift
+   done
+            as_fn_append acx_subdir_pre_adjusted_config_args " '--disable-option-checking'"
+            if test "x$prefix" = xNONE; then :
+  acx_tmp="--prefix=$ac_default_prefix"
+else
+  acx_tmp="--prefix=$prefix"
+fi
+            case $acx_tmp in #(
+  *\'*) :
+    acx_tmp=`$as_echo "$acx_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+  *) :
+     ;;
+esac
+            as_fn_append acx_subdir_pre_adjusted_config_args " '$acx_tmp'"
+fi
+} # acx_subdir_pre_adjust_config_args
+
+acx_subdir_extra_run_0 ()
+{
+echo "Run before 1"
+} # acx_subdir_extra_run_0
+
+acx_subdir_extra_run_1 ()
+{
+echo "Run after 1"
+} # acx_subdir_extra_run_1
+
+acx_subdir_extra_run_2 ()
+{
+echo "Run before 2"
+} # acx_subdir_extra_run_2
+
+acx_subdir_extra_run_3 ()
+{
+echo "Run after 2"
+} # acx_subdir_extra_run_3
 cat >config.log <<_ACEOF
 This file contains any messages produced by compilers while
 running configure, to aid debugging if configure makes a mistake.
@@ -4553,25 +4665,44 @@ BUNDLED_FCFLAGS=''
 BUNDLED_LIBFILES=''
 
 
-   acx_config_subdir_pre_post_fns=
-                  acx_config_subdir_args_bundled_picky=
-   acx_config_subdir_ignore_arg=no
-   eval "set dummy $ac_configure_args"; shift
-   for acx_config_subdir_arg; do
-     if test "x$acx_config_subdir_ignore_arg" = xno; then :
-  case $acx_config_subdir_arg in #(
-  -cache-file|--cache-file|--cache-fil|--cache-fi| \
-           --cache-f|--cache-|--cache|--cach|--cac|--ca|--c| \
-           -srcdir|--srcdir|--srcdi|--srcd|--src|--sr| \
-           -prefix|--prefix|--prefi|--pref|--pre|--pr|--p) :
-    acx_config_subdir_ignore_arg=yes ;; #(
-  -cache-file=*|--cache-file=*|--cache-fil=*|--cache-fi=*| \
-           --cache-f=*|--cache-=*|--cache=*|--cach=*|--cac=*|--ca=*|--c=*| \
-           --config-cache|-C| \
-           -srcdir=*|--srcdir=*|--srcdi=*|--srcd=*|--src=*|--sr=*| \
-           -prefix=*|--prefix=*|--prefi=*|--pref=*|--pre=*|--pr=*|--p=*| \
-           --disable-option-checking) :
-     ;; #(
+polymorphic_subdir='bundled/picky'
+polymorphic_config=''
+                     acx_subdir_srcdirs_fn "$polymorphic_subdir"
+   eval "acx_subdir_run_cmd_`$as_echo "$polymorphic_subdir" | $as_tr_sh`=\"'\$ac_srcdir/'\\\"\\\${polymorphic_config}\\\"\""
+   eval "acx_subdir_run_dir_`$as_echo "$polymorphic_subdir" | $as_tr_sh`=\"\$polymorphic_subdir\""
+   eval "acx_subdir_build_type_`$as_echo "$polymorphic_subdir" | $as_tr_sh`='config'"
+         acx_subdir_pre_adjust_config_args
+      eval "acx_subdir_run_args_`$as_echo "$polymorphic_subdir" | $as_tr_sh`=\$acx_subdir_pre_adjusted_config_args"
+      if test "x$cache_file" = x'/dev/null'; then :
+  acx_tmp=$cache_file
+else
+  case $cache_file in #(
+  [\\/]* | ?:[\\/]*) :
+    acx_tmp=$cache_file ;; #(
+  *) :
+    acx_tmp="$ac_top_build_prefix$cache_file" ;;
+esac
+         acx_tmp="$acx_tmp.`echo "$polymorphic_subdir" | tr / .`"
+fi
+      set dummy "--cache-file=$acx_tmp" "--srcdir=$ac_srcdir"; shift
+   for acx_tmp; do
+     case $acx_tmp in #(
+  *\'*) :
+    acx_tmp=`$as_echo "$acx_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+  *) :
+     ;;
+esac
+     as_fn_append acx_subdir_run_args_`$as_echo "$polymorphic_subdir" | $as_tr_sh` " '$acx_tmp'"
+   done
+      as_fn_append extra_src_subdirs " $polymorphic_subdir"
+   eval "acx_subdir_run_condition_`$as_echo "$polymorphic_subdir" | $as_tr_sh`=no"
+polymorphic_subdir=
+polymorphic_config='configure.gnu'
+eval "set dummy $acx_subdir_run_args_bundled_picky"; shift
+   acx_subdir_run_args_bundled_picky=
+   while test $# != 0; do
+     acx_tmp=$1
+     case $acx_tmp in #(
   FCFLAGS=*) :
      ;; #(
   -enable-silent-rules|-enable-silent-rules=*|--enable-silent-rules|--enable-silent-rules=*|-disable-silent-rules|--disable-silent-rules) :
@@ -4581,53 +4712,85 @@ BUNDLED_LIBFILES=''
   -enable-always|-enable-always=*|--enable-always|--enable-always=*|-disable-always|--disable-always) :
      ;; #(
   *) :
-
-           case $acx_config_subdir_arg in #(
+           case $acx_tmp in #(
   *\'*) :
-    acx_config_subdir_arg=`$as_echo "$acx_config_subdir_arg" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+    acx_tmp=`$as_echo "$acx_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
   *) :
      ;;
 esac
-            as_fn_append acx_config_subdir_args_bundled_picky " '$acx_config_subdir_arg'" ;;
+        as_fn_append acx_subdir_run_args_bundled_picky " '$acx_tmp'" ;;
 esac
-else
-  acx_config_subdir_ignore_arg=no
-fi
+     shift
+   done
+set dummy FCFLAGS= --enable-always=yes; shift
+   for acx_tmp; do
+     case $acx_tmp in #(
+  *\'*) :
+    acx_tmp=`$as_echo "$acx_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+  *) :
+     ;;
+esac
+     as_fn_append acx_subdir_run_args_bundled_picky " '$acx_tmp'"
    done
 
-      subdirs_extra="bundled/picky"
+# Check whether --enable-delayed-config was given.
+if test "${enable_delayed_config+set}" = set; then :
+  enableval=$enable_delayed_config; if test x"$enableval" != xno; then :
+  enable_delayed_config=yes
+fi
+else
+  enable_delayed_config=yes
+fi
 
 
-      set dummy FCFLAGS= --enable-always=yes ; shift
-      for acx_config_subdir_arg; do
-        case $acx_config_subdir_arg in #(
+DELAYED_CONFIG_RULES=''
+if test "x$enable_delayed_config" = xyes; then :
+  as_fn_append DELAYED_CONFIG_RULES "polymorphic_config:= $polymorphic_config$as_nl"
+else
+  polymorphic_subdir='bundled/picky'
+   eval "acx_subdir_run_condition_`$as_echo "$polymorphic_subdir" | $as_tr_sh`=yes"
+                  as_fn_append acx_subdir_run_before_`$as_echo "$polymorphic_subdir" | $as_tr_sh` ' acx_subdir_extra_run_0'
+               as_fn_append acx_subdir_run_after_`$as_echo "$polymorphic_subdir" | $as_tr_sh` ' acx_subdir_extra_run_1'
+   polymorphic_subdir=
+
+                  as_fn_append acx_subdir_run_before_bundled_picky ' acx_subdir_extra_run_2'
+                     as_fn_append acx_subdir_run_after_bundled_picky ' acx_subdir_extra_run_3'
+fi
+
+                     acx_subdir_srcdirs_fn "bundled/build/threaded_hello"
+   acx_subdir_run_cmd_bundled_threaded_hello="'$ac_top_srcdir/bundled/threaded_hello/configure'"
+   acx_subdir_run_dir_bundled_threaded_hello="bundled/build/threaded_hello"
+   acx_subdir_build_type_bundled_threaded_hello='config'
+         acx_subdir_pre_adjust_config_args
+      acx_subdir_run_args_bundled_threaded_hello=$acx_subdir_pre_adjusted_config_args
+      if test "x$cache_file" = x'/dev/null'; then :
+  acx_tmp=$cache_file
+else
+  case $cache_file in #(
+  [\\/]* | ?:[\\/]*) :
+    acx_tmp=$cache_file ;; #(
+  *) :
+    acx_tmp="$ac_top_build_prefix$cache_file" ;;
+esac
+         acx_tmp="$acx_tmp.bundled.threaded_hello"
+fi
+      set dummy "--cache-file=$acx_tmp" "--srcdir=$ac_top_srcdir/bundled/threaded_hello"; shift
+   for acx_tmp; do
+     case $acx_tmp in #(
   *\'*) :
-    acx_config_subdir_arg=`$as_echo "$acx_config_subdir_arg" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+    acx_tmp=`$as_echo "$acx_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
   *) :
      ;;
 esac
-        as_fn_append acx_config_subdir_args_bundled_picky " '$acx_config_subdir_arg'"
-      done
-
-
-                     acx_config_subdir_args_bundled_threaded_hello=
-   acx_config_subdir_ignore_arg=no
-   eval "set dummy $ac_configure_args"; shift
-   for acx_config_subdir_arg; do
-     if test "x$acx_config_subdir_ignore_arg" = xno; then :
-  case $acx_config_subdir_arg in #(
-  -cache-file|--cache-file|--cache-fil|--cache-fi| \
-           --cache-f|--cache-|--cache|--cach|--cac|--ca|--c| \
-           -srcdir|--srcdir|--srcdi|--srcd|--src|--sr| \
-           -prefix|--prefix|--prefi|--pref|--pre|--pr|--p) :
-    acx_config_subdir_ignore_arg=yes ;; #(
-  -cache-file=*|--cache-file=*|--cache-fil=*|--cache-fi=*| \
-           --cache-f=*|--cache-=*|--cache=*|--cach=*|--cac=*|--ca=*|--c=*| \
-           --config-cache|-C| \
-           -srcdir=*|--srcdir=*|--srcdi=*|--srcd=*|--src=*|--sr=*| \
-           -prefix=*|--prefix=*|--prefi=*|--pref=*|--pre=*|--pr=*|--p=*| \
-           --disable-option-checking) :
-     ;; #(
+     as_fn_append acx_subdir_run_args_bundled_threaded_hello " '$acx_tmp'"
+   done
+      as_fn_append extra_src_subdirs " bundled/threaded_hello"
+   acx_subdir_run_condition_bundled_threaded_hello=yes
+eval "set dummy $acx_subdir_run_args_bundled_threaded_hello"; shift
+   acx_subdir_run_args_bundled_threaded_hello=
+   while test $# != 0; do
+     acx_tmp=$1
+     case $acx_tmp in #(
   -enable-static|-enable-static=*|--enable-static|--enable-static=*|-disable-static|--disable-static) :
      ;; #(
   -enable-shared|-enable-shared=*|--enable-shared|--enable-shared=*|-disable-shared|--disable-shared) :
@@ -4637,33 +4800,118 @@ esac
   -enable-silent-rules|-enable-silent-rules=*|--enable-silent-rules|--enable-silent-rules=*|-disable-silent-rules|--disable-silent-rules) :
      ;; #(
   *) :
-
-           case $acx_config_subdir_arg in #(
+           case $acx_tmp in #(
   *\'*) :
-    acx_config_subdir_arg=`$as_echo "$acx_config_subdir_arg" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+    acx_tmp=`$as_echo "$acx_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
   *) :
      ;;
 esac
-            as_fn_append acx_config_subdir_args_bundled_threaded_hello " '$acx_config_subdir_arg'" ;;
+        as_fn_append acx_subdir_run_args_bundled_threaded_hello " '$acx_tmp'" ;;
 esac
-else
-  acx_config_subdir_ignore_arg=no
-fi
+     shift
    done
-         set dummy --enable-static --disable-shared --disable-maintainer-mode --enable-silent-rules="$enable_silent_rules" ; shift
-      for acx_config_subdir_arg; do
-        case $acx_config_subdir_arg in #(
+set dummy --enable-static --disable-shared --disable-maintainer-mode --enable-silent-rules="$enable_silent_rules"; shift
+   for acx_tmp; do
+     case $acx_tmp in #(
   *\'*) :
-    acx_config_subdir_arg=`$as_echo "$acx_config_subdir_arg" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+    acx_tmp=`$as_echo "$acx_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
   *) :
      ;;
 esac
-        as_fn_append acx_config_subdir_args_bundled_threaded_hello " '$acx_config_subdir_arg'"
-      done
-      as_fn_append subdirs_extra " bundled/threaded_hello"
-as_fn_append BUNDLED_FCFLAGS "${FC_MOD_IN}bundled/threaded_hello "
-BUNDLED_LIBFILES="bundled/threaded_hello/.libs/libthreaded_hello_f.a $BUNDLED_LIBFILES"
-as_fn_append DEPGEN_EXTERNAL_MODS ',mo_threaded_hello'
+     as_fn_append acx_subdir_run_args_bundled_threaded_hello " '$acx_tmp'"
+   done
+as_fn_append BUNDLED_FCFLAGS "${FC_MOD_IN}bundled/build/threaded_hello "
+BUNDLED_LIBFILES="bundled/build/threaded_hello/.libs/libthreaded_hello_f.a $BUNDLED_LIBFILES"
+case " $extra_src_subdirs " in #(
+  *' bundled/threaded_hello '*) :
+    as_fn_append DEPGEN_EXTERNAL_MODS ',mo_threaded_hello' ;; #(
+  *) :
+     ;;
+esac
+
+                     acx_subdir_srcdirs_fn "bundled/delayed"
+   acx_subdir_run_cmd_bundled_delayed="'$ac_srcdir/configure'"
+   acx_subdir_run_dir_bundled_delayed="bundled/delayed"
+   acx_subdir_build_type_bundled_delayed='config'
+         acx_subdir_pre_adjust_config_args
+      acx_subdir_run_args_bundled_delayed=$acx_subdir_pre_adjusted_config_args
+      if test "x$cache_file" = x'/dev/null'; then :
+  acx_tmp=$cache_file
+else
+  case $cache_file in #(
+  [\\/]* | ?:[\\/]*) :
+    acx_tmp=$cache_file ;; #(
+  *) :
+    acx_tmp="$ac_top_build_prefix$cache_file" ;;
+esac
+         acx_tmp="$acx_tmp.bundled.delayed"
+fi
+      set dummy "--cache-file=$acx_tmp" "--srcdir=$ac_srcdir"; shift
+   for acx_tmp; do
+     case $acx_tmp in #(
+  *\'*) :
+    acx_tmp=`$as_echo "$acx_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+  *) :
+     ;;
+esac
+     as_fn_append acx_subdir_run_args_bundled_delayed " '$acx_tmp'"
+   done
+      as_fn_append extra_src_subdirs " bundled/delayed"
+   acx_subdir_run_condition_bundled_delayed=no
+eval "set dummy $acx_subdir_run_args_bundled_delayed"; shift
+   acx_subdir_run_args_bundled_delayed=
+   while test $# != 0; do
+     acx_tmp=$1
+     case $acx_tmp in #(
+  -enable-silent-rules|-enable-silent-rules=*|--enable-silent-rules|--enable-silent-rules=*|-disable-silent-rules|--disable-silent-rules) :
+     ;; #(
+  *) :
+           case $acx_tmp in #(
+  *\'*) :
+    acx_tmp=`$as_echo "$acx_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+  *) :
+     ;;
+esac
+        as_fn_append acx_subdir_run_args_bundled_delayed " '$acx_tmp'" ;;
+esac
+     shift
+   done
+set dummy --enable-silent-rules="$enable_silent_rules"; shift
+   for acx_tmp; do
+     case $acx_tmp in #(
+  *\'*) :
+    acx_tmp=`$as_echo "$acx_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+  *) :
+     ;;
+esac
+     as_fn_append acx_subdir_run_args_bundled_delayed " '$acx_tmp'"
+   done
+as_fn_append BUNDLED_FCFLAGS "${FC_MOD_IN}bundled/delayed "
+BUNDLED_LIBFILES="bundled/delayed/libdelayed.a $BUNDLED_LIBFILES"
+case " $extra_src_subdirs " in #(
+  *' bundled/delayed '*) :
+    as_fn_append DEPGEN_EXTERNAL_MODS ',mo_delayed' ;; #(
+  *) :
+     ;;
+esac
+
+bundled_configured_subdirs=''
+bundled_delayed_subdirs=''
+mkhelper_rule_separator=''
+for mkhelper_src_subdir in $extra_src_subdirs; do
+  eval mkhelper_build_subdir=\$acx_subdir_run_dir_`$as_echo "$mkhelper_src_subdir" | $as_tr_sh`
+  eval as_val=\$acx_subdir_run_condition_`$as_echo "$mkhelper_src_subdir" | $as_tr_sh`
+   if test "x$as_val" = xyes; then :
+  as_fn_append bundled_configured_subdirs " $mkhelper_build_subdir"
+else
+  as_fn_append bundled_delayed_subdirs " $mkhelper_build_subdir"
+     mkhelper_subdir_cmd="`eval 'as_val=${'acx_subdir_run_cmd_\`$as_echo "$mkhelper_src_subdir" | $as_tr_sh\`'};$as_echo "$as_val"'` `eval 'as_val=${'acx_subdir_run_args_\`$as_echo "$mkhelper_src_subdir" | $as_tr_sh\`'};$as_echo "$as_val"'`"
+     as_fn_append DELAYED_CONFIG_RULES "$mkhelper_rule_separator$mkhelper_build_subdir: \$(if \$(filter-out mostlyclean clean distclean,\$(or \$(MAKECMDGOALS),all)),$mkhelper_build_subdir/Makefile)
+$mkhelper_build_subdir/Makefile:
+	\$(silent_CONFIG)$MKDIR_P \$(@D) && cd \$(@D) && $mkhelper_subdir_cmd \$(if \$(silent_CONFIG),--silent)"
+	 mkhelper_rule_separator="$as_nl$as_nl"
+fi
+done
 
 
 
@@ -4818,126 +5066,63 @@ LIBOBJS=$ac_libobjs
 LTLIBOBJS=$ac_ltlibobjs
 
 
-if test "x$no_recursion" = xyes; then :
-  subdirs_extra=
+if test "x$no_recursion" != xyes; then :
+  if test "x$silent" = xyes; then :
+  acx_subdir_silent_arg="'--silent'"
 else
-  acx_config_subdir_common_args="'--disable-option-checking'"
-            if test "x$silent" = xyes; then :
-  as_fn_append acx_config_subdir_common_args " '--silent'"
+  acx_subdir_silent_arg=
 fi
-            acx_config_subdir_popdir=`pwd`
-            for acx_config_subdir in $subdirs_extra; do
-              acx_config_subdir_fn=acx_config_subdir_pre_cmds_`$as_echo "$acx_config_subdir" | $as_tr_sh`
-              case " $acx_config_subdir_pre_post_fns " in #(
-  *" $acx_config_subdir_fn "*) :
-    eval "$acx_config_subdir_fn"
-                 cd "$acx_config_subdir_popdir" ;; #(
-  *) :
-     ;;
-esac
-              acx_msg="=== configuring in $acx_config_subdir ($acx_config_subdir_popdir/$acx_config_subdir)"
-              $as_echo "$as_me:${as_lineno-$LINENO}: $acx_msg" >&5
-              $as_echo "$acx_msg" >&6
-              as_dir="$acx_config_subdir"; as_fn_mkdir_p
-              ac_builddir=.
-
-case "$acx_config_subdir" in
-.) ac_dir_suffix= ac_top_builddir_sub=. ac_top_build_prefix= ;;
-*)
-  ac_dir_suffix=/`$as_echo "$acx_config_subdir" | sed 's|^\.[\\/]||'`
-  # A ".." for each directory in $ac_dir_suffix.
-  ac_top_builddir_sub=`$as_echo "$ac_dir_suffix" | sed 's|/[^\\/]*|/..|g;s|/||'`
-  case $ac_top_builddir_sub in
-  "") ac_top_builddir_sub=. ac_top_build_prefix= ;;
-  *)  ac_top_build_prefix=$ac_top_builddir_sub/ ;;
-  esac ;;
-esac
-ac_abs_top_builddir=$ac_pwd
-ac_abs_builddir=$ac_pwd$ac_dir_suffix
-# for backward compatibility:
-ac_top_builddir=$ac_top_build_prefix
-
-case $srcdir in
-  .)  # We are building in place.
-    ac_srcdir=.
-    ac_top_srcdir=$ac_top_builddir_sub
-    ac_abs_top_srcdir=$ac_pwd ;;
-  [\\/]* | ?:[\\/]* )  # Absolute name.
-    ac_srcdir=$srcdir$ac_dir_suffix;
-    ac_top_srcdir=$srcdir
-    ac_abs_top_srcdir=$srcdir ;;
-  *) # Relative name.
-    ac_srcdir=$ac_top_build_prefix$srcdir$ac_dir_suffix
-    ac_top_srcdir=$ac_top_build_prefix$srcdir
-    ac_abs_top_srcdir=$ac_pwd/$srcdir ;;
-esac
-ac_abs_srcdir=$ac_abs_top_srcdir$ac_dir_suffix
-
-              cd "$acx_config_subdir"
-              if test -f "$ac_srcdir/configure.gnu"; then :
-  acx_config_subdir_script="$ac_srcdir/configure.gnu"
-elif test -f "$ac_srcdir/configure"; then :
-  acx_config_subdir_script="$ac_srcdir/configure"
-else
-  as_fn_error $? "unable to configure '$acx_config_subdir': no configure script found" "$LINENO" 5
-                 acx_config_subdir_script=
+            acx_subdir_run_any=no
+            for acx_subdir_srcdir in $extra_src_subdirs; do
+              eval as_val=\$acx_subdir_run_condition_`$as_echo "$acx_subdir_srcdir" | $as_tr_sh`
+   if test "x$as_val" = xyes; then :
+  acx_subdir_run_any=yes
+                 eval acx_subdir_builddir=\$acx_subdir_run_dir_`$as_echo "$acx_subdir_srcdir" | $as_tr_sh`
+                 eval acx_subdir_fns=\$acx_subdir_run_before_`$as_echo "$acx_subdir_srcdir" | $as_tr_sh`
+                 if test -n "$acx_subdir_fns"; then :
+  acx_tmp="=== running extra commands before configuring $acx_subdir_srcdir"
+                    $as_echo "$as_me:${as_lineno-$LINENO}: $acx_tmp" >&5
+                    $as_echo "$acx_tmp" >&6
+                    for acx_tmp in $acx_subdir_fns; do
+                      eval "$acx_tmp"
+                    done
 fi
-              if test -n "$acx_config_subdir_script"; then :
-  eval acx_config_subdir_args=\$acx_config_subdir_args_`$as_echo "$acx_config_subdir" | $as_tr_sh`
-                 if test /dev/null != "$cache_file"; then :
-  case $cache_file in #(
-  [\\/]* | ?:[\\/]*) :
-    acx_sub_cache_file=$cache_file ;; #(
-  *) :
-    acx_sub_cache_file="$ac_top_build_prefix$cache_file" ;;
-esac
-                      acx_sub_cache_file="$acx_sub_cache_file.`echo "$acx_config_subdir" | tr / .`"
-else
-  acx_sub_cache_file=$cache_file
+                 acx_tmp="=== configuring $acx_subdir_srcdir (in $acx_subdir_builddir)"
+                 $as_echo "$as_me:${as_lineno-$LINENO}: $acx_tmp" >&5
+                 $as_echo "$acx_tmp" >&6
+                 as_dir="$acx_subdir_builddir"; as_fn_mkdir_p
+                 acx_subdir_run_cmd="`eval 'as_val=${'acx_subdir_run_cmd_\`$as_echo "$acx_subdir_srcdir" | $as_tr_sh\`'};$as_echo "$as_val"'` `eval 'as_val=${'acx_subdir_run_args_\`$as_echo "$acx_subdir_srcdir" | $as_tr_sh\`'};$as_echo "$as_val"'`"
+                 acx_subdir_run_cmd="( cd '$acx_subdir_builddir' && $acx_subdir_run_cmd $acx_subdir_silent_arg)"
+                 { $as_echo "$as_me:${as_lineno-$LINENO}: running $acx_subdir_run_cmd" >&5
+$as_echo "$as_me: running $acx_subdir_run_cmd" >&6;}
+                 eval "$acx_subdir_run_cmd" || as_fn_error $? "configuration of $acx_subdir_srcdir failed" "$LINENO" 5
+                 eval acx_subdir_fns=\$acx_subdir_run_after_`$as_echo "$acx_subdir_srcdir" | $as_tr_sh`
+                 if test -n "$acx_subdir_fns"; then :
+  acx_tmp="=== running extra commands after configuring $acx_subdir_srcdir"
+                    $as_echo "$as_me:${as_lineno-$LINENO}: $acx_tmp" >&5
+                    $as_echo "$acx_tmp" >&6
+                    for acx_tmp in $acx_subdir_fns; do
+                      eval "$acx_tmp"
+                    done
 fi
-                 for acx_config_subdir_arg in \
-                   "--cache-file=$acx_sub_cache_file" \
-                   "--srcdir=$ac_srcdir" \
-                   "--prefix=$prefix"; do
-                   case $acx_config_subdir_arg in #(
-  *\'*) :
-    acx_config_subdir_arg=`$as_echo "$acx_config_subdir_arg" | sed "s/'/'\\\\\\\\''/g"` ;; #(
-  *) :
-     ;;
-esac
-                   as_fn_append acx_config_subdir_args " '$acx_config_subdir_arg'"
-                 done
-                 as_fn_append acx_config_subdir_args " $acx_config_subdir_common_args"
-                 { $as_echo "$as_me:${as_lineno-$LINENO}: running $SHELL $acx_config_subdir_script $acx_config_subdir_args" >&5
-$as_echo "$as_me: running $SHELL $acx_config_subdir_script $acx_config_subdir_args" >&6;}
-                 eval "\$SHELL \"$acx_config_subdir_script\" $acx_config_subdir_args" || as_fn_error $? "$acx_config_subdir_script failed for $acx_config_subdir" "$LINENO" 5
 fi
-              cd "$acx_config_subdir_popdir"
-              acx_config_subdir_fn=acx_config_subdir_post_cmds_`$as_echo "$acx_config_subdir" | $as_tr_sh`
-              case " $acx_config_subdir_pre_post_fns " in #(
-  *" $acx_config_subdir_fn "*) :
-    eval "$acx_config_subdir_fn"
-                 cd "$acx_config_subdir_popdir" ;; #(
-  *) :
-     ;;
-esac
-            done
-            if test -n "$subdirs_extra"; then :
+               done
+               if test "x$acx_subdir_run_any" = xyes; then :
   $as_echo "===" >&6
-               $as_echo "$as_me:${as_lineno-$LINENO}: ===" >&5
+                  $as_echo "$as_me:${as_lineno-$LINENO}: ===" >&5
 fi
 fi
-acx_exec_result=`$as_echo @LDFLAGS@ | "bundled/threaded_hello/config.status" -q --file=- 2>/dev/null`
+acx_tmp=`$as_echo @LDFLAGS@ | "$acx_subdir_run_dir_bundled_threaded_hello/config.status" -q --file=- 2>/dev/null`
    if test $? -eq 0; then :
-  mkhelper_LDFLAGS=$acx_exec_result
+  mkhelper_LDFLAGS=$acx_tmp
 else
-  as_fn_error $? "unable to run 'bundled/threaded_hello/config.status'" "$LINENO" 5
+  as_fn_error $? "unable to run '$acx_subdir_run_dir_bundled_threaded_hello/config.status'" "$LINENO" 5
 fi
-   acx_exec_result=`$as_echo @LIBS@ | "bundled/threaded_hello/config.status" -q --file=- 2>/dev/null`
+   acx_tmp=`$as_echo @LIBS@ | "$acx_subdir_run_dir_bundled_threaded_hello/config.status" -q --file=- 2>/dev/null`
    if test $? -eq 0; then :
-  mkhelper_LIBS=$acx_exec_result
+  mkhelper_LIBS=$acx_tmp
 else
-  as_fn_error $? "unable to run 'bundled/threaded_hello/config.status'" "$LINENO" 5
+  as_fn_error $? "unable to run '$acx_subdir_run_dir_bundled_threaded_hello/config.status'" "$LINENO" 5
 fi
    if test -n "$mkhelper_LDFLAGS"; then :
   as_fn_append LDFLAGS " $mkhelper_LDFLAGS"
@@ -4971,11 +5156,11 @@ esac
 fi
       done
 fi
-   acx_exec_result=`$as_echo ' @PTHREAD_CFLAGS@' | "bundled/threaded_hello/config.status" -q --file=- 2>/dev/null`
+   acx_tmp=`$as_echo ' @PTHREAD_CFLAGS@' | "$acx_subdir_run_dir_bundled_threaded_hello/config.status" -q --file=- 2>/dev/null`
    if test $? -eq 0; then :
-  mkhelper_PTHREAD_CFLAGS=$acx_exec_result
+  mkhelper_PTHREAD_CFLAGS=$acx_tmp
 else
-  as_fn_error $? "unable to run 'bundled/threaded_hello/config.status'" "$LINENO" 5
+  as_fn_error $? "unable to run '$acx_subdir_run_dir_bundled_threaded_hello/config.status'" "$LINENO" 5
 fi
    if test -n "$mkhelper_PTHREAD_CFLAGS"; then :
   if test "x$FC_VENDOR" = xnag; then :

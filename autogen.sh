@@ -38,3 +38,6 @@ script_dir=`cd "$script_dir"; pwd`
 
   # All went fine since we have not exited before:
   exit 0 ) || exit $?
+
+( dir="$script_dir/bundled/delayed"
+  echo "Running autoreconf in '$dir'..." && cd "$dir" && autoreconf -fvi ) || exit $?

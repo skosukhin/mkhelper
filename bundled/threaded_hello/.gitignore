@@ -1,11 +1,12 @@
 *.la
 *.lo
 *.mod
+*.o
 .deps
 .libs
-/Makefile
 /autom4te.cache
 /config.log
 /config.status
 /libtool
 /print_hello
+Makefile

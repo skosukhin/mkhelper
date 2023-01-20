@@ -229,35 +229,93 @@ AC_SUBST([BUNDLED_LIBFILES], [''])
 
 dnl Configure a bundled library that is very picky on the provided configure
 dnl options:
-ACX_CONFIG_SUBDIR([bundled/picky],
-  [[FCFLAGS=*],
-   [ACX_CONFIG_SUBDIR_PATTERN_ENABLE([silent-rules])],
-   [ACX_CONFIG_SUBDIR_PATTERN_WITH([netcdf-root])],
-   [ACX_CONFIG_SUBDIR_PATTERN_ENABLE([always])]],
-  [], [yes])
-ACX_CONFIG_SUBDIR_APPEND_ARGS([bundled/picky],
-  [[FCFLAGS=],
-   [--enable-always=yes]])
+polymorphic_subdir='bundled/picky'
+polymorphic_config=''
+ACX_SUBDIR_INIT_CONFIG([$polymorphic_subdir],
+  [no-run no-recursive-help], [], [AS_ESCAPE(["${polymorphic_config}"])])
+polymorphic_subdir=
+polymorphic_config='configure.gnu'
+ACX_SUBDIR_REMOVE_ARGS([bundled/picky],
+  [FCFLAGS=*],
+  [ACX_SUBDIR_CONFIG_PATTERN_ENABLE([silent-rules])],
+  [ACX_SUBDIR_CONFIG_PATTERN_WITH([netcdf-root])],
+  [ACX_SUBDIR_CONFIG_PATTERN_ENABLE([always])])
+ACX_SUBDIR_APPEND_ARGS([bundled/picky],
+  [FCFLAGS=], [--enable-always=yes])
+
+AC_ARG_ENABLE([delayed-config],
+  [AC_HELP_STRING([--enable-delayed-config],
+     [enable the delayed (build-time) configuration of the bundled/picky ]dnl
+[subdirectory @<:@default: yes@:>@])],
+  [AS_IF([test x"$enableval" != xno], [enable_delayed_config=yes])],
+  [enable_delayed_config=yes])
+
+AC_SUBST([DELAYED_CONFIG_RULES], [''])dnl
+AS_VAR_IF([enable_delayed_config], [yes],
+  [AS_VAR_APPEND([DELAYED_CONFIG_RULES],
+     ["polymorphic_config:= $polymorphic_config$as_nl"])],
+  [polymorphic_subdir='bundled/picky'
+   ACX_SUBDIR_RUN_RESET([$polymorphic_subdir], [yes])
+   ACX_SUBDIR_RUN_EXTRA([$polymorphic_subdir],
+     [echo "Run before 1"],
+     [echo "Run after 1"])
+   polymorphic_subdir=
+
+   ACX_SUBDIR_RUN_EXTRA([bundled/picky], [echo "Run before 2"])
+   ACX_SUBDIR_RUN_EXTRA([bundled/picky], [], [echo "Run after 2"])])
 
 dnl Configure a libtool-based bundled library that depends on POSIX Threads:
-ACX_CONFIG_SUBDIR([bundled/threaded_hello],
-  [[ACX_CONFIG_SUBDIR_PATTERN_ENABLE([static])],
-   [ACX_CONFIG_SUBDIR_PATTERN_ENABLE([shared])],
-   [ACX_CONFIG_SUBDIR_PATTERN_ENABLE([maintainer-mode])],
-   [ACX_CONFIG_SUBDIR_PATTERN_ENABLE([silent-rules])]],
-  [[--enable-static], [--disable-shared], [--disable-maintainer-mode],
-   [--enable-silent-rules="$enable_silent_rules"]],
-  [yes])
-AS_VAR_APPEND([BUNDLED_FCFLAGS], ["${FC_MOD_IN}bundled/threaded_hello "])
-BUNDLED_LIBFILES="bundled/threaded_hello/.libs/libthreaded_hello_f.a dnl
+ACX_SUBDIR_INIT_CONFIG([bundled/threaded_hello],
+  [], [bundled/build/threaded_hello])
+ACX_SUBDIR_REMOVE_ARGS([bundled/threaded_hello],
+  [ACX_SUBDIR_CONFIG_PATTERN_ENABLE([static])],
+  [ACX_SUBDIR_CONFIG_PATTERN_ENABLE([shared])],
+  [ACX_SUBDIR_CONFIG_PATTERN_ENABLE([maintainer-mode])],
+  [ACX_SUBDIR_CONFIG_PATTERN_ENABLE([silent-rules])])
+ACX_SUBDIR_APPEND_ARGS([bundled/threaded_hello],
+  [--enable-static --disable-shared --disable-maintainer-mode],
+  [--enable-silent-rules="$enable_silent_rules"])
+AS_VAR_APPEND([BUNDLED_FCFLAGS], ["${FC_MOD_IN}bundled/build/threaded_hello "])
+BUNDLED_LIBFILES="bundled/build/threaded_hello/.libs/libthreaded_hello_f.a dnl
 $BUNDLED_LIBFILES"
-AS_VAR_APPEND([DEPGEN_EXTERNAL_MODS], [',mo_threaded_hello'])
+ACX_SUBDIR_INIT_IFELSE([bundled/threaded_hello],
+  [AS_VAR_APPEND([DEPGEN_EXTERNAL_MODS], [',mo_threaded_hello'])])
+
+dnl Initialize a bundled library that will be configured at the build time:
+ACX_SUBDIR_INIT_CONFIG([bundled/delayed], [no-run])
+ACX_SUBDIR_REMOVE_ARGS([bundled/delayed],
+  [ACX_SUBDIR_CONFIG_PATTERN_ENABLE([silent-rules])])
+ACX_SUBDIR_APPEND_ARGS([bundled/delayed],
+  [--enable-silent-rules="$enable_silent_rules"])
+AS_VAR_APPEND([BUNDLED_FCFLAGS], ["${FC_MOD_IN}bundled/delayed "])
+BUNDLED_LIBFILES="bundled/delayed/libdelayed.a $BUNDLED_LIBFILES"
+ACX_SUBDIR_INIT_IFELSE([bundled/delayed],
+  [AS_VAR_APPEND([DEPGEN_EXTERNAL_MODS], [',mo_delayed'])])
+
+AC_SUBST([bundled_configured_subdirs], [''])dnl
+AC_SUBST([bundled_delayed_subdirs], [''])dnl
+mkhelper_rule_separator=''
+for mkhelper_src_subdir in $extra_src_subdirs; do
+  ACX_SUBDIR_GET_BUILD_DIR([mkhelper_build_subdir], [$mkhelper_src_subdir])
+  ACX_SUBDIR_RUN_IFELSE([$mkhelper_src_subdir],
+    [AS_VAR_APPEND([bundled_configured_subdirs], [" $mkhelper_build_subdir"])],
+    [AS_VAR_APPEND([bundled_delayed_subdirs], [" $mkhelper_build_subdir"])
+     ACX_SUBDIR_GET_RUN_CMD([mkhelper_subdir_cmd], [$mkhelper_src_subdir])
+     AS_VAR_APPEND([DELAYED_CONFIG_RULES], [dnl
+"$mkhelper_rule_separator$mkhelper_build_subdir: dnl
+\$(if \$(filter-out mostlyclean clean distclean,\$(or \$(MAKECMDGOALS),all)),dnl
+$mkhelper_build_subdir/Makefile)
+$mkhelper_build_subdir/Makefile:
+	\$(silent_CONFIG)$MKDIR_P \$(@D) && cd \$(@D) && dnl
+$mkhelper_subdir_cmd \$(if \$(silent_CONFIG),--silent)"])
+	 mkhelper_rule_separator="$as_nl$as_nl"])
+done
 
 dnl Collect compiler and linker flags required for linking to the library:
 AC_CONFIG_COMMANDS_PRE(
-  [ACX_CONFIG_SUBDIR_VAR([mkhelper_LDFLAGS],
+  [ACX_SUBDIR_QUERY_CONFIG_STATUS([mkhelper_LDFLAGS],
      [bundled/threaded_hello], [@LDFLAGS@])
-   ACX_CONFIG_SUBDIR_VAR([mkhelper_LIBS],
+   ACX_SUBDIR_QUERY_CONFIG_STATUS([mkhelper_LIBS],
      [bundled/threaded_hello], [@LIBS@])
    AS_IF([test -n "$mkhelper_LDFLAGS"],
      [AS_VAR_APPEND([LDFLAGS], [" $mkhelper_LDFLAGS"])])
@@ -272,7 +330,7 @@ dnl Except for RPATH flags:
              ["$acx_cv_fc_rpath_flag$mkhelper_libdir"], [' '])])
       done])
 dnl We need to link to pthread library, which might require PTHREAD_CFLAGS
-   ACX_CONFIG_SUBDIR_VAR([mkhelper_PTHREAD_CFLAGS],
+   ACX_SUBDIR_QUERY_CONFIG_STATUS([mkhelper_PTHREAD_CFLAGS],
      [bundled/threaded_hello], [' @PTHREAD_CFLAGS@'])
    AS_IF([test -n "$mkhelper_PTHREAD_CFLAGS"],
      [AS_VAR_IF([FC_VENDOR], [nag],

@@ -2,8 +2,9 @@
 
 program main
 
-  use mo_mkhelper, only: print_hello
+  use mo_mkhelper, only: print_mkhelper_hello => print_hello
   use mo_threaded_hello, only: print_threaded_hello => print_hello
+  use mo_delayed, only: print_delayed_hello => print_hello
 
 #ifdef TEST_INVALID
   use mo_invalid
@@ -78,11 +79,13 @@ program main
 
   call implicit_external()
 
-  call print_hello()
+  call print_mkhelper_hello()
 
   print *, "Running threaded bundled library..."
   retval = print_threaded_hello()
   if (retval .ne. 0) stop 2
+
+  call print_delayed_hello()
 
   print *, "Success!"
 end program main

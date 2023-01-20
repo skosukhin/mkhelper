@@ -20,7 +20,7 @@ jobs:
     - name: Distclean
       run: make -j4 distclean
     - name: 'Configure #2'
-      run: ./configure --disable-openmp --disable-silent-rules || { cat ./config.log; exit 1; }
+      run: ./configure --disable-openmp --disable-delayed-config --disable-silent-rules || { cat ./config.log; exit 1; }
     - name: 'Build #2'
       run: make -j4
     - name: 'Run #2'
