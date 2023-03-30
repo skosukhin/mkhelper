@@ -5,6 +5,7 @@ program main
   use mo_mkhelper, only: print_mkhelper_hello => print_hello
   use mo_threaded_hello, only: print_threaded_hello => print_hello
   use mo_delayed, only: print_delayed_hello => print_hello
+  use mo_cmake_based, only: print_cmake_based_hello => print_hello
 
 #ifdef TEST_INVALID
   use mo_invalid
@@ -86,6 +87,8 @@ program main
   if (retval .ne. 0) stop 2
 
   call print_delayed_hello()
+
+  call print_cmake_based_hello()
 
   print *, "Success!"
 end program main

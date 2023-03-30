@@ -1,0 +1,9 @@
+*.a
+.ninja_log
+/*.cmake
+CMakeCache.txt
+CMakeFiles/*
+Makefile
+build.ninja
+build/*
+mod/*

@@ -5,9 +5,15 @@ srcdir:= @srcdir@
 subdirs:= src
 
 # Relative paths to the directories of the bundled packages:
-bundled_configured_subdirs:= @bundled_configured_subdirs@
-bundled_delayed_subdirs:= @bundled_delayed_subdirs@
-bundled_subdirs:= $(bundled_configured_subdirs) $(bundled_delayed_subdirs)
+bundled_ready_config_subdirs:= @bundled_ready_config_subdirs@
+bundled_delayed_config_subdirs:= @bundled_delayed_config_subdirs@
+bundled_ready_cmake_subdirs:= @bundled_ready_cmake_subdirs@
+bundled_delayed_cmake_subdirs:= @bundled_delayed_cmake_subdirs@
+bundled_subdirs:= \
+  $(bundled_ready_config_subdirs) \
+  $(bundled_delayed_config_subdirs) \
+  $(bundled_ready_cmake_subdirs) \
+  $(bundled_delayed_cmake_subdirs)
 
 # Path to the directory with the Fortran module files:
 moddir:= mod
@@ -18,6 +24,7 @@ exec_prefix= @exec_prefix@
 
 # Compilers and utilities:
 AR= @AR@
+CMAKE= @CMAKE@
 DEPGEN= ${PYTHON} $(srcdir)/mkhelper/depgen.py
 DEPLIST= ${PYTHON} $(srcdir)/mkhelper/deplist.py
 FC= @FC@
@@ -49,6 +56,7 @@ DEPLIST_args= @deplist.config
 V= @DEFAULT_VERBOSITY@
 ifeq ($(V), 0)
 silent_AR=     @echo "  AR      " $@;
+silent_CMAKE=  @echo "  CMAKE   " $(@D);
 silent_CONFIG= @echo "  CONFIG  " $(@D);
 silent_DEPGEN= @echo "  DEPGEN  " $@;
 silent_FC=     @echo "  FC      " $@;
@@ -120,6 +128,7 @@ distclean: clean
 	rm -f config.log config.status depgen.config deplist.config
 	rm -f $(lib_dep_files) $(exe_dep_files)
 	rm -f $(dir_files)
+	rm -rf $(bundled_ready_cmake_subdirs) $(bundled_delayed_cmake_subdirs)
 	@for dir in $(moddir) bundled/build; do \
 	  if test -d "$$dir"; then \
 	    echo "find '$$dir' -type d -empty -delete"; \
@@ -190,16 +199,30 @@ extra_f90.d: mkhelper.mk
 @DELAYED_CONFIG_RULES@
 
 # Make bundled libraries:
-$(bundled_configured_subdirs):
+$(bundled_ready_config_subdirs):
 	@if test -f '$@/Makefile'; then \
 	  $(MAKE) -C $@ $(filter all mostlyclean clean distclean,$(MAKECMDGOALS)) V=$(V); \
 	else \
 	  test -z '$(filter-out distclean,$(or $(MAKECMDGOALS),all))'; \
 	fi
 
-$(bundled_delayed_subdirs):
+$(bundled_delayed_config_subdirs):
 	@if test -f '$@/Makefile'; then \
 	  $(MAKE) -C $@ $(filter all mostlyclean clean distclean,$(MAKECMDGOALS)) V=$(V); \
+	else \
+	  test -z '$(filter-out mostlyclean clean distclean,$(or $(MAKECMDGOALS),all))'; \
+	fi
+
+$(bundled_ready_cmake_subdirs):
+	@if test -f '$@/Makefile'; then \
+	  $(MAKE) -C $@ $(filter all clean,$(MAKECMDGOALS) $(if $(filter mostlyclean distclean,$(MAKECMDGOALS)),clean)) VERBOSE=$(filter-out 0,$(V)); \
+	else \
+	  test -z '$(filter-out distclean,$(or $(MAKECMDGOALS),all))'; \
+	fi
+
+$(bundled_delayed_cmake_subdirs):
+	@if test -f '$@/Makefile'; then \
+	  $(MAKE) -C $@ $(filter all clean,$(MAKECMDGOALS) $(if $(filter mostlyclean distclean,$(MAKECMDGOALS)),clean)) VERBOSE=$(filter-out 0,$(V)); \
 	else \
 	  test -z '$(filter-out mostlyclean clean distclean,$(or $(MAKECMDGOALS),all))'; \
 	fi

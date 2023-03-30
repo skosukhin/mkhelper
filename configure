@@ -589,8 +589,11 @@ ac_default_prefix="`pwd`/install"
 extra_src_subdirs=
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
-bundled_delayed_subdirs
-bundled_configured_subdirs
+bundled_delayed_cmake_subdirs
+bundled_ready_cmake_subdirs
+bundled_delayed_config_subdirs
+bundled_ready_config_subdirs
+CMAKE
 DELAYED_CONFIG_RULES
 BUNDLED_LIBFILES
 BUNDLED_FCFLAGS
@@ -1362,7 +1365,8 @@ Optional Features:
   --enable-invalid-test   enable the test for invalid dependency tree, which
                           fails the building [default: no]
   --enable-delayed-config enable the delayed (build-time) configuration of the
-                          bundled/picky subdirectory [default: yes]
+                          bundled/picky and bundled/cmake_based subdirectories
+                          [default: yes]
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -1662,6 +1666,165 @@ acx_subdir_extra_run_3 ()
 {
 echo "Run after 2"
 } # acx_subdir_extra_run_3
+
+acx_subdir_pre_adjust_cmake_args ()
+{
+if ${acx_subdir_pre_adjusted_cmake_args+:} false; then :
+
+else
+  acx_subdir_pre_adjusted_cmake_args="'-Wno-dev' '--no-warn-unused-cli' '-GUnix Makefiles'"
+            eval "set dummy $ac_configure_args"; shift
+                                    acx_subdir_cmake_vars_to_transform=
+            for acx_tmp; do
+              case $acx_tmp in #(
+  AR=*|RANLIB=*|CFLAGS=*|CXXFLAGS=*|CPPFLAGS=*|FCFLAGS=*|LDFLAGS=*|LIBS=*|CC=*|CXX=*|FC=*) :
+    acx_arg_name=`expr "x$acx_tmp" : 'x\([^=]*\)='`
+                 as_fn_append acx_subdir_cmake_vars_to_transform " $acx_arg_name"
+                 acx_arg_cmd_value=`expr "x$acx_tmp" : '[^=]*=\(.*\)'`
+                 eval acx_arg_${acx_arg_name}=\$acx_arg_cmd_value ;; #(
+  *) :
+     ;;
+esac
+            done
+                           for acx_arg_name in CC CXX FC; do
+                 if test "x$acx_arg_name" = xCC; then :
+  acx_subdir_xFLAGS=CFLAGS
+else
+  acx_subdir_xFLAGS="${acx_arg_name}FLAGS"
+fi
+                 eval "acx_subdir_${acx_arg_name}_${acx_subdir_xFLAGS}="
+                 case " $acx_subdir_cmake_vars_to_transform " in #(
+  *" $acx_arg_name "*) :
+    set dummy `eval 'as_val=${'$acx_arg_name'};$as_echo "$as_val"'`; shift
+                    eval acx_arg_${acx_arg_name}_EXEC=\$1; shift
+                    as_fn_append acx_subdir_cmake_vars_to_transform " ${acx_arg_name}_EXEC"
+                    acx_tmp=$@
+                    if test -n "$acx_tmp"; then :
+  eval acx_subdir_${acx_arg_name}_${acx_subdir_xFLAGS}=\$acx_tmp
+                       case " $acx_subdir_cmake_vars_to_transform " in #(
+  *" $acx_subdir_xFLAGS "*) :
+    as_fn_append acx_tmp " `eval 'as_val=${'acx_arg_${acx_subdir_xFLAGS}'};$as_echo "$as_val"'`" ;; #(
+  *) :
+    as_fn_append acx_subdir_cmake_vars_to_transform " $acx_subdir_xFLAGS" ;;
+esac
+                       eval acx_arg_${acx_subdir_xFLAGS}=\$acx_tmp
+fi ;; #(
+  *) :
+     ;;
+esac
+               done
+                           for acx_arg_name in AR RANLIB; do
+              case " $acx_subdir_cmake_vars_to_transform " in #(
+  *" $acx_arg_name "*) :
+    acx_prog_search_abspath=unknown
+                 eval acx_prog_exec=\$acx_arg_${acx_arg_name}
+                 case $acx_prog_exec in #(
+  *[\\/]*) :
+    if as_fn_executable_p $acx_prog_exec; then :
+  acx_prog_search_abspath=$acx_prog_exec
+fi ;; #(
+  *) :
+    as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    if as_fn_executable_p "$as_dir/$acx_prog_exec"; then :
+  acx_prog_search_abspath="$as_dir/$acx_prog_exec"
+                          break
+fi
+  done
+IFS=$as_save_IFS
+ ;;
+esac
+                 if test "x$acx_prog_search_abspath" = xunknown; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: unable to convert argument $acx_arg_name to its CMake equivalent(s): absolute path to \"$acx_prog_exec\" is not found" >&5
+$as_echo "$as_me: WARNING: unable to convert argument $acx_arg_name to its CMake equivalent(s): absolute path to \"$acx_prog_exec\" is not found" >&2;}
+else
+  eval acx_arg_${acx_arg_name}_ABSPATH=\$acx_prog_search_abspath
+                    as_fn_append acx_subdir_cmake_vars_to_transform " ${acx_arg_name}_ABSPATH"
+fi ;; #(
+  *) :
+     ;;
+esac
+            done
+                        case " $acx_subdir_cmake_vars_to_transform " in #(
+  *' CPPFLAGS '*) :
+    for acx_arg_name in CFLAGS CXXFLAGS; do
+                 case " $acx_subdir_cmake_vars_to_transform " in #(
+  *" $acx_arg_name "*) :
+    as_fn_append acx_arg_${acx_arg_name} " $acx_arg_CPPFLAGS" ;; #(
+  *) :
+    eval acx_arg_${acx_arg_name}=\$acx_arg_CPPFLAGS
+                    as_fn_append acx_subdir_cmake_vars_to_transform " $acx_arg_name" ;;
+esac
+               done ;; #(
+  *) :
+     ;;
+esac
+                        if test "x$prefix" = xNONE; then :
+  acx_arg_PREFIX=$ac_default_prefix
+else
+  acx_arg_PREFIX=$prefix
+fi
+            as_fn_append acx_subdir_cmake_vars_to_transform ' PREFIX'
+            for acx_arg_name in $acx_subdir_cmake_vars_to_transform; do
+              acx_subdir_cmake_vars_to_set=
+              case $acx_arg_name in #(
+  AR) :
+    acx_subdir_cmake_vars_to_set='' ;; #(
+  RANLIB) :
+    acx_subdir_cmake_vars_to_set='' ;; #(
+  CFLAGS) :
+    acx_subdir_cmake_vars_to_set='CMAKE_C_FLAGS' ;; #(
+  CXXFLAGS) :
+    acx_subdir_cmake_vars_to_set='CMAKE_CXX_FLAGS' ;; #(
+  CPPFLAGS) :
+    acx_subdir_cmake_vars_to_set='' ;; #(
+  FCFLAGS) :
+    acx_subdir_cmake_vars_to_set='CMAKE_Fortran_FLAGS' ;; #(
+  LDFLAGS) :
+    acx_subdir_cmake_vars_to_set='CMAKE_EXE_LINKER_FLAGS CMAKE_MODULE_LINKER_FLAGS CMAKE_SHARED_LINKER_FLAGS' ;; #(
+  LIBS) :
+    acx_subdir_cmake_vars_to_set='CMAKE_C_STANDARD_LIBRARIES CMAKE_CXX_STANDARD_LIBRARIES CMAKE_Fortran_STANDARD_LIBRARIES' ;; #(
+  CC) :
+    acx_subdir_cmake_vars_to_set='' ;; #(
+  CXX) :
+    acx_subdir_cmake_vars_to_set='' ;; #(
+  FC) :
+    acx_subdir_cmake_vars_to_set='' ;; #(
+  CC_EXEC) :
+    acx_subdir_cmake_vars_to_set='CMAKE_C_COMPILER' ;; #(
+  CXX_EXEC) :
+    acx_subdir_cmake_vars_to_set='CMAKE_CXX_COMPILER' ;; #(
+  FC_EXEC) :
+    acx_subdir_cmake_vars_to_set='CMAKE_Fortran_COMPILER' ;; #(
+  AR_ABSPATH) :
+    acx_subdir_cmake_vars_to_set='CMAKE_AR CMAKE_C_COMPILER_AR CMAKE_CXX_COMPILER_AR CMAKE_Fortran_COMPILER_AR' ;; #(
+  RANLIB_ABSPATH) :
+    acx_subdir_cmake_vars_to_set='CMAKE_RANLIB CMAKE_C_COMPILER_RANLIB CMAKE_CXX_COMPILER_RANLIB CMAKE_Fortran_COMPILER_RANLIB' ;; #(
+  PREFIX) :
+    acx_subdir_cmake_vars_to_set='CMAKE_INSTALL_PREFIX' ;; #(
+  *) :
+     ;;
+esac
+              if test -n "$acx_subdir_cmake_vars_to_set"; then :
+  eval acx_subdir_quoted_value=\$acx_arg_${acx_arg_name}
+                 case $acx_subdir_quoted_value in #(
+  *\'*) :
+    acx_subdir_quoted_value=`$as_echo "$acx_subdir_quoted_value" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+  *) :
+     ;;
+esac
+                 for acx_subdir_cmake_var in $acx_subdir_cmake_vars_to_set; do
+                   as_fn_append acx_subdir_pre_adjusted_cmake_args " '-D$acx_subdir_cmake_var=$acx_subdir_quoted_value'"
+                 done
+fi
+              { eval acx_arg_${acx_arg_name}=; unset acx_arg_${acx_arg_name};}
+            done
+
+fi
+} # acx_subdir_pre_adjust_cmake_args
 cat >config.log <<_ACEOF
 This file contains any messages produced by compilers while
 running configure, to aid debugging if configure makes a mistake.
@@ -4895,20 +5058,92 @@ case " $extra_src_subdirs " in #(
      ;;
 esac
 
-bundled_configured_subdirs=''
-bundled_delayed_subdirs=''
+CMAKE=${CMAKE-cmake}
+               acx_subdir_run_cmd_bundled_cmake_based="\"\${CMAKE}\""
+   acx_subdir_run_dir_bundled_cmake_based="bundled/cmake_based/build"
+   acx_subdir_build_type_bundled_cmake_based='cmake'
+         acx_subdir_pre_adjust_cmake_args
+      acx_subdir_run_args_bundled_cmake_based=$acx_subdir_pre_adjusted_cmake_args
+         acx_subdir_srcdirs_fn "bundled/cmake_based/build"
+         case $ac_srcdir in #(
+  .) :
+    acx_tmp='-S..' ;; #(
+  *) :
+    acx_tmp="-S$ac_top_srcdir/bundled/cmake_based" ;;
+esac
+      case $acx_tmp in #(
+  *\'*) :
+    acx_tmp=`$as_echo "$acx_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+  *) :
+     ;;
+esac
+      as_fn_append acx_subdir_run_args_bundled_cmake_based " '$acx_tmp'"
+      as_fn_append extra_src_subdirs " bundled/cmake_based"
+   acx_subdir_run_condition_bundled_cmake_based=no
+eval "set dummy $acx_subdir_run_args_bundled_cmake_based"; shift
+   acx_subdir_run_args_bundled_cmake_based=
+   while test $# != 0; do
+     acx_tmp=$1
+     case $acx_tmp in #(
+  -DCMAKE_Fortran_COMPILER=*) :
+     ;; #(
+  *) :
+           case $acx_tmp in #(
+  *\'*) :
+    acx_tmp=`$as_echo "$acx_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+  *) :
+     ;;
+esac
+        as_fn_append acx_subdir_run_args_bundled_cmake_based " '$acx_tmp'" ;;
+esac
+     shift
+   done
+set dummy -DCMAKE_Fortran_COMPILER="$FC" -DBUILD_SHARED_LIBS:BOOL=OFF   -DCMAKE_BUILD_TYPE=NOEXTRAFLAGS; shift
+   for acx_tmp; do
+     case $acx_tmp in #(
+  *\'*) :
+    acx_tmp=`$as_echo "$acx_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+  *) :
+     ;;
+esac
+     as_fn_append acx_subdir_run_args_bundled_cmake_based " '$acx_tmp'"
+   done
+as_fn_append BUNDLED_FCFLAGS "${FC_MOD_IN}bundled/cmake_based/build/mod "
+BUNDLED_LIBFILES="bundled/cmake_based/build/libCMakeBasedHello.a $BUNDLED_LIBFILES"
+case " $extra_src_subdirs " in #(
+  *' bundled/cmake_based '*) :
+    as_fn_append DEPGEN_EXTERNAL_MODS ',mo_cmake_based' ;; #(
+  *) :
+     ;;
+esac
+if test "x$enable_delayed_config" = xno; then :
+  acx_subdir_run_condition_bundled_cmake_based=yes
+fi
+
+bundled_ready_config_subdirs=''
+bundled_delayed_config_subdirs=''
+bundled_ready_cmake_subdirs=''
+bundled_delayed_cmake_subdirs=''
 mkhelper_rule_separator=''
 for mkhelper_src_subdir in $extra_src_subdirs; do
   eval mkhelper_build_subdir=\$acx_subdir_run_dir_`$as_echo "$mkhelper_src_subdir" | $as_tr_sh`
+  eval mkhelper_build_type=\$acx_subdir_build_type_`$as_echo "$mkhelper_src_subdir" | $as_tr_sh`
   eval as_val=\$acx_subdir_run_condition_`$as_echo "$mkhelper_src_subdir" | $as_tr_sh`
    if test "x$as_val" = xyes; then :
-  as_fn_append bundled_configured_subdirs " $mkhelper_build_subdir"
+  as_fn_append bundled_ready_${mkhelper_build_type}_subdirs " $mkhelper_build_subdir"
 else
-  as_fn_append bundled_delayed_subdirs " $mkhelper_build_subdir"
+  as_fn_append bundled_delayed_${mkhelper_build_type}_subdirs " $mkhelper_build_subdir"
      mkhelper_subdir_cmd="`eval 'as_val=${'acx_subdir_run_cmd_\`$as_echo "$mkhelper_src_subdir" | $as_tr_sh\`'};$as_echo "$as_val"'` `eval 'as_val=${'acx_subdir_run_args_\`$as_echo "$mkhelper_src_subdir" | $as_tr_sh\`'};$as_echo "$as_val"'`"
+     if test "x$mkhelper_build_type" = xcmake; then :
+  mkhelper_silent_var='silent_CMAKE'
+        mkhelper_silent_suffix='>/dev/null'
+else
+  mkhelper_silent_var='silent_CONFIG'
+        mkhelper_silent_suffix='--silent'
+fi
      as_fn_append DELAYED_CONFIG_RULES "$mkhelper_rule_separator$mkhelper_build_subdir: \$(if \$(filter-out mostlyclean clean distclean,\$(or \$(MAKECMDGOALS),all)),$mkhelper_build_subdir/Makefile)
 $mkhelper_build_subdir/Makefile:
-	\$(silent_CONFIG)$MKDIR_P \$(@D) && cd \$(@D) && $mkhelper_subdir_cmd \$(if \$(silent_CONFIG),--silent)"
+	\$($mkhelper_silent_var)$MKDIR_P \$(@D) && cd \$(@D) && $mkhelper_subdir_cmd \$(if \$($mkhelper_silent_var),$mkhelper_silent_suffix)"
 	 mkhelper_rule_separator="$as_nl$as_nl"
 fi
 done

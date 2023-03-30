@@ -246,7 +246,7 @@ ACX_SUBDIR_APPEND_ARGS([bundled/picky],
 AC_ARG_ENABLE([delayed-config],
   [AC_HELP_STRING([--enable-delayed-config],
      [enable the delayed (build-time) configuration of the bundled/picky ]dnl
-[subdirectory @<:@default: yes@:>@])],
+[and bundled/cmake_based subdirectories @<:@default: yes@:>@])],
   [AS_IF([test x"$enableval" != xno], [enable_delayed_config=yes])],
   [enable_delayed_config=yes])
 
@@ -292,22 +292,50 @@ BUNDLED_LIBFILES="bundled/delayed/libdelayed.a $BUNDLED_LIBFILES"
 ACX_SUBDIR_INIT_IFELSE([bundled/delayed],
   [AS_VAR_APPEND([DEPGEN_EXTERNAL_MODS], [',mo_delayed'])])
 
-AC_SUBST([bundled_configured_subdirs], [''])dnl
-AC_SUBST([bundled_delayed_subdirs], [''])dnl
+dnl Initialize a CMake-based library:
+AC_SUBST([CMAKE], [${CMAKE-cmake}])dnl
+ACX_SUBDIR_INIT_CMAKE([bundled/cmake_based], [no-run], [],
+  [AS_ESCAPE(["${CMAKE}"])])
+ACX_SUBDIR_REMOVE_ARGS([bundled/cmake_based], [-DCMAKE_Fortran_COMPILER=*])
+ACX_SUBDIR_APPEND_ARGS([bundled/cmake_based],
+  [-DCMAKE_Fortran_COMPILER="$FC"],
+  [-DBUILD_SHARED_LIBS:BOOL=OFF],
+dnl Set non-existing build type to avoid extra compiler flags:
+  [-DCMAKE_BUILD_TYPE=NOEXTRAFLAGS])
+AS_VAR_APPEND([BUNDLED_FCFLAGS], ["${FC_MOD_IN}bundled/cmake_based/build/mod "])
+BUNDLED_LIBFILES=dnl
+"bundled/cmake_based/build/libCMakeBasedHello.a $BUNDLED_LIBFILES"
+ACX_SUBDIR_INIT_IFELSE([bundled/cmake_based],
+  [AS_VAR_APPEND([DEPGEN_EXTERNAL_MODS], [',mo_cmake_based'])])
+AS_VAR_IF([enable_delayed_config], [no],
+  [ACX_SUBDIR_RUN_RESET([bundled/cmake_based], [yes])])
+
+AC_SUBST([bundled_ready_config_subdirs], [''])dnl
+AC_SUBST([bundled_delayed_config_subdirs], [''])dnl
+AC_SUBST([bundled_ready_cmake_subdirs], [''])dnl
+AC_SUBST([bundled_delayed_cmake_subdirs], [''])dnl
 mkhelper_rule_separator=''
 for mkhelper_src_subdir in $extra_src_subdirs; do
   ACX_SUBDIR_GET_BUILD_DIR([mkhelper_build_subdir], [$mkhelper_src_subdir])
+  ACX_SUBDIR_GET_BUILD_TYPE([mkhelper_build_type], [$mkhelper_src_subdir])
   ACX_SUBDIR_RUN_IFELSE([$mkhelper_src_subdir],
-    [AS_VAR_APPEND([bundled_configured_subdirs], [" $mkhelper_build_subdir"])],
-    [AS_VAR_APPEND([bundled_delayed_subdirs], [" $mkhelper_build_subdir"])
+    [AS_VAR_APPEND([bundled_ready_${mkhelper_build_type}_subdirs],
+       [" $mkhelper_build_subdir"])],
+    [AS_VAR_APPEND([bundled_delayed_${mkhelper_build_type}_subdirs],
+       [" $mkhelper_build_subdir"])
      ACX_SUBDIR_GET_RUN_CMD([mkhelper_subdir_cmd], [$mkhelper_src_subdir])
+     AS_VAR_IF([mkhelper_build_type], [cmake],
+       [mkhelper_silent_var='silent_CMAKE'
+        mkhelper_silent_suffix='>/dev/null'],
+       [mkhelper_silent_var='silent_CONFIG'
+        mkhelper_silent_suffix='--silent'])
      AS_VAR_APPEND([DELAYED_CONFIG_RULES], [dnl
 "$mkhelper_rule_separator$mkhelper_build_subdir: dnl
 \$(if \$(filter-out mostlyclean clean distclean,\$(or \$(MAKECMDGOALS),all)),dnl
 $mkhelper_build_subdir/Makefile)
 $mkhelper_build_subdir/Makefile:
-	\$(silent_CONFIG)$MKDIR_P \$(@D) && cd \$(@D) && dnl
-$mkhelper_subdir_cmd \$(if \$(silent_CONFIG),--silent)"])
+	\$($mkhelper_silent_var)$MKDIR_P \$(@D) && cd \$(@D) && dnl
+$mkhelper_subdir_cmd \$(if \$($mkhelper_silent_var),$mkhelper_silent_suffix)"])
 	 mkhelper_rule_separator="$as_nl$as_nl"])
 done
 

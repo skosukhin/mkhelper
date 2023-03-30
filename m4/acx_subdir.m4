@@ -104,6 +104,275 @@ AC_DEFUN([ACX_SUBDIR_INIT_CONFIG],
    m4_popdef([acx_subdir_opt_adjust_args])dnl
    m4_popdef([acx_subdir_opt_run])])
 
+# ACX_SUBDIR_INIT_CMAKE(SUBDIR,
+#                       [OPTIONS = adjust-args run],
+#                       [BUILD-SUBDIR = SUBDIR/build],
+#                       [CMAKE-EXEC = cmake])
+# -----------------------------------------------------------------------------
+# Initializes a CMake-based project residing in the directory SUBDIR (path
+# relative to the top source directory of the top-level project) for the
+# following configuration depending on the following OPTIONS (a space-separated
+# list, defaults to 'adjust-args adjust-compilers run'):
+#     [no-]adjust-args         whether arguments provided for the top-level
+#                              configure script must be translated into CMake
+#                              arguments (including but not limited to
+#                              'CFLAGS -> -DCMAKE_C_FLAGS',
+#                              '--prefix -> -DCMAKE_INSTALL_PREFIX', etc.).
+#     [no-]adjust-compilers    whether compiler commands provided for the
+#                              top-level configure script must be translated
+#                              into CMake arguments. This implies that all
+#                              extra flags that are found in the CC/CXX/FC
+#                              variables will be stored in the
+#                              acx_subdir_<CC/CXX/FC>_<C/CXX/FC>FLAGS variables
+#                              and prepended to the respective
+#                              CMAKE_<LANG>_FLAGS CMake arguments. The argument
+#                              is ignored if the argument adjustment is
+#                              disabled (i.e. option no-adjust-args is set).
+#     [no-]run                  whether CMAKE-EXEC must be run for SUBDIR by
+#                               the top-level configure script.
+#
+# The configuration of the SUBDIR project is done by calling CMAKE-EXEC
+# (defaults to '${CMAKE-cmake}') from the BUILD-SUBDIR (path relative to the
+# top build directory of the top-level project, defaults to SUBDIR/build)
+# directory.
+#
+# Sets variable extra_src_subdirs to the space-separated lists of all
+# initialized SUBDIRs and BUILD-SUBDIRs (accounting for possible shell
+# branching).
+#
+AC_DEFUN([ACX_SUBDIR_INIT_CMAKE],
+  [m4_ifblank([$1], [m4_fatal([SUBDIR ('$1') cannot be blank])])dnl
+   m4_pushdef([acx_subdir_opt_adjust_args], [adjust-args])dnl
+   m4_pushdef([acx_subdir_opt_adjust_compilers], [adjust-compilers])dnl
+   m4_pushdef([acx_subdir_opt_run], [run])dnl
+   m4_foreach_w([opt], [$2],
+     [m4_bmatch(opt,
+        [^\(no-\)?adjust-args$],
+        [m4_define([acx_subdir_opt_adjust_args], opt)],
+        [^\(no-\)?adjust-compilers$],
+        [m4_define([acx_subdir_opt_adjust_compilers], opt)],
+        [^\(no-\)?run$],
+        [m4_define([acx_subdir_opt_run], opt)],
+        [m4_fatal([unknown option ']opt['])])])dnl
+   AS_VAR_SET([_ACX_SUBDIR_RUN_CMD_VAR([$1])], ["m4_default([$4], ['cmake'])"])
+   AS_VAR_SET([_ACX_SUBDIR_RUN_DIR_VAR([$1])],
+     ["m4_default([$3], [$1/build])"])
+   AS_VAR_SET([_ACX_SUBDIR_BUILD_TYPE_VAR([$1])], ['cmake'])
+   m4_cond([acx_subdir_opt_adjust_args], [adjust-args],
+     [AC_REQUIRE_SHELL_FN([acx_subdir_pre_adjust_cmake_args], [],
+        [AS_VAR_SET_IF([acx_subdir_pre_adjusted_cmake_args], [],
+           [AS_VAR_SET([acx_subdir_pre_adjusted_cmake_args],
+              ["'-Wno-dev' '--no-warn-unused-cli' '-GUnix Makefiles'"])
+            eval "set dummy $ac_configure_args"; shift
+dnl Transform standard precious (influential environment) variables:
+            m4_pushdef([acx_subdir_known_args],
+              [[AR],
+               [RANLIB],
+               [CFLAGS, [CMAKE_C_FLAGS]],
+               [CXXFLAGS, [CMAKE_CXX_FLAGS]],
+               [CPPFLAGS],
+               [FCFLAGS, [CMAKE_Fortran_FLAGS]],
+               [LDFLAGS, [CMAKE_EXE_LINKER_FLAGS
+                          CMAKE_MODULE_LINKER_FLAGS
+                          CMAKE_SHARED_LINKER_FLAGS]],
+               [LIBS, [CMAKE_C_STANDARD_LIBRARIES
+                       CMAKE_CXX_STANDARD_LIBRARIES
+                       CMAKE_Fortran_STANDARD_LIBRARIES]]])dnl
+            m4_if(acx_subdir_opt_adjust_compilers, [adjust-compilers],
+              [m4_append([acx_subdir_known_args],
+                 [[CC], [CXX], [FC]], [,])])dnl
+            acx_subdir_cmake_vars_to_transform=
+            for acx_tmp; do
+              AS_CASE([$acx_tmp],
+                [m4_join([|],
+                   m4_foreach([pair],
+                     [acx_subdir_known_args], [m4_car(pair)=*,]))],
+                [acx_arg_name=`expr "x$acx_tmp" : 'x\(@<:@^=@:>@*\)='`
+                 AS_VAR_APPEND([acx_subdir_cmake_vars_to_transform],
+                   [" $acx_arg_name"])
+                 acx_arg_cmd_value=`expr "x$acx_tmp" : '@<:@^=@:>@*=\(.*\)'`
+                 AS_VAR_COPY([acx_arg_${acx_arg_name}], [acx_arg_cmd_value])])
+            done
+dnl CMake requires CMAKE_<LANG>_COMPILER arguments to be set either to absolute
+dnl paths or to the basenames of the executables in the PATH. Therefore, we
+dnl cannot simply set the arguments to the values of the CC/CXX/FC variables,
+dnl which might contain extra arguments for the compiler. Unfortunately, there
+dnl seem to be no solution for the problem without delegating additional
+dnl responsibility to the user:
+            m4_case(acx_subdir_opt_adjust_compilers,
+              [adjust-compilers],
+              [dnl
+dnl Prepend the extra flags to the CMAKE_<LANG>_FLAGS. This is the documented
+dnl approach, which we apply by default. The drawback is that it makes it more
+dnl difficult for the users to override the compiler flags using the
+dnl ACX_SUBDIR_REMOVE_ARGS and ACX_SUBDIR_APPEND_ARGS macros: they have to make
+dnl sure that whatever new value they set have to be prepended with the extra
+dnl flags. A small help that we can offer is to store the flags in the
+dnl acx_subdir_<CC/CXX/FC>_<C/CXX/FC>FLAGS shell variables so that the users do
+dnl not have to extract them again.
+               for acx_arg_name in CC CXX FC; do
+                 AS_VAR_IF([acx_arg_name], [CC],
+                   [acx_subdir_xFLAGS=CFLAGS],
+                   [acx_subdir_xFLAGS="${acx_arg_name}FLAGS"])
+                 AS_VAR_SET([acx_subdir_${acx_arg_name}_${acx_subdir_xFLAGS}])
+                 AS_CASE([" $acx_subdir_cmake_vars_to_transform "],
+                   [*" $acx_arg_name "*],
+                   [set dummy AS_VAR_GET([$acx_arg_name]); shift
+                    AS_VAR_COPY([acx_arg_${acx_arg_name}_EXEC], [1]); shift
+                    AS_VAR_APPEND([acx_subdir_cmake_vars_to_transform],
+                      [" ${acx_arg_name}_EXEC"])
+                    AS_VAR_COPY([acx_tmp], [@])
+                    AS_IF([test -n "$acx_tmp"],
+                      [AS_VAR_COPY(
+                         [acx_subdir_${acx_arg_name}_${acx_subdir_xFLAGS}],
+                         [acx_tmp])
+                       AS_CASE([" $acx_subdir_cmake_vars_to_transform "],
+                         [*" $acx_subdir_xFLAGS "*],
+                         [AS_VAR_APPEND([acx_tmp],
+                            [" AS_VAR_GET([acx_arg_${acx_subdir_xFLAGS}])"])],
+                         [AS_VAR_APPEND([acx_subdir_cmake_vars_to_transform],
+                            [" $acx_subdir_xFLAGS"])])
+                       AS_VAR_COPY([acx_arg_${acx_subdir_xFLAGS}],
+                         [acx_tmp])])])
+               done
+               m4_append([acx_subdir_known_args],
+                 [[CC_EXEC, [CMAKE_C_COMPILER]],
+                  [CXX_EXEC, [CMAKE_CXX_COMPILER]],
+                  [FC_EXEC, [CMAKE_Fortran_COMPILER]]], [,])],
+              [no-adjust-compilers],
+              [dnl
+dnl Do not set CMAKE_<LANG>_COMPILER arguments and let cmake get the compilers
+dnl and the extra arguments from the CC/CXX/FC environment variables. When
+dnl choosing this option, the users have to make sure that the variables are
+dnl set correctly in the environment when cmake is executed, which might be
+dnl tricky in certain scenarios. Also, the configuration log files might become
+dnl less readable since the compilers and extra flags are set implicitly.
+],
+              [dnl This is a dead conditional branch kept as an example.
+dnl Provide the extra flags as CMAKE_<LANG>_COMPILER_ARG1 arguments, which are
+dnl not documented but are supported starting CMake 3.0.0. Unfortunately, this
+dnl was broken in CMake 3.19.0 and fixed only in CMake 3.24.0 (see
+dnl https://gitlab.kitware.com/cmake/cmake/-/commit/6f1af899db4e93c960145dae12ebaacb308ea1f0
+dnl and
+dnl https://gitlab.kitware.com/cmake/cmake/-/commit/211a9deac1d4144c7d7ce18ecb6c5d21c4854eaa,
+dnl respectively).
+               for acx_arg_name in CC CXX FC; do
+               AS_CASE([" $acx_subdir_cmake_vars_to_transform "],
+                 [*" $acx_arg_name "*],
+                 [set dummy AS_VAR_GET([$acx_arg_name]); shift
+                  AS_VAR_COPY([acx_arg_${acx_arg_name}_EXEC], [1]); shift
+                  AS_VAR_APPEND([acx_subdir_cmake_vars_to_transform],
+                    [" ${acx_arg_name}_EXEC"])
+                  AS_VAR_COPY([acx_tmp], [@])
+                  AS_IF([test -n "$acx_tmp"],
+                    [AS_VAR_COPY([acx_arg_${acx_arg_name}_ARGS], [acx_tmp])
+                     AS_VAR_APPEND([acx_subdir_cmake_vars_to_transform],
+                       [" ${acx_arg_name}_ARGS"])])])
+               done
+               m4_append([acx_subdir_known_args],
+                 [[CC_EXEC, [CMAKE_C_COMPILER]],
+                  [CC_ARGS, [CMAKE_C_COMPILER_ARG1]],
+                  [CXX_EXEC, [CMAKE_CXX_COMPILER]],
+                  [CXX_ARGS, [CMAKE_CXX_COMPILER_ARG1]],
+                  [FC_EXEC, [CMAKE_Fortran_COMPILER]],
+                  [FC_ARGS, [CMAKE_Fortran_COMPILER_ARG1]]], [,])])dnl
+dnl CMake requires the archiver and the archive indexer commands to be set as
+dnl absolute paths. Otherwise, it will try to find the executable in the build
+dnl directory. Also, AR and RANLIB are not supposed to be paths to executables
+dnl with arguments because it will cause CMake to choke:
+            for acx_arg_name in AR RANLIB; do
+              AS_CASE([" $acx_subdir_cmake_vars_to_transform "],
+                [*" $acx_arg_name "*],
+                [acx_prog_search_abspath=unknown
+                 AS_VAR_COPY([acx_prog_exec], [acx_arg_${acx_arg_name}])
+                 AS_CASE([$acx_prog_exec],
+                   [*[[\\/]]*],
+                   [AS_IF([AS_EXECUTABLE_P([$acx_prog_exec])],
+                      [acx_prog_search_abspath=$acx_prog_exec])],
+                   [_AS_PATH_WALK([],
+                      [AS_IF([AS_EXECUTABLE_P(["$as_dir/$acx_prog_exec"])],
+                         [acx_prog_search_abspath="$as_dir/$acx_prog_exec"
+                          break])])])
+                 AS_VAR_IF([acx_prog_search_abspath], [unknown],
+                   [AC_MSG_WARN([unable to convert argument $acx_arg_name dnl
+to its CMake equivalent(s): absolute path to "$acx_prog_exec" is not found])],
+                   [AS_VAR_COPY([acx_arg_${acx_arg_name}_ABSPATH],
+                      [acx_prog_search_abspath])
+                    AS_VAR_APPEND([acx_subdir_cmake_vars_to_transform],
+                      [" ${acx_arg_name}_ABSPATH"])])])
+            done
+            m4_append([acx_subdir_known_args],
+              [[AR_ABSPATH, [CMAKE_AR
+                             CMAKE_C_COMPILER_AR
+                             CMAKE_CXX_COMPILER_AR
+                             CMAKE_Fortran_COMPILER_AR]],
+               [RANLIB_ABSPATH, [CMAKE_RANLIB
+                                 CMAKE_C_COMPILER_RANLIB
+                                 CMAKE_CXX_COMPILER_RANLIB
+                                 CMAKE_Fortran_COMPILER_RANLIB]]],
+              [,])dnl
+dnl CMake has no explicit support for CPPFLAGS, therefore, we append them to
+dnl CFLAGS and CXXFLAGS:
+            AS_CASE([" $acx_subdir_cmake_vars_to_transform "],
+              [*' CPPFLAGS '*],
+              [for acx_arg_name in CFLAGS CXXFLAGS; do
+                 AS_CASE([" $acx_subdir_cmake_vars_to_transform "],
+                   [*" $acx_arg_name "*],
+                   [AS_VAR_APPEND([acx_arg_${acx_arg_name}],
+                      [" $acx_arg_CPPFLAGS"])],
+                   [AS_VAR_COPY([acx_arg_${acx_arg_name}], [acx_arg_CPPFLAGS])
+                    AS_VAR_APPEND([acx_subdir_cmake_vars_to_transform],
+                      [" $acx_arg_name"])])
+               done])
+dnl Also process the installation prefix:
+            m4_append([acx_subdir_known_args],
+              [[PREFIX, [CMAKE_INSTALL_PREFIX]]], [,])dnl
+            AS_VAR_IF([prefix], [NONE],
+              [acx_arg_PREFIX=$ac_default_prefix],
+              [acx_arg_PREFIX=$prefix])
+            AS_VAR_APPEND([acx_subdir_cmake_vars_to_transform], [' PREFIX'])
+dnl Append the transformed arguments:
+            for acx_arg_name in $acx_subdir_cmake_vars_to_transform; do
+              acx_subdir_cmake_vars_to_set=
+              AS_CASE([$acx_arg_name],
+                m4_foreach([pair], [acx_subdir_known_args],
+                  [m4_quote(m4_car(pair)),
+                   m4_quote(acx_subdir_cmake_vars_to_set=dnl
+'m4_normalize(m4_cdr(pair))'),]))
+              AS_IF([test -n "$acx_subdir_cmake_vars_to_set"],
+                [AS_VAR_COPY([acx_subdir_quoted_value],
+                   [acx_arg_${acx_arg_name}])
+                 ASX_ESCAPE_SINGLE_QUOTE([acx_subdir_quoted_value])
+                 for acx_subdir_cmake_var in $acx_subdir_cmake_vars_to_set; do
+                   AS_VAR_APPEND([acx_subdir_pre_adjusted_cmake_args],
+                     [" '-D$acx_subdir_cmake_var=$acx_subdir_quoted_value'"])
+                 done])
+              AS_UNSET([acx_arg_${acx_arg_name}])
+            done
+            m4_popdef([acx_subdir_known_args])])])dnl
+      acx_subdir_pre_adjust_cmake_args
+      AS_VAR_SET([_ACX_SUBDIR_RUN_ARG_VAR([$1])],
+        [$acx_subdir_pre_adjusted_cmake_args])
+      m4_ifval([$3],
+        [ASX_SRCDIRS(["$3"])
+         acx_tmp="-S$ac_top_srcdir/$1"],
+        [ASX_SRCDIRS(["$1/build"])
+         AS_CASE([$ac_srcdir],
+           [.], [acx_tmp='-S..'],
+           [acx_tmp="-S$ac_top_srcdir/$1"])])
+      ASX_ESCAPE_SINGLE_QUOTE([acx_tmp])
+      AS_VAR_APPEND([_ACX_SUBDIR_RUN_ARG_VAR([$1])], [" '$acx_tmp'"])],
+     [AS_VAR_SET([_ACX_SUBDIR_RUN_ARG_VAR([$1])])])
+   m4_divert_once([DEFAULTS], [extra_src_subdirs=])dnl
+   AS_VAR_APPEND([extra_src_subdirs], [" $1"])
+   m4_cond([acx_subdir_opt_run], [run],
+     [AS_VAR_SET([_ACX_SUBDIR_RUN_YESNO_VAR([$1])], [yes])[]dnl
+      _ACX_SUBDIR_COMMANDS_PRE],
+     [AS_VAR_SET([_ACX_SUBDIR_RUN_YESNO_VAR([$1])], [no])])[]dnl
+   m4_popdef([acx_subdir_opt_adjust_args])dnl
+   m4_popdef([acx_subdir_opt_adjust_compilers])dnl
+   m4_popdef([acx_subdir_opt_run])])
+
 # ACX_SUBDIR_INIT_IFELSE(SUBDIR,
 #                        [ACTION-IF-INITIALIZED],
 #                        [ACTION-IF-NOT-INITIALIZED])
@@ -270,7 +539,8 @@ AC_DEFUN([ACX_SUBDIR_GET_BUILD_DIR],
 # of the build system of the SUBDIR source directory.
 #
 # Possible out values are:
-#   "config" - Autoconf-based build system.
+#   "config" - Autoconf-based build system;
+#   "cmake"  - CMake-based build system.
 #
 AC_DEFUN([ACX_SUBDIR_GET_BUILD_TYPE],
   [AS_VAR_COPY([$1], [_ACX_SUBDIR_BUILD_TYPE_VAR([$2])])])
