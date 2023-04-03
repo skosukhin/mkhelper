@@ -213,12 +213,6 @@ install-mods: $(filter %.@FC_MOD_FILE_EXT@.proxy,$(shell $(DEPLIST) $(DEPLIST_ar
 install-exes: $(exe_files)
 	$(INSTALL) -d $(DESTDIR)@bindir@ && $(INSTALL) $^ $(DESTDIR)@bindir@
 
-# Include dependencies if required:
-current_targets:= $(strip $(MAKECMDGOALS))
-ifeq (,$(current_targets))
-current_targets:= all
-endif
-
-ifneq (,$(filter-out $(NO_INC_TARGETS),$(MAKECMDGOALS)))
+ifneq (,$(filter-out $(NO_INC_TARGETS),$(or $(MAKECMDGOALS),all)))
 include $(lib_dep_files) $(exe_dep_files)
 endif
