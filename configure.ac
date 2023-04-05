@@ -23,6 +23,7 @@ with -L flags to the runtime library search path (RPATH)
 
 ACX_COMPILER_CROSS_CHECK_DELAY
 AC_PROG_FC
+export FC
 AC_LANG([Fortran])
 ACX_FC_PP_SRCEXT([f90])
 ACX_COMPILER_FC_VERSION
@@ -253,7 +254,7 @@ AC_ARG_ENABLE([delayed-config],
 AC_SUBST([DELAYED_CONFIG_RULES], [''])dnl
 AS_VAR_IF([enable_delayed_config], [yes],
   [AS_VAR_APPEND([DELAYED_CONFIG_RULES],
-     ["polymorphic_config:= $polymorphic_config$as_nl"])],
+     ["export FC${as_nl}polymorphic_config:= $polymorphic_config${as_nl}"])],
   [polymorphic_subdir='bundled/picky'
    ACX_SUBDIR_RUN_RESET([$polymorphic_subdir], [yes])
    ACX_SUBDIR_RUN_EXTRA([$polymorphic_subdir],
@@ -296,9 +297,7 @@ dnl Initialize a CMake-based library:
 AC_SUBST([CMAKE], [${CMAKE-cmake}])dnl
 ACX_SUBDIR_INIT_CMAKE([bundled/cmake_based], [no-run], [],
   [AS_ESCAPE(["${CMAKE}"])])
-ACX_SUBDIR_REMOVE_ARGS([bundled/cmake_based], [-DCMAKE_Fortran_COMPILER=*])
 ACX_SUBDIR_APPEND_ARGS([bundled/cmake_based],
-  [-DCMAKE_Fortran_COMPILER="$FC"],
   [-DBUILD_SHARED_LIBS:BOOL=OFF],
 dnl Set non-existing build type to avoid extra compiler flags:
   [-DCMAKE_BUILD_TYPE=NOEXTRAFLAGS])

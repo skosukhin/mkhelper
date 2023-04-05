@@ -2809,6 +2809,7 @@ ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
+export FC
 ac_ext=${ac_fc_srcext-f}
 ac_compile='$FC -c $FCFLAGS $ac_fcflags_srcext conftest.$ac_ext >&5'
 ac_link='$FC -o conftest$ac_exeext $FCFLAGS $LDFLAGS $ac_fcflags_srcext conftest.$ac_ext $LIBS >&5'
@@ -4908,7 +4909,7 @@ fi
 
 DELAYED_CONFIG_RULES=''
 if test "x$enable_delayed_config" = xyes; then :
-  as_fn_append DELAYED_CONFIG_RULES "polymorphic_config:= $polymorphic_config$as_nl"
+  as_fn_append DELAYED_CONFIG_RULES "export FC${as_nl}polymorphic_config:= $polymorphic_config${as_nl}"
 else
   polymorphic_subdir='bundled/picky'
    eval "acx_subdir_run_condition_`$as_echo "$polymorphic_subdir" | $as_tr_sh`=yes"
@@ -5080,25 +5081,7 @@ esac
       as_fn_append acx_subdir_run_args_bundled_cmake_based " '$acx_tmp'"
       as_fn_append extra_src_subdirs " bundled/cmake_based"
    acx_subdir_run_condition_bundled_cmake_based=no
-eval "set dummy $acx_subdir_run_args_bundled_cmake_based"; shift
-   acx_subdir_run_args_bundled_cmake_based=
-   while test $# != 0; do
-     acx_tmp=$1
-     case $acx_tmp in #(
-  -DCMAKE_Fortran_COMPILER=*) :
-     ;; #(
-  *) :
-           case $acx_tmp in #(
-  *\'*) :
-    acx_tmp=`$as_echo "$acx_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
-  *) :
-     ;;
-esac
-        as_fn_append acx_subdir_run_args_bundled_cmake_based " '$acx_tmp'" ;;
-esac
-     shift
-   done
-set dummy -DCMAKE_Fortran_COMPILER="$FC" -DBUILD_SHARED_LIBS:BOOL=OFF   -DCMAKE_BUILD_TYPE=NOEXTRAFLAGS; shift
+set dummy -DBUILD_SHARED_LIBS:BOOL=OFF   -DCMAKE_BUILD_TYPE=NOEXTRAFLAGS; shift
    for acx_tmp; do
      case $acx_tmp in #(
   *\'*) :
