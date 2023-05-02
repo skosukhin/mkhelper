@@ -15,7 +15,7 @@ ACX_HOST_FQDN([AC_SUBST([host_fqdn], [$acx_cv_host_fqdn])])
 ACX_BUILD_ENVIRONMENT
 
 AC_ARG_ENABLE([rpaths],
-  [AC_HELP_STRING([--enable-rpaths],
+  [AS_HELP_STRING([--enable-rpaths],
      [prepend LDFLAGS with additional linker flags to add directories specified
 with -L flags to the runtime library search path (RPATH)
 @<:@default=yes@:>@])], [],
@@ -106,7 +106,7 @@ ACX_PROG_FPP([FPP], [FPP=$acx_cv_prog_fpp], [FPP=],
   [$FC_INC_FLAG_PP_f90], [$FC_PP_DEF])
 
 AC_ARG_ENABLE([silent-rules],
-  [AC_HELP_STRING([--enable-silent-rules],
+  [AS_HELP_STRING([--enable-silent-rules],
      [less verbose build output (undo: "make V=1") @<:@default=yes@:>@])], [],
   [enable_silent_rules=yes])
 AS_VAR_IF([enable_silent_rules], [yes],
@@ -114,7 +114,7 @@ AS_VAR_IF([enable_silent_rules], [yes],
 AC_SUBST([DEFAULT_VERBOSITY])
 
 AC_ARG_ENABLE([additional-mods],
-  [AC_HELP_STRING([--enable-additional-mods],
+  [AS_HELP_STRING([--enable-additional-mods],
      [enable usage of additional modules  @<:@default: yes@:>@])],
   [], [enable_additional_mods=yes])
 AS_VAR_IF([enable_additional_mods], [yes],
@@ -122,7 +122,7 @@ AS_VAR_IF([enable_additional_mods], [yes],
      [" ${acx_cv_fc_macro_flag}INCLUDE_MODULES"])])
 
 AC_ARG_ENABLE([openmp],
-  [AC_HELP_STRING([--enable-openmp],
+  [AS_HELP_STRING([--enable-openmp],
      [enable OpenMP support @<:@default: yes@:>@])],
   [], [enable_openmp=yes])
 AS_VAR_IF([enable_openmp], [yes],
@@ -141,7 +141,7 @@ preprocessor macro _OPENMP])],
 FCFLAGS accordingly to disable it])])])
 
 AC_ARG_ENABLE([module-nature-test],
-  [AC_HELP_STRING([--enable-module-nature-test],
+  [AS_HELP_STRING([--enable-module-nature-test],
      [enable the test of special treatment for intrinsic Fortran modules, ]dnl
 [which might fail for some compilers @<:@default: yes@:>@])],
   [], [enable_module_nature_test=yes])
@@ -150,7 +150,7 @@ AS_VAR_IF([enable_module_nature_test], [yes],
      [" ${acx_cv_fc_macro_flag}TEST_MODULE_NATURE"])])
 
 AC_ARG_ENABLE([invalid-test],
-  [AC_HELP_STRING([--enable-invalid-test],
+  [AS_HELP_STRING([--enable-invalid-test],
      [enable the test for invalid dependency tree, which fails the building ]dnl
 [@<:@default: no@:>@])],
   [], [enable_invalid_test=no])
@@ -245,7 +245,7 @@ ACX_SUBDIR_APPEND_ARGS([bundled/picky],
   [FCFLAGS=], [--enable-always=yes])
 
 AC_ARG_ENABLE([delayed-config],
-  [AC_HELP_STRING([--enable-delayed-config],
+  [AS_HELP_STRING([--enable-delayed-config],
      [enable the delayed (build-time) configuration of the bundled/picky ]dnl
 [and bundled/cmake_based subdirectories @<:@default: yes@:>@])],
   [AS_IF([test x"$enableval" != xno], [enable_delayed_config=yes])],

@@ -36,13 +36,13 @@ AC_DEFUN([ACX_LANG_PACKAGE_INIT],
    m4_pushdef([acx_package_with_root],
      [with_[]AS_TR_SH([ASX_TR_ARG([$1])])_root])dnl
    AC_ARG_WITH(ASX_TR_ARG([$1])[-root],
-     [AC_HELP_STRING([--with-ASX_TR_ARG([$1])-root=[]acx_package_ROOT],
+     [AS_HELP_STRING([--with-ASX_TR_ARG([$1])-root=[]acx_package_ROOT],
         [root search path for $1 headers and libraries])])
    m4_ifnblank([$2],
      [m4_pushdef([acx_package_with_include],
         [with_[]AS_TR_SH([ASX_TR_ARG([$1])])_include])dnl
       AC_ARG_WITH(ASX_TR_ARG([$1])[-include],
-        [AC_HELP_STRING([--with-ASX_TR_ARG([$1])-include=DIR],
+        [AS_HELP_STRING([--with-ASX_TR_ARG([$1])-include=DIR],
            [search path for $1 headers @<:@]acx_package_ROOT[]dnl
 m4_default([$4], [/include])[@:>@])], [],
            [AS_VAR_SET_IF([acx_package_with_root],
@@ -61,7 +61,7 @@ m4_default([$4], [/include])"])])
      [m4_pushdef([acx_package_with_lib],
         [with_[]AS_TR_SH([ASX_TR_ARG([$1])])_lib])dnl
       AC_ARG_WITH(ASX_TR_ARG([$1])[-lib],
-        [AC_HELP_STRING([--with-ASX_TR_ARG([$1])-lib=DIR],
+        [AS_HELP_STRING([--with-ASX_TR_ARG([$1])-lib=DIR],
            [search path for $1 libraries @<:@]acx_package_ROOT[]dnl
 m4_default([$5], [/lib])[@:>@])],
            [],

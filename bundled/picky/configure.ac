@@ -9,17 +9,17 @@ AS_IF([test -n "$FCFLAGS"],
   [AC_MSG_ERROR([FCFLAGS must always be empty])])
 
 AC_ARG_ENABLE([silent-rules],
-  [AC_HELP_STRING([--enable-silent-rules], [this option must never be set])],
+  [AS_HELP_STRING([--enable-silent-rules], [this option must never be set])],
      [AC_MSG_ERROR([this script must never receive an argument that would dnl
 affect the option 'silent-rules'])])
 
 AC_ARG_WITH([netcdf-root],
-  [AC_HELP_STRING([--with-netcdf-root], [this option must never be set])],
+  [AS_HELP_STRING([--with-netcdf-root], [this option must never be set])],
      [AC_MSG_ERROR([this script must never receive an argument that would dnl
 affect the option 'netcdf-root'])])
 
 AC_ARG_ENABLE([always],
-  [AC_HELP_STRING([--enable-always],
+  [AS_HELP_STRING([--enable-always],
      [this option must always be enabled @<:@default: no@:>@])],
   [], [enable_always=no])
 
