@@ -355,11 +355,11 @@ dnl Append the transformed arguments:
         [$acx_subdir_pre_adjusted_cmake_args])
       m4_ifval([$3],
         [ASX_SRCDIRS(["$3"])
-         acx_tmp="-S$ac_top_srcdir/$1"],
+         acx_tmp="$ac_top_srcdir/$1"],
         [ASX_SRCDIRS(["$1/build"])
          AS_CASE([$ac_srcdir],
-           [.], [acx_tmp='-S..'],
-           [acx_tmp="-S$ac_top_srcdir/$1"])])
+           [.], [acx_tmp='..'],
+           [acx_tmp="$ac_top_srcdir/$1"])])
       ASX_ESCAPE_SINGLE_QUOTE([acx_tmp])
       AS_VAR_APPEND([_ACX_SUBDIR_RUN_ARG_VAR([$1])], [" '$acx_tmp'"])],
      [AS_VAR_SET([_ACX_SUBDIR_RUN_ARG_VAR([$1])])])

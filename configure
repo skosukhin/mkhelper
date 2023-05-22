@@ -5068,9 +5068,9 @@ CMAKE=${CMAKE-cmake}
          acx_subdir_srcdirs_fn "bundled/cmake_based/build"
          case $ac_srcdir in #(
   .) :
-    acx_tmp='-S..' ;; #(
+    acx_tmp='..' ;; #(
   *) :
-    acx_tmp="-S$ac_top_srcdir/bundled/cmake_based" ;;
+    acx_tmp="$ac_top_srcdir/bundled/cmake_based" ;;
 esac
       case $acx_tmp in #(
   *\'*) :
