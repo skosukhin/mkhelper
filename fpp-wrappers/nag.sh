@@ -27,7 +27,7 @@
 # There are three known ways to solve this problem:
 # 
 #   1) compile the output of the preprocessing without the flag '-fpp', which
-#      is apparently the way inteded by the developers:
+#      is apparently the way intended by the developers:
 # 
 #      $ nagfor ./conftest_preprocessed.f90
 #      NAG Fortran Compiler Release 6.2(Chiyoda) Build 6223

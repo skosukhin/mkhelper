@@ -57,7 +57,7 @@ for option; do
 Usage: $0 [OPTION]...
 
 Instantiates a filesystem hashmap in the specified directory. If the directory
-exists and is already assigned to a hashmap, checks whether its configuraion is
+exists and is already assigned to a hashmap, checks whether its configuration is
 matches the specified command-line options.
 
 Defaults for the options are specified in brackets.
@@ -148,14 +148,14 @@ else
   timeout_count=0
   while :; do
     if test -f "$config_file"; then
-      fn_notice "checking the configuraion of the existing hashmap in '$root'..."
+      fn_notice "checking the configuration of the existing hashmap in '$root'..."
       (
         config=`cat "$config_file"` || fn_error 2 "failed to read configuration file '$config_file'"
         eval "$config"
         for var in $config_vars; do
            eval "test \"x\$$config_var_prefix$var\" = \"x\$$var\" || fn_error 2 \"configuration mismatch for $var: \\\`\$$config_var_prefix$var\\\` != \\\`\$$var\\\`\""
         done
-      ) && fn_notice "the configuraion is compatible"
+      ) && fn_notice "the configuration is compatible"
       exit 0
     elif test $timeout_count -ge $timeout_max_count; then
       fn_error 2 "failed to initialize the hashmap in '$root': time limit exceeded"
