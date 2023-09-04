@@ -2946,13 +2946,13 @@ else
   acx_cv_fc_compiler_version=unknown
       case $acx_cv_fc_compiler_vendor in #(
         intel) acx_cv_fc_compiler_version=`$FC --version 2>/dev/null | sed -n 's/^ifort (IFORT) \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`
-   if test -z "$acx_cv_fc_compiler_version"; then :
+   if test -n "$acx_cv_fc_compiler_version"; then :
+  acx_cv_fc_compiler_version="classic:${acx_cv_fc_compiler_version}"
+else
   acx_cv_fc_compiler_version=`$FC --version 2>/dev/null | sed -n 's/^ifx (IFORT) \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`
       if test -n "$acx_cv_fc_compiler_version"; then :
   acx_cv_fc_compiler_version="oneapi:${acx_cv_fc_compiler_version}"
 fi
-else
-  acx_cv_fc_compiler_version="classic:${acx_cv_fc_compiler_version}"
 fi
    if test "`echo $acx_cv_fc_compiler_version | sed 's/^.*://' | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
   acx_cv_fc_compiler_version=unknown
@@ -2966,13 +2966,13 @@ fi ;; #(
   acx_cv_fc_compiler_version=unknown
 fi ;; #(
         portland) acx_cv_fc_compiler_version=`$FC -V 2>/dev/null | sed -n 's/\(pgfortran\|pgf90\) \([0-9][0-9]*\.[0-9][0-9]*\)-\([0-9][0-9]*\).*/\2.\3/p'`
-   if test -z "$acx_cv_fc_compiler_version"; then :
+   if test -n "$acx_cv_fc_compiler_version"; then :
+  acx_cv_fc_compiler_version="pg:${acx_cv_fc_compiler_version}"
+else
   acx_cv_fc_compiler_version=`$FC -V 2>/dev/null | sed -n 's/nvfortran \([0-9][0-9]*\.[0-9][0-9]*\)-\([0-9][0-9]*\).*/\1.\2/p'`
       if test -n "$acx_cv_fc_compiler_version"; then :
   acx_cv_fc_compiler_version="nv:${acx_cv_fc_compiler_version}"
 fi
-else
-  acx_cv_fc_compiler_version="pg:${acx_cv_fc_compiler_version}"
 fi
    if test "`echo $acx_cv_fc_compiler_version | sed 's/^.*://' | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
   acx_cv_fc_compiler_version=unknown
@@ -2993,13 +2993,13 @@ fi ;; #(
   acx_cv_fc_compiler_version=unknown
 fi ;; #(
         flang) acx_cv_fc_compiler_version=`$FC -V 2>&1 | sed -n 's/.*version \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\)/\1/p'`
-   if test $? -ne 0 || test -z "$acx_cv_fc_compiler_version"; then :
+   if test $? -eq 0 && test -n "$acx_cv_fc_compiler_version"; then :
+  acx_cv_fc_compiler_version="f18:${acx_cv_fc_compiler_version}"
+else
   acx_cv_fc_compiler_version=`$FC --version 2>/dev/null | sed -n 's/.*version \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`
       if test $? -eq 0 && test -n "$acx_cv_fc_compiler_version"; then :
   acx_cv_fc_compiler_version="classic:${acx_cv_fc_compiler_version}"
 fi
-else
-  acx_cv_fc_compiler_version="f18:${acx_cv_fc_compiler_version}"
 fi
    if test "`echo $acx_cv_fc_compiler_version | sed 's/^.*://' | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
   acx_cv_fc_compiler_version=unknown
