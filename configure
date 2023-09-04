@@ -2981,9 +2981,9 @@ fi ;; #(
    if test "`echo $acx_cv_fc_compiler_version | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
   acx_cv_fc_compiler_version=unknown
 fi ;; #(
-        gnu) acx_cv_fc_compiler_version=`$FC -dumpfullversion 2>/dev/null`
-   if test $? -ne 0 || test -z "$acx_cv_fc_compiler_version"; then :
-  acx_cv_fc_compiler_version=`$FC -dumpversion 2>/dev/null`
+        gnu) acx_cv_fc_compiler_version=`$FC -dumpfullversion 2>/dev/null | sed -n '/^[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*$/p'`
+   if test -z "$acx_cv_fc_compiler_version"; then :
+  acx_cv_fc_compiler_version=`$FC -dumpversion 2>/dev/null | sed -n '/^[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*$/p'`
 fi
    if test "`echo $acx_cv_fc_compiler_version | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
   acx_cv_fc_compiler_version=unknown

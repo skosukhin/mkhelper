@@ -82,7 +82,7 @@ grep '^AMD clang version' >/dev/null 2>&1],
         [AS_VAR_GET([_AC_CC]) -V 2>&1 | grep '^f18 compiler' >/dev/null 2>&1],
         [acx_cache_var=flang],
         [AS_VAR_GET([_AC_CC]) --version 2>&1 | dnl
-grep '^clang version' >/dev/null 2>&1],
+grep 'clang version' >/dev/null 2>&1],
         [acx_cache_var=flang],
         [acx_cache_var=unknown])
       rm -f a.out a.out.dSYM a.exe b.out])
@@ -146,14 +146,16 @@ AC_DEFUN([ACX_COMPILER_FC_VERSION_SIMPLE],
               [acx_cache_var="nv:${acx_cache_var}"])])],
         [cray],
         [acx_cache_var=`AS_VAR_GET([_AC_CC]) -V 2>&1 | dnl
-[sed -n 's/.*ersion \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p']`],
+[sed -n 's/.*[vV]ersion \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p']`],
         [nec],
         [acx_cache_var=`AS_VAR_GET([_AC_CC]) --version 2>&1 | dnl
 [sed -n 's/^nfort (NFORT) \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p']`],
         [gnu],
-        [acx_cache_var=`AS_VAR_GET([_AC_CC]) -dumpfullversion 2>/dev/null`
-         AS_IF([test $? -ne 0 || test -z "$acx_cache_var"],
-           [acx_cache_var=`AS_VAR_GET([_AC_CC]) -dumpversion 2>/dev/null`])],
+        [acx_cache_var=`AS_VAR_GET([_AC_CC]) -dumpfullversion 2>/dev/null | dnl
+[sed -n '/^[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*$/p']`
+         AS_IF([test -z "$acx_cache_var"],
+           [acx_cache_var=`AS_VAR_GET([_AC_CC]) -dumpversion 2>/dev/null | dnl
+[sed -n '/^[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*$/p']`])],
         [amd],
         [acx_cache_var=`AS_VAR_GET([_AC_CC]) --version 2>/dev/null | dnl
 [sed -n 's/.*AOCC_\([0-9][0-9]*\)[._]\([0-9][0-9]*\)[._]\([0-9][0-9]*\).*/\1.\2.\3/p']`],
@@ -238,7 +240,7 @@ grep '^AMD clang version' >/dev/null 2>&1],
 grep '^Apple \(LLVM\|clang\) version' >/dev/null 2>&1],
         [acx_cache_var=apple],
         [AS_VAR_GET([_AC_CC]) --version 2>&1 | dnl
-grep '^clang version' >/dev/null 2>&1],
+grep 'clang version' >/dev/null 2>&1],
         [acx_cache_var=clang],
         [acx_cache_var=unknown])
       rm -f a.out a.out.dSYM a.exe b.out])
@@ -313,9 +315,11 @@ AC_DEFUN([ACX_COMPILER_CC_VERSION_SIMPLE],
         [acx_cache_var=`AS_VAR_GET([_AC_CC]) --version 2>&1 | dnl
 [sed -n 's/^ncc (NCC) \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p']`],
         [gnu],
-        [acx_cache_var=`AS_VAR_GET([_AC_CC]) -dumpfullversion 2>/dev/null`
-         AS_IF([test $? -ne 0 || test -z "$acx_cache_var"],
-           [acx_cache_var=`AS_VAR_GET([_AC_CC]) -dumpversion 2>/dev/null`])],
+        [acx_cache_var=`AS_VAR_GET([_AC_CC]) -dumpfullversion 2>/dev/null | dnl
+[sed -n '/^[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*$/p']`
+         AS_IF([test -z "$acx_cache_var"],
+           [acx_cache_var=`AS_VAR_GET([_AC_CC]) -dumpversion 2>/dev/null | dnl
+[sed -n '/^[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*$/p']`])],
         [amd],
         [acx_cache_var=`AS_VAR_GET([_AC_CC]) --version 2>/dev/null | dnl
 [sed -n 's/.*AOCC_\([0-9][0-9]*\)[._]\([0-9][0-9]*\)[._]\([0-9][0-9]*\).*/\1.\2.\3/p']`],
@@ -324,7 +328,7 @@ AC_DEFUN([ACX_COMPILER_CC_VERSION_SIMPLE],
 [sed -E -n 's/^Apple (LLVM|clang) version ([0-9]+\.[0-9]+\.[0-9]+).*/\2/p']`],
         [clang],
         [acx_cache_var=`AS_VAR_GET([_AC_CC]) --version 2>/dev/null | dnl
-[sed -n 's/.*version \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p']`],
+[sed -n 's/.*clang version \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p']`],
         [acx_cache_var=unknown])
       rm -f a.out a.out.dSYM a.exe b.out
       AS_IF([test -z "$acx_cache_var"], [acx_cache_var=unknown])])
@@ -521,9 +525,11 @@ m4_define([_ACX_COMPILER_VERSION_GNU(C)],
      [__GNUC__], [__GNUC_MINOR__], [__GNUC_PATCHLEVEL__])])
 m4_copy([_ACX_COMPILER_VERSION_GNU(C)], [_ACX_COMPILER_VERSION_GNU(C++)])
 m4_define([_ACX_COMPILER_VERSION_GNU(Fortran)],
-  [acx_cache_var=`AS_VAR_GET([_AC_CC]) -dumpfullversion 2>/dev/null`
-   AS_IF([test $? -ne 0 || test -z "$acx_cache_var"],
-     [acx_cache_var=`AS_VAR_GET([_AC_CC]) -dumpversion 2>/dev/null`])
+  [acx_cache_var=`AS_VAR_GET([_AC_CC]) -dumpfullversion 2>/dev/null | dnl
+[sed -n '/^[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*$/p']`
+   AS_IF([test -z "$acx_cache_var"],
+     [acx_cache_var=`AS_VAR_GET([_AC_CC]) -dumpversion 2>/dev/null | dnl
+[sed -n '/^[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*$/p']`])
    AS_IF([test dnl
 "`echo $acx_cache_var | sed 's/@<:@0-9@:>@//g' 2>/dev/null`" != '..'],
      [acx_cache_var=unknown])])
