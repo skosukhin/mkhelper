@@ -640,11 +640,11 @@ m4_copy([_ACX_COMPILER_VERSION_CLANG(C)], [_ACX_COMPILER_VERSION_CLANG(C++)])
 m4_define([_ACX_COMPILER_VERSION_FLANG(Fortran)],
   [acx_cache_var=`AS_VAR_GET([_AC_CC]) -V 2>&1 | dnl
 [sed -n 's/.*version \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\)/\1/p']`
-   AS_IF([test $? -eq 0 && test -n "$acx_cache_var"],
+   AS_IF([test -n "$acx_cache_var"],
      [acx_cache_var="f18:${acx_cache_var}"],
      [acx_cache_var=`AS_VAR_GET([_AC_CC]) --version 2>/dev/null | dnl
 [sed -n 's/.*version \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p']`
-      AS_IF([test $? -eq 0 && test -n "$acx_cache_var"],
+      AS_IF([test -n "$acx_cache_var"],
         [acx_cache_var="classic:${acx_cache_var}"])])
    AS_IF([test dnl
 "`echo $acx_cache_var | sed 's/^.*://' | sed 's/@<:@0-9@:>@//g' 2>/dev/null`" != '..'],
