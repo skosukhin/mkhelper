@@ -129,7 +129,8 @@ AS_VAR_IF([enable_openmp], [yes],
   [ACX_LANG_OPENMP_FLAG(
      [AS_VAR_APPEND([FCFLAGS], [" $acx_cv_fc_openmp_flag"])
       ACX_LANG_MACRO_CHECK_VALUE([_OPENMP],
-        [201511 201307 201107 200805 200505 200011 199911 199710])
+        [202111 202011 201811 201511 201307 201107 200805 200505 200011 dnl
+199911 199710])
       AS_VAR_IF([acx_macro_value], [unknown],
         [AC_MSG_FAILURE([unable to detect the value of the Fortran dnl
 preprocessor macro _OPENMP])],

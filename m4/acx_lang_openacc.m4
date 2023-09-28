@@ -24,6 +24,10 @@
 # acx_cv_[]_AC_LANG_ABBREV[]_macro__OPENACC_value shell variable. The possible
 # (successful) values of the variable are dates, which map to the versions of
 # the standard in the following way:
+#   202111 3.2
+#   202011 3.1
+#   201911 3.0
+#   201811 2.7
 #   201711 2.6
 #   201510 2.5
 #   201308 2.0 (the corrected version)

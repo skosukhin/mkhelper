@@ -4263,7 +4263,7 @@ rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 fi
       if test "x$acx_cv_fc_macro__OPENMP_value" = xunknown; then :
-  set dummy 201511 201307 201107 200805 200505 200011 199911 199710; shift
+  set dummy 202111 202011 201811 201511 201307 201107 200805 200505 200011 199911 199710; shift
             while test $# != 0; do
               cat > conftest.$ac_ext <<_ACEOF
       program main
