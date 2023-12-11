@@ -2,11 +2,11 @@ import os
 import sys
 
 
-def open23(name, mode='r'):
+def open23(name, mode="r"):
     if sys.version_info < (3, 0, 0):
         return open(name, mode)
     else:
-        return open(name, mode, encoding='latin-1')
+        return open(name, mode, encoding="latin-1")
 
 
 def map23(foo, iterable):
@@ -23,7 +23,7 @@ def file_in_dir(f, d):
         return True
 
 
-def find_unquoted_string(string, line, quotes='\'"'):
+def find_unquoted_string(string, line, quotes="'\""):
     skip = 0
     quote = None
     while 1:
@@ -40,7 +40,7 @@ def find_unquoted_string(string, line, quotes='\'"'):
                     quote = c
                 elif quote == c:
                     quote = None
-            elif c == '\\' and quote:
+            elif c == "\\" and quote:
                 escaped = True
 
         if quote:
@@ -59,19 +59,21 @@ class IncludeFinder:
             return filename
         elif self.include_order:
             for inc_type in self.include_order:
-                if inc_type == 'cwd' and os.path.isfile(filename):
+                if inc_type == "cwd" and os.path.isfile(filename):
                     return filename
-                elif inc_type == 'src' and root_includer:
-                    candidate = os.path.join(os.path.dirname(root_includer),
-                                             filename)
+                elif inc_type == "src" and root_includer:
+                    candidate = os.path.join(
+                        os.path.dirname(root_includer), filename
+                    )
                     if os.path.isfile(candidate):
                         return candidate
-                elif inc_type == 'inc' and current_includer:
-                    candidate = os.path.join(os.path.dirname(current_includer),
-                                             filename)
+                elif inc_type == "inc" and current_includer:
+                    candidate = os.path.join(
+                        os.path.dirname(current_includer), filename
+                    )
                     if os.path.isfile(candidate):
                         return candidate
-                elif inc_type == 'flg' and self.include_dirs:
+                elif inc_type == "flg" and self.include_dirs:
                     for d in self.include_dirs:
                         candidate = os.path.join(d, filename)
                         if os.path.isfile(candidate):
@@ -120,7 +122,7 @@ class StreamStack:
                 stream = self._stream_stack.pop()
                 if self._close_stack.pop():
                     stream.close()
-        return ''
+        return ""
 
 
 class StdStreamWrapper:

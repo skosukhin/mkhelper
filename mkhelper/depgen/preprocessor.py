@@ -1,37 +1,46 @@
 import re
 
-from depgen import IncludeFinder, StreamStack, file_in_dir, open23, \
-    find_unquoted_string
+from depgen import (
+    IncludeFinder,
+    StreamStack,
+    file_in_dir,
+    open23,
+    find_unquoted_string,
+)
 
 
 class Preprocessor:
-    _re_ifdef = re.compile(r'^\s*#\s*if(n)?def\s+([a-zA-Z_]\w*)')
-    _re_if_expr = re.compile(r'^\s*#\s*if((?:\s|\().*)')
+    _re_ifdef = re.compile(r"^\s*#\s*if(n)?def\s+([a-zA-Z_]\w*)")
+    _re_if_expr = re.compile(r"^\s*#\s*if((?:\s|\().*)")
 
-    _re_elif = re.compile(r'^\s*#\s*elif((?:\s|\().*)')
-    _re_else = re.compile(r'^\s*#\s*else(?:\s.*)')
-    _re_endif = re.compile(r'^\s*#\s*endif(?:\s.*)')
+    _re_elif = re.compile(r"^\s*#\s*elif((?:\s|\().*)")
+    _re_else = re.compile(r"^\s*#\s*else(?:\s.*)")
+    _re_endif = re.compile(r"^\s*#\s*endif(?:\s.*)")
 
     _re_include = re.compile(r'^\s*#\s*include\s+(?:"(.*?)"|<(.*?)>)')
-    _re_define = re.compile(r'^\s*#\s*define\s+([a-zA-Z_]\w*)(\(.*\))?\s+(.*)$')
-    _re_undef = re.compile(r'^\s*#\s*undef\s+([a-zA-Z_]\w*)')
+    _re_define = re.compile(r"^\s*#\s*define\s+([a-zA-Z_]\w*)(\(.*\))?\s+(.*)$")
+    _re_undef = re.compile(r"^\s*#\s*undef\s+([a-zA-Z_]\w*)")
 
     # matches "defined MACRO_NAME" and "defined (MACRO_NAME)"
     _re_defined_call = re.compile(
-        r'(defined\s*(\(\s*)?([a-zA-Z_]\w*)(?(2)\s*\)))')
+        r"(defined\s*(\(\s*)?([a-zA-Z_]\w*)(?(2)\s*\)))"
+    )
 
     _re_identifier = re.compile(
-        r'(([a-zA-Z_]\w*)(\s*\(\s*(\w+(?:\s*,\s*\w+)*)?\s*\))?)')
+        r"(([a-zA-Z_]\w*)(\s*\(\s*(\w+(?:\s*,\s*\w+)*)?\s*\))?)"
+    )
 
-    def __init__(self,
-                 stream,
-                 include_order=None,
-                 include_sys_order=None,
-                 include_dirs=None,
-                 include_roots=None,
-                 try_eval_expr=False,
-                 inc_sys=False,
-                 predefined_macros=None):
+    def __init__(
+        self,
+        stream,
+        include_order=None,
+        include_sys_order=None,
+        include_dirs=None,
+        include_roots=None,
+        try_eval_expr=False,
+        inc_sys=False,
+        predefined_macros=None,
+    ):
         self.include_roots = include_roots
         self.try_eval_expr = try_eval_expr
         self.inc_sys = inc_sys
@@ -41,8 +50,9 @@ class Preprocessor:
         self.debug_callback = None
 
         self._include_finder = IncludeFinder(include_order, include_dirs)
-        self._include_sys_finder = IncludeFinder(include_sys_order,
-                                                 include_dirs)
+        self._include_sys_finder = IncludeFinder(
+            include_sys_order, include_dirs
+        )
         self._include_stack = StreamStack()
         self._include_stack.add(stream)
 
@@ -84,10 +94,10 @@ class Preprocessor:
                     state = 1 if bool(macro in self._macros) ^ negate else -1
                     if self.debug_callback:
                         self.debug_callback(
-                            line, 'evaluated to {0}'.format(state > 0))
+                            line, "evaluated to {0}".format(state > 0)
+                        )
                 elif self.debug_callback:
-                    self.debug_callback(
-                        line, 'was not evaluated (dead branch)')
+                    self.debug_callback(line, "was not evaluated (dead branch)")
                 self._if(state)
                 continue
 
@@ -100,15 +110,19 @@ class Preprocessor:
                         state = self._evaluate_expr_to_state(expr)
                         if self.debug_callback:
                             self.debug_callback(
-                                line, 'evaluated to {0}'.format(
-                                    'Unknown (evaluation failed)'
-                                    if state == 0 else state > 0))
+                                line,
+                                "evaluated to {0}".format(
+                                    "Unknown (evaluation failed)"
+                                    if state == 0
+                                    else state > 0
+                                ),
+                            )
                     elif self.debug_callback:
                         self.debug_callback(
-                            line, 'was not evaluated (evaluation disabled)')
+                            line, "was not evaluated (evaluation disabled)"
+                        )
                 elif self.debug_callback:
-                    self.debug_callback(
-                        line, 'was not evaluated (dead branch)')
+                    self.debug_callback(line, "was not evaluated (dead branch)")
                 self._if(state)
                 continue
 
@@ -122,15 +136,19 @@ class Preprocessor:
                         state = self._evaluate_expr_to_state(expr)
                         if self.debug_callback:
                             self.debug_callback(
-                                line, 'evaluated to {0}'.format(
-                                    'Unknown (evaluation failed)'
-                                    if state == 0 else state > 0))
+                                line,
+                                "evaluated to {0}".format(
+                                    "Unknown (evaluation failed)"
+                                    if state == 0
+                                    else state > 0
+                                ),
+                            )
                     elif self.debug_callback:
                         self.debug_callback(
-                            line, 'was not evaluated (evaluation disabled)')
+                            line, "was not evaluated (evaluation disabled)"
+                        )
                 elif self.debug_callback:
-                    self.debug_callback(
-                        line, 'was not evaluated (dead branch)')
+                    self.debug_callback(line, "was not evaluated (dead branch)")
                 self._elif(state)
                 continue
 
@@ -155,9 +173,9 @@ class Preprocessor:
                 if not self._branch_is_dead():
                     self._define(*match.group(1, 2, 3))
                     if self.debug_callback:
-                        self.debug_callback(line, 'accepted')
+                        self.debug_callback(line, "accepted")
                 elif self.debug_callback:
-                    self.debug_callback(line, 'ignored (dead branch)')
+                    self.debug_callback(line, "ignored (dead branch)")
                 continue
 
             # undef directive
@@ -166,58 +184,65 @@ class Preprocessor:
                 if not self._branch_is_dead():
                     self._macros.pop(match.group(1), None)
                     if self.debug_callback:
-                        self.debug_callback(line, 'accepted')
+                        self.debug_callback(line, "accepted")
                 elif self.debug_callback:
-                    self.debug_callback(line, 'ignored (dead branch)')
+                    self.debug_callback(line, "ignored (dead branch)")
                 continue
 
             # include directive
             match = Preprocessor._re_include.match(line)
             if match:
                 if not self._branch_is_dead():
-
                     if match.lastindex == 1:  # quoted form
                         filepath = self._include_finder.find(
                             match.group(1),
                             self._include_stack.root_name,
-                            self._include_stack.current_name)
+                            self._include_stack.current_name,
+                        )
                     elif match.lastindex == 2:  # angle-bracket form
                         if self.inc_sys:
                             filepath = self._include_sys_finder.find(
                                 match.group(2),
                                 self._include_stack.root_name,
-                                self._include_stack.current_name)
+                                self._include_stack.current_name,
+                            )
                         else:
                             if self.debug_callback:
-                                self.debug_callback(line,
-                                                    'ignored (system header)')
+                                self.debug_callback(
+                                    line, "ignored (system header)"
+                                )
                             continue
                     else:
                         if self.debug_callback:
-                            self.debug_callback(line,
-                                                'ignored (internal error)')
+                            self.debug_callback(
+                                line, "ignored (internal error)"
+                            )
                         continue
 
                     if filepath:
                         if not self.include_roots or any(
-                                [file_in_dir(filepath, d)
-                                 for d in self.include_roots]):
-                            self._include_stack.add(open23(filepath, 'r'))
+                            [
+                                file_in_dir(filepath, d)
+                                for d in self.include_roots
+                            ]
+                        ):
+                            self._include_stack.add(open23(filepath, "r"))
                             if self.include_callback:
                                 self.include_callback(filepath)
                             if self.debug_callback:
                                 self.debug_callback(
-                                    line,
-                                    "included file '{0}'".format(filepath))
+                                    line, "included file '{0}'".format(filepath)
+                                )
                         elif self.debug_callback:
                             self.debug_callback(
                                 line,
                                 "ignored (file '{0}' "
-                                "is not in the source roots)".format(filepath))
+                                "is not in the source roots)".format(filepath),
+                            )
                     elif self.debug_callback:
-                        self.debug_callback(line, 'ignored (file not found)')
+                        self.debug_callback(line, "ignored (file not found)")
                 elif self.debug_callback:
-                    self.debug_callback(line, 'ignored (dead branch)')
+                    self.debug_callback(line, "ignored (dead branch)")
                 continue
 
             if self._branch_is_dead():
@@ -233,8 +258,8 @@ class Preprocessor:
         self._include_stack.clear()
 
     def _define(self, name, args=None, body=None):
-        if name != 'defined':
-            self._macros[name] = (args, '' if body is None else body)
+        if name != "defined":
+            self._macros[name] = (args, "" if body is None else body)
 
     def _if(self, state):
         self._if_state_stack.append(state)
@@ -258,7 +283,7 @@ class Preprocessor:
         return any(state < 0 for state in self._if_state_stack)
 
     def _replace_continuation(self, line):
-        while line.endswith('\\\n'):
+        while line.endswith("\\\n"):
             suffix = self._include_stack.readline()
             line = line[:-2] + suffix
         return line
@@ -267,25 +292,25 @@ class Preprocessor:
         while 1:
             # Check whether the line contains an unquoted block comment
             # initiator '/*':
-            start_idx = find_unquoted_string('/*', line)
+            start_idx = find_unquoted_string("/*", line)
             if start_idx < 0:
                 return line
             # Check whether the line contains a block comment
             # terminator '*/' (even if it is quoted):
-            term_idx = line.find('*/', start_idx + 2)
+            term_idx = line.find("*/", start_idx + 2)
             while term_idx < 0:
                 # The block is not terminated yet, read the next line:
                 next_line = self._include_stack.readline()
                 line_length = len(line)
                 if next_line:
                     line += next_line
-                    term_idx = line.find('*/', line_length)
+                    term_idx = line.find("*/", line_length)
                 else:
                     term_idx = line_length
             else:
                 # Replace the block of comments with a single
                 # space:
-                line = '%s %s' % (line[:start_idx], line[term_idx + 2:])
+                line = "%s %s" % (line[:start_idx], line[term_idx + 2 :])
 
     def _evaluate_expr_to_state(self, expr):
         prev_expr = expr
@@ -294,12 +319,13 @@ class Preprocessor:
             defined_calls = re.findall(Preprocessor._re_defined_call, expr)
             for call in defined_calls:
                 expr = expr.replace(
-                    call[0], '1' if call[2] in self._macros else '0')
+                    call[0], "1" if call[2] in self._macros else "0"
+                )
 
             identifiers = re.findall(Preprocessor._re_identifier, expr)
 
             for identifier in identifiers:
-                if identifier[1] == 'defined':
+                if identifier[1] == "defined":
                     return 0
 
                 macro = self._macros.get(identifier[1], None)
@@ -313,14 +339,15 @@ class Preprocessor:
                         return 0
                     else:
                         # identifier is defined as object-like macro
-                        expr = expr.replace(identifier[0],
-                                            macro[1] + identifier[2])
+                        expr = expr.replace(
+                            identifier[0], macro[1] + identifier[2]
+                        )
                 else:
                     # no function call
                     if macro is None or macro[0] is not None:
                         # macro is not defined or
                         # defined as function-like macro
-                        expr = expr.replace(identifier[0], '0')
+                        expr = expr.replace(identifier[0], "0")
                     else:
                         # identifier is defined as object-like macro
                         expr = expr.replace(identifier[0], macro[1])
@@ -330,13 +357,12 @@ class Preprocessor:
             else:
                 prev_expr = expr
 
-        expr = expr.replace('||', ' or ')
-        expr = expr.replace('&&', ' and ')
-        expr = expr.replace('!', 'not ')
+        expr = expr.replace("||", " or ")
+        expr = expr.replace("&&", " and ")
+        expr = expr.replace("!", "not ")
 
         try:
             result = bool(eval(expr, {}))
             return 1 if result else -1
         except:
             return 0
-
