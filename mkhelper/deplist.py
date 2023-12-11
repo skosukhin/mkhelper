@@ -1,4 +1,14 @@
-#!/usr/bin/env python
+#!/bin/sh
+""":"
+for cmd in python3 python; do
+  if command -v > /dev/null "${cmd}"; then
+    exec "${cmd}" "$0" "$@"
+  fi
+done
+echo "Error: could not find a python interpreter!" >&2
+exit 1
+":"""
+
 import argparse
 import collections
 import fnmatch
