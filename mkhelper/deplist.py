@@ -1,14 +1,10 @@
 #!/usr/bin/env python
+import argparse
+import collections
+import fnmatch
 import os
 import re
 import sys
-import fnmatch
-import collections
-
-try:
-    import argparse
-except ImportError:
-    import _argparse as argparse
 
 _re_rule = re.compile(
     r'^[ ]*([-+\w./]+(?:[ ]+[-+\w./]+)*)[ ]*'  # targets

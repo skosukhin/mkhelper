@@ -1,13 +1,9 @@
 #!/usr/bin/env python
+import argparse
 import os
 import sys
 
 from depgen import open23, map23, StdStreamWrapper, DummyParser
-
-try:
-    import argparse
-except ImportError:
-    import _argparse as argparse
 
 
 def parse_args():
