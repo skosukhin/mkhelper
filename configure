@@ -3247,50 +3247,62 @@ DEPGEN_INTRINSIC_MODS=iso_c_binding,iso_fortran_env,ieee_exceptions,ieee_arithme
 
 
 
-   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler flag needed to specify search paths for module files" >&5
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler flag needed to specify search paths for module files" >&5
 $as_echo_n "checking for Fortran compiler flag needed to specify search paths for module files... " >&6; }
 if ${acx_cv_fc_module_in_flag+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   acx_cv_fc_module_in_flag=unknown
-      as_dir=conftest.dir; as_fn_mkdir_p
-      cd conftest.dir
-      cat > conftest.$ac_ext <<_ACEOF
+mkdir conftest.dir
+cd conftest.dir
+cat > conftest.$ac_ext <<_ACEOF
+
       module conftest_module
       implicit none
       public
       contains
       subroutine conftest_routine
+      write(*,'(a)') 'gotcha!'
       end subroutine
       end module
 _ACEOF
 if ac_fn_fc_try_compile "$LINENO"; then :
   cd ..
-         acx_save_FCFLAGS=$FCFLAGS
-         cat > conftest.$ac_ext <<_ACEOF
+   ac_fc_module_flag_FCFLAGS_save=$FCFLAGS
+   for ac_flag in -M -I '-I ' '-M ' -p '-mod ' '-module ' '-Am -I'; do
+     FCFLAGS="$ac_fc_module_flag_FCFLAGS_save ${ac_flag}conftest.dir ${ac_flag}conftest.dir"
+     cat > conftest.$ac_ext <<_ACEOF
+
       program main
       use conftest_module, only : conftest_routine
       implicit none
-      call conftest_routine()
-      end
+      call conftest_routine
+      end program
 _ACEOF
-         for acx_flag in -M -I '-I ' '-M ' -p '-mod ' '-module ' '-Am -I'; do
-           FCFLAGS="$acx_save_FCFLAGS ${acx_flag}conftest.dir ${acx_flag}conftest.dir"
-           if ac_fn_fc_try_compile "$LINENO"; then :
-  acx_cv_fc_module_in_flag=$acx_flag
-fi
-rm -f core conftest.err conftest.$ac_objext
-           test "x$acx_cv_fc_module_in_flag" != xunknown && break
-         done
-         rm -f conftest.$ac_ext
-         FCFLAGS=$acx_save_FCFLAGS
+if ac_fn_fc_try_compile "$LINENO"; then :
+  acx_cv_fc_module_in_flag="$ac_flag"
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-      rm -rf conftest.dir
+     if test "$acx_cv_fc_module_in_flag" != unknown; then
+       break
+     fi
+   done
+   FCFLAGS=$ac_fc_module_flag_FCFLAGS_save
+
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+rm -rf conftest.dir
+
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_module_in_flag" >&5
 $as_echo "$acx_cv_fc_module_in_flag" >&6; }
-   if test "x$acx_cv_fc_module_in_flag" = xunknown; then :
+if test "$acx_cv_fc_module_in_flag" != unknown; then
+    :
+else
+    :
+fi
+                  if test "x$acx_cv_fc_module_in_flag" = xunknown; then :
   { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
 as_fn_error $? "unable to detect Fortran compiler flag needed to specify search paths for module files
@@ -3299,52 +3311,64 @@ else
   FC_MOD_IN=$acx_cv_fc_module_in_flag
 
 fi
-   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler flag needed to specify output path for module files" >&5
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler flag needed to specify output path for module files" >&5
 $as_echo_n "checking for Fortran compiler flag needed to specify output path for module files... " >&6; }
 if ${acx_cv_fc_module_out_flag+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  acx_cv_fc_module_out_flag=unknown
-      as_dir=conftest.dir/sub; as_fn_mkdir_p
-      cd conftest.dir
-      acx_save_FCFLAGS=$FCFLAGS
-      cat > conftest.$ac_ext <<_ACEOF
-      program main
-      use conftest_module, only : conftest_routine
-      implicit none
-      call conftest_routine()
-      end
-_ACEOF
-      mv conftest.$ac_ext sub/conftest.$ac_ext
-      cat > conftest.$ac_ext <<_ACEOF
+  mkdir conftest.dir conftest.dir/sub
+cd conftest.dir
+acx_cv_fc_module_out_flag=unknown
+ac_fc_module_output_flag_FCFLAGS_save=$FCFLAGS
+for ac_flag in -J '-J ' -fmod= -moddir= +moddir= -qmoddir= '-mdir ' '-mod ' \
+	      '-module ' -M '-Am -M' '-e m -J '; do
+  FCFLAGS="$ac_fc_module_output_flag_FCFLAGS_save ${ac_flag}sub"
+  cat > conftest.$ac_ext <<_ACEOF
+
       module conftest_module
       implicit none
       public
       contains
       subroutine conftest_routine
+      write(*,'(a)') 'gotcha!'
       end subroutine
       end module
 _ACEOF
-      for acx_flag in -J '-J ' -fmod= -moddir= +moddir= -qmoddir= '-mdir ' '-mod ' '-module ' -M '-Am -M' '-e m -J '; do
-        FCFLAGS="${acx_flag}sub $acx_save_FCFLAGS"
-        if ac_fn_fc_try_compile "$LINENO"; then :
+if ac_fn_fc_try_compile "$LINENO"; then :
   cd sub
-           if ac_fn_fc_try_compile "$LINENO"; then :
-  acx_cv_fc_module_out_flag=$acx_flag
+     cat > conftest.$ac_ext <<_ACEOF
+
+      program main
+      use conftest_module, only : conftest_routine
+      implicit none
+      call conftest_routine
+      end program
+_ACEOF
+if ac_fn_fc_try_compile "$LINENO"; then :
+  acx_cv_fc_module_out_flag="$ac_flag"
 fi
-rm -f core conftest.err conftest.$ac_objext
-           cd ..
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+     cd ..
+     if test "$acx_cv_fc_module_out_flag" != unknown; then
+       break
+     fi
 fi
-rm -f core conftest.err conftest.$ac_objext
-        test "x$acx_cv_fc_module_out_flag" != xunknown && break
-      done
-      FCFLAGS=$acx_save_FCFLAGS
-      cd ..
-      rm -rf conftest.dir
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+done
+FCFLAGS=$ac_fc_module_output_flag_FCFLAGS_save
+cd ..
+rm -rf conftest.dir
+
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_module_out_flag" >&5
 $as_echo "$acx_cv_fc_module_out_flag" >&6; }
-   if test "x$acx_cv_fc_module_out_flag" = xunknown; then :
+if test "$acx_cv_fc_module_out_flag" != unknown; then
+    :
+else
+    :
+fi
+                  if test "x$acx_cv_fc_module_out_flag" = xunknown; then :
   { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
 as_fn_error $? "unable to detect Fortran compiler flag needed to specify output path for module files
