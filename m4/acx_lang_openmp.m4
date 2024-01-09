@@ -1,9 +1,6 @@
 # ACX_LANG_OPENMP_FLAG([ACTION-IF-SUCCESS],
 #                      [ACTION-IF-FAILURE = FAILURE])
 # -----------------------------------------------------------------------------
-# Originally taken from the master branch of Autoconf where it is a part of
-# AC_OPENMP.
-# -----------------------------------------------------------------------------
 # Finds the compiler flag needed to enable OpenMP support. The result is either
 # "unknown", or the actual compiler flag required to enable OpenMP support,
 # which may be an empty string.

@@ -1,9 +1,6 @@
 # ACX_LANG_MACRO_FLAG([ACTION-IF-SUCCESS],
 #                     [ACTION-IF-FAILURE = FAILURE])
 # -----------------------------------------------------------------------------
-# Originally taken from the master branch of Autoconf where it is known as
-# AC_FC_PP_DEFINE.
-# -----------------------------------------------------------------------------
 # Finds the compiler flag needed to specify a preprocessor macro definition.
 #
 # If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE

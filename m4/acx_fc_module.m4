@@ -126,9 +126,6 @@ specify output path for module files])])], [$1])])
 # ACX_FC_MODULE_NAMING([ACTION-IF-SUCCESS],
 #                      [ACTION-IF-FAILURE = FAILURE])
 # -----------------------------------------------------------------------------
-# Originally taken from the master branch of Autoconf where it is known as
-# AC_FC_MODULE_EXTENSION.
-# -----------------------------------------------------------------------------
 # Finds the Fortran compiler module file naming template.
 #
 # If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
