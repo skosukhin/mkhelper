@@ -8,18 +8,6 @@
 # "unknown", or the actual compiler flag required to enable OpenMP support,
 # which may be an empty string.
 #
-# Known flags:
-# Intel >= 16: -qopenmp
-# NAG, Intel < 16: -openmp
-# GNU: -fopenmp
-# Cray: -homp
-# SGI, PGI: -mp
-# SunPRO: -xopenmp
-# Tru64 Compaq C: -omp
-# IBM XL: -qsmp=omp
-# NEC SX: -Popenmp
-# Lahey Fortran: --openmp
-#
 # If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
 # (defaults to failing with an error message).
 #
@@ -56,8 +44,7 @@ support])
      [acx_cache_var=unknown
       acx_save_[]_AC_LANG_PREFIX[]FLAGS=$[]_AC_LANG_PREFIX[]FLAGS
       AC_LANG_CONFTEST([_ACX_LANG_OPENMP])
-      for acx_lang_openmp_flag in '' -qopenmp -openmp -fopenmp -homp -mp dnl
--xopenmp -omp -qsmp=omp -Popenmp --openmp; do
+      for acx_lang_openmp_flag in '' -qopenmp -openmp -fopenmp -homp -mp; do
         _AC_LANG_PREFIX[]FLAGS="${acx_save_[]_AC_LANG_PREFIX[]FLAGS} dnl
 $acx_lang_openmp_flag"
         AC_LINK_IFELSE([], [acx_cache_var=$acx_lang_openmp_flag])

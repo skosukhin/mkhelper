@@ -3830,7 +3830,7 @@ else
       end
 _ACEOF
       acx_save_FCFLAGS=$FCFLAGS
-      for acx_lang_macro_flag in -D -WF,-D -Wp,-D -Wc,-D; do
+      for acx_lang_macro_flag in -D; do
         FCFLAGS="${acx_save_FCFLAGS} ${acx_lang_macro_flag}CONFTEST_ONE ${acx_lang_macro_flag}CONFTEST_TWO=42"
         if ac_fn_fc_try_compile "$LINENO"; then :
   acx_cv_fc_macro_flag=$acx_lang_macro_flag
@@ -4181,7 +4181,7 @@ else
       end
 
 _ACEOF
-      for acx_lang_openmp_flag in '' -qopenmp -openmp -fopenmp -homp -mp -xopenmp -omp -qsmp=omp -Popenmp --openmp; do
+      for acx_lang_openmp_flag in '' -qopenmp -openmp -fopenmp -homp -mp; do
         FCFLAGS="${acx_save_FCFLAGS} $acx_lang_openmp_flag"
         if ac_fn_fc_try_link "$LINENO"; then :
   acx_cv_fc_openmp_flag=$acx_lang_openmp_flag

@@ -134,13 +134,7 @@ m4_define([_ACX_LANG_KNOWN_MACRO_FLAGS(C)], [-D])
 # -----------------------------------------------------------------------------
 # Implementation of _ACX_LANG_KNOWN_MACRO_FLAGS for Fortran language.
 #
-# Known flags:
-# IBM: -WF,-D
-# Lahey/Fujitsu: -Wp,-D     older versions???
-# f2c: -D or -Wc,-D
-# others: -D
-#
-m4_define([_ACX_LANG_KNOWN_MACRO_FLAGS(Fortran)], [-D -WF,-D -Wp,-D -Wc,-D])
+m4_define([_ACX_LANG_KNOWN_MACRO_FLAGS(Fortran)], [-D])
 
 # _ACX_LANG_MACRO_PRINT_PROGRAM(MACRO-NAME,
 #                               [INCLUDES])
