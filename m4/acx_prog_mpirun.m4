@@ -122,9 +122,10 @@ m4_define([_ACX_PROG_MPIRUN],
          for acx_candidate in "$[@]"; do
             _AS_ECHO_LOG(
               [acx_exec_result=`$acx_candidate -n m4_default([$6], [2]) dnl
-./conftest$ac_exeext 2>/dev/null`])
+./conftest$ac_exeext 2>&AS_MESSAGE_LOG_FD`])
             acx_exec_result=dnl
-`$acx_candidate -n m4_default([$6], [2]) ./conftest$ac_exeext 2>/dev/null`
+`$acx_candidate -n m4_default([$6], [2]) dnl
+./conftest$ac_exeext 2>&AS_MESSAGE_LOG_FD`
             acx_status=$?
             _AS_ECHO_LOG([\$? = $acx_status])
             AS_IF([test $acx_status -eq 0],
