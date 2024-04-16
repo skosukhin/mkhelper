@@ -68,10 +68,10 @@ def parse_args():
 
     parser = ArgumentParser(
         fromfile_prefix_chars="@",
-        description="Generates OUTPUT makefile containing dependency rules "
-        "for the INPUT source file. Recognizes preprocessor "
-        "`#include`, `#if` and associated directives as well as "
-        "Fortran `INCLUDE`, `USE` and `MODULE` statements.",
+        description="Generates OUTPUT makefile containing dependency rules for "
+        "the INPUT source file. Recognizes preprocessor `#include`, `#if` and "
+        "associated directives as well as Fortran `INCLUDE`, `USE` and "
+        "`MODULE` statements.",
     )
 
     def comma_splitter(s):
@@ -116,40 +116,39 @@ def parse_args():
         metavar="SRC_NAME",
         nargs="+",
         help="name of the source file, the prerequisite of the corresponding "
-        "compilation rule as it will appear in the OUTPUT; normally (and "
-        "by default) equals to the INPUT or to an empty string when the "
-        "latter is set to the standard input stream",
+        "compilation rule as it will appear in the OUTPUT; normally (and by "
+        "default) equals to the INPUT or to an empty string when the latter is "
+        "set to the standard input stream",
     )
     parser.add_argument(
         "--obj-name",
         metavar="OBJ_NAME",
         nargs="+",
         help="name of the object file, the target of the corresponding "
-        "compilation rule as it will appear in the OUTPUT; normally "
-        "equals to the path to the object file that is supposed to be "
-        "generated as a result of compilation (default: SRC_NAME "
-        "without the directory-part and the file extension replaced "
-        "with `.o`)",
+        "compilation rule as it will appear in the OUTPUT; normally equals to "
+        "the path to the object file that is supposed to be generated as a "
+        "result of compilation (default: SRC_NAME without the directory-part "
+        "and the file extension replaced with `.o`)",
     )
     parser.add_argument(
         "--dep-name",
         metavar="DEP_NAME",
         nargs="+",
         help="name of the generated makefile, the additional target of the "
-        "corresponding compilation rule (for automatic dependency "
-        "generation) as it will appear in the OUTPUT; normally (and by "
-        "default) equals to the OUTPUT or to an empty string when the "
-        "latter is set to the standard output stream)",
+        "corresponding compilation rule (for automatic dependency generation) "
+        "as it will appear in the OUTPUT; normally (and by default) equals to "
+        "the OUTPUT or to an empty string when the latter is set to the "
+        "standard output stream)",
     )
     parser.add_argument(
         "--src-roots",
         metavar="SRC_ROOTS",
         type=path_splitter,
         help="colon-separated list of paths to directories; if specified and "
-        "not empty, dependencies on files that do not reside in one of "
-        "the specified directories will be ignored; applies only to "
-        "files included using the preprocessor `#include` directive or "
-        "the Fortran `INCLUDE` statement",
+        "not empty, dependencies on files that do not reside in one of the "
+        "specified directories will be ignored; applies only to files included "
+        "using the preprocessor `#include` directive or the Fortran `INCLUDE` "
+        "statement",
     )
     parser.add_argument(
         "--lc-enable",
@@ -164,12 +163,12 @@ def parse_args():
         nargs="?",
         default=argparse.SUPPRESS,
         help="actual flags to be used in compilation, i.e. $(CPPFLAGS) or "
-        "$(FCFLAGS), must be given at the end of the command line "
-        "following the double dash separator (--); the program searches "
-        "these flags for (possibly multiple instances of) PP_INC_FLAG, "
-        "PP_MACRO_FLAG, FC_INC_FLAG and FC_MOD_DIR_FLAG; any values "
-        "found are used in the dependency generation (in the case of "
-        "FC_MOD_DIR_FLAG, only the last value found is used)",
+        "$(FCFLAGS), must be given at the end of the command line following "
+        "the double dash separator (--); the program searches these flags for "
+        "(possibly multiple instances of) PP_INC_FLAG, PP_MACRO_FLAG, "
+        "FC_INC_FLAG and FC_MOD_DIR_FLAG; any values found are used in the "
+        "dependency generation (in the case of FC_MOD_DIR_FLAG, only the last "
+        "value found is used)",
     )
 
     pp_arg_group = parser.add_argument_group("preprocessor arguments")
@@ -184,17 +183,16 @@ def parse_args():
         action="store_true",
         help="enable evaluation of expressions that appear in preprocessor "
         "directives `#if` and `#elif` (does not apply to `#ifdef` and "
-        "`#ifndef`, which are always evaluated); if disabled (default) "
-        "or evaluation fails, both branches of the directives are "
-        "included by the preprocessing stage",
+        "`#ifndef`, which are always evaluated); if disabled (default) or "
+        "evaluation fails, both branches of the directives are included by the "
+        "preprocessing stage",
     )
     pp_arg_group.add_argument(
         "--pp-inc-sys",
         action="store_true",
         help="enable recognition of dependencies specified with the "
-        "angle-bracket form of the preprocessor `#include` directive "
-        "(i.e. `#include <filename>`); the constraint set by SRC_ROOTS "
-        "applies",
+        "angle-bracket form of the preprocessor `#include` directive (i.e. "
+        "`#include <filename>`); the constraint set by SRC_ROOTS applies",
     )
     pp_arg_group.add_argument(
         "--pp-inc-order",
@@ -202,15 +200,14 @@ def parse_args():
         metavar="ORDER_LIST",
         type=comma_splitter,
         help="directory search order of files included using the quoted form "
-        "of the preprocessor `#include` directive (i.e. `#include "
-        '"filename"`) ; ORDER_LIST is an ordered comma-separated list of '
-        "keywords, the corresponding search paths of which are to be "
-        "searched in the given order. The recognized keywords are: `cwd` "
-        "(for the current working directory), `flg` (for the directories "
-        "specified with PP_INC_FLAG compiler flag), `src` (for the "
-        "directory containing the INPUT source file), and `inc` (for the "
-        "directory containing the file with the `#include` directive). "
-        "Default: `%(default)s`.",
+        "of the preprocessor `#include` directive (i.e. "
+        '`#include "filename"`) ; ORDER_LIST is an ordered comma-separated '
+        "list of keywords, the corresponding search paths of which are to be "
+        "searched in the given order. The recognized keywords are: `cwd` (for "
+        "the current working directory), `flg` (for the directories specified "
+        "with PP_INC_FLAG compiler flag), `src` (for the directory containing "
+        "the INPUT source file), and `inc` (for the directory containing the "
+        "file with the `#include` directive). Default: `%(default)s`.",
     )
     pp_arg_group.add_argument(
         "--pp-inc-sys-order",
@@ -218,26 +215,25 @@ def parse_args():
         metavar="ORDER_LIST",
         type=comma_splitter,
         help="equivalent to the `--pp-inc-order` argument, only for the "
-        "angle-bracket form of the preprocessor `#include` directive "
-        "(i.e. `#include <filename>`, default: `%(default)s`)",
+        "angle-bracket form of the preprocessor `#include` directive (i.e. "
+        "`#include <filename>`, default: `%(default)s`)",
     )
-
     pp_arg_group.add_argument(
         "--pp-macro-flag",
         metavar="PP_MACRO_FLAG",
         default="-D",
-        help="preprocessor flag used for macro definition; only flags "
-        "that start with a single dash (-) and have no more than one "
-        "trailing whitespace are supported (default: `%(default)s`)",
+        help="preprocessor flag used for macro definition; only flags that "
+        "start with a single dash (-) and have no more than one trailing "
+        "whitespace are supported (default: `%(default)s`)",
     )
     pp_arg_group.add_argument(
         "--pp-inc-flag",
         metavar="PP_INC_FLAG",
         default="-I",
         help="preprocessor flag used for setting search paths for the "
-        "`#include` directive; only flags that start with a single dash "
-        "(-) and have no more than one trailing whitespace are supported "
-        "(default: `%(default)s`)",
+        "`#include` directive; only flags that start with a single dash (-) "
+        "and have no more than one trailing whitespace are supported (default: "
+        "`%(default)s`)",
     )
 
     fc_arg_group = parser.add_argument_group("Fortran arguments")
@@ -245,8 +241,8 @@ def parse_args():
         "--fc-enable",
         action="store_true",
         help="enable recognition of Fortran dependencies specified with "
-        "`INCLUDE`, `USE` and `MODULE` statements; if disabled (default),"
-        "all arguments of this argument group are ignored",
+        "`INCLUDE`, `USE` and `MODULE` statements; if disabled (default), all "
+        "arguments of this argument group are ignored",
     )
     fc_arg_group.add_argument(
         "--fc-mod-ext",
@@ -267,8 +263,7 @@ def parse_args():
         metavar="ORDER_LIST",
         type=comma_splitter,
         help="equivalent to the `--pp-inc-order` argument, only for the "
-        "Fortran `INCLUDE` statement and FC_INC_FLAG (default: "
-        "`%(default)s`)",
+        "Fortran `INCLUDE` statement and FC_INC_FLAG (default: `%(default)s`)",
     )
     fc_intrisic_mods_default = (
         "iso_c_binding,iso_fortran_env,ieee_exceptions,"
@@ -281,15 +276,16 @@ def parse_args():
         type=comma_splitter,
         action="append",
         help="comma-separated list of Fortran intrinsic modules. Fortran "
-        "modules that are explicitly specified as intrinsic in the "
-        "source file (i.e. `USE, INTRINSIC :: MODULENAME`) are ignored "
-        "regardless of whether they are mentioned on the "
-        "INTRINSIC_MODS_LIST. Fortran modules that are mentioned on the "
-        "INTRINSIC_MODS_LIST are ignored only when their nature is not "
-        "specified in the source file at all (i.e. `USE :: MODULENAME`). "
-        "Fortran modules that need to be ignored unconditionally must "
-        "be put on the EXTERNAL_MODS_LIST (see `--fc-external-mods`). "
-        "Default: `{0}`.".format(fc_intrisic_mods_default),
+        "modules that are explicitly specified as intrinsic in the source file "
+        "(i.e. `USE, INTRINSIC :: MODULENAME`) are ignored regardless of "
+        "whether they are mentioned on the INTRINSIC_MODS_LIST. Fortran "
+        "modules that are mentioned on the INTRINSIC_MODS_LIST are ignored "
+        "only when their nature is not specified in the source file at all "
+        "(i.e. `USE :: MODULENAME`). Fortran modules that need to be ignored "
+        "unconditionally must be put on the EXTERNAL_MODS_LIST (see "
+        "`--fc-external-mods`). Default: `{0}`.".format(
+            fc_intrisic_mods_default
+        ),
     )
     fc_arg_group.add_argument(
         "--fc-external-mods",
@@ -304,19 +300,19 @@ def parse_args():
         "--fc-mod-dir-flag",
         metavar="FC_MOD_DIR_FLAG",
         default="-J",
-        help="Fortran compiler flag used to specify the directory where "
-        "module files are saved; only flags that start with a single "
-        "dash (-) and have no more than one trailing whitespace are "
-        "supported (default: `%(default)s`)",
+        help="Fortran compiler flag used to specify the directory where module "
+        "files are saved; only flags that start with a single dash (-) and "
+        "have no more than one trailing whitespace are supported (default: "
+        "`%(default)s`)",
     )
     fc_arg_group.add_argument(
         "--fc-inc-flag",
         metavar="FC_INC_FLAG",
         default="-I",
-        help="preprocessor flag used for setting search paths for the "
-        "Fortran `INCLUDE` statement; only flags that start with a "
-        "single dash (-) and have no more than one trailing whitespace "
-        "are supported (default: `%(default)s`)",
+        help="preprocessor flag used for setting search paths for the Fortran "
+        "`INCLUDE` statement; only flags that start with a single dash (-) and "
+        "have no more than one trailing whitespace are supported (default: "
+        "`%(default)s`)",
     )
 
     unknown = []

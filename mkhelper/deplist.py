@@ -87,8 +87,8 @@ def parse_args():
     parser = ArgumentParser(
         fromfile_prefix_chars="@",
         description="Reads a set of MAKEFILEs and prints a topologically "
-        "sorted list of TARGETs (PREREQuisites) together with "
-        "their dependencies (dependents).",
+        "sorted list of TARGETs (PREREQuisites) together with their "
+        "dependencies (dependents).",
     )
 
     parser.add_argument(
@@ -99,20 +99,18 @@ def parse_args():
         "--target",
         nargs="*",
         help="names of the makefile targets to be printed together with their "
-        "dependencies; mutually exclusive with the argument "
-        "'-p/--prereq'; if neither of the arguments is specified, all "
-        "targets and prerequisites found in the makefiles are sent to the "
-        "output",
+        "dependencies; mutually exclusive with the argument '-p/--prereq'; if "
+        "neither of the arguments is specified, all targets and prerequisites "
+        "found in the makefiles are sent to the output",
     )
     parser.add_argument(
         "-p",
         "--prereq",
         nargs="*",
         help="names of the makefile prerequisites to be printed together with "
-        "their dependents; mutually exclusive with the argument "
-        "'-t/--target'; if neither of the arguments is specified, all "
-        "targets and prerequisites found in the makefiles are sent to the "
-        "output",
+        "their dependents; mutually exclusive with the argument '-t/--target'; "
+        "if neither of the arguments is specified, all targets and "
+        "prerequisites found in the makefiles are sent to the output",
     )
     parser.add_argument(
         "--inc-oo",
@@ -131,11 +129,10 @@ def parse_args():
         nargs=2,
         metavar="PATTERN",
         help="pair of shell-like wildcards; the option enables additional "
-        "consistency checks of the dependency graph: each target that "
-        "matches the first pattern of the pair is checked whether it has "
-        "no more than one prerequisite matching the second pattern; if "
-        "the check fails, a warning message is emitted to the standard "
-        "error stream",
+        "consistency checks of the dependency graph: each target that matches "
+        "the first pattern of the pair is checked whether it has no more than "
+        "one prerequisite matching the second pattern; if the check fails, a "
+        "warning message is emitted to the standard error stream",
     )
     parser.add_argument(
         "--check-unique-basename",
@@ -143,10 +140,10 @@ def parse_args():
         nargs="+",
         metavar="PATTERN",
         help="list of shell-like wildcards; the option enables additional "
-        "consistency checks of the dependency graph; all targets that "
-        "match at least one the patterns are checked whether none of them "
-        "have the same basename; if the check fails, a warning message is "
-        "emitted to the standard error stream",
+        "consistency checks of the dependency graph; all targets that match at "
+        "least one the patterns are checked whether none of them have the same "
+        "basename; if the check fails, a warning message is emitted to the "
+        "standard error stream",
     )
     parser.add_argument(
         # Unfortunately, we cannot set nargs to 'two or more', therefore we
@@ -156,11 +153,11 @@ def parse_args():
         nargs="+",
         metavar="PATTERN",
         help="list of two or more shell-like wildcards; the option enables "
-        "additional consistency checks of the dependency graph: each "
-        "target that matches the first pattern of the list is checked "
-        "whether it has at least one prerequisite matching any of the "
-        "rest of the patterns; if the check fails, a warning message is "
-        "emitted to the standard error stream",
+        "additional consistency checks of the dependency graph: each target "
+        "that matches the first pattern of the list is checked whether it has "
+        "at least one prerequisite matching any of the rest of the patterns; "
+        "if the check fails, a warning message is emitted to the standard "
+        "error stream",
     )
     parser.add_argument(
         "--check-cycles",
@@ -173,15 +170,15 @@ def parse_args():
         "--check-colour",
         choices=_term_colors.keys(),
         help="colour the message output of the checks using ANSI escape "
-        "sequences; the argument is ignored if the standard error stream "
-        "is not associated with a terminal device",
+        "sequences; the argument is ignored if the standard error stream is "
+        "not associated with a terminal device",
     )
     parser.add_argument(
         "-f",
         "--makefile",
         nargs="*",
-        help="paths to makefiles; a single dash (-) triggers reading from "
-        "the standard input stream",
+        help="paths to makefiles; a single dash (-) triggers reading from the "
+        "standard input stream",
     )
 
     args = parser.parse_args()
