@@ -272,24 +272,24 @@ def parse_args():
     )
     fc_arg_group.add_argument(
         "--fc-intrinsic-mods",
-        metavar="INTRINSIC_MODS_LIST",
+        metavar="FC_INTRINSIC_MODS_LIST",
         type=comma_splitter,
         action="append",
         help="comma-separated list of Fortran intrinsic modules. Fortran "
         "modules that are explicitly specified as intrinsic in the source file "
         "(i.e. `USE, INTRINSIC :: MODULENAME`) are ignored regardless of "
-        "whether they are mentioned on the INTRINSIC_MODS_LIST. Fortran "
-        "modules that are mentioned on the INTRINSIC_MODS_LIST are ignored "
+        "whether they are mentioned on the FC_INTRINSIC_MODS_LIST. Fortran "
+        "modules that are mentioned on the FC_INTRINSIC_MODS_LIST are ignored "
         "only when their nature is not specified in the source file at all "
         "(i.e. `USE :: MODULENAME`). Fortran modules that need to be ignored "
-        "unconditionally must be put on the EXTERNAL_MODS_LIST (see "
+        "unconditionally must be put on the FC_EXTERNAL_MODS_LIST (see "
         "`--fc-external-mods`). Default: `{0}`.".format(
             fc_intrisic_mods_default
         ),
     )
     fc_arg_group.add_argument(
         "--fc-external-mods",
-        metavar="EXTERNAL_MODS_LIST",
+        metavar="FC_EXTERNAL_MODS_LIST",
         type=comma_splitter,
         action="append",
         help="comma-separated list of external (to the project) Fortran "
