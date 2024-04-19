@@ -44,28 +44,29 @@ import argparse
 import os
 import sys
 
-from depgen import open23, map23, StdStreamWrapper, DummyParser
+from depgen import DummyParser, StdStreamWrapper, map23, open23, zip_longest23
+
+
+class ArgumentParser(argparse.ArgumentParser):
+    def convert_arg_line_to_args(self, arg_line):
+        try:
+            # Drop everything after the first occurrence of #:
+            arg_line = arg_line[: arg_line.index("#")]
+        except ValueError:
+            pass
+
+        result = []
+        # Do not regard consecutive whitespaces as a single separator:
+        for arg in arg_line.split(" "):
+            if arg:
+                result.append(arg)
+            elif result:
+                # The previous argument has a significant whitespace:
+                result[-1] += " "
+        return result
 
 
 def parse_args():
-    class ArgumentParser(argparse.ArgumentParser):
-        def convert_arg_line_to_args(self, arg_line):
-            try:
-                # Drop everything after the first occurrence of #:
-                arg_line = arg_line[: arg_line.index("#")]
-            except ValueError:
-                pass
-
-            result = []
-            # Do not regard consecutive whitespaces as a single separator:
-            for arg in arg_line.split(" "):
-                if arg:
-                    result.append(arg)
-                elif result:
-                    # The previous argument has a significant whitespace:
-                    result[-1] += " "
-            return result
-
     parser = ArgumentParser(
         fromfile_prefix_chars="@",
         description="Generates OUTPUT makefile containing dependency rules for "
@@ -343,7 +344,7 @@ def parse_args():
         )
 
     if not args.output:
-        args.output = [None] * len(args.input)
+        args.output = [None]
     elif len(args.output) != len(args.input):
         parser.error(
             "number of OUTPUT values is not equal to the number of "
@@ -491,7 +492,7 @@ def main():
     elif args.pp_enable or args.lc_enable:
         parser = DummyParser()
 
-    for inp, out, src_name, obj_name, dep_name in zip(
+    for inp, out, src_name, obj_name, dep_name in zip_longest23(
         args.input, args.output, args.src_name, args.obj_name, args.dep_name
     ):
         in_stream = (
@@ -543,12 +544,10 @@ def main():
             in_stream.close()
 
         out_lines = gen_lc_deps(src_name, lc_files)
-        lc_files.clear()
 
         out_lines.extend(
             gen_include_deps(src_name, obj_name, dep_name, included_files)
         )
-        included_files.clear()
 
         if provided_modules or required_modules:
             out_lines.extend(
@@ -561,8 +560,6 @@ def main():
                     args.fc_mod_ext,
                 )
             )
-        provided_modules.clear()
-        required_modules.clear()
 
         if args.debug:
             out_lines.extend(
@@ -594,6 +591,11 @@ def main():
         )
         out_stream.writelines(out_lines)
         out_stream.close()
+
+        lc_files.clear()
+        included_files.clear()
+        provided_modules.clear()
+        required_modules.clear()
 
 
 def gen_lc_deps(src_name, lc_files):
