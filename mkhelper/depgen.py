@@ -627,7 +627,9 @@ def gen_module_deps(
             result.append("%s: %s\n" % (targets, obj_name))
 
         # Do not depend on the modules that are provided in the same file:
-        required_modules -= provided_modules
+        required_modules = [
+            m for m in required_modules if m not in provided_modules
+        ]
         if required_modules:
             prereqs = " ".join(
                 modulenames_to_filenames(
