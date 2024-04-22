@@ -202,41 +202,42 @@ def parse_args():
     return args
 
 
-def read_makefile(makefile, inc_order_only):
+def read_makefiles(makefiles, inc_order_only):
     result = collections.defaultdict(list)
 
-    if makefile == "-":
-        stream = sys.stdin
-    elif not os.path.isfile(makefile):
-        return result
-    else:
-        stream = open(makefile, "r")
+    for mkf in makefiles:
+        if mkf == "-":
+            stream = sys.stdin
+        elif not os.path.isfile(mkf):
+            continue
+        else:
+            stream = open(mkf, "r")
 
-    it = iter(stream)
+        it = iter(stream)
 
-    for line in it:
-        while line.endswith("\\\n"):
-            line = line[:-2]
-            try:
-                line += next(it)
-            except StopIteration:
-                break
+        for line in it:
+            while line.endswith("\\\n"):
+                line = line[:-2]
+                try:
+                    line += next(it)
+                except StopIteration:
+                    break
 
-        match = _re_rule.match(line)
-        if match:
-            targets = set(match.group(1).split())
-            prereqs = []
+            match = _re_rule.match(line)
+            if match:
+                targets = set(match.group(1).split())
+                prereqs = []
 
-            if match.group(2):
-                prereqs.extend(match.group(2).split())
+                if match.group(2):
+                    prereqs.extend(match.group(2).split())
 
-            if match.group(3) and inc_order_only:
-                prereqs.extend(match.group(3).split())
+                if match.group(3) and inc_order_only:
+                    prereqs.extend(match.group(3).split())
 
-            for target in targets:
-                result[target].extend(prereqs)
+                for target in targets:
+                    result[target].extend(prereqs)
 
-    stream.close()
+        stream.close()
     return result
 
 
@@ -279,22 +280,14 @@ def visit_dfs(
             finish_visit_cb(vertex)
 
 
-def build_graph(makefiles, inc_oo):
-    # Read makefiles:
-    result = collections.defaultdict(list)
-    for mkf in makefiles:
-        mkf_dict = read_makefile(mkf, inc_oo)
-
-        for target, prereqs in mkf_dict.items():
-            result[target].extend(prereqs)
-
+def sanitize_graph(graph):
     # Remove duplicates (we do not use sets as values of the dictionary to keep
     # the order of prerequisites):
-    for target in result.keys():
+    for target in graph.keys():
         seen = set()
-        result[target] = [
+        graph[target] = [
             prereq
-            for prereq in result[target]
+            for prereq in graph[target]
             if not (prereq in seen or seen.add(prereq))
         ]
 
@@ -302,13 +295,11 @@ def build_graph(makefiles, inc_oo):
     # of the graph:
     leaves = set(
         prereq
-        for prereqs in result.values()
+        for prereqs in graph.values()
         for prereq in prereqs
-        if prereq not in result
+        if prereq not in graph
     )
-    result.update((prereq, result.default_factory()) for prereq in leaves)
-
-    return result
+    graph.update((prereq, graph.default_factory()) for prereq in leaves)
 
 
 def flip_edges(graph):
@@ -361,10 +352,12 @@ def main():
     if args.makefile is None:
         return
 
-    dep_graph = build_graph(args.makefile, args.inc_oo)
+    dep_graph = read_makefiles(args.makefile, args.inc_oo)
 
     if not dep_graph:
         return
+
+    sanitize_graph(dep_graph)
 
     if args.prereq is None:
         traversed_graph = dep_graph
