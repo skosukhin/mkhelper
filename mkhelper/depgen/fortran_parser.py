@@ -43,8 +43,8 @@ class FortranParser:
     _re_include = re.compile(r'^\s*include\s+(\'|")(.*?)\1', re.I)
     _re_line_continue_start = re.compile(r"^(.*)&\s*$")
     _re_line_continue_end = re.compile(r"^\s*&")
-    _re_module_provide = re.compile(r"^\s*module\s+(?!procedure\s)(\w+)", re.I)
-    _re_module_require = re.compile(
+    _re_module_start = re.compile(r"^\s*module\s+(?!procedure\s)(\w+)", re.I)
+    _re_module_use = re.compile(
         r"^\s*use(?:\s+|(?:\s*,\s*((?:non_)?intrinsic))?\s*::\s*)(\w+)", re.I
     )
 
@@ -70,8 +70,8 @@ class FortranParser:
 
         # Callbacks:
         self.include_callback = None
-        self.module_callback = None
-        self.use_module_callback = None
+        self.module_start_callback = None
+        self.module_use_callback = None
         self.debug_callback = None
 
         self._include_finder = IncludeFinder(include_order, include_dirs)
@@ -110,20 +110,20 @@ class FortranParser:
                     match = FortranParser._re_line_continue_start.match(line)
 
                 for line in FortranParser._split_semicolons(line):
-                    # module provided
-                    match = FortranParser._re_module_provide.match(line)
+                    # module definition start
+                    match = FortranParser._re_module_start.match(line)
                     if match:
                         module_name = match.group(1).lower()
-                        if self.module_callback:
-                            self.module_callback(module_name)
+                        if self.module_start_callback:
+                            self.module_start_callback(module_name)
                         if self.debug_callback:
                             self.debug_callback(
-                                line, "declared module '%s'" % module_name
+                                line, "module '%s' (start)" % module_name
                             )
                         continue
 
-                    # module required
-                    match = FortranParser._re_module_require.match(line)
+                    # module used
+                    match = FortranParser._re_module_use.match(line)
                     if match:
                         module_nature = (
                             match.group(1).lower()
@@ -156,8 +156,8 @@ class FortranParser:
                                     "is external)" % module_name,
                                 )
                         else:
-                            if self.use_module_callback:
-                                self.use_module_callback(module_name)
+                            if self.module_use_callback:
+                                self.module_use_callback(module_name)
                             if self.debug_callback:
                                 self.debug_callback(
                                     line, "used module '%s'" % module_name

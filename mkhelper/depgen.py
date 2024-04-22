@@ -452,12 +452,12 @@ def main():
 
     provided_modules = set()
 
-    def module_callback(module):
+    def module_start_callback(module):
         provided_modules.add(module)
 
     required_modules = set()
 
-    def use_module_callback(module):
+    def module_use_callback(module):
         required_modules.add(module)
 
     lc_debug_info = None
@@ -477,8 +477,8 @@ def main():
         )
 
         ftn.include_callback = include_callback
-        ftn.module_callback = module_callback
-        ftn.use_module_callback = use_module_callback
+        ftn.module_start_callback = module_start_callback
+        ftn.module_use_callback = module_use_callback
 
         def debug_callback(line, msg):
             ftn_debug_info.append("#  `%s`:\t%s\n" % (line[:-1], msg))
