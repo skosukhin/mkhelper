@@ -43,7 +43,9 @@ class FortranParser:
     _re_include = re.compile(r'^\s*include\s+(\'|")(.*?)\1', re.I)
     _re_line_continue_start = re.compile(r"^(.*)&\s*$")
     _re_line_continue_end = re.compile(r"^\s*&")
-    _re_module_start = re.compile(r"^\s*module\s+(?!procedure\s)(\w+)", re.I)
+    _re_module_start = re.compile(
+        r"^\s*module\s+(?!(?:procedure|subroutine|function)\s)(\w+)", re.I
+    )
     _re_module_use = re.compile(
         r"^\s*use(?:\s+|(?:\s*,\s*((?:non_)?intrinsic))?\s*::\s*)(\w+)", re.I
     )
