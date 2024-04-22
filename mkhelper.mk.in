@@ -193,6 +193,7 @@ sanitize-mod-proxies:
 extra_f90.d: mkhelper.mk
 	$(silent_DEPGEN):;{ \
 	  echo 'src/program/main.o:| src/program/implicit_external.o'; \
+	  echo 'src/program/main.o:| src/modules/submo_test_submodule.o'; \
 	} >$@
 
 # Configure delayed bundled libraries:

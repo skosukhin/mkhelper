@@ -46,6 +46,9 @@ class FortranParser:
     _re_module_start = re.compile(
         r"^\s*module\s+(?!(?:procedure|subroutine|function)\s)(\w+)", re.I
     )
+    _re_submodule_start = re.compile(
+        r"^\s*submodule\s*\(\s*(\w+)(?:\s*:\s*(\w+)\s*)?\s*\)\s*(\w+)", re.I
+    )
     _re_module_use = re.compile(
         r"^\s*use(?:\s+|(?:\s*,\s*((?:non_)?intrinsic))?\s*::\s*)(\w+)", re.I
     )
@@ -73,6 +76,7 @@ class FortranParser:
         # Callbacks:
         self.include_callback = None
         self.module_start_callback = None
+        self.submodule_start_callback = None
         self.module_use_callback = None
         self.debug_callback = None
 
@@ -121,6 +125,34 @@ class FortranParser:
                         if self.debug_callback:
                             self.debug_callback(
                                 line, "module '%s' (start)" % module_name
+                            )
+                        continue
+
+                    # submodule definition start
+                    match = FortranParser._re_submodule_start.match(line)
+                    if match:
+                        module_name = match.group(1).lower()
+                        parent_name = match.group(2)
+                        if parent_name:
+                            parent_name = parent_name.lower()
+                        submodule_name = match.group(3).lower()
+                        if self.submodule_start_callback:
+                            self.submodule_start_callback(
+                                submodule_name, parent_name, module_name
+                            )
+                        if self.debug_callback:
+                            self.debug_callback(
+                                line,
+                                "submodule '%s'%s of module '%s' (start)"
+                                % (
+                                    submodule_name,
+                                    (
+                                        " with parent '%s'" % parent_name
+                                        if parent_name
+                                        else ""
+                                    ),
+                                    module_name,
+                                ),
                             )
                         continue
 

@@ -460,6 +460,9 @@ def main():
     def module_use_callback(module):
         required_modules.add(module)
 
+    def submodule_start_callback(submodule, parent, module):
+        required_modules.add(module)
+
     lc_debug_info = None
     pp_debug_info = None
     ftn_debug_info = None
@@ -478,6 +481,7 @@ def main():
 
         ftn.include_callback = include_callback
         ftn.module_start_callback = module_start_callback
+        ftn.submodule_start_callback = submodule_start_callback
         ftn.module_use_callback = module_use_callback
 
         def debug_callback(line, msg):
