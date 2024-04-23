@@ -485,7 +485,9 @@ def main():
         ftn.module_use_callback = module_use_callback
 
         def debug_callback(line, msg):
-            ftn_debug_info.append("#  `{0}`:\t{1}\n".format(line[:-1], msg))
+            ftn_debug_info.append(
+                "#  `{0}`:\t{1}\n".format(line.rstrip("\n"), msg)
+            )
 
         if args.debug:
             ftn_debug_info = ["#\n# Fortran parser:\n"]
@@ -510,7 +512,9 @@ def main():
             lc.lc_callback = lc_callback
 
             def debug_callback(line, msg):
-                lc_debug_info.append("#  `{0}`:\t{1}\n".format(line[:-1], msg))
+                lc_debug_info.append(
+                    "#  `{0}`:\t{1}\n".format(line.rstrip("\n"), msg)
+                )
 
             if args.debug:
                 lc_debug_info = ["#\n# Line control processor:\n"]
@@ -535,7 +539,9 @@ def main():
             pp.include_callback = include_callback
 
             def debug_callback(line, msg):
-                pp_debug_info.append("#  `{0}`:\t{1}\n".format(line[:-1], msg))
+                pp_debug_info.append(
+                    "#  `{0}`:\t{1}\n".format(line.rstrip("\n"), msg)
+                )
 
             if args.debug:
                 pp_debug_info = ["#\n# Preprocessor:\n"]
