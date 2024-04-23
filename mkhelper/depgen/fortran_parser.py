@@ -124,7 +124,7 @@ class FortranParser:
                             self.module_start_callback(module_name)
                         if self.debug_callback:
                             self.debug_callback(
-                                line, "module '%s' (start)" % module_name
+                                line, "module '{0}' (start)".format(module_name)
                             )
                         continue
 
@@ -143,11 +143,11 @@ class FortranParser:
                         if self.debug_callback:
                             self.debug_callback(
                                 line,
-                                "submodule '%s'%s of module '%s' (start)"
-                                % (
+                                "submodule '{0}'{1} of module '{2}' "
+                                "(start)".format(
                                     submodule_name,
                                     (
-                                        " with parent '%s'" % parent_name
+                                        " with parent '{0}'".format(parent_name)
                                         if parent_name
                                         else ""
                                     ),
@@ -169,8 +169,10 @@ class FortranParser:
                             if self.debug_callback:
                                 self.debug_callback(
                                     line,
-                                    "ignored module usage ('%s' "
-                                    "is explicitly intrinsic)" % module_name,
+                                    "ignored module usage "
+                                    "('{0}' is explicitly intrinsic)".format(
+                                        module_name
+                                    ),
                                 )
                         elif (
                             module_name in self.intrinsic_mods
@@ -179,22 +181,25 @@ class FortranParser:
                             if self.debug_callback:
                                 self.debug_callback(
                                     line,
-                                    "ignored module usage ('%s' "
-                                    "is implicitly intrinsic)" % module_name,
+                                    "ignored module usage "
+                                    "('{0}' is implicitly intrinsic)".format(
+                                        module_name
+                                    ),
                                 )
                         elif module_name in self.external_mods:
                             if self.debug_callback:
                                 self.debug_callback(
                                     line,
-                                    "ignored module usage ('%s' "
-                                    "is external)" % module_name,
+                                    "ignored module usage "
+                                    "('{0}' is external)".format(module_name),
                                 )
                         else:
                             if self.module_use_callback:
                                 self.module_use_callback(module_name)
                             if self.debug_callback:
                                 self.debug_callback(
-                                    line, "used module '%s'" % module_name
+                                    line,
+                                    "used module '{0}'".format(module_name),
                                 )
                         continue
 
@@ -217,13 +222,14 @@ class FortranParser:
                                     self.include_callback(filepath)
                                 if self.debug_callback:
                                     self.debug_callback(
-                                        line, "included file '%s'" % filepath
+                                        line,
+                                        "included file '{0}'".format(filepath),
                                     )
                             elif self.debug_callback:
                                 self.debug_callback(
                                     line,
-                                    "ignored (file '%s' "
-                                    "is not in the source roots)" % filepath,
+                                    "ignored (file '{0}' is not "
+                                    "in the source roots)".format(filepath),
                                 )
                         elif self.debug_callback:
                             self.debug_callback(

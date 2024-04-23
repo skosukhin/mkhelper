@@ -63,13 +63,13 @@ class LCProcessor:
                             self.lc_callback(filepath)
                         if self.debug_callback:
                             self.debug_callback(
-                                line, "accepted file '%s'" % filepath
+                                line, "accepted file '{0}'".format(filepath)
                             )
                     elif self.debug_callback:
                         self.debug_callback(
                             line,
-                            "ignored (file '%s' "
-                            "is not in the source roots)" % filepath,
+                            "ignored (file '{0}' is not "
+                            "in the source roots)".format(filepath),
                         )
                 elif self.debug_callback:
                     self.debug_callback(line, "ignored (file not found)")

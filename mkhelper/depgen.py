@@ -485,7 +485,7 @@ def main():
         ftn.module_use_callback = module_use_callback
 
         def debug_callback(line, msg):
-            ftn_debug_info.append("#  `%s`:\t%s\n" % (line[:-1], msg))
+            ftn_debug_info.append("#  `{0}`:\t{1}\n".format(line[:-1], msg))
 
         if args.debug:
             ftn_debug_info = ["#\n# Fortran parser:\n"]
@@ -510,7 +510,7 @@ def main():
             lc.lc_callback = lc_callback
 
             def debug_callback(line, msg):
-                lc_debug_info.append("#  `%s`:\t%s\n" % (line[:-1], msg))
+                lc_debug_info.append("#  `{0}`:\t{1}\n".format(line[:-1], msg))
 
             if args.debug:
                 lc_debug_info = ["#\n# Line control processor:\n"]
@@ -535,7 +535,7 @@ def main():
             pp.include_callback = include_callback
 
             def debug_callback(line, msg):
-                pp_debug_info.append("#  `%s`:\t%s\n" % (line[:-1], msg))
+                pp_debug_info.append("#  `{0}`:\t{1}\n".format(line[:-1], msg))
 
             if args.debug:
                 pp_debug_info = ["#\n# Preprocessor:\n"]
@@ -605,7 +605,7 @@ def main():
 def gen_lc_deps(src_name, lc_files):
     result = []
     if src_name and lc_files:
-        result.append("%s: %s\n" % (src_name, " ".join(lc_files)))
+        result.append("{0}: {1}\n".format(src_name, " ".join(lc_files)))
     return result
 
 
@@ -615,7 +615,7 @@ def gen_include_deps(src_name, obj_name, dep_name, included_files):
     if targets:
         prereqs = " ".join(filter(None, [src_name] + list(included_files)))
         if prereqs:
-            result.append("%s: %s\n" % (targets, prereqs))
+            result.append("{0}: {1}\n".format(targets, prereqs))
     return result
 
 
@@ -630,7 +630,7 @@ def gen_module_deps(
                     provided_modules, mod_dir, mod_upper, mod_ext
                 )
             )
-            result.append("%s: %s\n" % (targets, obj_name))
+            result.append("{0}: {1}\n".format(targets, obj_name))
 
         # Do not depend on the modules that are provided in the same file:
         required_modules = [
@@ -642,7 +642,7 @@ def gen_module_deps(
                     required_modules, mod_dir, mod_upper, mod_ext
                 )
             )
-            result.append("%s: %s\n" % (obj_name, prereqs))
+            result.append("{0}: {1}\n".format(obj_name, prereqs))
     return result
 
 
@@ -653,7 +653,7 @@ def modulenames_to_filenames(modules, directory, upprecase, extension):
     if directory:
         result = map(lambda s: os.path.join(directory, s), result)
     if extension:
-        result = map(lambda s: "%s.%s" % (s, extension), result)
+        result = map(lambda s: "{0}.{1}".format(s, extension), result)
     return result
 
 

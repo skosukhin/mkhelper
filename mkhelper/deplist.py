@@ -314,9 +314,8 @@ def flip_edges(graph):
 
 def warn(msg, colour=None):
     sys.stderr.write(
-        "%s%s: WARNING: %s%s\n"
-        % (
-            ("\033[%dm" % _term_colors[colour]) if colour else "",
+        "{0}{1}: WARNING: {2}{3}\n".format(
+            ("\033[{0}m".format(_term_colors[colour])) if colour else "",
             os.path.basename(__file__),
             msg,
             "\033[0m" if colour else "",
@@ -398,9 +397,9 @@ def main():
                         )
                         if len(matching_prereqs) > 1:
                             warn(
-                                "target '%s' has more than one immediate "
-                                "prerequisite matching pattern '%s':\n\t%s"
-                                % (
+                                "target '{0}' has more than one immediate "
+                                "prerequisite matching pattern "
+                                "'{1}':\n\t{2}".format(
                                     vertex,
                                     prereq_pattern,
                                     "\n\t".join(matching_prereqs),
@@ -433,8 +432,9 @@ def main():
                     if len(paths) > 1 and basename:
                         warn(
                             "the dependency graph contains more than one "
-                            "target with basename '%s':\n\t%s"
-                            % (basename, "\n\t".join(paths)),
+                            "target with basename '{0}':\n\t{1}".format(
+                                basename, "\n\t".join(paths)
+                            ),
                             args.check_colour,
                         )
 
@@ -457,9 +457,11 @@ def main():
                         ]
                     ):
                         warn(
-                            "target '%s' does not have an immediate "
-                            "prerequisite matching any of the patterns: '%s'"
-                            % (vertex, "', '".join(prereq_patterns)),
+                            "target '{0}' does not have an immediate "
+                            "prerequisite matching any of the patterns: "
+                            "'{1}'".format(
+                                vertex, "', '".join(prereq_patterns)
+                            ),
                             args.check_colour,
                         )
 
@@ -491,8 +493,8 @@ def main():
                     )
 
                 warn(
-                    "the dependency graph has a cycle:\n\t%s"
-                    % "\n\t".join(msg_lines),
+                    "the dependency graph has a cycle:\n"
+                    "\t{0}".format("\n\t".join(msg_lines)),
                     args.check_colour,
                 )
 

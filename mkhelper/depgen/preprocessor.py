@@ -340,7 +340,7 @@ class Preprocessor:
             else:
                 # Replace the block of comments with a single
                 # space:
-                line = "%s %s" % (line[:start_idx], line[term_idx + 2 :])
+                line = "{0} {1}".format(line[:start_idx], line[term_idx + 2 :])
 
     def _evaluate_expr_to_state(self, expr):
         prev_expr = expr
