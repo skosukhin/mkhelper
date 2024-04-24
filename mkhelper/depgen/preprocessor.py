@@ -29,6 +29,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import re
+import sys
 
 from depgen import (
     IncludeFinder,
@@ -103,13 +104,21 @@ class Preprocessor:
         # stack:
         self._states_per_endif_stack = []
 
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        line = self.readline()
+        if line:
+            return line
+        else:
+            raise StopIteration
+
+    if sys.version_info < (3,):
+        next = __next__
+
     def readline(self):
-        while 1:
-            line = self._include_stack.readline()
-
-            if not line:
-                return line
-
+        for line in self._include_stack:
             line = self._replace_continuation(line)
             line = self._remove_block_comments(line)
 
@@ -316,7 +325,7 @@ class Preprocessor:
 
     def _replace_continuation(self, line):
         while line.endswith("\\\n"):
-            suffix = self._include_stack.readline()
+            suffix = next(self._include_stack, "")
             line = line[:-2] + suffix
         return line
 
@@ -332,13 +341,12 @@ class Preprocessor:
             term_idx = line.find("*/", start_idx + 2)
             while term_idx < 0:
                 # The block is not terminated yet, read the next line:
-                next_line = self._include_stack.readline()
-                line_length = len(line)
-                if next_line:
-                    line += next_line
-                    term_idx = line.find("*/", line_length)
-                else:
-                    term_idx = line_length
+                term_idx = len(line)
+                try:
+                    line += next(self._include_stack)
+                    term_idx = line.find("*/", term_idx)
+                except StopIteration:
+                    pass
             else:
                 # Replace the block of comments with a single
                 # space:

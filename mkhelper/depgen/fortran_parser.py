@@ -85,11 +85,7 @@ class FortranParser:
     def parse(self, stream):
         include_stack = StreamStack()
         include_stack.push(stream, stream.name)
-        while 1:
-            line = include_stack.readline()
-            if not line:
-                break
-
+        for line in include_stack:
             # delete comments
             line = FortranParser._delete_comments(line)
             if line.isspace():
@@ -98,7 +94,7 @@ class FortranParser:
             # line continuation
             match = FortranParser._re_line_continue_start.match(line)
             while match:
-                next_line = include_stack.readline()
+                next_line = next(include_stack, None)
                 if not next_line:
                     break
 

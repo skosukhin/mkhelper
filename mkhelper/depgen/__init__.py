@@ -118,8 +118,8 @@ class IncludeFinder:
 
 class StreamStack:
     def __init__(self):
-        # Stack of file-like objects (i.e. objects implementing methods readline
-        # and close:
+        # Stack of file-like objects (i.e. string iterators with the close
+        # method:
         self._stream_stack = []
         self._close_stack = []
         self._name_stack = []
@@ -145,16 +145,22 @@ class StreamStack:
         self._close_stack *= 0
         self._name_stack *= 0
 
-    def readline(self):
+    def __iter__(self):
+        return self
+
+    def __next__(self):
         while self._stream_stack:
-            line = self._stream_stack[-1].readline()
-            if line:
-                return line
-            else:
+            try:
+                return next(self._stream_stack[-1])
+            except StopIteration:
+                self._name_stack.pop()
                 stream = self._stream_stack.pop()
                 if self._close_stack.pop():
                     stream.close()
-        return ""
+        raise StopIteration
+
+    if sys.version_info < (3,):
+        next = __next__
 
 
 class DummyParser:

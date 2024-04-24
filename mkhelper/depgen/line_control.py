@@ -30,6 +30,7 @@
 
 import os
 import re
+import sys
 
 from depgen import file_in_dir
 
@@ -45,6 +46,19 @@ class LCProcessor:
         self.debug_callback = None
 
         self._stream = stream
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        line = self.readline()
+        if line:
+            return line
+        else:
+            raise StopIteration
+
+    if sys.version_info < (3,):
+        next = __next__
 
     def readline(self):
         while 1:
