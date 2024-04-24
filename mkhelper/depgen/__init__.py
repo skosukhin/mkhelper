@@ -124,12 +124,6 @@ class StreamStack:
         self._close_stack = []
         self._name_stack = []
 
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_value, exc_traceback):
-        self.clear()
-
     @property
     def root_name(self):
         return self._name_stack[0] if self._name_stack else None
