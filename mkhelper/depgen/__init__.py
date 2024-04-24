@@ -116,7 +116,9 @@ class IncludeFinder:
         return None
 
 
-class StreamStack:
+class StreamStack(object):
+    __slots__ = ["_stream_stack", "_close_stack", "_name_stack"]
+
     def __init__(self):
         # Stack of file-like objects (i.e. string iterators with the close
         # method:
