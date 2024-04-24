@@ -84,7 +84,7 @@ class Preprocessor:
             include_sys_order, include_dirs
         )
         self._include_stack = StreamStack()
-        self._include_stack.add(stream, stream.name)
+        self._include_stack.push(stream, stream.name)
 
         if predefined_macros:
             self._macros = dict(predefined_macros)
@@ -256,7 +256,7 @@ class Preprocessor:
                                 for d in self.include_roots
                             ]
                         ):
-                            self._include_stack.add(
+                            self._include_stack.push(
                                 open23(filepath, "r"), filepath
                             )
                             if self.include_callback:

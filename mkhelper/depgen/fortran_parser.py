@@ -84,7 +84,7 @@ class FortranParser:
 
     def parse(self, stream):
         with StreamStack() as s:
-            s.add(stream, stream.name)
+            s.push(stream, stream.name)
             while 1:
                 line = s.readline()
                 if not line:
@@ -217,7 +217,7 @@ class FortranParser:
                                     for d in self.include_roots
                                 ]
                             ):
-                                s.add(open23(filepath, "r"), filepath)
+                                s.push(open23(filepath, "r"), filepath)
                                 if self.include_callback:
                                     self.include_callback(filepath)
                                 if self.debug_callback:

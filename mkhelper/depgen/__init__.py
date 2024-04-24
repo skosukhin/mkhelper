@@ -138,7 +138,7 @@ class StreamStack:
     def current_name(self):
         return self._name_stack[-1] if self._name_stack else None
 
-    def add(self, stream, name=None, close=True):
+    def push(self, stream, name=None, close=True):
         self._stream_stack.append(stream)
         self._close_stack.append(close)
         self._name_stack.append(name)
