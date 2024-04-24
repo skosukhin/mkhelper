@@ -171,7 +171,5 @@ class DummyParser:
 
     @staticmethod
     def parse(stream):
-        while 1:
-            line = stream.readline()
-            if not line:
-                break
+        for _ in stream:
+            pass

@@ -108,16 +108,6 @@ class Preprocessor:
         return self
 
     def __next__(self):
-        line = self.readline()
-        if line:
-            return line
-        else:
-            raise StopIteration
-
-    if sys.version_info < (3,):
-        next = __next__
-
-    def readline(self):
         for line in self._include_stack:
             line = self._replace_continuation(line)
             line = self._remove_block_comments(line)
@@ -290,6 +280,11 @@ class Preprocessor:
                 continue
 
             return line
+
+        raise StopIteration
+
+    if sys.version_info < (3,):
+        next = __next__
 
     @property
     def name(self):

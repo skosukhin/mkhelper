@@ -51,21 +51,7 @@ class LCProcessor:
         return self
 
     def __next__(self):
-        line = self.readline()
-        if line:
-            return line
-        else:
-            raise StopIteration
-
-    if sys.version_info < (3,):
-        next = __next__
-
-    def readline(self):
-        while 1:
-            line = self._stream.readline()
-            if not line:
-                return line
-
+        for line in self._stream:
             match = LCProcessor._re_lc.match(line)
             if match:
                 filepath = match.group(1)
@@ -90,6 +76,11 @@ class LCProcessor:
                 continue
 
             return line
+
+        raise StopIteration
+
+    if sys.version_info < (3,):
+        next = __next__
 
     @property
     def name(self):
