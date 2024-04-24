@@ -160,21 +160,6 @@ class StreamStack:
         return ""
 
 
-class StdStreamWrapper:
-    def __init__(self, stream, name=None):
-        self._stream = stream
-        self.name = stream.name if name is None else name
-
-    def readline(self):
-        return self._stream.readline()
-
-    def writelines(self, lines):
-        return self._stream.writelines(lines)
-
-    def close(self):
-        pass
-
-
 class DummyParser:
     def __init__(self):
         pass

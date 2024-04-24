@@ -44,7 +44,7 @@ import argparse
 import os
 import sys
 
-from depgen import DummyParser, StdStreamWrapper, map23, open23, zip_longest23
+from depgen import DummyParser, map23, open23, zip_longest23
 
 
 class ArgumentParser(argparse.ArgumentParser):
@@ -501,8 +501,8 @@ def main():
     for inp, out, src_name, obj_name, dep_name in zip_longest23(
         args.input, args.output, args.src_name, args.obj_name, args.dep_name
     ):
-        in_stream = (
-            StdStreamWrapper(sys.stdin, "") if inp is None else open23(inp)
+        in_stream, in_stream_close = (
+            (sys.stdin, False) if inp is None else (open23(inp), True)
         )
 
         if args.lc_enable:
@@ -549,9 +549,8 @@ def main():
 
             in_stream = pp
 
-        if parser:
-            parser.parse(in_stream)
-            in_stream.close()
+        parser.parse(in_stream)
+        not in_stream_close or in_stream.close()
 
         out_lines = gen_lc_deps(src_name, lc_files)
 
@@ -596,11 +595,11 @@ def main():
                 out_lines.extend(ftn_debug_info)
             out_lines.append("\n")
 
-        out_stream = (
-            StdStreamWrapper(sys.stdout) if out is None else open23(out, "w")
+        out_stream, out_stream_close = (
+            (sys.stdout, False) if out is None else (open23(out, "w"), True)
         )
         out_stream.writelines(out_lines)
-        out_stream.close()
+        not out_stream_close or out_stream.close()
 
         lc_files.clear()
         included_files.clear()
