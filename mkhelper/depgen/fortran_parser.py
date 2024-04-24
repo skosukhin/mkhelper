@@ -85,171 +85,157 @@ class FortranParser:
     def parse(self, stream):
         include_stack = StreamStack()
         include_stack.push(stream, stream.name)
-        for line in include_stack:
-            # delete comments
-            line = FortranParser._delete_comments(line)
-            if line.isspace():
+        for line in FortranParser.streamline_input(include_stack):
+            # module definition start
+            match = FortranParser._re_module_start.match(line)
+            if match:
+                module_name = match.group(1).lower()
+                if self.module_start_callback:
+                    self.module_start_callback(module_name)
+                if self.debug_callback:
+                    self.debug_callback(
+                        line, "module '{0}' (start)".format(module_name)
+                    )
                 continue
 
-            # line continuation
-            match = FortranParser._re_line_continue_start.match(line)
-            while match:
-                next_line = next(include_stack, None)
-                if not next_line:
+            # submodule definition start
+            match = FortranParser._re_submodule_start.match(line)
+            if match:
+                module_name = match.group(1).lower()
+                parent_name = match.group(2)
+                if parent_name:
+                    parent_name = parent_name.lower()
+                submodule_name = match.group(3).lower()
+                if self.submodule_start_callback:
+                    self.submodule_start_callback(
+                        submodule_name, parent_name, module_name
+                    )
+                if self.debug_callback:
+                    self.debug_callback(
+                        line,
+                        "submodule '{0}'{1} of module '{2}' (start)".format(
+                            submodule_name,
+                            (
+                                " with parent '{0}'".format(parent_name)
+                                if parent_name
+                                else ""
+                            ),
+                            module_name,
+                        ),
+                    )
+                continue
+
+            # module used
+            match = FortranParser._re_module_use.match(line)
+            if match:
+                module_nature = (
+                    match.group(1).lower() if match.group(1) is not None else ""
+                )
+                module_name = match.group(2).lower()
+                if module_nature == "intrinsic":
+                    if self.debug_callback:
+                        self.debug_callback(
+                            line,
+                            "ignored module usage "
+                            "('{0}' is explicitly intrinsic)".format(
+                                module_name
+                            ),
+                        )
+                elif (
+                    module_name in self.intrinsic_mods
+                    and module_nature != "non_intrinsic"
+                ):
+                    if self.debug_callback:
+                        self.debug_callback(
+                            line,
+                            "ignored module usage "
+                            "('{0}' is implicitly intrinsic)".format(
+                                module_name
+                            ),
+                        )
+                elif module_name in self.external_mods:
+                    if self.debug_callback:
+                        self.debug_callback(
+                            line,
+                            "ignored module usage "
+                            "('{0}' is external)".format(module_name),
+                        )
+                else:
+                    if self.module_use_callback:
+                        self.module_use_callback(module_name)
+                    if self.debug_callback:
+                        self.debug_callback(
+                            line,
+                            "used module '{0}'".format(module_name),
+                        )
+                continue
+
+            # include statement
+            match = FortranParser._re_include.match(line)
+            if match:
+                filename = match.group(2)
+                filepath = self._include_finder.find(
+                    filename,
+                    include_stack.root_name,
+                    include_stack.current_name,
+                )
+                if filepath:
+                    if not self.include_roots or any(
+                        [file_in_dir(filepath, d) for d in self.include_roots]
+                    ):
+                        include_stack.push(open23(filepath, "r"), filepath)
+                        if self.include_callback:
+                            self.include_callback(filepath)
+                        if self.debug_callback:
+                            self.debug_callback(
+                                line,
+                                "included file '{0}'".format(filepath),
+                            )
+                    elif self.debug_callback:
+                        self.debug_callback(
+                            line,
+                            "ignored (file '{0}' is not "
+                            "in the source roots)".format(filepath),
+                        )
+                elif self.debug_callback:
+                    self.debug_callback(line, "ignored (file not found)")
+                continue
+        include_stack.clear()
+
+    @staticmethod
+    def streamline_input(stream):
+        stream = FortranParser.drop_comments_and_empty_lines(stream)
+        for line in stream:
+            # concatenate lines
+            while 1:
+                match = FortranParser._re_line_continue_start.match(line)
+                if not match:
                     break
 
-                next_line = FortranParser._delete_comments(next_line)
-
-                # If the line contains only comments, we need the next one
-                # TODO: implement a separate class FortranPrepcocessor
-                if next_line.isspace():
-                    continue
+                next_line = next(stream, None)
+                if next_line is None:
+                    break
 
                 line = match.group(1) + re.sub(
                     FortranParser._re_line_continue_end, "", next_line
                 )
 
-                match = FortranParser._re_line_continue_start.match(line)
+            # split semicolons
+            while 1:
+                idx = find_unquoted_string(";", line)
+                if idx < 0:
+                    break
 
-            for line in FortranParser._split_semicolons(line):
-                # module definition start
-                match = FortranParser._re_module_start.match(line)
-                if match:
-                    module_name = match.group(1).lower()
-                    if self.module_start_callback:
-                        self.module_start_callback(module_name)
-                    if self.debug_callback:
-                        self.debug_callback(
-                            line, "module '{0}' (start)".format(module_name)
-                        )
-                    continue
-
-                # submodule definition start
-                match = FortranParser._re_submodule_start.match(line)
-                if match:
-                    module_name = match.group(1).lower()
-                    parent_name = match.group(2)
-                    if parent_name:
-                        parent_name = parent_name.lower()
-                    submodule_name = match.group(3).lower()
-                    if self.submodule_start_callback:
-                        self.submodule_start_callback(
-                            submodule_name, parent_name, module_name
-                        )
-                    if self.debug_callback:
-                        self.debug_callback(
-                            line,
-                            "submodule '{0}'{1} of module '{2}' (start)".format(
-                                submodule_name,
-                                (
-                                    " with parent '{0}'".format(parent_name)
-                                    if parent_name
-                                    else ""
-                                ),
-                                module_name,
-                            ),
-                        )
-                    continue
-
-                # module used
-                match = FortranParser._re_module_use.match(line)
-                if match:
-                    module_nature = (
-                        match.group(1).lower()
-                        if match.group(1) is not None
-                        else ""
-                    )
-                    module_name = match.group(2).lower()
-                    if module_nature == "intrinsic":
-                        if self.debug_callback:
-                            self.debug_callback(
-                                line,
-                                "ignored module usage "
-                                "('{0}' is explicitly intrinsic)".format(
-                                    module_name
-                                ),
-                            )
-                    elif (
-                        module_name in self.intrinsic_mods
-                        and module_nature != "non_intrinsic"
-                    ):
-                        if self.debug_callback:
-                            self.debug_callback(
-                                line,
-                                "ignored module usage "
-                                "('{0}' is implicitly intrinsic)".format(
-                                    module_name
-                                ),
-                            )
-                    elif module_name in self.external_mods:
-                        if self.debug_callback:
-                            self.debug_callback(
-                                line,
-                                "ignored module usage "
-                                "('{0}' is external)".format(module_name),
-                            )
-                    else:
-                        if self.module_use_callback:
-                            self.module_use_callback(module_name)
-                        if self.debug_callback:
-                            self.debug_callback(
-                                line,
-                                "used module '{0}'".format(module_name),
-                            )
-                    continue
-
-                # include statement
-                match = FortranParser._re_include.match(line)
-                if match:
-                    filename = match.group(2)
-                    filepath = self._include_finder.find(
-                        filename,
-                        include_stack.root_name,
-                        include_stack.current_name,
-                    )
-                    if filepath:
-                        if not self.include_roots or any(
-                            [
-                                file_in_dir(filepath, d)
-                                for d in self.include_roots
-                            ]
-                        ):
-                            include_stack.push(open23(filepath, "r"), filepath)
-                            if self.include_callback:
-                                self.include_callback(filepath)
-                            if self.debug_callback:
-                                self.debug_callback(
-                                    line,
-                                    "included file '{0}'".format(filepath),
-                                )
-                        elif self.debug_callback:
-                            self.debug_callback(
-                                line,
-                                "ignored (file '{0}' is not "
-                                "in the source roots)".format(filepath),
-                            )
-                    elif self.debug_callback:
-                        self.debug_callback(line, "ignored (file not found)")
-                    continue
-        include_stack.clear()
-
-    @staticmethod
-    def _split_semicolons(line):
-        while 1:
-            idx = find_unquoted_string(";", line)
-            if idx < 0:
-                if line and not line.isspace():
-                    yield line
-                break
-            else:
-                prefix = line[:idx]
-                if prefix and not prefix.isspace():
-                    yield prefix + "\n"
+                yield line[:idx] + "\n"
                 line = line[idx + 1 :]
 
+            yield line
+
     @staticmethod
-    def _delete_comments(line):
-        comment_idx = find_unquoted_string("!", line)
-        if comment_idx >= 0:
-            line = line[:comment_idx]
-        return line
+    def drop_comments_and_empty_lines(stream):
+        for line in stream:
+            comment_idx = find_unquoted_string("!", line)
+            if comment_idx >= 0:
+                line = line[:comment_idx]
+            if line and not line.isspace():
+                yield line
