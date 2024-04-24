@@ -118,10 +118,11 @@ class IncludeFinder:
 
 class StreamStack:
     def __init__(self):
-        # Stack of file-like objects (i.e. objects implementing methods
-        # readline, close, and a property name:
+        # Stack of file-like objects (i.e. objects implementing methods readline
+        # and close:
         self._stream_stack = []
         self._close_stack = []
+        self._name_stack = []
 
     def __enter__(self):
         return self
@@ -131,15 +132,16 @@ class StreamStack:
 
     @property
     def root_name(self):
-        return self._stream_stack[0].name if self._stream_stack else None
+        return self._name_stack[0] if self._name_stack else None
 
     @property
     def current_name(self):
-        return self._stream_stack[-1].name if self._stream_stack else None
+        return self._name_stack[-1] if self._name_stack else None
 
-    def add(self, stream, close=True):
+    def add(self, stream, name=None, close=True):
         self._stream_stack.append(stream)
         self._close_stack.append(close)
+        self._name_stack.append(name)
 
     def clear(self):
         for stream, close in zip(self._stream_stack, self._close_stack):
@@ -147,6 +149,7 @@ class StreamStack:
                 stream.close()
         self._stream_stack *= 0
         self._close_stack *= 0
+        self._name_stack *= 0
 
     def readline(self):
         while self._stream_stack:
