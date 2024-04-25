@@ -462,9 +462,9 @@ def main():
 
     parser = None
     if args.pp_enable:
-        from depgen.preprocessor import Preprocessor
+        from depgen.preprocessor import Parser
 
-        parser = Preprocessor(
+        parser = Parser(
             include_order=args.pp_inc_order,
             include_sys_order=args.pp_inc_sys_order,
             include_dirs=args.pp_inc_dirs,
@@ -484,9 +484,9 @@ def main():
             )
 
     if args.lc_enable:
-        from depgen.line_control import LCProcessor
+        from depgen.line_control import Parser
 
-        parser = LCProcessor(include_roots=args.src_roots, subparser=parser)
+        parser = Parser(include_roots=args.src_roots, subparser=parser)
         parser.lc_callback = lambda filename: lc_files.add(filename)
 
         if args.debug:
@@ -496,9 +496,9 @@ def main():
             )
 
     if args.fc_enable:
-        from depgen.fortran_parser import FortranParser
+        from depgen.fortran import Parser
 
-        parser = FortranParser(
+        parser = Parser(
             include_order=args.fc_inc_order,
             include_dirs=args.fc_inc_dirs,
             include_roots=args.src_roots,

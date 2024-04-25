@@ -34,7 +34,7 @@ import re
 from depgen import file_in_dir
 
 
-class LCProcessor:
+class Parser:
     _re_lc = re.compile(r'^#\s*[1-9]\d*\s*"(.*?)"\s*(?:[1-9]\d*)?')
 
     def __init__(self, include_roots=None, subparser=None):
@@ -52,7 +52,7 @@ class LCProcessor:
         stream = self._get_stream_iterator(stream, stream_name)
 
         for line in stream:
-            match = LCProcessor._re_lc.match(line)
+            match = Parser._re_lc.match(line)
             if match:
                 filepath = match.group(1)
                 if os.path.isfile(filepath):

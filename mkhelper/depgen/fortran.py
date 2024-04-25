@@ -39,7 +39,7 @@ from depgen import (
 )
 
 
-class FortranParser:
+class Parser:
     _re_include = re.compile(r'^\s*include\s+([\'"])(.*?)\1', re.I)
     _re_line_continue_start = re.compile(r"^(.*)&\s*$")
     _re_line_continue_end = re.compile(r"^\s*&")
@@ -93,9 +93,9 @@ class FortranParser:
         include_stack = StreamStack()
         include_stack.push(stream, stream_name)
 
-        for line in FortranParser.streamline_input(include_stack):
+        for line in Parser.streamline_input(include_stack):
             # module definition start
-            match = FortranParser._re_module_start.match(line)
+            match = Parser._re_module_start.match(line)
             if match:
                 module_name = match.group(1).lower()
                 if self.module_start_callback:
@@ -107,7 +107,7 @@ class FortranParser:
                 continue
 
             # submodule definition start
-            match = FortranParser._re_submodule_start.match(line)
+            match = Parser._re_submodule_start.match(line)
             if match:
                 module_name = match.group(1).lower()
                 parent_name = match.group(2)
@@ -134,7 +134,7 @@ class FortranParser:
                 continue
 
             # module used
-            match = FortranParser._re_module_use.match(line)
+            match = Parser._re_module_use.match(line)
             if match:
                 module_nature = (
                     match.group(1).lower() if match.group(1) is not None else ""
@@ -179,7 +179,7 @@ class FortranParser:
                 continue
 
             # include statement
-            match = FortranParser._re_include.match(line)
+            match = Parser._re_include.match(line)
             if match:
                 filename = match.group(2)
                 filepath = self._include_finder.find(
@@ -217,11 +217,11 @@ class FortranParser:
 
     @staticmethod
     def streamline_input(stream):
-        stream = FortranParser.drop_comments_and_empty_lines(stream)
+        stream = Parser.drop_comments_and_empty_lines(stream)
         for line in stream:
             # concatenate lines
             while 1:
-                match = FortranParser._re_line_continue_start.match(line)
+                match = Parser._re_line_continue_start.match(line)
                 if not match:
                     break
 
@@ -230,7 +230,7 @@ class FortranParser:
                     break
 
                 line = match.group(1) + re.sub(
-                    FortranParser._re_line_continue_end, "", next_line
+                    Parser._re_line_continue_end, "", next_line
                 )
 
             # split semicolons

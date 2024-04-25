@@ -39,7 +39,7 @@ from depgen import (
 )
 
 
-class Preprocessor:
+class Parser:
     _re_ifdef = re.compile(r"^\s*#\s*if(n)?def\s+([a-zA-Z_]\w*)")
     _re_if_expr = re.compile(r"^\s*#\s*if((?:\s|\().*)")
 
@@ -90,9 +90,9 @@ class Preprocessor:
         branch_state = BranchState()
         macro_handler = MacroHandler(self._predefined_macros)
 
-        for line in Preprocessor.streamline_input(include_stack):
+        for line in Parser.streamline_input(include_stack):
             # if(n)def directive
-            match = Preprocessor._re_ifdef.match(line)
+            match = Parser._re_ifdef.match(line)
             if match:
                 macro, negate, state = match.group(2), bool(match.group(1)), 0
                 if not branch_state.is_dead():
@@ -107,7 +107,7 @@ class Preprocessor:
                 continue
 
             # if directive
-            match = Preprocessor._re_if_expr.match(line)
+            match = Parser._re_if_expr.match(line)
             if match:
                 expr, state = match.group(1), 0
                 if not branch_state.is_dead():
@@ -132,7 +132,7 @@ class Preprocessor:
                 continue
 
             # elif directive
-            match = Preprocessor._re_elif.match(line)
+            match = Parser._re_elif.match(line)
             if match:
                 branch_state.switch_else()
                 expr, state = match.group(1), 0
@@ -158,13 +158,13 @@ class Preprocessor:
                 continue
 
             # else directive
-            match = Preprocessor._re_else.match(line)
+            match = Parser._re_else.match(line)
             if match:
                 branch_state.switch_else()
                 continue
 
             # endif directive
-            match = Preprocessor._re_endif.match(line)
+            match = Parser._re_endif.match(line)
             if match:
                 branch_state.switch_endif()
                 continue
@@ -173,7 +173,7 @@ class Preprocessor:
                 continue
 
             # define directive
-            match = Preprocessor._re_define.match(line)
+            match = Parser._re_define.match(line)
             if match:
                 if not branch_state.is_dead():
                     macro_handler.define(*match.group(1, 2, 3))
@@ -184,7 +184,7 @@ class Preprocessor:
                 continue
 
             # undef directive
-            match = Preprocessor._re_undef.match(line)
+            match = Parser._re_undef.match(line)
             if match:
                 if not branch_state.is_dead():
                     macro_handler.undefine(match.group(1))
@@ -195,7 +195,7 @@ class Preprocessor:
                 continue
 
             # include directive
-            match = Preprocessor._re_include.match(line)
+            match = Parser._re_include.match(line)
             if match:
                 if not branch_state.is_dead():
                     if match.lastindex == 1:  # quoted form
