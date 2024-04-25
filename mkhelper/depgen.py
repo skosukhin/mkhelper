@@ -509,7 +509,7 @@ def main():
         if args.lc_enable:
             from depgen.line_control import LCProcessor
 
-            lc = LCProcessor(in_stream, include_roots=args.src_roots)
+            lc = LCProcessor(include_roots=args.src_roots)
             lc.lc_callback = lc_callback
 
             def debug_callback(line, msg):
@@ -521,7 +521,7 @@ def main():
                 lc_debug_info = ["#\n# Line control processor:\n"]
                 lc.debug_callback = debug_callback
 
-            in_stream = lc
+            in_stream = lc.parse(in_stream, in_stream_name)
 
         if args.pp_enable:
             from depgen.preprocessor import Preprocessor

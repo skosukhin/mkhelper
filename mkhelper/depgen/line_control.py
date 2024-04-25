@@ -30,7 +30,6 @@
 
 import os
 import re
-import sys
 
 from depgen import file_in_dir
 
@@ -38,20 +37,15 @@ from depgen import file_in_dir
 class LCProcessor:
     _re_lc = re.compile(r'^#\s*[1-9]\d*\s*"(.*?)"\s*(?:[1-9]\d*)?')
 
-    def __init__(self, stream, include_roots=None):
+    def __init__(self, include_roots=None):
         self.include_roots = include_roots
 
         # Callbacks:
         self.lc_callback = None
         self.debug_callback = None
 
-        self._stream = stream
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        for line in self._stream:
+    def parse(self, stream, _):
+        for line in stream:
             match = LCProcessor._re_lc.match(line)
             if match:
                 filepath = match.group(1)
@@ -75,16 +69,4 @@ class LCProcessor:
                     self.debug_callback(line, "ignored (file not found)")
                 continue
 
-            return line
-
-        raise StopIteration
-
-    if sys.version_info < (3,):
-        next = __next__
-
-    @property
-    def name(self):
-        return self._stream.name
-
-    def close(self):
-        self._stream.close()
+            yield line
