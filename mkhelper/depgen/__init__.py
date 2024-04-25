@@ -51,6 +51,20 @@ def map23(foo, iterable):
         return list(map(foo, iterable))
 
 
+if hasattr(sys, "implementation") and sys.implementation.name == "cpython":
+    # see https://docs.python.org/3/library/itertools.html#itertools-recipes
+    import collections
+
+    def exhaust(it):
+        return collections.deque(it, maxlen=0)
+
+else:
+
+    def exhaust(it):
+        for _ in it:
+            pass
+
+
 def file_in_dir(f, d):
     if d:
         return os.path.abspath(f).startswith(os.path.abspath(d) + os.path.sep)

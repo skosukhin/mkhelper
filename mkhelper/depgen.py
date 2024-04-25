@@ -44,7 +44,7 @@ import argparse
 import os
 import sys
 
-from depgen import map23, open23, zip_longest23
+from depgen import exhaust, map23, open23, zip_longest23
 
 
 class ArgumentParser(argparse.ArgumentParser):
@@ -542,8 +542,7 @@ def main():
         )
 
         if parser:
-            for _ in parser.parse(in_stream, in_stream.name):
-                pass
+            exhaust(parser.parse(in_stream, in_stream.name))
 
         not in_stream_close or in_stream.close()
 
