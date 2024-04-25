@@ -82,9 +82,9 @@ class FortranParser:
 
         self._include_finder = IncludeFinder(include_order, include_dirs)
 
-    def parse(self, stream):
+    def parse(self, stream, stream_name):
         include_stack = StreamStack()
-        include_stack.push(stream, stream.name)
+        include_stack.push(stream, stream_name)
         for line in FortranParser.streamline_input(include_stack):
             # module definition start
             match = FortranParser._re_module_start.match(line)

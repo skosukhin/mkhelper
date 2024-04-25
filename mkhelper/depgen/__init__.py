@@ -170,6 +170,6 @@ class DummyParser:
         pass
 
     @staticmethod
-    def parse(stream):
+    def parse(stream, *_):
         for _ in stream:
             pass

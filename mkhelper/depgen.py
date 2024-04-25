@@ -504,6 +504,7 @@ def main():
         in_stream, in_stream_close = (
             (sys.stdin, False) if inp is None else (open23(inp), True)
         )
+        in_stream_name = in_stream.name
 
         if args.lc_enable:
             from depgen.line_control import LCProcessor
@@ -526,7 +527,6 @@ def main():
             from depgen.preprocessor import Preprocessor
 
             pp = Preprocessor(
-                in_stream,
                 include_order=args.pp_inc_order,
                 include_sys_order=args.pp_inc_sys_order,
                 include_dirs=args.pp_inc_dirs,
@@ -547,9 +547,9 @@ def main():
                 pp_debug_info = ["#\n# Preprocessor:\n"]
                 pp.debug_callback = debug_callback
 
-            in_stream = pp
+            in_stream = pp.parse(in_stream, in_stream_name)
 
-        parser.parse(in_stream)
+        parser.parse(in_stream, in_stream_name)
         not in_stream_close or in_stream.close()
 
         out_lines = gen_lc_deps(src_name, lc_files)
