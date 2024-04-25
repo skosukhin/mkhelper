@@ -339,7 +339,7 @@ class MacroHandler(object):
 
     # matches object-like and function-like macro identifiers
     _re_identifier = re.compile(
-        r"(([a-zA-Z_]\w*)(\s*\(\s*(\w+(?:\s*,\s*\w+)*)?\s*\))?)"
+        r"(([a-zA-Z_]\w*)\s*(\(\s*(?:\w+(?:\s*,\s*\w+)*\s*)?\))?)"
     )
 
     __slots__ = ["_macros"]
@@ -358,8 +358,8 @@ class MacroHandler(object):
         return 1 if bool(macro_name in self._macros) ^ negate else -1
 
     def eval_expression(self, expr):
-        prev_expr = expr
-        while 1:
+        prev_expr = None
+        while expr != prev_expr:
             # replace calls to function "defined"
             defined_calls = re.findall(MacroHandler._re_defined_call, expr)
             for call in defined_calls:
@@ -369,45 +369,54 @@ class MacroHandler(object):
 
             identifiers = re.findall(MacroHandler._re_identifier, expr)
 
-            for identifier in identifiers:
-                if identifier[1] == "defined":
-                    return 0
+            for identifier, identifier_name, identifier_args in identifiers:
 
-                macro = self._macros.get(identifier[1], None)
-                if identifier[2]:
-                    # potential call to a function
+                macro = self._macros.get(identifier_name, None)
+
+                if identifier_args:
+                    # expansion of a function-like identifier
+
                     if macro is None:
-                        # call to undefined function
+                        # the respective macro is not defined, which normally
+                        # results in a preprocessor error
                         return 0
-                    elif macro[0] is not None:
-                        # we can't evaluate function-like macros
-                        return 0
+                    elif macro[0] is None:
+                        # the respective macro is an object-like one: replace
+                        # the name of the function-like identifier with the body
+                        # (value) of the macro
+                        identifier_repl = macro[1] + identifier_args
+                    elif "".join(identifier_args.split()) == "()":
+                        # the argument list of the function-like identifier is
+                        # empty: replace the identifier with the body of the
+                        # function-like macro
+                        identifier_repl = macro[1]
                     else:
-                        # identifier is defined as object-like macro
-                        expr = expr.replace(
-                            identifier[0], macro[1] + identifier[2]
-                        )
+                        # we cannot expand function-like macros but we might not
+                        # have to due to the short-circuit evaluation
+                        continue
                 else:
-                    # no function call
-                    if macro is None or macro[0] is not None:
-                        # macro is not defined or
-                        # defined as function-like macro
-                        expr = expr.replace(identifier[0], "0")
-                    else:
-                        # identifier is defined as object-like macro
-                        expr = expr.replace(identifier[0], macro[1])
+                    # expansion of an object-like identifier
 
-            if prev_expr == expr:
-                break
-            else:
-                prev_expr = expr
+                    if macro is None or macro[0] is not None:
+                        # the respective macro is not defined or defined as a
+                        # function-like one: the identifier evaluates to False
+                        identifier_repl = "0"
+                    else:
+                        # the respective macro is defined as an object-like one:
+                        # replace the identifier with the body (value) of the
+                        # macro
+                        identifier_repl = macro[1]
+
+                expr = expr.replace(identifier, identifier_repl)
+
+            prev_expr = expr
 
         expr = expr.replace("||", " or ")
         expr = expr.replace("&&", " and ")
         expr = expr.replace("!", "not ")
 
         try:
-            result = bool(eval(expr, {}))
+            result = bool(eval(expr, {"__builtins__": None}))
             return 1 if result else -1
         except Exception:
             return 0
