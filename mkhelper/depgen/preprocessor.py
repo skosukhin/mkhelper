@@ -60,6 +60,7 @@ class Preprocessor:
         try_eval_expr=False,
         inc_sys=False,
         predefined_macros=None,
+        subparser=None,
     ):
         self.include_roots = include_roots
         self.try_eval_expr = try_eval_expr
@@ -76,7 +77,13 @@ class Preprocessor:
 
         self._predefined_macros = predefined_macros
 
+        self._get_stream_iterator = (
+            subparser.parse if subparser else lambda x, *_: x
+        )
+
     def parse(self, stream, stream_name):
+        stream = self._get_stream_iterator(stream, stream_name)
+
         include_stack = StreamStack()
         include_stack.push(stream, stream_name)
 

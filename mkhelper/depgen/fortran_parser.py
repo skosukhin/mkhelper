@@ -60,6 +60,7 @@ class FortranParser:
         include_roots=None,
         intrinsic_mods=None,
         external_mods=None,
+        subparser=None,
     ):
         self.include_roots = include_roots
 
@@ -73,6 +74,10 @@ class FortranParser:
         else:
             self.external_mods = set()
 
+        self._get_stream_iterator = (
+            subparser.parse if subparser else lambda x, *_: x
+        )
+
         # Callbacks:
         self.include_callback = None
         self.module_start_callback = None
@@ -83,8 +88,11 @@ class FortranParser:
         self._include_finder = IncludeFinder(include_order, include_dirs)
 
     def parse(self, stream, stream_name):
+        stream = self._get_stream_iterator(stream, stream_name)
+
         include_stack = StreamStack()
         include_stack.push(stream, stream_name)
+
         for line in FortranParser.streamline_input(include_stack):
             # module definition start
             match = FortranParser._re_module_start.match(line)

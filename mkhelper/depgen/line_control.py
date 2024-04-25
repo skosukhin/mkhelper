@@ -37,14 +37,20 @@ from depgen import file_in_dir
 class LCProcessor:
     _re_lc = re.compile(r'^#\s*[1-9]\d*\s*"(.*?)"\s*(?:[1-9]\d*)?')
 
-    def __init__(self, include_roots=None):
+    def __init__(self, include_roots=None, subparser=None):
         self.include_roots = include_roots
+
+        self._get_stream_iterator = (
+            subparser.parse if subparser else lambda x, *_: x
+        )
 
         # Callbacks:
         self.lc_callback = None
         self.debug_callback = None
 
-    def parse(self, stream, _):
+    def parse(self, stream, stream_name):
+        stream = self._get_stream_iterator(stream, stream_name)
+
         for line in stream:
             match = LCProcessor._re_lc.match(line)
             if match:
