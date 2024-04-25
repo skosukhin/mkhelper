@@ -447,25 +447,18 @@ def main():
 
     lc_files = set()
 
-    def lc_callback(filename):
-        lc_files.add(filename)
-
     provided_modules = set()
-
-    def module_start_callback(module):
-        provided_modules.add(module)
-
     required_modules = set()
-
-    def module_use_callback(module):
-        required_modules.add(module)
-
-    def submodule_start_callback(_submodule, _parent, module):
-        required_modules.add(module)
 
     pp_debug_info = None
     lc_debug_info = None
     ftn_debug_info = None
+
+    def init_debug_info(section):
+        return ["#\n# {0}:\n".format(section)]
+
+    def format_debug_line(line, msg):
+        return "#  `{0}`:\t{1}\n".format(line.rstrip("\n"), msg)
 
     parser = None
     if args.pp_enable:
@@ -484,29 +477,23 @@ def main():
 
         parser.include_callback = include_callback
 
-        def debug_callback(line, msg):
-            pp_debug_info.append(
-                "#  `{0}`:\t{1}\n".format(line.rstrip("\n"), msg)
-            )
-
         if args.debug:
-            pp_debug_info = ["#\n# Preprocessor:\n"]
-            parser.debug_callback = debug_callback
+            pp_debug_info = init_debug_info("Preprocessor")
+            parser.debug_callback = lambda line, msg: pp_debug_info.append(
+                format_debug_line(line, msg)
+            )
 
     if args.lc_enable:
         from depgen.line_control import LCProcessor
 
         parser = LCProcessor(include_roots=args.src_roots, subparser=parser)
-        parser.lc_callback = lc_callback
-
-        def debug_callback(line, msg):
-            lc_debug_info.append(
-                "#  `{0}`:\t{1}\n".format(line.rstrip("\n"), msg)
-            )
+        parser.lc_callback = lambda filename: lc_files.add(filename)
 
         if args.debug:
-            lc_debug_info = ["#\n# Line control processor:\n"]
-            parser.debug_callback = debug_callback
+            lc_debug_info = init_debug_info("Line control")
+            parser.debug_callback = lambda line, msg: lc_debug_info.append(
+                format_debug_line(line, msg)
+            )
 
     if args.fc_enable:
         from depgen.fortran_parser import FortranParser
@@ -521,18 +508,19 @@ def main():
         )
 
         parser.include_callback = include_callback
-        parser.module_start_callback = module_start_callback
-        parser.submodule_start_callback = submodule_start_callback
-        parser.module_use_callback = module_use_callback
-
-        def debug_callback(line, msg):
-            ftn_debug_info.append(
-                "#  `{0}`:\t{1}\n".format(line.rstrip("\n"), msg)
-            )
+        parser.module_start_callback = lambda module: provided_modules.add(
+            module
+        )
+        parser.submodule_start_callback = (
+            lambda _submodule, _parent, module: required_modules.add(module)
+        )
+        parser.module_use_callback = lambda module: required_modules.add(module)
 
         if args.debug:
-            ftn_debug_info = ["#\n# Fortran parser:\n"]
-            parser.debug_callback = debug_callback
+            ftn_debug_info = init_debug_info("Fortran")
+            parser.debug_callback = lambda line, msg: ftn_debug_info.append(
+                format_debug_line(line, msg)
+            )
 
     for inp, out, src_name, obj_name, dep_name in zip_longest23(
         args.input, args.output, args.src_name, args.obj_name, args.dep_name
