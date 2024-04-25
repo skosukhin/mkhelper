@@ -40,7 +40,7 @@ from depgen import (
 
 
 class FortranParser:
-    _re_include = re.compile(r'^\s*include\s+(\'|")(.*?)\1', re.I)
+    _re_include = re.compile(r'^\s*include\s+([\'"])(.*?)\1', re.I)
     _re_line_continue_start = re.compile(r"^(.*)&\s*$")
     _re_line_continue_end = re.compile(r"^\s*&")
     _re_module_start = re.compile(
@@ -212,6 +212,7 @@ class FortranParser:
 
         # return an empty iterator
         return
+        # noinspection PyUnreachableCode
         yield
 
     @staticmethod

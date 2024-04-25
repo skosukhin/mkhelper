@@ -498,7 +498,7 @@ def main():
                     args.check_colour,
                 )
 
-        def check_cycles_finish_visit_cb(vertex):
+        def check_cycles_finish_visit_cb(_):
             path.pop()
 
         start_visit_cb_list.append(check_cycles_start_visit_cb)

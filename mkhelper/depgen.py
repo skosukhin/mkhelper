@@ -460,7 +460,7 @@ def main():
     def module_use_callback(module):
         required_modules.add(module)
 
-    def submodule_start_callback(submodule, parent, module):
+    def submodule_start_callback(_submodule, _parent, module):
         required_modules.add(module)
 
     lc_debug_info = None

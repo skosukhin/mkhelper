@@ -409,5 +409,5 @@ class MacroHandler(object):
         try:
             result = bool(eval(expr, {}))
             return 1 if result else -1
-        except:
+        except Exception:
             return 0
