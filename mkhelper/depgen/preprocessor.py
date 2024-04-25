@@ -48,7 +48,7 @@ class Parser:
     _re_endif = re.compile(r"^\s*#\s*endif(?:\s.*)")
 
     _re_include = re.compile(r'^\s*#\s*include\s+(?:"(.*?)"|<(.*?)>)')
-    _re_define = re.compile(r"^\s*#\s*define\s+([a-zA-Z_]\w*)(\(.*\))?\s+(.*)$")
+    _re_define = re.compile(r"^\s*#\s*define\s+([a-zA-Z_]\w*)(\([^)]*\))?(.*)$")
     _re_undef = re.compile(r"^\s*#\s*undef\s+([a-zA-Z_]\w*)")
 
     def __init__(
