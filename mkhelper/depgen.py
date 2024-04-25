@@ -440,15 +440,15 @@ def parse_args():
 def main():
     args = parse_args()
 
-    lc_files = set()
-
-    def lc_callback(filename):
-        lc_files.add(filename)
-
     included_files = set()
 
     def include_callback(filename):
         included_files.add(filename)
+
+    lc_files = set()
+
+    def lc_callback(filename):
+        lc_files.add(filename)
 
     provided_modules = set()
 
@@ -463,26 +463,11 @@ def main():
     def submodule_start_callback(_submodule, _parent, module):
         required_modules.add(module)
 
-    lc_debug_info = None
     pp_debug_info = None
+    lc_debug_info = None
     ftn_debug_info = None
 
     parser = None
-    if args.lc_enable:
-        from depgen.line_control import LCProcessor
-
-        parser = LCProcessor(include_roots=args.src_roots, subparser=parser)
-        parser.lc_callback = lc_callback
-
-        def debug_callback(line, msg):
-            lc_debug_info.append(
-                "#  `{0}`:\t{1}\n".format(line.rstrip("\n"), msg)
-            )
-
-        if args.debug:
-            lc_debug_info = ["#\n# Line control processor:\n"]
-            parser.debug_callback = debug_callback
-
     if args.pp_enable:
         from depgen.preprocessor import Preprocessor
 
@@ -506,6 +491,21 @@ def main():
 
         if args.debug:
             pp_debug_info = ["#\n# Preprocessor:\n"]
+            parser.debug_callback = debug_callback
+
+    if args.lc_enable:
+        from depgen.line_control import LCProcessor
+
+        parser = LCProcessor(include_roots=args.src_roots, subparser=parser)
+        parser.lc_callback = lc_callback
+
+        def debug_callback(line, msg):
+            lc_debug_info.append(
+                "#  `{0}`:\t{1}\n".format(line.rstrip("\n"), msg)
+            )
+
+        if args.debug:
+            lc_debug_info = ["#\n# Line control processor:\n"]
             parser.debug_callback = debug_callback
 
     if args.fc_enable:
@@ -581,10 +581,10 @@ def main():
                     "\n",
                 ]
             )
-            if lc_debug_info is not None:
-                out_lines.extend(lc_debug_info)
             if pp_debug_info is not None:
                 out_lines.extend(pp_debug_info)
+            if lc_debug_info is not None:
+                out_lines.extend(lc_debug_info)
             if ftn_debug_info is not None:
                 out_lines.extend(ftn_debug_info)
             out_lines.append("\n")
@@ -595,8 +595,8 @@ def main():
         out_stream.writelines(out_lines)
         not out_stream_close or out_stream.close()
 
-        lc_files.clear()
         included_files.clear()
+        lc_files.clear()
         provided_modules.clear()
         required_modules.clear()
 
