@@ -210,6 +210,10 @@ class FortranParser:
                 continue
         include_stack.clear()
 
+        # return an empty iterator
+        return
+        yield
+
     @staticmethod
     def streamline_input(stream):
         stream = FortranParser.drop_comments_and_empty_lines(stream)

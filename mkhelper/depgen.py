@@ -44,7 +44,7 @@ import argparse
 import os
 import sys
 
-from depgen import DummyParser, map23, open23, zip_longest23
+from depgen import map23, open23, zip_longest23
 
 
 class ArgumentParser(argparse.ArgumentParser):
@@ -468,21 +468,62 @@ def main():
     ftn_debug_info = None
 
     parser = None
+    if args.lc_enable:
+        from depgen.line_control import LCProcessor
+
+        parser = LCProcessor(include_roots=args.src_roots, subparser=parser)
+        parser.lc_callback = lc_callback
+
+        def debug_callback(line, msg):
+            lc_debug_info.append(
+                "#  `{0}`:\t{1}\n".format(line.rstrip("\n"), msg)
+            )
+
+        if args.debug:
+            lc_debug_info = ["#\n# Line control processor:\n"]
+            parser.debug_callback = debug_callback
+
+    if args.pp_enable:
+        from depgen.preprocessor import Preprocessor
+
+        parser = Preprocessor(
+            include_order=args.pp_inc_order,
+            include_sys_order=args.pp_inc_sys_order,
+            include_dirs=args.pp_inc_dirs,
+            include_roots=args.src_roots,
+            try_eval_expr=args.pp_eval_expr,
+            inc_sys=args.pp_inc_sys,
+            predefined_macros=args.pp_macros,
+            subparser=parser,
+        )
+
+        parser.include_callback = include_callback
+
+        def debug_callback(line, msg):
+            pp_debug_info.append(
+                "#  `{0}`:\t{1}\n".format(line.rstrip("\n"), msg)
+            )
+
+        if args.debug:
+            pp_debug_info = ["#\n# Preprocessor:\n"]
+            parser.debug_callback = debug_callback
+
     if args.fc_enable:
         from depgen.fortran_parser import FortranParser
 
-        ftn = FortranParser(
+        parser = FortranParser(
             include_order=args.fc_inc_order,
             include_dirs=args.fc_inc_dirs,
             include_roots=args.src_roots,
             intrinsic_mods=args.fc_intrinsic_mods,
             external_mods=args.fc_external_mods,
+            subparser=parser,
         )
 
-        ftn.include_callback = include_callback
-        ftn.module_start_callback = module_start_callback
-        ftn.submodule_start_callback = submodule_start_callback
-        ftn.module_use_callback = module_use_callback
+        parser.include_callback = include_callback
+        parser.module_start_callback = module_start_callback
+        parser.submodule_start_callback = submodule_start_callback
+        parser.module_use_callback = module_use_callback
 
         def debug_callback(line, msg):
             ftn_debug_info.append(
@@ -491,12 +532,7 @@ def main():
 
         if args.debug:
             ftn_debug_info = ["#\n# Fortran parser:\n"]
-            ftn.debug_callback = debug_callback
-
-        parser = ftn
-
-    elif args.pp_enable or args.lc_enable:
-        parser = DummyParser()
+            parser.debug_callback = debug_callback
 
     for inp, out, src_name, obj_name, dep_name in zip_longest23(
         args.input, args.output, args.src_name, args.obj_name, args.dep_name
@@ -504,52 +540,11 @@ def main():
         in_stream, in_stream_close = (
             (sys.stdin, False) if inp is None else (open23(inp), True)
         )
-        in_stream_name = in_stream.name
 
-        if args.lc_enable:
-            from depgen.line_control import LCProcessor
+        if parser:
+            for _ in parser.parse(in_stream, in_stream.name):
+                pass
 
-            lc = LCProcessor(include_roots=args.src_roots)
-            lc.lc_callback = lc_callback
-
-            def debug_callback(line, msg):
-                lc_debug_info.append(
-                    "#  `{0}`:\t{1}\n".format(line.rstrip("\n"), msg)
-                )
-
-            if args.debug:
-                lc_debug_info = ["#\n# Line control processor:\n"]
-                lc.debug_callback = debug_callback
-
-            in_stream = lc.parse(in_stream, in_stream_name)
-
-        if args.pp_enable:
-            from depgen.preprocessor import Preprocessor
-
-            pp = Preprocessor(
-                include_order=args.pp_inc_order,
-                include_sys_order=args.pp_inc_sys_order,
-                include_dirs=args.pp_inc_dirs,
-                include_roots=args.src_roots,
-                try_eval_expr=args.pp_eval_expr,
-                inc_sys=args.pp_inc_sys,
-                predefined_macros=args.pp_macros,
-            )
-
-            pp.include_callback = include_callback
-
-            def debug_callback(line, msg):
-                pp_debug_info.append(
-                    "#  `{0}`:\t{1}\n".format(line.rstrip("\n"), msg)
-                )
-
-            if args.debug:
-                pp_debug_info = ["#\n# Preprocessor:\n"]
-                pp.debug_callback = debug_callback
-
-            in_stream = pp.parse(in_stream, in_stream_name)
-
-        parser.parse(in_stream, in_stream_name)
         not in_stream_close or in_stream.close()
 
         out_lines = gen_lc_deps(src_name, lc_files)

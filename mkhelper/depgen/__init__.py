@@ -163,13 +163,3 @@ class StreamStack(object):
 
     if sys.version_info < (3,):
         next = __next__
-
-
-class DummyParser:
-    def __init__(self):
-        pass
-
-    @staticmethod
-    def parse(stream, *_):
-        for _ in stream:
-            pass
