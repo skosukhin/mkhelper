@@ -48,10 +48,14 @@ import re
 import sys
 
 _re_rule = re.compile(
-    r"^[ ]*([-+\w./]+(?:[ ]+[-+\w./]+)*)[ ]*"  # targets
-    r":(?:[ ]*([-+\w./]+(?:[ ]+[-+\w./]+)*))?[ ]*"  # normal prerequisites
-    r"(?:\|[ ]*([-+\w./]+(?:[ ]+[-+\w./]+)*))?"
-)  # order-only prerequisites
+    # targets
+    r"^[ ]*(?P<targets>[-+\w./]+(?:[ ]+[-+\w./]+)*)[ ]*"
+    # normal prerequisites
+    r":(?:[ ]*(?P<normal>[-+\w./]+(?:[ ]+[-+\w./]+)*))?[ ]*"
+    # order-only prerequisites
+    r"(?:\|[ ]*(?P<order_only>[-+\w./]+(?:[ ]+[-+\w./]+)*))?"
+)
+
 _meta_root = 0
 _term_colors = {
     "black": 90,
@@ -225,14 +229,17 @@ def read_makefiles(makefiles, inc_order_only):
 
             match = _re_rule.match(line)
             if match:
-                targets = set(match.group(1).split())
+                targets = set(match.group("targets").split())
                 prereqs = []
 
-                if match.group(2):
-                    prereqs.extend(match.group(2).split())
+                prereqs_string = match.group("normal")
+                if prereqs_string:
+                    prereqs.extend(prereqs_string.split())
 
-                if match.group(3) and inc_order_only:
-                    prereqs.extend(match.group(3).split())
+                if inc_order_only:
+                    prereqs_string = match.group("order_only")
+                    if prereqs_string:
+                        prereqs.extend(prereqs_string.split())
 
                 for target in targets:
                     result[target].extend(prereqs)
