@@ -48,12 +48,10 @@ import re
 import sys
 
 _re_rule = re.compile(
-    # targets
     r"^[ ]*(?P<targets>[-+\w./]+(?:[ ]+[-+\w./]+)*)[ ]*"
-    # normal prerequisites
-    r":(?:[ ]*(?P<normal>[-+\w./]+(?:[ ]+[-+\w./]+)*))?[ ]*"
-    # order-only prerequisites
-    r"(?:\|[ ]*(?P<order_only>[-+\w./]+(?:[ ]+[-+\w./]+)*))?"
+    r":[ ]*(?P<normal>[-+\w./]+(?:[ ]+[-+\w./]+)*)?[ ]*"
+    r"\|?[ ]*(?P<order_only>[-+\w./]+(?:[ ]+[-+\w./]+)*)?[ ]*"
+    r"(?:#-hint)?[ ]*(?P<hint>[-+\w./]+(?:[ ]+[-+\w./]+)*)?[ ]*"
 )
 
 _meta_root = 0
@@ -207,7 +205,8 @@ def parse_args():
 
 
 def read_makefiles(makefiles, inc_order_only):
-    result = collections.defaultdict(list)
+    dep_graph = collections.defaultdict(list)
+    extra_edges = collections.defaultdict(list)
 
     for mkf in makefiles:
         if mkf == "-":
@@ -242,10 +241,15 @@ def read_makefiles(makefiles, inc_order_only):
                         prereqs.extend(prereqs_string.split())
 
                 for target in targets:
-                    result[target].extend(prereqs)
+                    dep_graph[target].extend(prereqs)
+
+                prereqs_string = match.group("hint")
+                if prereqs_string:
+                    for target in targets:
+                        extra_edges[target].extend(prereqs_string.split())
 
         stream.close()
-    return result
+    return dep_graph, extra_edges
 
 
 def visit_dfs(
@@ -358,12 +362,13 @@ def main():
     if args.makefile is None:
         return
 
-    dep_graph = read_makefiles(args.makefile, args.inc_oo)
+    dep_graph, extra_edges = read_makefiles(args.makefile, args.inc_oo)
 
     if not dep_graph:
         return
 
     sanitize_graph(dep_graph)
+    sanitize_graph(extra_edges)
 
     if args.prereq is None:
         traversed_graph = dep_graph
@@ -371,6 +376,7 @@ def main():
     else:
         traversed_graph = flip_edges(dep_graph)
         start_nodes = args.prereq
+        extra_edges = flip_edges(extra_edges)
 
     # Insert _meta_root, which will be the starting-point for the dependency
     # graph traverse:
@@ -519,9 +525,12 @@ def main():
 
     finish_visit_cb_list.append(toposort_finish_visit_cb)
 
+    visited_vertices = set()
+
     visit_dfs(
         traversed_graph,
         _meta_root,
+        visited=visited_vertices,
         start_visit_cb_list=start_visit_cb_list,
         finish_visit_cb_list=finish_visit_cb_list,
         skip_visit_cb_list=skip_visit_cb_list,
@@ -530,14 +539,21 @@ def main():
     for postprocess_cb in postprocess_cb_list:
         postprocess_cb()
 
+    output = []
+
+    for target, prereqs in extra_edges.items():
+        if target in visited_vertices:
+            output.extend(
+                prereq for prereq in prereqs if prereq not in visited_vertices
+            )
+
     # The last element of toposort is _meta_root:
-    output = "\n".join(
-        toposort[-2::-1]
-        if (args.reverse ^ (args.prereq is not None))
-        else toposort[:-1]
-    )
-    if output:
-        print(output)
+    output.extend(toposort[:-1])
+
+    if args.reverse ^ (args.prereq is not None):
+        output.reverse()
+
+    print("\n".join(output))
 
 
 if __name__ == "__main__":
