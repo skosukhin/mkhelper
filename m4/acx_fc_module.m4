@@ -185,6 +185,96 @@ module file naming template])])],
         [AC_MSG_RESULT([name.$acx_cv_fc_module_naming_ext])])
       $1])])
 
+# ACX_FC_MODULE_SNAMING([ACTION-IF-SUCCESS],
+#                       [ACTION-IF-FAILURE = FAILURE])
+# -----------------------------------------------------------------------------
+# Finds the Fortran compiler submodule file naming template.
+#
+# If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
+# (defaults to failing with an error message).
+#
+# The result is cached in the acx_cv_fc_module_snaming_infix and
+# acx_cv_fc_module_snaming_ext variables. If output submodule files are
+# prefixed with the names of the modules they extend (root ancestors),
+# acx_cv_fc_module_snaming_infix is set to a non-empty string that the compiler
+# injects between the name of the root ancestor and the submodule name in the
+# submodule filename. Otherwise, acx_cv_fc_module_snaming_infix is set to an
+# empty string. The acx_cv_fc_module_snaming_ext variable stores the file
+# extension without the leading dot. Either of the variables can have value
+# "unknown". The result is successful only if both variables are detected.
+#
+AC_DEFUN([ACX_FC_MODULE_SNAMING],
+  [AC_LANG_ASSERT([Fortran])dnl
+   AC_REQUIRE([ACX_FC_MODULE_NAMING])dnl
+   AC_MSG_CHECKING([for Fortran compiler submodule file naming template])
+   AS_IF([AS_VAR_TEST_SET([acx_cv_fc_module_snaming_infix]) && dnl
+AS_VAR_TEST_SET([acx_cv_fc_module_snaming_ext])],
+     [AS_ECHO_N(["(cached) "]) >&AS_MESSAGE_FD],
+     [acx_cv_fc_module_snaming_infix=dnl
+${acx_cv_fc_module_snaming_infix-unknown}
+      acx_cv_fc_module_snaming_ext=${acx_cv_fc_module_snaming_ext-unknown}
+      AS_MKDIR_P([conftest.dir])
+      cd conftest.dir
+      AC_COMPILE_IFELSE([AC_LANG_SOURCE(
+[[      module conftest_module
+      implicit none
+      public
+      interface
+      module subroutine conftest_routine
+      end subroutine
+      end interface
+      end module
+      submodule (conftest_module) conftest_submodule
+      implicit none
+      contains
+      module subroutine conftest_routine
+      end subroutine
+      end submodule]])],
+        [AS_VAR_IF([acx_cv_fc_module_naming_upper], [yes],
+           [acx_fc_module_name='CONFTEST_MODULE'
+            acx_fc_module_sname='CONFTEST_SUBMODULE'],
+           [acx_fc_module_name='conftest_module'
+            acx_fc_module_sname='conftest_submodule'])
+         AS_VAR_IF([acx_cv_fc_module_snaming_infix], [unknown],
+           [acx_tmp='*'],
+           [acx_tmp="${acx_fc_module_name}$acx_cv_fc_module_snaming_infix"])
+         AS_VAR_APPEND([acx_tmp], ["$acx_fc_module_sname."])
+         AS_VAR_IF([acx_cv_fc_module_snaming_ext], [unknown],
+           [AS_VAR_APPEND([acx_tmp], '*')],
+           [AS_VAR_APPEND([acx_tmp], ["$acx_cv_fc_module_snaming_ext"])])
+         acx_tmp=`ls $acx_tmp 2>/dev/null`
+         AS_IF([test 1 -eq `AS_ECHO(["$acx_tmp"]) | wc -l` 2>/dev/null],
+           [AS_VAR_IF([acx_cv_fc_module_snaming_ext], [unknown],
+              [AS_CASE([$acx_tmp],
+                 [*"$acx_fc_module_sname."*],
+                 [acx_cv_fc_module_snaming_ext=`echo $acx_tmp | dnl
+sed "s,.*$acx_fc_module_sname\.,,"`])])
+            AS_VAR_IF([acx_cv_fc_module_snaming_infix], [unknown],
+              [AS_CASE([$acx_tmp],
+                 ["$acx_fc_module_sname."*],
+                 [acx_cv_fc_module_snaming_infix=],
+                 ["$acx_fc_module_name"*"$acx_fc_module_sname"*],
+                 [acx_cv_fc_module_snaming_infix=`echo $acx_tmp | dnl
+sed "s,$acx_fc_module_sname\..*,," | sed "s,^$acx_fc_module_name,,"`])])])])])
+      cd ..
+      rm -rf conftest.dir
+      AS_IF([test "x$acx_cv_fc_module_snaming_infix" = xunknown || dnl
+test "x$acx_cv_fc_module_snaming_ext" = xunknown],
+        [AC_MSG_RESULT([unknown])
+         m4_default([$2], [AC_MSG_FAILURE([unable to detect Fortran compiler dnl
+submodule file naming template])])],
+        [AS_VAR_IF([acx_cv_fc_module_naming_upper], [yes],
+           [acx_fc_module_name='NAME'
+            acx_fc_module_sname='SNAME'],
+           [acx_fc_module_name='name'
+            acx_fc_module_sname='sname'])
+         AS_VAR_IF([acx_cv_fc_module_snaming_infix], [],
+           [acx_tmp=],
+           [acx_tmp="$acx_fc_module_name$acx_cv_fc_module_snaming_infix"])
+         AC_MSG_RESULT(
+           [$acx_tmp$acx_fc_module_sname.$acx_cv_fc_module_snaming_ext])
+         $1])])
+
 # ACX_FC_MODULE_CHECK(MODULE-NAME,
 #                     [ACTION-IF-SUCCESS],
 #                     [ACTION-IF-FAILURE = FAILURE])

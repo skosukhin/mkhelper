@@ -66,6 +66,10 @@ ACX_FC_MODULE_NAMING(
   [AC_SUBST([FC_MOD_FILE_UPPER], [$acx_cv_fc_module_naming_upper])
    AC_SUBST([FC_MOD_FILE_EXT], [$acx_cv_fc_module_naming_ext])])
 
+ACX_FC_MODULE_SNAMING(
+  [AC_SUBST([FC_SMOD_FILE_INFIX], [$acx_cv_fc_module_snaming_infix])
+   AC_SUBST([FC_SMOD_FILE_EXT], [$acx_cv_fc_module_snaming_ext])])
+
 ACX_FC_INCLUDE_FLAG(
   [AC_SUBST([FC_INC_FLAG], [$acx_cv_fc_ftn_include_flag])])
 ACX_FC_INCLUDE_ORDER(
