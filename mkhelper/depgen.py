@@ -478,7 +478,6 @@ def main():
         parser.include_callback = include_callback
 
         if args.debug:
-            pp_debug_info = init_debug_info("Preprocessor")
             parser.debug_callback = lambda line, msg: pp_debug_info.append(
                 format_debug_line(line, msg)
             )
@@ -490,7 +489,6 @@ def main():
         parser.lc_callback = lambda filename: lc_files.add(filename)
 
         if args.debug:
-            lc_debug_info = init_debug_info("Line control")
             parser.debug_callback = lambda line, msg: lc_debug_info.append(
                 format_debug_line(line, msg)
             )
@@ -517,7 +515,6 @@ def main():
         parser.module_use_callback = lambda module: required_modules.add(module)
 
         if args.debug:
-            ftn_debug_info = init_debug_info("Fortran")
             parser.debug_callback = lambda line, msg: ftn_debug_info.append(
                 format_debug_line(line, msg)
             )
@@ -528,6 +525,14 @@ def main():
         in_stream, in_stream_close = (
             (sys.stdin, False) if inp is None else (open23(inp), True)
         )
+
+        if args.debug:
+            if args.pp_enable:
+                pp_debug_info = init_debug_info("Preprocessor")
+            if args.lc_enable:
+                lc_debug_info = init_debug_info("Line control")
+            if args.fc_enable:
+                ftn_debug_info = init_debug_info("Fortran")
 
         if parser:
             exhaust(parser.parse(in_stream, in_stream.name))
