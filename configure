@@ -3383,7 +3383,9 @@ $as_echo_n "checking for Fortran compiler module file naming template... " >&6; 
    if ${acx_cv_fc_module_naming_upper+:} false && ${acx_cv_fc_module_naming_ext+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  as_dir=conftest.dir; as_fn_mkdir_p
+  acx_cv_fc_module_naming_upper=${acx_cv_fc_module_naming_upper-unknown}
+      acx_cv_fc_module_naming_ext=${acx_cv_fc_module_naming_ext-unknown}
+      as_dir=conftest.dir; as_fn_mkdir_p
       cd conftest.dir
       cat > conftest.$ac_ext <<_ACEOF
       module conftest_module
@@ -3395,21 +3397,16 @@ else
       end module
 _ACEOF
 if ac_fn_fc_try_compile "$LINENO"; then :
-  case "$acx_cv_fc_module_naming_upper" in #(
+  case $acx_cv_fc_module_naming_upper in #(
   yes) :
-    acx_tmp='CONFTEST_MODULE.*'
-            acx_cv_fc_module_naming_ext=unknown ;; #(
+    acx_tmp='CONFTEST_MODULE.*' ;; #(
   no) :
-    acx_tmp='conftest_module.*'
-            acx_cv_fc_module_naming_ext=unknown ;; #(
+    acx_tmp='conftest_module.*' ;; #(
   *) :
-    if ${acx_cv_fc_module_naming_ext+:} false; then :
-  acx_tmp="CONFTEST_MODULE.$acx_cv_fc_module_naming_ext conftest_module.$acx_cv_fc_module_naming_ext"
-               acx_cv_fc_module_naming_upper=unknown
-else
+    if test "x$acx_cv_fc_module_naming_ext" = xunknown; then :
   acx_tmp='CONFTEST_MODULE.* conftest_module.*'
-               acx_cv_fc_module_naming_upper=unknown
-               acx_cv_fc_module_naming_ext=unknown
+else
+  acx_tmp="CONFTEST_MODULE.$acx_cv_fc_module_naming_ext conftest_module.$acx_cv_fc_module_naming_ext"
 fi ;;
 esac
          acx_tmp=`ls $acx_tmp 2>/dev/null`
@@ -3417,10 +3414,10 @@ esac
   case "$acx_tmp" in #(
   CONFTEST_MODULE.*) :
     acx_cv_fc_module_naming_upper=yes
-               acx_cv_fc_module_naming_ext=`echo $acx_tmp | sed -n 's,CONFTEST_MODULE\.,,p'` ;; #(
+               acx_cv_fc_module_naming_ext=`echo $acx_tmp | sed 's,CONFTEST_MODULE\.,,'` ;; #(
   conftest_module.*) :
     acx_cv_fc_module_naming_upper=no
-               acx_cv_fc_module_naming_ext=`echo $acx_tmp | sed -n 's,conftest_module\.,,p'` ;; #(
+               acx_cv_fc_module_naming_ext=`echo $acx_tmp | sed 's,conftest_module\.,,'` ;; #(
   *) :
      ;;
 esac
