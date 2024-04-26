@@ -449,6 +449,7 @@ def main():
 
     provided_modules = set()
     required_modules = set()
+    extended_modules = set()
 
     pp_debug_info = None
     lc_debug_info = None
@@ -510,7 +511,7 @@ def main():
             module
         )
         parser.submodule_start_callback = (
-            lambda _submodule, _parent, module: required_modules.add(module)
+            lambda _submodule, _parent, module: extended_modules.add(module)
         )
         parser.module_use_callback = lambda module: required_modules.add(module)
 
@@ -545,12 +546,13 @@ def main():
             gen_include_deps(src_name, obj_name, dep_name, included_files)
         )
 
-        if provided_modules or required_modules:
+        if provided_modules or required_modules or extended_modules:
             out_lines.extend(
                 gen_module_deps(
                     obj_name,
                     provided_modules,
                     required_modules,
+                    extended_modules,
                     args.fc_mod_dir,
                     args.fc_mod_upper,
                     args.fc_mod_ext,
@@ -592,6 +594,7 @@ def main():
         lc_files.clear()
         provided_modules.clear()
         required_modules.clear()
+        extended_modules.clear()
 
 
 def gen_lc_deps(src_name, lc_files):
@@ -612,7 +615,13 @@ def gen_include_deps(src_name, obj_name, dep_name, included_files):
 
 
 def gen_module_deps(
-    obj_name, provided_modules, required_modules, mod_dir, mod_upper, mod_ext
+    obj_name,
+    provided_modules,
+    required_modules,
+    extended_modules,
+    mod_dir,
+    mod_upper,
+    mod_ext,
 ):
     result = []
     if obj_name:
@@ -626,7 +635,9 @@ def gen_module_deps(
 
         # Do not depend on the modules that are provided in the same file:
         required_modules = [
-            m for m in required_modules if m not in provided_modules
+            m
+            for m in required_modules | extended_modules
+            if m not in provided_modules
         ]
         if required_modules:
             prereqs = " ".join(
@@ -635,6 +646,17 @@ def gen_module_deps(
                 )
             )
             result.append("{0}: {1}\n".format(obj_name, prereqs))
+
+        if extended_modules:
+            result.extend(
+                [
+                    "{0}: #-hint {1}\n".format(m, obj_name)
+                    for m in modulenames_to_filenames(
+                        extended_modules, mod_dir, mod_upper, mod_ext
+                    )
+                ]
+            )
+
     return result
 
 

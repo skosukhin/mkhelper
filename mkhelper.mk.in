@@ -192,8 +192,7 @@ sanitize-mod-proxies:
 # Dependency generation rule for undetectable Fortran dependencies:
 extra_f90.d: mkhelper.mk
 	$(silent_DEPGEN):;{ \
-	  echo 'src/program/main.o: #-hint src/program/implicit_external.o'; \
-	  echo 'src/program/main.o: #-hint src/modules/submo_test_submodule.o'; \
+	  echo 'src/program/main.@OBJEXT@: #-hint src/program/implicit_external.@OBJEXT@'; \
 	} >$@
 
 # Configure delayed bundled libraries:
