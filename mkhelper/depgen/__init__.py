@@ -43,7 +43,12 @@ def open23(name, mode="r"):
         return open(name, mode)
     else:
         # noinspection PyArgumentList
-        return open(name, mode, encoding="latin-1")
+        return open(
+            name,
+            mode,
+            encoding=(None if "b" in mode else "UTF-8"),
+            errors=(None if "b" in mode else "surrogateescape"),
+        )
 
 
 def map23(foo, iterable):
