@@ -52,6 +52,7 @@ class Parser:
     _re_module_use = re.compile(
         r"^\s*use(?:\s+|(?:\s*,\s*((?:non_)?intrinsic))?\s*::\s*)(\w+)", re.I
     )
+    _re_module_end = re.compile(r"^\s*end\s+module(?:\s+(\w+))?\s*$", re.I)
 
     def __init__(
         self,
@@ -93,11 +94,14 @@ class Parser:
         include_stack = StreamStack()
         include_stack.push(stream, stream_name)
 
+        current_module = None
+
         for line in Parser.streamline_input(include_stack):
             # module definition start
             match = Parser._re_module_start.match(line)
             if match:
                 module_name = match.group(1).lower()
+                current_module = module_name
                 if self.module_start_callback:
                     self.module_start_callback(module_name)
                 if self.debug_callback:
@@ -208,6 +212,41 @@ class Parser:
                 elif self.debug_callback:
                     self.debug_callback(line, "ignored (file not found)")
                 continue
+
+            if self.debug_callback is None:
+                continue
+
+            # module definition end
+            match = Parser._re_module_end.match(line)
+            if match:
+                if self.debug_callback:
+                    module_name = match.group(1)
+                    if module_name:
+                        module_name = module_name.lower()
+                    self.debug_callback(
+                        line,
+                        "module '{0}' (end, {1})".format(
+                            str(module_name),
+                            (
+                                (
+                                    (
+                                        "as expected"
+                                        if module_name == current_module
+                                        else "expected '{0}'".format(
+                                            current_module
+                                        )
+                                    )
+                                    if module_name
+                                    else "assumed '{0}'".format(current_module)
+                                )
+                                if current_module
+                                else "unexpected"
+                            ),
+                        ),
+                    )
+                current_module = None
+                continue
+
         include_stack.clear()
 
         # return an empty iterator
