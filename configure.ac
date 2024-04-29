@@ -70,6 +70,9 @@ ACX_FC_MODULE_SNAMING(
   [AC_SUBST([FC_SMOD_FILE_INFIX], [$acx_cv_fc_module_snaming_infix])
    AC_SUBST([FC_SMOD_FILE_EXT], [$acx_cv_fc_module_snaming_ext])])
 
+ACX_FC_MODULE_ROOT_SMOD(
+  [AC_SUBST([FC_ROOT_SMOD], [$acx_cv_fc_module_root_smod])])
+
 ACX_FC_INCLUDE_FLAG(
   [AC_SUBST([FC_INC_FLAG], [$acx_cv_fc_ftn_include_flag])])
 ACX_FC_INCLUDE_ORDER(

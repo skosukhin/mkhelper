@@ -616,6 +616,7 @@ FC_INC_ORDER_PP_f90
 FC_INC_FLAG_PP_f90
 FC_INC_ORDER
 FC_INC_FLAG
+FC_ROOT_SMOD
 FC_SMOD_FILE_EXT
 FC_SMOD_FILE_INFIX
 FC_MOD_FILE_EXT
@@ -3545,6 +3546,56 @@ $as_echo "$acx_tmp$acx_fc_module_sname.$acx_cv_fc_module_snaming_ext" >&6; }
          FC_SMOD_FILE_INFIX=$acx_cv_fc_module_snaming_infix
 
    FC_SMOD_FILE_EXT=$acx_cv_fc_module_snaming_ext
+
+fi
+
+         { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether Fortran compiler generates submodule files for root ancestors" >&5
+$as_echo_n "checking whether Fortran compiler generates submodule files for root ancestors... " >&6; }
+if ${acx_cv_fc_module_root_smod+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  acx_cv_fc_module_root_smod=unknown
+      if test "x$acx_cv_fc_module_snaming_ext" = x"$acx_cv_fc_module_naming_ext"; then :
+  acx_cv_fc_module_root_smod=no
+else
+  as_dir=conftest.dir; as_fn_mkdir_p
+         cd conftest.dir
+         cat > conftest.$ac_ext <<_ACEOF
+      module conftest_module
+      implicit none
+      public
+      interface
+      module subroutine conftest_routine
+      end subroutine
+      end interface
+      end module
+_ACEOF
+if ac_fn_fc_try_compile "$LINENO"; then :
+  if test "x$acx_cv_fc_module_naming_upper" = xyes; then :
+  acx_fc_module_name='CONFTEST_MODULE'
+else
+  acx_fc_module_name='conftest_module'
+fi
+            if test -f "$acx_fc_module_name.$acx_cv_fc_module_snaming_ext"; then :
+  acx_cv_fc_module_root_smod=yes
+else
+  acx_cv_fc_module_root_smod=no
+fi
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+         cd ..
+         rm -rf conftest.dir
+fi
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_module_root_smod" >&5
+$as_echo "$acx_cv_fc_module_root_smod" >&6; }
+   if test "x$acx_cv_fc_module_root_smod" = xunknown; then :
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "unable to detect whether Fortran compiler generates submodule files for modules
+See \`config.log' for more details" "$LINENO" 5; }
+else
+  FC_ROOT_SMOD=$acx_cv_fc_module_root_smod
 
 fi
 
