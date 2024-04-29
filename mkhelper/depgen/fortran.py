@@ -40,14 +40,14 @@ from depgen import (
 
 
 class Parser:
-    _re_include = re.compile(r'^\s*include\s+([\'"])(.*?)\1', re.I)
+    _re_include = re.compile(r'^\s*include\s+([\'"])(.*?)\1\s*$', re.I)
     _re_line_continue_start = re.compile(r"^(.*)&\s*$")
     _re_line_continue_end = re.compile(r"^\s*&")
     _re_module_start = re.compile(
-        r"^\s*module\s+(?!(?:procedure|subroutine|function)\s)(\w+)", re.I
+        r"^\s*module\s+(?!(?:procedure|subroutine|function)\s)(\w+)\s*$", re.I
     )
     _re_submodule_start = re.compile(
-        r"^\s*submodule\s*\(\s*(\w+)(?:\s*:\s*(\w+)\s*)?\s*\)\s*(\w+)", re.I
+        r"^\s*submodule\s*\(\s*(\w+)(?:\s*:\s*(\w+)\s*)?\s*\)\s*(\w+)\s*$", re.I
     )
     _re_module_use = re.compile(
         r"^\s*use(?:\s+|(?:\s*,\s*((?:non_)?intrinsic))?\s*::\s*)(\w+)", re.I
