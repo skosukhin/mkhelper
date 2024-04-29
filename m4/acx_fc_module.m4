@@ -181,8 +181,8 @@ test "x$acx_cv_fc_module_naming_ext" = xunknown],
       m4_default([$2], [AC_MSG_FAILURE([unable to detect Fortran compiler dnl
 module file naming template])])],
      [AS_VAR_IF([acx_cv_fc_module_naming_upper], [yes],
-        [AC_MSG_RESULT([NAME.$acx_cv_fc_module_naming_ext])],
-        [AC_MSG_RESULT([name.$acx_cv_fc_module_naming_ext])])
+        [AC_MSG_RESULT([{NAME}.$acx_cv_fc_module_naming_ext])],
+        [AC_MSG_RESULT([{name}.$acx_cv_fc_module_naming_ext])])
       $1])])
 
 # ACX_FC_MODULE_SNAMING([ACTION-IF-SUCCESS],
@@ -264,10 +264,10 @@ test "x$acx_cv_fc_module_snaming_ext" = xunknown],
          m4_default([$2], [AC_MSG_FAILURE([unable to detect Fortran compiler dnl
 submodule file naming template])])],
         [AS_VAR_IF([acx_cv_fc_module_naming_upper], [yes],
-           [acx_fc_module_name='NAME'
-            acx_fc_module_sname='SNAME'],
-           [acx_fc_module_name='name'
-            acx_fc_module_sname='sname'])
+           [acx_fc_module_name='{NAME}'
+            acx_fc_module_sname='{SNAME}'],
+           [acx_fc_module_name='{name}'
+            acx_fc_module_sname='{sname}'])
          AS_VAR_IF([acx_cv_fc_module_snaming_infix], [],
            [acx_tmp=],
            [acx_tmp="$acx_fc_module_name$acx_cv_fc_module_snaming_infix"])

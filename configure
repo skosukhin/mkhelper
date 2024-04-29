@@ -3439,11 +3439,11 @@ as_fn_error $? "unable to detect Fortran compiler module file naming template
 See \`config.log' for more details" "$LINENO" 5; }
 else
   if test "x$acx_cv_fc_module_naming_upper" = xyes; then :
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: NAME.$acx_cv_fc_module_naming_ext" >&5
-$as_echo "NAME.$acx_cv_fc_module_naming_ext" >&6; }
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: {NAME}.$acx_cv_fc_module_naming_ext" >&5
+$as_echo "{NAME}.$acx_cv_fc_module_naming_ext" >&6; }
 else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: name.$acx_cv_fc_module_naming_ext" >&5
-$as_echo "name.$acx_cv_fc_module_naming_ext" >&6; }
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: {name}.$acx_cv_fc_module_naming_ext" >&5
+$as_echo "{name}.$acx_cv_fc_module_naming_ext" >&6; }
 fi
       FC_MOD_FILE_UPPER=$acx_cv_fc_module_naming_upper
 
@@ -3530,11 +3530,11 @@ as_fn_error $? "unable to detect Fortran compiler submodule file naming template
 See \`config.log' for more details" "$LINENO" 5; }
 else
   if test "x$acx_cv_fc_module_naming_upper" = xyes; then :
-  acx_fc_module_name='NAME'
-            acx_fc_module_sname='SNAME'
+  acx_fc_module_name='{NAME}'
+            acx_fc_module_sname='{SNAME}'
 else
-  acx_fc_module_name='name'
-            acx_fc_module_sname='sname'
+  acx_fc_module_name='{name}'
+            acx_fc_module_sname='{sname}'
 fi
          if ${acx_cv_fc_module_snaming_infix:+false} :; then :
   acx_tmp=
