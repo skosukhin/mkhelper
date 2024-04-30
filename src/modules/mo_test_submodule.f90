@@ -9,10 +9,14 @@ module mo_test_submodule
     module function print_hello_function()
       integer :: print_hello_function
     end function print_hello_function
+
+    module function print_hello_function2()
+      integer :: print_hello_function2
+    end function print_hello_function2
   end interface
 
   contains
     subroutine print_hello()
-      print *, "Hello from submodule test (parent module)."
+      print *, "Hello from submodule test (ancestor module)."
     end subroutine print_hello
 end module mo_test_submodule

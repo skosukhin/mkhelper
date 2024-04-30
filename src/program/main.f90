@@ -6,7 +6,8 @@ program main
   use mo_test_submodule, only: &
   &  print_test_submodule_parent => print_hello, &
   &  print_test_submodule_subroutine => print_hello_subroutine, &
-  &  print_test_submodule_function => print_hello_function
+  &  print_test_submodule_function => print_hello_function, &
+  &  print_test_submodule_function2 => print_hello_function2
   use mo_threaded_hello, only: print_threaded_hello => print_hello
   use mo_delayed, only: print_delayed_hello => print_hello
   use mo_cmake_based, only: print_cmake_based_hello => print_hello
@@ -89,6 +90,7 @@ program main
   call print_test_submodule_parent()
   call print_test_submodule_subroutine()
   retval = print_test_submodule_function()
+  retval = print_test_submodule_function2()
 
   print *, "Running threaded bundled library..."
   retval = print_threaded_hello()
