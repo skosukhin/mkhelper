@@ -259,6 +259,19 @@ def parse_args():
         "names (default: `%(default)s`)",
     )
     fc_arg_group.add_argument(
+        "--fc-smod-ext",
+        default="smod",
+        help="filename extension (without leading dot) of compiler-generated "
+        "Fortran submodule files (default: `%(default)s`)",
+    )
+    fc_arg_group.add_argument(
+        "--fc-root-smod",
+        choices=["yes", "no"],
+        default="yes",
+        help="whether Fortran compiler generates submodule files for the root "
+        "module ancestors (default: `%(default)s`)",
+    )
+    fc_arg_group.add_argument(
         "--fc-inc-order",
         default="src,flg",
         metavar="ORDER_LIST",
@@ -420,6 +433,7 @@ def parse_args():
 
     if args.fc_enable:
         args.fc_mod_upper = args.fc_mod_upper == "yes"
+        args.fc_root_smod = args.fc_root_smod == "yes"
         args.fc_mod_dir = args.fc_mod_dir[-1] if args.fc_mod_dir else None
 
         if args.fc_intrinsic_mods:
@@ -556,6 +570,8 @@ def main():
                     args.fc_mod_dir,
                     args.fc_mod_upper,
                     args.fc_mod_ext,
+                    args.fc_smod_ext,
+                    args.fc_root_smod,
                 )
             )
 
@@ -622,22 +638,28 @@ def gen_module_deps(
     mod_dir,
     mod_upper,
     mod_ext,
+    smod_ext,
+    root_smod,
 ):
     result = []
     if obj_name:
         if provided_modules:
-            targets = " ".join(
-                modulenames_to_filenames(
-                    provided_modules, mod_dir, mod_upper, mod_ext
-                )
+            targets = modulenames_to_filenames(
+                provided_modules, mod_dir, mod_upper, mod_ext
             )
+            if root_smod:
+                targets = list(targets)
+                targets.extend(
+                    modulenames_to_filenames(
+                        provided_modules, mod_dir, mod_upper, smod_ext
+                    )
+                )
+            targets = " ".join(targets)
             result.append("{0}: {1}\n".format(targets, obj_name))
 
         # Do not depend on the modules that are provided in the same file:
         required_modules = [
-            m
-            for m in required_modules | extended_modules
-            if m not in provided_modules
+            m for m in required_modules if m not in provided_modules
         ]
         if required_modules:
             prereqs = " ".join(
@@ -647,7 +669,20 @@ def gen_module_deps(
             )
             result.append("{0}: {1}\n".format(obj_name, prereqs))
 
+        # Do not depend on the submodules that are provided in the same file:
+        extended_modules = [
+            m for m in extended_modules if m not in provided_modules
+        ]
         if extended_modules:
+            prereqs = " ".join(
+                modulenames_to_filenames(
+                    extended_modules,
+                    mod_dir,
+                    mod_upper,
+                    smod_ext if root_smod else mod_ext,
+                )
+            )
+            result.append("{0}: {1}\n".format(obj_name, prereqs))
             result.extend(
                 [
                     "{0}: #-hint {1}\n".format(m, obj_name)

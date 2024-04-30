@@ -10,6 +10,8 @@
 --fc-enable
 --fc-mod-ext=@FC_MOD_FILE_EXT@.proxy
 --fc-mod-upper=@FC_MOD_FILE_UPPER@
+--fc-smod-ext=@FC_SMOD_FILE_EXT@
+--fc-root-smod=@FC_ROOT_SMOD@
 --fc-inc-flag=@FC_INC_FLAG@
 --fc-inc-order=@FC_INC_ORDER@
 --fc-mod-dir-flag=@FC_MOD_OUT@
