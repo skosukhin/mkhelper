@@ -53,6 +53,12 @@ class Parser:
         r"^\s*use(?:\s+|(?:\s*,\s*((?:non_)?intrinsic))?\s*::\s*)(\w+)", re.I
     )
     _re_module_end = re.compile(r"^\s*end\s+module(?:\s+(\w+))?\s*$", re.I)
+    _re_module_prefixed_procedure = re.compile(
+        r"^\s*(?:\w+(?:\(.*\))?\s+)*"
+        r"module\s+"
+        r"(?:\w+(?:\(.*\))?\s+)*(?:function|subroutine)",
+        re.I,
+    )
 
     def __init__(
         self,
@@ -84,6 +90,7 @@ class Parser:
         self.module_start_callback = None
         self.submodule_start_callback = None
         self.module_use_callback = None
+        self.extendable_module_callback = None
         self.debug_callback = None
 
         self._include_finder = IncludeFinder(include_order, include_dirs)
@@ -95,6 +102,7 @@ class Parser:
         include_stack.push(stream, stream_name)
 
         current_module = None
+        current_module_is_extendable = False
 
         for line in Parser.streamline_input(include_stack):
             # module definition start
@@ -213,7 +221,39 @@ class Parser:
                     self.debug_callback(line, "ignored (file not found)")
                 continue
 
-            if self.debug_callback is None:
+            if not (self.extendable_module_callback or self.debug_callback):
+                continue
+
+            # procedure with the module prefix
+            match = Parser._re_module_prefixed_procedure.match(line)
+            if match:
+                if current_module:
+                    if current_module_is_extendable:
+                        if self.debug_callback:
+                            self.debug_callback(
+                                line,
+                                "ignored module subroutine/function "
+                                "(module '{0}' is already known "
+                                "to be extendable)".format(current_module),
+                            )
+                    else:
+                        current_module_is_extendable = True
+                        if self.extendable_module_callback:
+                            self.extendable_module_callback(current_module)
+                        if self.debug_callback:
+                            self.debug_callback(
+                                line,
+                                "module subroutine/function "
+                                "(module '{0}' is extendable)".format(
+                                    current_module
+                                ),
+                            )
+                elif self.debug_callback:
+                    self.debug_callback(
+                        line,
+                        "ignored module subroutine/function "
+                        "(not in the module scope)",
+                    )
                 continue
 
             # module definition end
@@ -245,6 +285,7 @@ class Parser:
                         ),
                     )
                 current_module = None
+                current_module_is_extendable = False
                 continue
 
         include_stack.clear()

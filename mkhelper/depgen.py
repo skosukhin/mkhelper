@@ -534,7 +534,7 @@ def main():
         parser.include_callback = include_callback
         parser.module_start_callback = lambda module: provided_modules.add(
             module
-        ) or (args.fc_root_smod and provided_submodules.add((module, None)))
+        )
         parser.submodule_start_callback = (
             lambda submodule, parent, module: provided_submodules.add(
                 (module, submodule)
@@ -546,6 +546,11 @@ def main():
             )
         )
         parser.module_use_callback = lambda module: required_modules.add(module)
+
+        if args.fc_root_smod:
+            parser.extendable_module_callback = (
+                lambda module: provided_submodules.add((module, None))
+            )
 
         if args.debug:
             parser.debug_callback = lambda line, msg: ftn_debug_info.append(
