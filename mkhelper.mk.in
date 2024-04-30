@@ -117,6 +117,7 @@ depend: $(lib_dep_files) $(exe_dep_files)
 mostlyclean: $(bundled_subdirs)
 	rm -f $(src_files:.f90=.@OBJEXT@)
 	rm -f $(moddir)/*.@FC_MOD_FILE_EXT@ $(moddir)/*.@FC_MOD_FILE_EXT@.proxy
+	rm -f $(moddir)/*.@FC_SMOD_FILE_EXT@ $(moddir)/*.@FC_SMOD_FILE_EXT@.sproxy
 	rm -f $(lib_files) $(exe_files) $(exe_files:=.dSYM)
 
 # Delete files generated at the building stage:
@@ -161,12 +162,12 @@ $(exe_files): | $(dir_files)
 	$(silent_FCLD)$(FC) -o $@ $(makefile_FCFLAGS) $(FCFLAGS) $(LDFLAGS) $+ $(makefile_LIBS) $(LIBS)
 
 # Fortran compilation rule:
-%.@OBJEXT@: %.f90 | $(dir_files) $(bundled_subdirs)
+%.@OBJEXT@: %.f90 | $(dir_files) $(bundled_subdirs) sanitize-mod-proxies
 	$(silent_FC)$(FC) -o $@ -c $(makefile_FCFLAGS) $(FCFLAGS) @FCFLAGS_f90@ $<
 
 
 # Fortran module file tracking rule:
-$(moddir)/%.@FC_MOD_FILE_EXT@.proxy: | sanitize-mod-proxies
+$(moddir)/%.@FC_MOD_FILE_EXT@.proxy:
 	@if test -z '$<'; then \
 	  echo "Cannot find Fortran source file providing module '$(basename $(@F:.proxy=))'." >&2; \
 	else \
@@ -175,11 +176,21 @@ $(moddir)/%.@FC_MOD_FILE_EXT@.proxy: | sanitize-mod-proxies
 	  else cp '$(@:.proxy=)' '$@' 2>/dev/null; fi; \
 	fi
 
+# Fortran submodule file tracking rule:
+$(moddir)/%.@FC_SMOD_FILE_EXT@.sproxy:
+	@if test -z '$<'; then \
+	  echo "Cannot find Fortran source file providing submodule '$(basename $(@F:.sproxy=))'." >&2; \
+	else \
+	  if test ! -f '$(@:.sproxy=)'; then rm -f '$<'; $(MAKE) '$<'; fi; \
+	  if cmp '$@' '$(@:.sproxy=)' >/dev/null 2>&1 || $(MODCMP) '$@' '$(@:.sproxy=)' @FC_VENDOR@ 2>/dev/null; then :; \
+	  else cp '$(@:.sproxy=)' '$@' 2>/dev/null; fi; \
+	fi
+
 # Deletes all Fortran module proxy files that do not have an existing module to
 # be a proxy of, i.e. if <filename>.proxy exists but <filename> does not,
 # delete <filename>.proxy:
 sanitize-mod-proxies:
-	@rm -f $(filter-out $(addsuffix .proxy,$(wildcard $(moddir)/*.@FC_MOD_FILE_EXT@)),$(wildcard $(moddir)/*.@FC_MOD_FILE_EXT@.proxy))
+	@rm -f $(filter-out $(addsuffix .proxy,$(wildcard $(moddir)/*.@FC_MOD_FILE_EXT@)),$(wildcard $(moddir)/*.@FC_MOD_FILE_EXT@.proxy)) $(filter-out $(addsuffix .sproxy,$(wildcard $(moddir)/*.@FC_SMOD_FILE_EXT@)),$(wildcard $(moddir)/*.@FC_SMOD_FILE_EXT@.sproxy))
 
 # Directory creation rule:
 %/.dirstamp:
