@@ -463,7 +463,8 @@ def main():
 
     provided_modules = set()
     required_modules = set()
-    extended_modules = set()
+    provided_submodules = set()
+    required_submodules = set()
 
     pp_debug_info = None
     lc_debug_info = None
@@ -523,9 +524,16 @@ def main():
         parser.include_callback = include_callback
         parser.module_start_callback = lambda module: provided_modules.add(
             module
-        )
+        ) or (args.fc_root_smod and provided_submodules.add((module, None)))
         parser.submodule_start_callback = (
-            lambda _submodule, _parent, module: extended_modules.add(module)
+            lambda submodule, parent, module: provided_submodules.add(
+                (module, submodule)
+            )
+            or (
+                required_submodules.add((module, parent))
+                if parent or args.fc_root_smod
+                else required_modules.add(module)
+            )
         )
         parser.module_use_callback = lambda module: required_modules.add(module)
 
@@ -560,18 +568,23 @@ def main():
             gen_include_deps(src_name, obj_name, dep_name, included_files)
         )
 
-        if provided_modules or required_modules or extended_modules:
+        if (
+            provided_modules
+            or required_modules
+            or provided_submodules
+            or required_submodules
+        ):
             out_lines.extend(
                 gen_module_deps(
                     obj_name,
                     provided_modules,
                     required_modules,
-                    extended_modules,
+                    provided_submodules,
+                    required_submodules,
                     args.fc_mod_dir,
                     args.fc_mod_upper,
                     args.fc_mod_ext,
                     args.fc_smod_ext,
-                    args.fc_root_smod,
                 )
             )
 
@@ -610,7 +623,8 @@ def main():
         lc_files.clear()
         provided_modules.clear()
         required_modules.clear()
-        extended_modules.clear()
+        provided_submodules.clear()
+        required_submodules.clear()
 
 
 def gen_lc_deps(src_name, lc_files):
@@ -634,63 +648,83 @@ def gen_module_deps(
     obj_name,
     provided_modules,
     required_modules,
-    extended_modules,
+    provided_submodules,
+    required_submodules,
     mod_dir,
     mod_upper,
     mod_ext,
     smod_ext,
-    root_smod,
 ):
     result = []
     if obj_name:
-        if provided_modules:
-            targets = modulenames_to_filenames(
+        obj_targets = list(
+            modulenames_to_filenames(
                 provided_modules, mod_dir, mod_upper, mod_ext
             )
-            if root_smod:
-                targets = list(targets)
-                targets.extend(
-                    modulenames_to_filenames(
-                        provided_modules, mod_dir, mod_upper, smod_ext
-                    )
-                )
-            targets = " ".join(targets)
-            result.append("{0}: {1}\n".format(targets, obj_name))
-
-        # Do not depend on the modules that are provided in the same file:
-        required_modules = [
-            m for m in required_modules if m not in provided_modules
-        ]
-        if required_modules:
-            prereqs = " ".join(
-                modulenames_to_filenames(
-                    required_modules, mod_dir, mod_upper, mod_ext
-                )
+        )
+        obj_targets.extend(
+            modulenames_to_filenames(
+                # We do not support real submodules yet:
+                [
+                    module
+                    for module, submodule in provided_submodules
+                    if submodule is None
+                ],
+                mod_dir,
+                mod_upper,
+                smod_ext,
             )
-            result.append("{0}: {1}\n".format(obj_name, prereqs))
+        )
 
-        # Do not depend on the submodules that are provided in the same file:
-        extended_modules = [
-            m for m in extended_modules if m not in provided_modules
+        if obj_targets:
+            result.append("{0}: {1}\n".format(" ".join(obj_targets), obj_name))
+
+        obj_prereqs = list(
+            modulenames_to_filenames(
+                # Do not depend on the provided modules:
+                [m for m in required_modules if m not in provided_modules],
+                mod_dir,
+                mod_upper,
+                mod_ext,
+            )
+        )
+
+        # Do not depend on the provided submodules:
+        required_submodules = [
+            m for m in required_submodules if m not in provided_submodules
         ]
-        if extended_modules:
-            prereqs = " ".join(
-                modulenames_to_filenames(
-                    extended_modules,
+        obj_prereqs.extend(
+            modulenames_to_filenames(
+                # We do not support real submodules yet:
+                [
+                    module
+                    for module, submodule in required_submodules
+                    if submodule is None
+                ],
+                mod_dir,
+                mod_upper,
+                smod_ext,
+            )
+        )
+
+        if obj_prereqs:
+            result.append("{0}: {1}\n".format(obj_name, " ".join(obj_prereqs)))
+
+        result.extend(
+            [
+                "{0}: #-hint {1}\n".format(m, obj_name)
+                for m in modulenames_to_filenames(
+                    set(
+                        module
+                        for module, _ in provided_submodules
+                        if module not in provided_modules
+                    ),
                     mod_dir,
                     mod_upper,
-                    smod_ext if root_smod else mod_ext,
+                    mod_ext,
                 )
-            )
-            result.append("{0}: {1}\n".format(obj_name, prereqs))
-            result.extend(
-                [
-                    "{0}: #-hint {1}\n".format(m, obj_name)
-                    for m in modulenames_to_filenames(
-                        extended_modules, mod_dir, mod_upper, mod_ext
-                    )
-                ]
-            )
+            ]
+        )
 
     return result
 
