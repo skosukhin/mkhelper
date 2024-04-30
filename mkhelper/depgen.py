@@ -265,6 +265,16 @@ def parse_args():
         "Fortran submodule files (default: `%(default)s`)",
     )
     fc_arg_group.add_argument(
+        "--fc-smod-infix",
+        default="@",
+        help="filename infix of compiler-generated Fortran submodule files, "
+        "i.e. a string in the basename of the submodule filename that appears "
+        "between the name of the ancestor module and the name of the "
+        "submodule; an empty value of the argument means that the compiler "
+        "does not prefix submodule filenames with the names of their ancestor "
+        "modules (default: `%(default)s`)",
+    )
+    fc_arg_group.add_argument(
         "--fc-root-smod",
         choices=["yes", "no"],
         default="yes",
@@ -584,6 +594,7 @@ def main():
                     args.fc_mod_dir,
                     args.fc_mod_upper,
                     args.fc_mod_ext,
+                    args.fc_smod_infix,
                     args.fc_smod_ext,
                 )
             )
@@ -653,26 +664,17 @@ def gen_module_deps(
     mod_dir,
     mod_upper,
     mod_ext,
+    smod_infix,
     smod_ext,
 ):
     result = []
     if obj_name:
         obj_targets = list(
-            modulenames_to_filenames(
-                provided_modules, mod_dir, mod_upper, mod_ext
-            )
+            modules_to_filenames(provided_modules, mod_dir, mod_upper, mod_ext)
         )
         obj_targets.extend(
-            modulenames_to_filenames(
-                # We do not support real submodules yet:
-                [
-                    module
-                    for module, submodule in provided_submodules
-                    if submodule is None
-                ],
-                mod_dir,
-                mod_upper,
-                smod_ext,
+            submodules_to_filenames(
+                provided_submodules, mod_dir, mod_upper, smod_infix, smod_ext
             )
         )
 
@@ -680,7 +682,7 @@ def gen_module_deps(
             result.append("{0}: {1}\n".format(" ".join(obj_targets), obj_name))
 
         obj_prereqs = list(
-            modulenames_to_filenames(
+            modules_to_filenames(
                 # Do not depend on the provided modules:
                 [m for m in required_modules if m not in provided_modules],
                 mod_dir,
@@ -689,20 +691,17 @@ def gen_module_deps(
             )
         )
 
-        # Do not depend on the provided submodules:
-        required_submodules = [
-            m for m in required_submodules if m not in provided_submodules
-        ]
         obj_prereqs.extend(
-            modulenames_to_filenames(
-                # We do not support real submodules yet:
+            submodules_to_filenames(
+                # Do not depend on the provided submodules:
                 [
-                    module
-                    for module, submodule in required_submodules
-                    if submodule is None
+                    m
+                    for m in required_submodules
+                    if m not in provided_submodules
                 ],
                 mod_dir,
                 mod_upper,
+                smod_infix,
                 smod_ext,
             )
         )
@@ -713,10 +712,11 @@ def gen_module_deps(
         result.extend(
             [
                 "{0}: #-hint {1}\n".format(m, obj_name)
-                for m in modulenames_to_filenames(
+                for m in modules_to_filenames(
                     set(
                         module
                         for module, _ in provided_submodules
+                        # Do not depend on the provided modules:
                         if module not in provided_modules
                     ),
                     mod_dir,
@@ -729,7 +729,7 @@ def gen_module_deps(
     return result
 
 
-def modulenames_to_filenames(modules, directory, upprecase, extension):
+def modules_to_filenames(modules, directory, upprecase, extension):
     result = modules
     if upprecase:
         result = map(lambda s: s.upper(), result)
@@ -737,6 +737,23 @@ def modulenames_to_filenames(modules, directory, upprecase, extension):
         result = map(lambda s: os.path.join(directory, s), result)
     if extension:
         result = map(lambda s: "{0}.{1}".format(s, extension), result)
+    return result
+
+
+def submodules_to_filenames(submodules, directory, uppercase, infix, extension):
+    result = modules_to_filenames(
+        map(
+            lambda module_submodule: (
+                "{1}{0}{2}".format(infix, *module_submodule)
+                if infix and module_submodule[1]
+                else module_submodule[1] or module_submodule[0]
+            ),
+            submodules,
+        ),
+        directory,
+        uppercase,
+        extension,
+    )
     return result
 
 
