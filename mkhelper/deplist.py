@@ -143,9 +143,9 @@ def parse_args():
         metavar="PATTERN",
         help="list of shell-like wildcards; the option enables additional "
         "consistency checks of the dependency graph; all targets that match at "
-        "least one the patterns are checked whether none of them have the same "
-        "basename; if the check fails, a warning message is emitted to the "
-        "standard error stream",
+        "least one of the patterns are checked whether none of them have the "
+        "same basename; if the check fails, a warning message is emitted to "
+        "the standard error stream",
     )
     parser.add_argument(
         # Unfortunately, we cannot set nargs to 'two or more', therefore we
