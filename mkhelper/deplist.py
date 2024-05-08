@@ -43,6 +43,7 @@ exit 1
 import argparse
 import collections
 import fnmatch
+import itertools
 import os
 import re
 import sys
@@ -291,16 +292,21 @@ def visit_dfs(
             finish_visit_cb(vertex)
 
 
+def dedupe(sequence):
+    seen = set()
+    for x in sequence:
+        if x not in seen:
+            yield x
+            seen.add(x)
+
+
 def sanitize_graph(graph):
     # Remove duplicates (we do not use sets as values of the dictionary to keep
     # the order of prerequisites):
     for target in graph.keys():
-        seen = set()
-        graph[target] = [
-            prereq
-            for prereq in graph[target]
-            if not (prereq in seen or seen.add(prereq))
-        ]
+        graph[target] = graph.default_factory(
+            dedupe(prereq for prereq in graph[target])
+        )
 
     # Make leaves (i.e. prerequisites without any prerequisites) explicit nodes
     # of the graph:
@@ -523,37 +529,53 @@ def main():
     def toposort_finish_visit_cb(vertex):
         toposort.append(vertex)
 
+    def toposort_postprocess_cb():
+        # The last element of toposort is _meta_root:
+        toposort.pop()
+
     finish_visit_cb_list.append(toposort_finish_visit_cb)
+    postprocess_cb_list.append(toposort_postprocess_cb)
 
     visited_vertices = set()
 
-    visit_dfs(
-        traversed_graph,
-        _meta_root,
-        visited=visited_vertices,
-        start_visit_cb_list=start_visit_cb_list,
-        finish_visit_cb_list=finish_visit_cb_list,
-        skip_visit_cb_list=skip_visit_cb_list,
-    )
+    def traverse():
+        visit_dfs(
+            traversed_graph,
+            _meta_root,
+            visited=visited_vertices,
+            start_visit_cb_list=start_visit_cb_list,
+            finish_visit_cb_list=finish_visit_cb_list,
+            skip_visit_cb_list=skip_visit_cb_list,
+        )
 
-    for postprocess_cb in postprocess_cb_list:
-        postprocess_cb()
+        for postprocess_cb in postprocess_cb_list:
+            postprocess_cb()
 
-    output = []
+    traverse()
 
-    for target, prereqs in extra_edges.items():
-        if target in visited_vertices:
-            output.extend(
-                prereq for prereq in prereqs if prereq not in visited_vertices
+    if extra_edges:
+        # Reset the _meta_root:
+        visited_vertices.remove(_meta_root)
+        traversed_graph[_meta_root] *= 0
+
+        for target, prereqs in extra_edges.items():
+            # Make the _meta_root point to the extra prerequisites of the
+            # visited vertices:
+            if target in visited_vertices:
+                traversed_graph[_meta_root].extend(prereqs)
+
+            # Add the extra prerequisites to the graph:
+            traversed_graph[target] = traversed_graph.default_factory(
+                dedupe(itertools.chain(traversed_graph[target], prereqs))
             )
 
-    # The last element of toposort is _meta_root:
-    output.extend(toposort[:-1])
+        # Traverse the graph once more with the extra edges:
+        traverse()
 
     if args.reverse ^ (args.prereq is not None):
-        output.reverse()
+        toposort.reverse()
 
-    print("\n".join(output))
+    print("\n".join(toposort))
 
 
 if __name__ == "__main__":
