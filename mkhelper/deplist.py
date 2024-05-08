@@ -399,7 +399,7 @@ def main():
 
         def check_unique_prereq_start_visit_cb(vertex):
             # Skip if the vertex is _meta_root or does not have descendants:
-            if vertex == _meta_root or vertex not in dep_graph:
+            if vertex == _meta_root:
                 return
             for pattern_list in args.check_unique_prereq:
                 if fnmatch.fnmatch(vertex, pattern_list[0]):
