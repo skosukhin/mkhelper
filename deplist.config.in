@@ -1,3 +1,4 @@
+--inc-hints
 --check-colour yellow
 # Check whether the dependency graph is acyclic:
 --check-cycles

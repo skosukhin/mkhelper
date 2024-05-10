@@ -121,6 +121,11 @@ def parse_args():
         help="include order-only prerequisites in the dependency graph",
     )
     parser.add_argument(
+        "--inc-hints",
+        action="store_true",
+        help="include #-hint prerequisites in the dependency graph",
+    )
+    parser.add_argument(
         "-r",
         "--reverse",
         action="store_true",
@@ -205,7 +210,7 @@ def parse_args():
     return args
 
 
-def read_makefiles(makefiles, inc_order_only):
+def read_makefiles(makefiles, inc_order_only, inc_hints):
     dep_graph = collections.defaultdict(list)
     extra_edges = collections.defaultdict(list)
 
@@ -244,10 +249,11 @@ def read_makefiles(makefiles, inc_order_only):
                 for target in targets:
                     dep_graph[target].extend(prereqs)
 
-                prereqs_string = match.group("hint")
-                if prereqs_string:
-                    for target in targets:
-                        extra_edges[target].extend(prereqs_string.split())
+                if inc_hints:
+                    prereqs_string = match.group("hint")
+                    if prereqs_string:
+                        for target in targets:
+                            extra_edges[target].extend(prereqs_string.split())
 
         stream.close()
     return dep_graph, extra_edges
@@ -368,7 +374,9 @@ def main():
     if args.makefile is None:
         return
 
-    dep_graph, extra_edges = read_makefiles(args.makefile, args.inc_oo)
+    dep_graph, extra_edges = read_makefiles(
+        args.makefile, args.inc_oo, args.inc_hints
+    )
 
     if not dep_graph:
         return
