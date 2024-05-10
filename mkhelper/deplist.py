@@ -116,14 +116,16 @@ def parse_args():
         "prerequisites found in the makefiles are sent to the output",
     )
     parser.add_argument(
-        "--inc-oo",
+        "--ignore-order-only",
+        "--no-oo",
         action="store_true",
-        help="include order-only prerequisites in the dependency graph",
+        help="ignore order-only prerequisites",
     )
     parser.add_argument(
-        "--inc-hints",
+        "--ignore-hints",
+        "--no-hints",
         action="store_true",
-        help="include #-hint prerequisites in the dependency graph",
+        help="ignore #-hint prerequisites",
     )
     parser.add_argument(
         "-r",
@@ -210,7 +212,7 @@ def parse_args():
     return args
 
 
-def read_makefiles(makefiles, inc_order_only, inc_hints):
+def read_makefiles(makefiles, ignore_order_only, ignore_hints):
     dep_graph = collections.defaultdict(list)
     extra_edges = collections.defaultdict(list)
 
@@ -241,7 +243,7 @@ def read_makefiles(makefiles, inc_order_only, inc_hints):
                 if prereqs_string:
                     prereqs.extend(prereqs_string.split())
 
-                if inc_order_only:
+                if not ignore_order_only:
                     prereqs_string = match.group("order_only")
                     if prereqs_string:
                         prereqs.extend(prereqs_string.split())
@@ -249,7 +251,7 @@ def read_makefiles(makefiles, inc_order_only, inc_hints):
                 for target in targets:
                     dep_graph[target].extend(prereqs)
 
-                if inc_hints:
+                if not ignore_hints:
                     prereqs_string = match.group("hint")
                     if prereqs_string:
                         for target in targets:
@@ -375,7 +377,7 @@ def main():
         return
 
     dep_graph, extra_edges = read_makefiles(
-        args.makefile, args.inc_oo, args.inc_hints
+        args.makefile, args.ignore_order_only, args.ignore_hints
     )
 
     if not dep_graph:
