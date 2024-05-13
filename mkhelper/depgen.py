@@ -348,7 +348,7 @@ def parse_args():
         args = parser.parse_args()
 
     if not args.input:
-        args.input = [None]
+        args.input = (None,)
 
     if not args.src_name:
         args.src_name = args.input
@@ -367,7 +367,7 @@ def parse_args():
         )
 
     if not args.output:
-        args.output = [None]
+        args.output = ()
     elif len(args.output) != len(args.input):
         parser.error(
             "number of OUTPUT values is not equal to the number of "
