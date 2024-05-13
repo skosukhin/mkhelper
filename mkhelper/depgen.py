@@ -88,7 +88,7 @@ def parse_args():
             ]
             if src_no_ext_basename:
                 return src_no_ext_basename + ".o"
-        return ""
+        return None
 
     parser.add_argument(
         "--input",

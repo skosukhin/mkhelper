@@ -148,9 +148,9 @@ class Parser:
             # module used
             match = Parser._re_module_use.match(line)
             if match:
-                module_nature = (
-                    match.group(1).lower() if match.group(1) is not None else ""
-                )
+                module_nature = match.group(1)
+                if module_nature:
+                    module_nature = module_nature.lower()
                 module_name = match.group(2).lower()
                 if module_nature == "intrinsic":
                     if self.debug_callback:
