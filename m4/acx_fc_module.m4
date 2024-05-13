@@ -385,3 +385,56 @@ m4_default([$3], [[      call $2 ()]])])],
      [AC_MSG_FAILURE([Fortran module procedure 'AS_TR_CPP([$2])' from dnl
 module 'AS_TR_CPP([$1])' is not available])])])
    m4_popdef([acx_cache_var])])
+
+# ACX_FC_MODULE_ONLY_FLAG([ACTION-IF-SUCCESS],
+#                         [ACTION-IF-FAILURE = FAILURE])
+# -----------------------------------------------------------------------------
+# Finds the Fortran compiler flag needed to generate module files but no object
+# files. The result is either "unknown" or the actual compiler flag (might be a
+# space-separated combination of several flags).
+#
+# If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
+# (defaults to failing with an error message).
+#
+# The flag is cached in the acx_cv_fc_module_only_flag variable.
+#
+# Known flags:
+# Intel: -syntax-only (or -fsyntax-only)
+# GNU: -fsyntax-only
+# NEC: -fsyntax-only
+# PGI/NVIDIA: -Msyntax-only
+# NAG: -M or -otype=mod
+# Cray: '-dB -M2179' (the second flag suppresses an excessive warning)
+#       or -otype=mod (undocumented and slow)
+#
+AC_DEFUN([ACX_FC_MODULE_ONLY_FLAG],
+  [AC_LANG_ASSERT([Fortran])dnl
+   AC_REQUIRE([ACX_FC_MODULE_NAMING])dnl
+   AC_CACHE_CHECK(
+     [for Fortran compiler flag needed to generate module files but no dnl
+object files],
+     [acx_cv_fc_module_only_flag],
+     [acx_cv_fc_module_only_flag=unknown
+      AS_MKDIR_P([conftest.dir])
+      cd conftest.dir
+      AC_LANG_CONFTEST([AC_LANG_SOURCE(
+[[      module conftest_module
+      end module]])])
+      AS_VAR_IF([acx_cv_fc_module_naming_upper], [yes],
+        [acx_tmp="CONFTEST_MODULE.$acx_cv_fc_module_naming_ext"],
+        [acx_tmp="conftest_module.$acx_cv_fc_module_naming_ext"])
+      acx_save_FCFLAGS=$FCFLAGS
+      for acx_flag in '-syntax-only' '-fsyntax-only' '-Msyntax-only' dnl
+'-dB -M2179' '-M' '-otype=mod'; do
+        FCFLAGS="$acx_save_FCFLAGS $acx_flag"
+        AS_IF([_AC_DO_VAR([ac_compile]) && dnl
+test -f $acx_tmp && test ! -f conftest.$ac_objext],
+          [acx_cv_fc_module_only_flag=$acx_flag; break],
+          [rm -f $acx_tmp conftest.$ac_objext])
+      done
+      FCFLAGS=$acx_save_FCFLAGS
+      cd ..
+      rm -rf conftest.dir])
+   AS_VAR_IF([acx_cv_fc_module_only_flag], [unknown], [m4_default([$2],
+     [AC_MSG_FAILURE([unable to detect Fortran compiler flag needed to dnl
+generate module files but no object files])])], [$1])])
