@@ -616,6 +616,9 @@ FC_INC_ORDER_PP_f90
 FC_INC_FLAG_PP_f90
 FC_INC_ORDER
 FC_INC_FLAG
+SEPARATE_MODS_DISABLED
+SEPARATE_MODS_ENABLED
+FC_MOD_ONLY
 FC_ROOT_SMOD
 FC_SMOD_FILE_EXT
 FC_SMOD_FILE_INFIX
@@ -687,6 +690,7 @@ ac_subst_files=''
 ac_user_opts='
 enable_option_checking
 enable_rpaths
+enable_separate_mods
 enable_silent_rules
 enable_additional_mods
 enable_openmp
@@ -1356,6 +1360,8 @@ Optional Features:
   --enable-rpaths         prepend LDFLAGS with additional linker flags to add
                           directories specified with -L flags to the runtime
                           library search path (RPATH) [default=yes]
+  --enable-separate-mods  enable the two-step compilation of the Fortran
+                          source files [default=yes]
   --enable-silent-rules   less verbose build output (undo: "make V=1")
                           [default=yes]
   --enable-additional-mods
@@ -3598,6 +3604,75 @@ else
   FC_ROOT_SMOD=$acx_cv_fc_module_root_smod
 
 fi
+
+# Check whether --enable-separate-mods was given.
+if test "${enable_separate_mods+set}" = set; then :
+  enableval=$enable_separate_mods;
+else
+  enable_separate_mods=yes
+fi
+
+if test "x$enable_separate_mods" = xyes; then :
+        { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler flag needed to generate module files but no object files" >&5
+$as_echo_n "checking for Fortran compiler flag needed to generate module files but no object files... " >&6; }
+if ${acx_cv_fc_module_only_flag+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  acx_cv_fc_module_only_flag=unknown
+      as_dir=conftest.dir; as_fn_mkdir_p
+      cd conftest.dir
+      cat > conftest.$ac_ext <<_ACEOF
+      module conftest_module
+      end module
+_ACEOF
+      if test "x$acx_cv_fc_module_naming_upper" = xyes; then :
+  acx_tmp="CONFTEST_MODULE.$acx_cv_fc_module_naming_ext"
+else
+  acx_tmp="conftest_module.$acx_cv_fc_module_naming_ext"
+fi
+      acx_save_FCFLAGS=$FCFLAGS
+      for acx_flag in '-syntax-only' '-fsyntax-only' '-Msyntax-only' '-dB -M2179' '-M' '-otype=mod'; do
+        FCFLAGS="$acx_save_FCFLAGS $acx_flag"
+        if { { ac_try="$ac_compile"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval ac_try_echo="\"\$as_me:${as_lineno-$LINENO}: $ac_try_echo\""
+$as_echo "$ac_try_echo"; } >&5
+  (eval "$ac_compile") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; } && test -f $acx_tmp && test ! -f conftest.$ac_objext; then :
+  acx_cv_fc_module_only_flag=$acx_flag; break
+else
+  rm -f $acx_tmp conftest.$ac_objext
+fi
+      done
+      FCFLAGS=$acx_save_FCFLAGS
+      cd ..
+      rm -rf conftest.dir
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_module_only_flag" >&5
+$as_echo "$acx_cv_fc_module_only_flag" >&6; }
+   if test "x$acx_cv_fc_module_only_flag" = xunknown; then :
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "unable to detect Fortran compiler flag needed to generate module files but no object files
+See \`config.log' for more details" "$LINENO" 5; }
+else
+  FC_MOD_ONLY=$acx_cv_fc_module_only_flag
+fi
+   SEPARATE_MODS_ENABLED=''
+   SEPARATE_MODS_DISABLED='#'
+else
+  FC_MOD_ONLY=
+   SEPARATE_MODS_ENABLED='#'
+   SEPARATE_MODS_DISABLED=''
+fi
+
+
+
 
       { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler flag needed to specify search paths for the \"INCLUDE\" statement" >&5
 $as_echo_n "checking for Fortran compiler flag needed to specify search paths for the \"INCLUDE\" statement... " >&6; }

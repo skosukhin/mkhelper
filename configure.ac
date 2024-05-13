@@ -73,6 +73,22 @@ ACX_FC_MODULE_SNAMING(
 ACX_FC_MODULE_ROOT_SMOD(
   [AC_SUBST([FC_ROOT_SMOD], [$acx_cv_fc_module_root_smod])])
 
+AC_ARG_ENABLE([separate-mods],
+  [AS_HELP_STRING([--enable-separate-mods],
+     [enable the two-step compilation of the Fortran source files
+@<:@default=yes@:>@])], [],
+  [enable_separate_mods=yes])
+AS_VAR_IF([enable_separate_mods], [yes],
+  [ACX_FC_MODULE_ONLY_FLAG([FC_MOD_ONLY=$acx_cv_fc_module_only_flag])
+   SEPARATE_MODS_ENABLED=''
+   SEPARATE_MODS_DISABLED='#'],
+  [FC_MOD_ONLY=
+   SEPARATE_MODS_ENABLED='#'
+   SEPARATE_MODS_DISABLED=''])
+AC_SUBST([FC_MOD_ONLY])
+AC_SUBST([SEPARATE_MODS_ENABLED])
+AC_SUBST([SEPARATE_MODS_DISABLED])
+
 ACX_FC_INCLUDE_FLAG(
   [AC_SUBST([FC_INC_FLAG], [$acx_cv_fc_ftn_include_flag])])
 ACX_FC_INCLUDE_ORDER(

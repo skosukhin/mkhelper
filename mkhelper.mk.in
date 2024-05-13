@@ -17,6 +17,7 @@ bundled_subdirs:= \
 
 # Path to the directory with the Fortran module files:
 moddir:= mod
+@SEPARATE_MODS_ENABLED@moddir_null:= $(moddir)/null
 
 # Paths to the installation directories:
 prefix= @prefix@
@@ -36,7 +37,7 @@ SHELL= @SHELL@
 
 # Fortran compiler flags:
 FCFLAGS= @FCFLAGS@
-makefile_FCFLAGS= @FC_MOD_IN@$(moddir) @FC_MOD_OUT@$(moddir) @FC_INC_FLAG@$(srcdir)/src/include @FC_INC_FLAG_PP_f90@$(srcdir)/src/include @config_FCFLAGS@ @BUNDLED_FCFLAGS@ @NETCDF_FCFLAGS@
+makefile_FCFLAGS= @FC_MOD_IN@$(moddir) @FC_INC_FLAG@$(srcdir)/src/include @FC_INC_FLAG_PP_f90@$(srcdir)/src/include @config_FCFLAGS@ @BUNDLED_FCFLAGS@ @NETCDF_FCFLAGS@
 
 # Archiver flags:
 ARFLAGS= @ARFLAGS@
@@ -62,6 +63,7 @@ silent_DEPGEN= @echo "  DEPGEN  " $@;
 silent_FC=     @echo "  FC      " $@;
 silent_FCLD=   @echo "  FCLD    " $@;
 silent_MKDIR=  @echo "  MKDIR   " $(@D);
+silent_MOD=    @echo "  MOD    <" $<;
 endif
 
 # Path suffixes (i.e. without $(srcdir) prefix) of the source files:
@@ -119,6 +121,7 @@ mostlyclean: $(bundled_subdirs)
 	rm -f $(moddir)/*.@FC_MOD_FILE_EXT@ $(moddir)/*.@FC_MOD_FILE_EXT@.proxy
 	rm -f $(moddir)/*.@FC_SMOD_FILE_EXT@ $(moddir)/*.@FC_SMOD_FILE_EXT@.sproxy
 	rm -f $(lib_files) $(exe_files) $(exe_files:=.dSYM)
+@SEPARATE_MODS_ENABLED@	rm -rf $(moddir_null) $(src_files:.f90=.modstamp)
 
 # Delete files generated at the building stage:
 clean: mostlyclean
@@ -162,9 +165,15 @@ $(exe_files): | $(dir_files)
 	$(silent_FCLD)$(FC) -o $@ $(makefile_FCFLAGS) $(FCFLAGS) $(LDFLAGS) $+ $(makefile_LIBS) $(LIBS)
 
 # Fortran compilation rule:
-%.@OBJEXT@: %.f90 | $(dir_files) $(bundled_subdirs) sanitize-mod-proxies
-	$(silent_FC)$(FC) -o $@ -c $(makefile_FCFLAGS) $(FCFLAGS) @FCFLAGS_f90@ $<
+@SEPARATE_MODS_ENABLED@%.@OBJEXT@: %.f90 | $(dir_files) $(bundled_subdirs) sanitize-mod-proxies
+@SEPARATE_MODS_ENABLED@	$(silent_FC)@MKDIR_P@ $(moddir_null)/$@ && $(FC) -o $@ -c @FC_MOD_OUT@$(moddir_null)/$@ $(makefile_FCFLAGS) $(FCFLAGS) @FCFLAGS_f90@ $<
 
+@SEPARATE_MODS_DISABLED@%.@OBJEXT@: %.f90 | $(dir_files) $(bundled_subdirs) sanitize-mod-proxies
+@SEPARATE_MODS_DISABLED@	$(silent_FC)$(FC) -o $@ -c @FC_MOD_OUT@$(moddir) $(makefile_FCFLAGS) $(FCFLAGS) @FCFLAGS_f90@ $<
+
+# Fortran module generation rule:
+@SEPARATE_MODS_ENABLED@%.modstamp: %.f90 | $(dir_files) $(bundled_subdirs) sanitize-mod-proxies
+@SEPARATE_MODS_ENABLED@	$(silent_MOD)$(FC) -c @FC_MOD_OUT@$(moddir) $(makefile_FCFLAGS) $(FCFLAGS) @FC_MOD_ONLY@ @FCFLAGS_f90@ $< && touch $@
 
 # Fortran module file tracking rule:
 $(moddir)/%.@FC_MOD_FILE_EXT@.proxy:
@@ -197,8 +206,11 @@ sanitize-mod-proxies:
 	$(silent_MKDIR)@MKDIR_P@ $(@D) && touch $@
 
 # Fortran dependency generation rule:
+@SEPARATE_MODS_ENABLED@fc_mod_stamp_name= $(@:.f90.d=.modstamp)
+@SEPARATE_MODS_DISABLED@fc_mod_stamp_name= $(@:.f90.d=.o)
+
 %.f90.d: %.f90 mkhelper.mk | $(dir_files)
-	$(silent_DEPGEN)$(DEPGEN) $(DEPGEN_args) -o $@ --obj-name $(@:.f90.d=.@OBJEXT@) -i $< -- $(DEPGEN_FCFLAGS) $(makefile_FCFLAGS) $(FCFLAGS)
+	$(silent_DEPGEN)$(DEPGEN) $(DEPGEN_args) -o $@ --obj-name $(@:.f90.d=.o) --fc-mod-stamp-name $(fc_mod_stamp_name) -i $< -- $(DEPGEN_FCFLAGS) @FC_MOD_OUT@$(moddir) $(makefile_FCFLAGS) $(FCFLAGS)
 
 # Dependency generation rule for undetectable Fortran dependencies:
 extra_f90.d: mkhelper.mk

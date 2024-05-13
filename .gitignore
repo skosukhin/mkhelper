@@ -21,6 +21,7 @@ Makefile
 
 # Build stage files
 *.a
+*.modstamp
 *.o
 /main
 /mod
