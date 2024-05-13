@@ -246,6 +246,17 @@ def parse_args():
         "arguments of this argument group are ignored",
     )
     fc_arg_group.add_argument(
+        "--fc-mod-stamp-name",
+        metavar="FC_MOD_STAMP_NAME",
+        nargs="+",
+        help="name of the Fortran module stamp file (a.k.a witness or anchor), "
+        "the prerequisite of the Fortran module and submodule files that are "
+        "generated as a result of, and an extra target of the Fortran module "
+        "and submodule files that are required for the compilation of SRC_NAME "
+        "as it will appear in the OUTPUT; normally (and by default) equals to "
+        "the OBJ_NAME",
+    )
+    fc_arg_group.add_argument(
         "--fc-mod-ext",
         default="mod",
         help="filename extension (without leading dot) of compiler-generated "
@@ -442,6 +453,14 @@ def parse_args():
         args.pp_macros = predefined_macros
 
     if args.fc_enable:
+        if not args.fc_mod_stamp_name:
+            args.fc_mod_stamp_name = args.obj_name
+        elif len(args.fc_mod_stamp_name) != len(args.input):
+            parser.error(
+                "number of FC_MOD_STAMP_NAME values is not equal to the number "
+                "of INPUT values"
+            )
+
         args.fc_mod_upper = args.fc_mod_upper == "yes"
         args.fc_root_smod = args.fc_root_smod == "yes"
         args.fc_mod_dir = args.fc_mod_dir[-1] if args.fc_mod_dir else None
@@ -457,6 +476,8 @@ def parse_args():
             args.fc_external_mods = [
                 m for sublist in args.fc_external_mods for m in sublist
             ]
+    else:
+        args.fc_mod_stamp_name = ()
 
     return args
 
@@ -557,8 +578,13 @@ def main():
                 format_debug_line(line, msg)
             )
 
-    for inp, out, src_name, obj_name, dep_name in zip_longest23(
-        args.input, args.output, args.src_name, args.obj_name, args.dep_name
+    for inp, out, src_name, obj_name, dep_name, mod_stamp_name in zip_longest23(
+        args.input,
+        args.output,
+        args.src_name,
+        args.obj_name,
+        args.dep_name,
+        args.fc_mod_stamp_name,
     ):
         in_stream, in_stream_close = (
             (sys.stdin, False) if inp is None else (open23(inp), True)
@@ -579,8 +605,12 @@ def main():
 
         out_lines = gen_lc_deps(src_name, lc_files)
 
+        include_targets = [obj_name, dep_name]
+        if obj_name != mod_stamp_name:
+            include_targets.append(mod_stamp_name)
+
         out_lines.extend(
-            gen_include_deps(src_name, obj_name, dep_name, included_files)
+            gen_include_deps(include_targets, src_name, included_files)
         )
 
         if (
@@ -592,6 +622,7 @@ def main():
             out_lines.extend(
                 gen_module_deps(
                     obj_name,
+                    mod_stamp_name,
                     provided_modules,
                     required_modules,
                     provided_submodules,
@@ -650,9 +681,9 @@ def gen_lc_deps(src_name, lc_files):
     return result
 
 
-def gen_include_deps(src_name, obj_name, dep_name, included_files):
+def gen_include_deps(include_targets, src_name, included_files):
     result = []
-    targets = " ".join(filter(None, (obj_name, dep_name)))
+    targets = " ".join(filter(None, include_targets))
     if targets:
         prereqs = " ".join(filter(None, [src_name] + list(included_files)))
         if prereqs:
@@ -662,6 +693,7 @@ def gen_include_deps(src_name, obj_name, dep_name, included_files):
 
 def gen_module_deps(
     obj_name,
+    mod_stamp_name,
     provided_modules,
     required_modules,
     provided_submodules,
@@ -673,20 +705,24 @@ def gen_module_deps(
     smod_ext,
 ):
     result = []
-    if obj_name:
-        obj_targets = list(
+
+    mod_stamp_name = mod_stamp_name or obj_name
+    if mod_stamp_name:
+        targets = list(
             modules_to_filenames(provided_modules, mod_dir, mod_upper, mod_ext)
         )
-        obj_targets.extend(
+        targets.extend(
             submodules_to_filenames(
                 provided_submodules, mod_dir, mod_upper, smod_infix, smod_ext
             )
         )
 
-        if obj_targets:
-            result.append("{0}: {1}\n".format(" ".join(obj_targets), obj_name))
+        if targets:
+            result.append(
+                "{0}: {1}\n".format(" ".join(targets), mod_stamp_name)
+            )
 
-        obj_prereqs = list(
+        prereqs = list(
             modules_to_filenames(
                 # Do not depend on the provided modules:
                 [m for m in required_modules if m not in provided_modules],
@@ -696,7 +732,7 @@ def gen_module_deps(
             )
         )
 
-        obj_prereqs.extend(
+        prereqs.extend(
             submodules_to_filenames(
                 # Do not depend on the provided submodules:
                 [
@@ -711,25 +747,36 @@ def gen_module_deps(
             )
         )
 
-        if obj_prereqs:
-            result.append("{0}: {1}\n".format(obj_name, " ".join(obj_prereqs)))
-
-        result.extend(
-            [
-                "{0}: #-hint {1}\n".format(m, obj_name)
-                for m in modules_to_filenames(
-                    set(
-                        module
-                        for module, _ in provided_submodules
-                        # Do not depend on the provided modules:
-                        if module not in provided_modules
-                    ),
-                    mod_dir,
-                    mod_upper,
-                    mod_ext,
+        if prereqs:
+            result.append(
+                "{0}: {1}\n".format(
+                    " ".join(filter(None, (obj_name, mod_stamp_name))),
+                    " ".join(prereqs),
                 )
-            ]
+            )
+
+    if obj_name:
+        targets = list(
+            modules_to_filenames(
+                set(
+                    module
+                    for module, _ in provided_submodules
+                    # Do not depend on the provided modules:
+                    if module not in provided_modules
+                ),
+                mod_dir,
+                mod_upper,
+                mod_ext,
+            )
         )
+
+        if mod_stamp_name != obj_name:
+            targets.append(mod_stamp_name)
+
+        if targets:
+            result.append(
+                "{0}: #-hint {1}\n".format(" ".join(targets), obj_name)
+            )
 
     return result
 
