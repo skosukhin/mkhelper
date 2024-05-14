@@ -34,8 +34,8 @@ from depgen import (
     IncludeFinder,
     StreamStack,
     file_in_dir,
-    open23,
     find_unquoted_string,
+    open23,
 )
 
 
