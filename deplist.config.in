@@ -2,8 +2,18 @@
 # Check whether the dependency graph is acyclic:
 --check-cycles
 # Check that each Fortran module is defined only once:
---check-unique-prereq *.@FC_MOD_FILE_EXT@.proxy *.@OBJEXT@
+--check-unique-prereq *.@FC_MOD_FILE_EXT@.proxy *.@OBJEXT@ *.modstamp
+# Check that each Fortran submodule is defined only once:
+--check-unique-prereq *.@FC_SMOD_FILE_EXT@.sproxy *.@OBJEXT@ *.modstamp
 # Check that every object file can be produced from a source file:
 --check-exists-prereq *.@OBJEXT@ *.f90
+# Check that every Fortran module stamp file can be produced from a source file:
+--check-exists-prereq *.modstamp *.f90
 # Check that all object files in the library have unique basenames:
 --check-unique-basename src/library/*.@OBJEXT@
+
+# TODO: add the following checks once libmkhelper.a is handled properly:
+# Check that each Fortran module is defined:
+# --check-exists-prereq *.@FC_MOD_FILE_EXT@.proxy *.@OBJEXT@ *.modstamp
+# Check that each Fortran submodule is defined:
+# --check-exists-prereq *.@FC_SMOD_FILE_EXT@.sproxy *.@OBJEXT@ *.modstamp
