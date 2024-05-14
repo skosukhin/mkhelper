@@ -163,10 +163,10 @@ def parse_args():
         "the standard error stream",
     )
     parser.add_argument(
-        # Unfortunately, we cannot set nargs to 'two or more', therefore we
-        # set nargs to 'one or more':
         "--check-exists-prereq",
         action="append",
+        # Unfortunately, we cannot set nargs to 'two or more', therefore we
+        # set nargs to 'one or more':
         nargs="+",
         metavar="PATTERN",
         help="list of two or more shell-like wildcards; the option enables "
@@ -497,10 +497,8 @@ def main():
                     vertex_prereqs = dep_graph.get(vertex, set())
                     prereq_patterns = pattern_list[1:]
                     if not any(
-                        [
-                            fnmatch.filter(vertex_prereqs, prereq_pattern)
-                            for prereq_pattern in prereq_patterns
-                        ]
+                        fnmatch.filter(vertex_prereqs, prereq_pattern)
+                        for prereq_pattern in prereq_patterns
                     ):
                         warn(
                             "target '{0}' does not have an immediate "
