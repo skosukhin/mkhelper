@@ -143,13 +143,16 @@ def parse_args():
     parser.add_argument(
         "--check-unique-prereq",
         action="append",
-        nargs=2,
+        # Unfortunately, we cannot set nargs to 'two or more', therefore we
+        # set nargs to 'one or more':
+        nargs="+",
         metavar="PATTERN",
-        help="pair of shell-like wildcards; the option enables additional "
-        "consistency checks of the dependency graph: each target that matches "
-        "the first pattern of the pair is checked whether it has no more than "
-        "one prerequisite matching the second pattern; if the check fails, a "
-        "warning message is emitted to the standard error stream",
+        help="list of two or more shell-like wildcards; the option enables "
+        "additional consistency checks of the dependency graph: each target "
+        "that matches the first pattern of the list is checked whether it has "
+        "no more than one prerequisite matching any of the rest of the "
+        "patterns; if the check fails, a warning message is emitted to the "
+        "standard error stream",
     )
     parser.add_argument(
         "--check-unique-basename",
@@ -207,6 +210,14 @@ def parse_args():
 
     if args.max_depth is not None and args.max_depth < 0:
         args.max_depth = None
+
+    if args.check_unique_prereq:
+        for pattern_list in args.check_unique_prereq:
+            if len(pattern_list) < 2:
+                parser.error(
+                    "argument --check-unique-prereq: expected 2 or "
+                    "more arguments"
+                )
 
     if args.check_exists_prereq:
         for pattern_list in args.check_exists_prereq:
@@ -437,21 +448,25 @@ def main():
             for pattern_list in args.check_unique_prereq:
                 if fnmatch.fnmatch(vertex, pattern_list[0]):
                     vertex_prereqs = dep_graph[vertex]
-                    for prereq_pattern in pattern_list[1:]:
-                        matching_prereqs = fnmatch.filter(
+                    prereq_patterns = pattern_list[1:]
+                    matching_prereqs = [
+                        prereq
+                        for prereq_pattern in prereq_patterns
+                        for prereq in fnmatch.filter(
                             vertex_prereqs, prereq_pattern
                         )
-                        if len(matching_prereqs) > 1:
-                            warn(
-                                "target '{0}' has more than one immediate "
-                                "prerequisite matching pattern "
-                                "'{1}':\n\t{2}".format(
-                                    vertex,
-                                    prereq_pattern,
-                                    "\n\t".join(matching_prereqs),
-                                ),
-                                args.check_colour,
-                            )
+                    ]
+                    if len(matching_prereqs) > 1:
+                        warn(
+                            "target '{0}' has more than one immediate "
+                            "prerequisite matching any of the patterns: "
+                            "'{1}':\n\t{2}".format(
+                                vertex,
+                                "', '".join(prereq_patterns),
+                                "\n\t".join(matching_prereqs),
+                            ),
+                            args.check_colour,
+                        )
 
         start_visit_cb_list.append(check_unique_prereq_start_visit_cb)
 
