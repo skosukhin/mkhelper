@@ -116,6 +116,13 @@ def parse_args():
         "prerequisites found in the makefiles are sent to the output",
     )
     parser.add_argument(
+        "--max-depth",
+        metavar="MAX_DEPTH",
+        type=int,
+        help="print dependencies (dependents) that are at most MAX_DEPTH "
+        "levels from the requested targets (prerequisites)",
+    )
+    parser.add_argument(
         "--ignore-order-only",
         "--no-oo",
         action="store_true",
@@ -198,6 +205,9 @@ def parse_args():
             "arguments -t/--target and -p/--prereq are mutually " "exclusive"
         )
 
+    if args.max_depth is not None and args.max_depth < 0:
+        args.max_depth = None
+
     if args.check_exists_prereq:
         for pattern_list in args.check_exists_prereq:
             if len(pattern_list) < 2:
@@ -264,13 +274,18 @@ def read_makefiles(makefiles, ignore_order_only, ignore_hints):
 def visit_dfs(
     dep_graph,
     vertex,
+    current_depth=0,
+    max_depth=None,
     visited=None,
     start_visit_cb_list=None,
     finish_visit_cb_list=None,
     skip_visit_cb_list=None,
 ):
+    if max_depth is not None and current_depth > max_depth:
+        return
+
     if visited is None:
-        visited = set()
+        visited = dict()
 
     if vertex in visited:
         if skip_visit_cb_list:
@@ -282,13 +297,15 @@ def visit_dfs(
         for start_visit_cb in start_visit_cb_list:
             start_visit_cb(vertex)
 
-    visited.add(vertex)
+    visited[vertex] = current_depth
 
     if vertex in dep_graph:
         for child in dep_graph[vertex]:
             visit_dfs(
                 dep_graph,
                 child,
+                current_depth + 1,
+                max_depth,
                 visited,
                 start_visit_cb_list,
                 finish_visit_cb_list,
@@ -546,12 +563,14 @@ def main():
     finish_visit_cb_list.append(toposort_finish_visit_cb)
     postprocess_cb_list.append(toposort_postprocess_cb)
 
-    visited_vertices = set()
+    visited_vertices = dict()
 
-    def traverse():
+    def traverse(start_depth=-1):
         visit_dfs(
             traversed_graph,
             _meta_root,
+            current_depth=start_depth,
+            max_depth=args.max_depth,
             visited=visited_vertices,
             start_visit_cb_list=start_visit_cb_list,
             finish_visit_cb_list=finish_visit_cb_list,
@@ -563,24 +582,21 @@ def main():
 
     traverse()
 
-    if extra_edges:
-        # Reset the _meta_root:
-        visited_vertices.remove(_meta_root)
-        traversed_graph[_meta_root] *= 0
+    # Add the extra prerequisites to the graph:
+    for target, prereqs in extra_edges.items():
+        traversed_graph[target] = traversed_graph.default_factory(
+            dedupe(itertools.chain(traversed_graph[target], prereqs))
+        )
 
-        for target, prereqs in extra_edges.items():
-            # Make the _meta_root point to the extra prerequisites of the
-            # visited vertices:
-            if target in visited_vertices:
-                traversed_graph[_meta_root].extend(prereqs)
+    for target, prereqs in extra_edges.items():
+        target_depth = visited_vertices.get(target, None)
+        if target_depth is None:
+            continue
 
-            # Add the extra prerequisites to the graph:
-            traversed_graph[target] = traversed_graph.default_factory(
-                dedupe(itertools.chain(traversed_graph[target], prereqs))
-            )
-
-        # Traverse the graph once more with the extra edges:
-        traverse()
+        # Reset the _meta_root and traverse the graph:
+        visited_vertices.pop(_meta_root)
+        traversed_graph[_meta_root] = prereqs
+        traverse(target_depth)
 
     if args.reverse ^ (args.prereq is not None):
         toposort.reverse()
