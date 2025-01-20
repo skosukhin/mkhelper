@@ -1,0 +1,11 @@
+[tool.isort]
+profile = "black"
+skip_gitignore = true
+line_length = 80
+
+[tool.black]
+line-length = 80
+
+[tool.flake8]
+max-line-length = 80
+extend-ignore = ["E203"]
