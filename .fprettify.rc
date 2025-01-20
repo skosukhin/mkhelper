@@ -1,0 +1,6 @@
+indent=2
+whitespace=2
+# The following case argument is ignored by all existing releases of fprettify
+# and must be provided on the command line
+# (see https://github.com/fortran-lang/fprettify/commit/cb254022c2034ad3b8f744f4dad1bf5b7438815d):
+case=[1, 1, 1, 1]
