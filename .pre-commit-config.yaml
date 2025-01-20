@@ -31,3 +31,13 @@ repos:
         name: cmake-lint (templates)
         types: [file]
         files: '\.cmake\.in$'
+  - repo: https://github.com/fortran-lang/fprettify
+    # We have to use the untagged version because there are no releases that
+    # support the case argument in the .fprettify.rc configuration file
+    # (see https://github.com/fortran-lang/fprettify/commit/cb254022c2034ad3b8f744f4dad1bf5b7438815d):
+    rev: cb254022c2034ad3b8f744f4dad1bf5b7438815d
+    hooks:
+      - id: fprettify
+        name: fprettify
+        files: '\.([fF]\d*|inc)$'
+        exclude: '^(test_inputs/.*|src/modules/mo_mod_a.f90$)'
