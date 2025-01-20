@@ -8,19 +8,6 @@ project(
 
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE
-      "Debug"
-      CACHE
-        STRING
-        "Choose the type of build, options are: Debug Release RelWithDebInfo"
-        FORCE
-  )
-  message(
-    STATUS "Setting build type to '${CMAKE_BUILD_TYPE}' as none was specified"
-  )
-endif(NOT CMAKE_BUILD_TYPE)
-
 if(${CMAKE_Fortran_COMPILER_ID} STREQUAL "NAG")
   enable_language(C)
 endif()
