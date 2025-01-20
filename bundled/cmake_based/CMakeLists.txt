@@ -1,13 +1,24 @@
 cmake_minimum_required(VERSION 3.18)
 
-project(CMakeBasedHello VERSION 1.0 LANGUAGES Fortran)
+project(
+  CMakeBasedHello
+  VERSION 1.0
+  LANGUAGES Fortran
+)
 
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 
 if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE "Debug" CACHE STRING
-      "Choose the type of build, options are: Debug Release RelWithDebInfo" FORCE)
-  message(STATUS "Setting build type to '${CMAKE_BUILD_TYPE}' as none was specified")
+  set(CMAKE_BUILD_TYPE
+      "Debug"
+      CACHE
+        STRING
+        "Choose the type of build, options are: Debug Release RelWithDebInfo"
+        FORCE
+  )
+  message(
+    STATUS "Setting build type to '${CMAKE_BUILD_TYPE}' as none was specified"
+  )
 endif(NOT CMAKE_BUILD_TYPE)
 
 if(${CMAKE_Fortran_COMPILER_ID} STREQUAL "NAG")
@@ -15,35 +26,26 @@ if(${CMAKE_Fortran_COMPILER_ID} STREQUAL "NAG")
 endif()
 include(GNUInstallDirs)
 
-add_library(${PROJECT_NAME}
-  mo_cmake_based.f90
-)
+add_library(${PROJECT_NAME} mo_cmake_based.f90)
 
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 set(Fortran_MODULE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/mod")
 
-set_target_properties(${PROJECT_NAME}
-  PROPERTIES
-    Fortran_MODULE_DIRECTORY "${Fortran_MODULE_DIRECTORY}"
+set_target_properties(
+  ${PROJECT_NAME}
+  PROPERTIES Fortran_MODULE_DIRECTORY "${Fortran_MODULE_DIRECTORY}"
 )
 
-target_include_directories(${PROJECT_NAME}
-  PUBLIC
-    $<BUILD_INTERFACE:${Fortran_MODULE_DIRECTORY}>
-    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+target_include_directories(
+  ${PROJECT_NAME}
+  PUBLIC $<BUILD_INTERFACE:${Fortran_MODULE_DIRECTORY}>
+         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
-install(
-  TARGETS ${PROJECT_NAME}
-  EXPORT "${PROJECT_NAME}Targets"
-)
+install(TARGETS ${PROJECT_NAME} EXPORT "${PROJECT_NAME}Targets")
 
-install(
-  DIRECTORY
-    "${Fortran_MODULE_DIRECTORY}/"
-  TYPE INCLUDE
-)
+install(DIRECTORY "${Fortran_MODULE_DIRECTORY}/" TYPE INCLUDE)
 
 export(
   EXPORT "${PROJECT_NAME}Targets"
@@ -55,8 +57,7 @@ configure_package_config_file(
   "${PROJECT_SOURCE_DIR}/cmake/Config.cmake.in"
   "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
   INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake"
-  NO_SET_AND_CHECK_MACRO
-  NO_CHECK_REQUIRED_COMPONENTS_MACRO
+  NO_SET_AND_CHECK_MACRO NO_CHECK_REQUIRED_COMPONENTS_MACRO
 )
 
 write_basic_package_version_file(
@@ -71,9 +72,7 @@ install(
 )
 
 install(
-  FILES
-    "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
-    "${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
-  DESTINATION
-    "${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}/cmake"
+  FILES "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+        "${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
+  DESTINATION "${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}/cmake"
 )
