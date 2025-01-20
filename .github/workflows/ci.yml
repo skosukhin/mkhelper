@@ -25,3 +25,14 @@ jobs:
       run: make -j4
     - name: 'Run #2'
       run: ./main
+  Style:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.x
+      - name: Run pre-commit
+        uses: pre-commit/action@v3.0.1
