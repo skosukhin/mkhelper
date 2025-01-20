@@ -6,6 +6,7 @@ repos:
         exclude: '^(libtool_patches|test_inputs)/.*|(^|/)(aclocal.m4|configure|Makefile.in)$'
       - id: trailing-whitespace
         exclude: '^(libtool_patches|test_inputs)/.*|(^|/)(aclocal.m4|configure|Makefile.in)$'
+      - id: check-yaml
   - repo: https://github.com/pycqa/isort
     rev: 5.13.2
     hooks:
