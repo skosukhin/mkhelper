@@ -1,4 +1,4 @@
-submodule (mo_test_submodule) smo_test_submodule
+submodule(mo_test_submodule) smo_test_submodule
   implicit none
 
   integer, parameter :: res = 0

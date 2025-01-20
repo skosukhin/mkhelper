@@ -15,8 +15,8 @@ module mo_test_submodule
     end function print_hello_function2
   end interface
 
-  contains
-    subroutine print_hello()
-      print *, "Hello from submodule test (ancestor module)."
-    end subroutine print_hello
+contains
+  subroutine print_hello()
+    print *, "Hello from submodule test (ancestor module)."
+  end subroutine print_hello
 end module mo_test_submodule

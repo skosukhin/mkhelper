@@ -1,10 +1,10 @@
 module mo_omp
   implicit none
   public
-  contains
+contains
   subroutine print_omp()
 #ifndef _OPENMP
-  choke
+    choke
 #else
     print *, "OpenMP 3.1 or older is enabled."
 #endif

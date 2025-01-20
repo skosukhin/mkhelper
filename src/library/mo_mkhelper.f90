@@ -7,9 +7,9 @@ module mo_mkhelper
   end interface
 end module mo_mkhelper
 
-submodule (mo_mkhelper) smo_mkhelper
-  contains
-    module subroutine print_hello()
-      print *, "Hello from mkhelper library."
-    end subroutine print_hello
+submodule(mo_mkhelper) smo_mkhelper
+contains
+  module subroutine print_hello()
+    print *, "Hello from mkhelper library."
+  end subroutine print_hello
 end submodule smo_mkhelper

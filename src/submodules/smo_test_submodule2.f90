@@ -1,4 +1,4 @@
-submodule (mo_test_submodule) smo_test_submodule2
+submodule(mo_test_submodule) smo_test_submodule2
   use mo_test_submodule_indirect, only: &
   & print_hello_indirect => print_hello
   implicit none
