@@ -1683,10 +1683,10 @@ if ${acx_subdir_pre_adjusted_cmake_args+:} false; then :
 else
   acx_subdir_pre_adjusted_cmake_args="'-Wno-dev' '--no-warn-unused-cli' '-GUnix Makefiles'"
             eval "set dummy $ac_configure_args"; shift
-                                    acx_subdir_cmake_vars_to_transform=
+                                                acx_subdir_cmake_vars_to_transform=
             for acx_tmp; do
               case $acx_tmp in #(
-  AR=*|RANLIB=*|CFLAGS=*|CXXFLAGS=*|CPPFLAGS=*|FCFLAGS=*|LDFLAGS=*|LIBS=*|CC=*|CXX=*|FC=*) :
+  CFLAGS=*|CXXFLAGS=*|CPPFLAGS=*|FCFLAGS=*|LDFLAGS=*|LIBS=*|CC=*|CXX=*|FC=*|AR=*|RANLIB=*) :
     acx_arg_name=`expr "x$acx_tmp" : 'x\([^=]*\)='`
                  as_fn_append acx_subdir_cmake_vars_to_transform " $acx_arg_name"
                  acx_arg_cmd_value=`expr "x$acx_tmp" : '[^=]*=\(.*\)'`
@@ -1722,12 +1722,12 @@ fi ;; #(
      ;;
 esac
                done
-                           for acx_arg_name in AR RANLIB; do
-              case " $acx_subdir_cmake_vars_to_transform " in #(
+                                          for acx_arg_name in AR RANLIB; do
+                 case " $acx_subdir_cmake_vars_to_transform " in #(
   *" $acx_arg_name "*) :
     acx_prog_search_abspath=unknown
-                 eval acx_prog_exec=\$acx_arg_${acx_arg_name}
-                 case $acx_prog_exec in #(
+                    eval acx_prog_exec=\$acx_arg_${acx_arg_name}
+                    case $acx_prog_exec in #(
   *[\\/]*) :
     if as_fn_executable_p $acx_prog_exec; then :
   acx_prog_search_abspath=$acx_prog_exec
@@ -1740,24 +1740,24 @@ do
   test -z "$as_dir" && as_dir=.
     if as_fn_executable_p "$as_dir/$acx_prog_exec"; then :
   acx_prog_search_abspath="$as_dir/$acx_prog_exec"
-                          break
+                             break
 fi
   done
 IFS=$as_save_IFS
  ;;
 esac
-                 if test "x$acx_prog_search_abspath" = xunknown; then :
+                    if test "x$acx_prog_search_abspath" = xunknown; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: unable to convert argument $acx_arg_name to its CMake equivalent(s): absolute path to \"$acx_prog_exec\" is not found" >&5
 $as_echo "$as_me: WARNING: unable to convert argument $acx_arg_name to its CMake equivalent(s): absolute path to \"$acx_prog_exec\" is not found" >&2;}
 else
   eval acx_arg_${acx_arg_name}_ABSPATH=\$acx_prog_search_abspath
-                    as_fn_append acx_subdir_cmake_vars_to_transform " ${acx_arg_name}_ABSPATH"
+                       as_fn_append acx_subdir_cmake_vars_to_transform " ${acx_arg_name}_ABSPATH"
 fi ;; #(
   *) :
      ;;
 esac
-            done
-                        case " $acx_subdir_cmake_vars_to_transform " in #(
+               done
+                           case " $acx_subdir_cmake_vars_to_transform " in #(
   *' CPPFLAGS '*) :
     for acx_arg_name in CFLAGS CXXFLAGS; do
                  case " $acx_subdir_cmake_vars_to_transform " in #(
@@ -1780,10 +1780,6 @@ fi
             for acx_arg_name in $acx_subdir_cmake_vars_to_transform; do
               acx_subdir_cmake_vars_to_set=
               case $acx_arg_name in #(
-  AR) :
-    acx_subdir_cmake_vars_to_set='' ;; #(
-  RANLIB) :
-    acx_subdir_cmake_vars_to_set='' ;; #(
   CFLAGS) :
     acx_subdir_cmake_vars_to_set='CMAKE_C_FLAGS' ;; #(
   CXXFLAGS) :
@@ -1801,6 +1797,10 @@ fi
   CXX) :
     acx_subdir_cmake_vars_to_set='' ;; #(
   FC) :
+    acx_subdir_cmake_vars_to_set='' ;; #(
+  AR) :
+    acx_subdir_cmake_vars_to_set='' ;; #(
+  RANLIB) :
     acx_subdir_cmake_vars_to_set='' ;; #(
   CC_EXEC) :
     acx_subdir_cmake_vars_to_set='CMAKE_C_COMPILER' ;; #(
@@ -5307,7 +5307,7 @@ case " $extra_src_subdirs " in #(
 esac
 
 CMAKE=${CMAKE-cmake}
-               acx_subdir_run_cmd_bundled_cmake_based="\"\${CMAKE}\""
+                  acx_subdir_run_cmd_bundled_cmake_based="\"\${CMAKE}\""
    acx_subdir_run_dir_bundled_cmake_based="bundled/cmake_based/build"
    acx_subdir_build_type_bundled_cmake_based='cmake'
          acx_subdir_pre_adjust_cmake_args
