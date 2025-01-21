@@ -197,9 +197,19 @@ AC_DEFUN([ACX_SUBDIR_INIT_CMAKE],
      ["m4_default([$3], [$1/build])"])
    AS_VAR_SET([_ACX_SUBDIR_BUILD_TYPE_VAR([$1])], ['cmake'])
    m4_cond([acx_subdir_opt_adjust_args], [adjust-args],
-     [AC_REQUIRE_SHELL_FN([acx_subdir_pre_adjust_cmake_args], [],
-        [AS_VAR_SET_IF([acx_subdir_pre_adjusted_cmake_args], [],
-           [AS_VAR_SET([acx_subdir_pre_adjusted_cmake_args],
+     [m4_pushdef([acx_subdir_pre_adjust_suffix])dnl
+      m4_if(acx_subdir_opt_adjust_compilers, [no-adjust-compilers],
+        [m4_append([acx_subdir_pre_adjust_suffix], [_nocomps])])dnl
+      m4_if(acx_subdir_opt_adjust_utilities, [no-adjust-utilities],
+        [m4_append([acx_subdir_pre_adjust_suffix], [_noutils])])dnl
+      m4_pushdef([acx_subdir_pre_adjust_cmake_fn],
+        acx_subdir_pre_adjust_cmake_args[]acx_subdir_pre_adjust_suffix)dnl
+      m4_pushdef([acx_subdir_pre_adjust_cmake_cv],
+        acx_subdir_pre_adjusted_cmake_args[]acx_subdir_pre_adjust_suffix)dnl
+      m4_popdef([acx_subdir_pre_adjust_suffix])dnl
+      AC_REQUIRE_SHELL_FN(acx_subdir_pre_adjust_cmake_fn, [],
+        [AS_VAR_SET_IF([acx_subdir_pre_adjust_cmake_cv], [],
+           [AS_VAR_SET([acx_subdir_pre_adjust_cmake_cv],
               ["'-Wno-dev' '--no-warn-unused-cli' '-GUnix Makefiles'"])
             eval "set dummy $ac_configure_args"; shift
 dnl Transform standard precious (influential environment) variables:
@@ -385,15 +395,15 @@ dnl Append the transformed arguments:
                    [acx_arg_${acx_arg_name}])
                  ASX_ESCAPE_SINGLE_QUOTE([acx_subdir_quoted_value])
                  for acx_subdir_cmake_var in $acx_subdir_cmake_vars_to_set; do
-                   AS_VAR_APPEND([acx_subdir_pre_adjusted_cmake_args],
+                   AS_VAR_APPEND([acx_subdir_pre_adjust_cmake_cv],
                      [" '-D$acx_subdir_cmake_var=$acx_subdir_quoted_value'"])
                  done])
               AS_UNSET([acx_arg_${acx_arg_name}])
             done
             m4_popdef([acx_subdir_known_args])])])dnl
-      acx_subdir_pre_adjust_cmake_args
+      acx_subdir_pre_adjust_cmake_fn
       AS_VAR_SET([_ACX_SUBDIR_RUN_ARG_VAR([$1])],
-        [$acx_subdir_pre_adjusted_cmake_args])
+        [$acx_subdir_pre_adjust_cmake_cv])
       m4_ifval([$3],
         [ASX_SRCDIRS(["$3"])
          acx_tmp="$ac_top_srcdir/$1"],
@@ -402,7 +412,9 @@ dnl Append the transformed arguments:
            [.], [acx_tmp='..'],
            [acx_tmp="$ac_top_srcdir/$1"])])
       ASX_ESCAPE_SINGLE_QUOTE([acx_tmp])
-      AS_VAR_APPEND([_ACX_SUBDIR_RUN_ARG_VAR([$1])], [" '$acx_tmp'"])],
+      AS_VAR_APPEND([_ACX_SUBDIR_RUN_ARG_VAR([$1])], [" '$acx_tmp'"])dnl
+      m4_popdef([acx_subdir_pre_adjust_cmake_fn])dnl
+      m4_popdef([acx_subdir_pre_adjust_cmake_cv])],
      [AS_VAR_SET([_ACX_SUBDIR_RUN_ARG_VAR([$1])])])
    m4_divert_once([DEFAULTS], [extra_src_subdirs=])dnl
    AS_VAR_APPEND([extra_src_subdirs], [" $1"])

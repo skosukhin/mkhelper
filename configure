@@ -5310,7 +5310,7 @@ CMAKE=${CMAKE-cmake}
                   acx_subdir_run_cmd_bundled_cmake_based="\"\${CMAKE}\""
    acx_subdir_run_dir_bundled_cmake_based="bundled/cmake_based/build"
    acx_subdir_build_type_bundled_cmake_based='cmake'
-         acx_subdir_pre_adjust_cmake_args
+                                             acx_subdir_pre_adjust_cmake_args
       acx_subdir_run_args_bundled_cmake_based=$acx_subdir_pre_adjusted_cmake_args
          acx_subdir_srcdirs_fn "bundled/cmake_based/build"
          case $ac_srcdir in #(
