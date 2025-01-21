@@ -158,13 +158,12 @@ AC_DEFUN([ACX_SUBDIR_INIT_CONFIG],
 #                              CMAKE_<LANG>_FLAGS CMake arguments. The argument
 #                              is ignored if the argument adjustment is
 #                              disabled (i.e. option no-adjust-args is set).
-#     [no-]run                  whether CMAKE-EXEC must be run for SUBDIR by
-#                               the top-level configure script.
+#     [no-]run                 whether CMAKE-EXEC must be run for SUBDIR by
+#                              the top-level configure script.
 #
 # The configuration of the SUBDIR project is done by calling CMAKE-EXEC
-# (defaults to '${CMAKE-cmake}') from the BUILD-SUBDIR (path relative to the
-# top build directory of the top-level project, defaults to SUBDIR/build)
-# directory.
+# (defaults to 'cmake') from the BUILD-SUBDIR (path relative to the top build
+# directory of the top-level project, defaults to SUBDIR/build) directory.
 #
 # Sets variable extra_src_subdirs to the space-separated lists of all
 # initialized SUBDIRs and BUILD-SUBDIRs (accounting for possible shell
