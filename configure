@@ -5086,7 +5086,7 @@ BUNDLED_LIBFILES=''
 polymorphic_subdir='bundled/picky'
 polymorphic_config=''
                         acx_subdir_srcdirs_fn "$polymorphic_subdir"
-   eval "acx_subdir_run_cmd_`$as_echo "$polymorphic_subdir" | $as_tr_sh`=\"'\$ac_srcdir/'\\\"\\\${polymorphic_config}\\\"\""
+   eval "acx_subdir_run_cmd_`$as_echo "$polymorphic_subdir" | $as_tr_sh`=\"'\$ac_top_srcdir/\$polymorphic_subdir/'\\\"\\\${polymorphic_config}\\\"\""
    eval "acx_subdir_build_type_`$as_echo "$polymorphic_subdir" | $as_tr_sh`='config'"
          acx_subdir_pre_adjust_config_args
       eval "acx_subdir_run_args_`$as_echo "$polymorphic_subdir" | $as_tr_sh`=\$acx_subdir_pre_adjusted_config_args"
@@ -5101,7 +5101,7 @@ else
 esac
          acx_tmp="$acx_tmp.`echo "$polymorphic_subdir" | tr / .`"
 fi
-      set dummy "--cache-file=$acx_tmp" "--srcdir=$ac_srcdir"; shift
+      set dummy "--cache-file=$acx_tmp" "--srcdir=$ac_top_srcdir/$polymorphic_subdir"; shift
    for acx_tmp; do
      case $acx_tmp in #(
   *\'*) :
@@ -5383,7 +5383,7 @@ CMAKE=${CMAKE-cmake}
                                              acx_subdir_pre_adjust_cmake_args
       acx_subdir_run_args_bundled_cmake_based_build=$acx_subdir_pre_adjusted_cmake_args
          acx_subdir_srcdirs_fn "bundled/cmake_based/build"
-         acx_tmp="$ac_top_srcdir/bundled/cmake_based"
+      acx_tmp="$ac_top_srcdir/bundled/cmake_based"
       case $acx_tmp in #(
   *\'*) :
     acx_tmp=`$as_echo "$acx_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(

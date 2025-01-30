@@ -83,8 +83,7 @@ AC_DEFUN([ACX_SUBDIR_INIT_CONFIG],
    m4_pushdef([acx_subdir_build_subdir], [m4_default([$3], [$1])])dnl
    ASX_SRCDIRS("acx_subdir_build_subdir")
    AS_VAR_SET([_ACX_SUBDIR_RUN_CMD_VAR([acx_subdir_build_subdir])],
-     ["'m4_ifval([$3], [$ac_top_srcdir/$1], [$ac_srcdir])/]dnl
-[m4_ifval([$4], ['$4], [configure'])"])
+     ["'$ac_top_srcdir/$1/m4_ifval([$4], ['$4], [configure'])"])
    AS_VAR_SET(
      [_ACX_SUBDIR_BUILD_TYPE_VAR([acx_subdir_build_subdir])], ['config'])
    m4_cond([acx_subdir_opt_adjust_args], [adjust-args],
@@ -122,8 +121,7 @@ AC_DEFUN([ACX_SUBDIR_INIT_CONFIG],
                              [`echo "$1" | tr / .`])"])
       _ACX_SUBDIR_APPEND_ARGS(
         [_ACX_SUBDIR_RUN_ARG_VAR([acx_subdir_build_subdir])],
-        ["--cache-file=$acx_tmp"],
-        ["--srcdir=m4_ifval([$3], [$ac_top_srcdir/$1], [$ac_srcdir])"])],
+        ["--cache-file=$acx_tmp"], ["--srcdir=$ac_top_srcdir/$1"])],
      [AS_VAR_SET(
        [_ACX_SUBDIR_RUN_ARG_VAR([acx_subdir_build_subdir])],
        [$ac_configure_args])])
@@ -142,7 +140,7 @@ AC_DEFUN([ACX_SUBDIR_INIT_CONFIG],
 
 # ACX_SUBDIR_INIT_CMAKE(SUBDIR,
 #                       [OPTIONS = adjust-args run],
-#                       [BUILD-SUBDIR = SUBDIR/build],
+#                       [BUILD-SUBDIR = SUBDIR],
 #                       [CMAKE-EXEC = cmake])
 # -----------------------------------------------------------------------------
 # Initializes a CMake-based project residing in the directory SUBDIR (path
@@ -175,7 +173,7 @@ AC_DEFUN([ACX_SUBDIR_INIT_CONFIG],
 #
 # The configuration of the SUBDIR project is done by calling CMAKE-EXEC
 # (defaults to 'cmake') from the BUILD-SUBDIR (path relative to the top build
-# directory of the top-level project, defaults to SUBDIR/build) directory.
+# directory of the top-level project, defaults to SUBDIR) directory.
 #
 # Sets variable extra_build_subdirs to the space-separated lists of all
 # initialized BUILD-SUBDIRs (accounting for possible shell branching).
@@ -197,7 +195,7 @@ AC_DEFUN([ACX_SUBDIR_INIT_CMAKE],
         [^\(no-\)?run$],
         [m4_define([acx_subdir_opt_run], opt)],
         [m4_fatal([unknown option ']opt['])])])dnl
-   m4_pushdef([acx_subdir_build_subdir], [m4_default([$3], [$1/build])])dnl
+   m4_pushdef([acx_subdir_build_subdir], [m4_default([$3], [$1])])dnl
    AS_VAR_SET([_ACX_SUBDIR_RUN_CMD_VAR([acx_subdir_build_subdir])],
      ["m4_default([$4], ['cmake'])"])
    AS_VAR_SET([_ACX_SUBDIR_BUILD_TYPE_VAR([acx_subdir_build_subdir])],
@@ -411,13 +409,8 @@ dnl Append the transformed arguments:
       AS_VAR_SET(
         [_ACX_SUBDIR_RUN_ARG_VAR([acx_subdir_build_subdir])],
         [$acx_subdir_pre_adjust_cmake_cv])
-      m4_ifval([$3],
-        [ASX_SRCDIRS(["$3"])
-         acx_tmp="$ac_top_srcdir/$1"],
-        [ASX_SRCDIRS(["$1/build"])
-         AS_CASE([$ac_srcdir],
-           [.], [acx_tmp='..'],
-           [acx_tmp="$ac_top_srcdir/$1"])])
+      ASX_SRCDIRS("acx_subdir_build_subdir")
+      acx_tmp="$ac_top_srcdir/$1"
       ASX_ESCAPE_SINGLE_QUOTE([acx_tmp])
       AS_VAR_APPEND([_ACX_SUBDIR_RUN_ARG_VAR([acx_subdir_build_subdir])],
         [" '$acx_tmp'"])dnl
