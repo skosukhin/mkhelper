@@ -10,6 +10,7 @@ program main
   &  print_test_submodule_function2 => print_hello_function2
   use mo_threaded_hello, only: print_threaded_hello => print_hello
   use mo_delayed, only: print_delayed_hello => print_hello
+  use mo_delayed_mangled, only: print_delayed_mangled_hello => print_hello
   use mo_cmake_based, only: print_cmake_based_hello => print_hello
 
 #ifdef TEST_INVALID
@@ -97,6 +98,7 @@ program main
   if (retval .ne. 0) stop 2
 
   call print_delayed_hello()
+  call print_delayed_mangled_hello()
 
   call print_cmake_based_hello()
 

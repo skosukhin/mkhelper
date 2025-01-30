@@ -292,43 +292,58 @@ AS_VAR_IF([enable_delayed_config], [yes],
 dnl Configure a libtool-based bundled library that depends on POSIX Threads:
 ACX_SUBDIR_INIT_CONFIG([bundled/threaded_hello],
   [], [bundled/build/threaded_hello])
-ACX_SUBDIR_REMOVE_ARGS([bundled/threaded_hello],
+ACX_SUBDIR_REMOVE_ARGS([bundled/build/threaded_hello],
   [ACX_SUBDIR_CONFIG_PATTERN_ENABLE([static])],
   [ACX_SUBDIR_CONFIG_PATTERN_ENABLE([shared])],
   [ACX_SUBDIR_CONFIG_PATTERN_ENABLE([maintainer-mode])],
   [ACX_SUBDIR_CONFIG_PATTERN_ENABLE([silent-rules])])
-ACX_SUBDIR_APPEND_ARGS([bundled/threaded_hello],
+ACX_SUBDIR_APPEND_ARGS([bundled/build/threaded_hello],
   [--enable-static --disable-shared --disable-maintainer-mode],
   [--enable-silent-rules="$enable_silent_rules"])
 AS_VAR_APPEND([BUNDLED_FCFLAGS], ["${FC_MOD_IN}bundled/build/threaded_hello "])
 BUNDLED_LIBFILES="bundled/build/threaded_hello/.libs/libthreaded_hello_f.a dnl
 $BUNDLED_LIBFILES"
-ACX_SUBDIR_INIT_IFELSE([bundled/threaded_hello],
+ACX_SUBDIR_INIT_IFELSE([bundled/build/threaded_hello],
   [AS_VAR_APPEND([DEPGEN_EXTERNAL_MODS], [',mo_threaded_hello'])])
 
 dnl Initialize a bundled library that will be configured at the build time:
-ACX_SUBDIR_INIT_CONFIG([bundled/delayed], [no-run])
-ACX_SUBDIR_REMOVE_ARGS([bundled/delayed],
+ACX_SUBDIR_INIT_CONFIG([bundled/delayed], [no-run], [bundled/build/delayed])
+ACX_SUBDIR_REMOVE_ARGS([bundled/build/delayed],
   [ACX_SUBDIR_CONFIG_PATTERN_ENABLE([silent-rules])])
-ACX_SUBDIR_APPEND_ARGS([bundled/delayed],
+ACX_SUBDIR_APPEND_ARGS([bundled/build/delayed],
   [--enable-silent-rules="$enable_silent_rules"])
-AS_VAR_APPEND([BUNDLED_FCFLAGS], ["${FC_MOD_IN}bundled/delayed "])
-BUNDLED_LIBFILES="bundled/delayed/libdelayed.a $BUNDLED_LIBFILES"
-ACX_SUBDIR_INIT_IFELSE([bundled/delayed],
+AS_VAR_APPEND([BUNDLED_FCFLAGS], ["${FC_MOD_IN}bundled/build/delayed "])
+BUNDLED_LIBFILES="bundled/build/delayed/libdelayed.a $BUNDLED_LIBFILES"
+ACX_SUBDIR_INIT_IFELSE([bundled/build/delayed],
   [AS_VAR_APPEND([DEPGEN_EXTERNAL_MODS], [',mo_delayed'])])
+
+dnl Initialize another bundled library from the same source directory:
+ACX_SUBDIR_INIT_CONFIG([bundled/delayed], [no-run],
+  [bundled/build/delayed_mangled])
+ACX_SUBDIR_REMOVE_ARGS([bundled/build/delayed_mangled],
+  [CPPFLAGS=*],
+  [ACX_SUBDIR_CONFIG_PATTERN_ENABLE([silent-rules])])
+ACX_SUBDIR_APPEND_ARGS([bundled/build/delayed_mangled],
+  [CPPFLAGS="${acx_cv_fc_macro_flag}MANGLE"],
+  [--enable-silent-rules="$enable_silent_rules"])
+AS_VAR_APPEND([BUNDLED_FCFLAGS], ["${FC_MOD_IN}bundled/build/delayed_mangled "])
+BUNDLED_LIBFILES="bundled/build/delayed_mangled/libdelayed.a $BUNDLED_LIBFILES"
+ACX_SUBDIR_INIT_IFELSE([bundled/build/delayed_mangled],
+  [AS_VAR_APPEND([DEPGEN_EXTERNAL_MODS], [',mo_delayed_mangled'])])
 
 dnl Initialize a CMake-based library:
 AC_SUBST([CMAKE], [${CMAKE-cmake}])dnl
-ACX_SUBDIR_INIT_CMAKE([bundled/cmake_based], [no-run], [],
+ACX_SUBDIR_INIT_CMAKE(
+  [bundled/cmake_based], [no-run], [bundled/cmake_based/build],
   [AS_ESCAPE(["${CMAKE}"])])
-ACX_SUBDIR_APPEND_ARGS([bundled/cmake_based],
+ACX_SUBDIR_APPEND_ARGS([bundled/cmake_based/build],
   [-DBUILD_SHARED_LIBS:BOOL=OFF],
 dnl Set non-existing build type to avoid extra compiler flags:
   [-DCMAKE_BUILD_TYPE=NOEXTRAFLAGS])
 AS_VAR_APPEND([BUNDLED_FCFLAGS], ["${FC_MOD_IN}bundled/cmake_based/build/mod "])
 BUNDLED_LIBFILES=dnl
 "bundled/cmake_based/build/libCMakeBasedHello.a $BUNDLED_LIBFILES"
-ACX_SUBDIR_INIT_IFELSE([bundled/cmake_based],
+ACX_SUBDIR_INIT_IFELSE([bundled/cmake_based/build],
   [AS_VAR_APPEND([DEPGEN_EXTERNAL_MODS], [',mo_cmake_based'])])
 AS_VAR_IF([enable_delayed_config], [no],
   [ACX_SUBDIR_RUN_RESET([bundled/cmake_based], [yes])])
@@ -338,15 +353,14 @@ AC_SUBST([bundled_delayed_config_subdirs], [''])dnl
 AC_SUBST([bundled_ready_cmake_subdirs], [''])dnl
 AC_SUBST([bundled_delayed_cmake_subdirs], [''])dnl
 mkhelper_rule_separator=''
-for mkhelper_src_subdir in $extra_src_subdirs; do
-  ACX_SUBDIR_GET_BUILD_DIR([mkhelper_build_subdir], [$mkhelper_src_subdir])
-  ACX_SUBDIR_GET_BUILD_TYPE([mkhelper_build_type], [$mkhelper_src_subdir])
-  ACX_SUBDIR_RUN_IFELSE([$mkhelper_src_subdir],
+for mkhelper_build_subdir in $extra_build_subdirs; do
+  ACX_SUBDIR_GET_BUILD_TYPE([mkhelper_build_type], [$mkhelper_build_subdir])
+  ACX_SUBDIR_RUN_IFELSE([$mkhelper_build_subdir],
     [AS_VAR_APPEND([bundled_ready_${mkhelper_build_type}_subdirs],
        [" $mkhelper_build_subdir"])],
     [AS_VAR_APPEND([bundled_delayed_${mkhelper_build_type}_subdirs],
        [" $mkhelper_build_subdir"])
-     ACX_SUBDIR_GET_RUN_CMD([mkhelper_subdir_cmd], [$mkhelper_src_subdir])
+     ACX_SUBDIR_GET_RUN_CMD([mkhelper_subdir_cmd], [$mkhelper_build_subdir])
      AS_VAR_IF([mkhelper_build_type], [cmake],
        [mkhelper_silent_var='silent_CMAKE'
         mkhelper_silent_suffix='>/dev/null'],
@@ -365,9 +379,9 @@ done
 dnl Collect compiler and linker flags required for linking to the library:
 AC_CONFIG_COMMANDS_PRE(
   [ACX_SUBDIR_QUERY_CONFIG_STATUS([mkhelper_LDFLAGS],
-     [bundled/threaded_hello], [@LDFLAGS@])
+     [bundled/build/threaded_hello], [@LDFLAGS@])
    ACX_SUBDIR_QUERY_CONFIG_STATUS([mkhelper_LIBS],
-     [bundled/threaded_hello], [@LIBS@])
+     [bundled/build/threaded_hello], [@LIBS@])
    AS_IF([test -n "$mkhelper_LDFLAGS"],
      [AS_VAR_APPEND([LDFLAGS], [" $mkhelper_LDFLAGS"])])
    AS_IF([test -n "$mkhelper_LDFLAGS"], [LIBS="$mkhelper_LIBS $LIBS"])
@@ -382,7 +396,7 @@ dnl Except for RPATH flags:
       done])
 dnl We need to link to pthread library, which might require PTHREAD_CFLAGS
    ACX_SUBDIR_QUERY_CONFIG_STATUS([mkhelper_PTHREAD_CFLAGS],
-     [bundled/threaded_hello], [' @PTHREAD_CFLAGS@'])
+     [bundled/build/threaded_hello], [' @PTHREAD_CFLAGS@'])
    AS_IF([test -n "$mkhelper_PTHREAD_CFLAGS"],
      [AS_VAR_IF([FC_VENDOR], [nag],
         [mkhelper_PTHREAD_CFLAGS=`AS_ECHO([" $mkhelper_PTHREAD_CFLAGS"]) | dnl

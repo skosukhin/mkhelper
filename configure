@@ -586,7 +586,7 @@ PACKAGE_URL=''
 
 ac_unique_file="src/program/main.f90"
 ac_default_prefix="`pwd`/install"
-extra_src_subdirs=
+extra_build_subdirs=
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
 bundled_delayed_cmake_subdirs
@@ -716,6 +716,7 @@ AR
 ARFLAGS
 PYTHON'
 ac_subdirs_all='bundled/threaded_hello
+bundled/delayed
 bundled/delayed'
 
 # Initialize some variables set by options.
@@ -5084,9 +5085,8 @@ BUNDLED_LIBFILES=''
 
 polymorphic_subdir='bundled/picky'
 polymorphic_config=''
-                     acx_subdir_srcdirs_fn "$polymorphic_subdir"
+                        acx_subdir_srcdirs_fn "$polymorphic_subdir"
    eval "acx_subdir_run_cmd_`$as_echo "$polymorphic_subdir" | $as_tr_sh`=\"'\$ac_srcdir/'\\\"\\\${polymorphic_config}\\\"\""
-   eval "acx_subdir_run_dir_`$as_echo "$polymorphic_subdir" | $as_tr_sh`=\"\$polymorphic_subdir\""
    eval "acx_subdir_build_type_`$as_echo "$polymorphic_subdir" | $as_tr_sh`='config'"
          acx_subdir_pre_adjust_config_args
       eval "acx_subdir_run_args_`$as_echo "$polymorphic_subdir" | $as_tr_sh`=\$acx_subdir_pre_adjusted_config_args"
@@ -5111,8 +5111,8 @@ fi
 esac
      as_fn_append acx_subdir_run_args_`$as_echo "$polymorphic_subdir" | $as_tr_sh` " '$acx_tmp'"
    done
-      as_fn_append extra_src_subdirs " $polymorphic_subdir"
-   eval "acx_subdir_run_condition_`$as_echo "$polymorphic_subdir" | $as_tr_sh`=no"
+      as_fn_append extra_build_subdirs " $polymorphic_subdir"
+   eval "acx_subdir_run_`$as_echo "$polymorphic_subdir" | $as_tr_sh`=no"
 polymorphic_subdir=
 polymorphic_config='configure.gnu'
 eval "set dummy $acx_subdir_run_args_bundled_picky"; shift
@@ -5165,7 +5165,7 @@ if test "x$enable_delayed_config" = xyes; then :
   as_fn_append DELAYED_CONFIG_RULES "export FC${as_nl}polymorphic_config:= $polymorphic_config${as_nl}"
 else
   polymorphic_subdir='bundled/picky'
-   eval "acx_subdir_run_condition_`$as_echo "$polymorphic_subdir" | $as_tr_sh`=yes"
+   eval "acx_subdir_run_`$as_echo "$polymorphic_subdir" | $as_tr_sh`=yes"
                   as_fn_append acx_subdir_run_before_`$as_echo "$polymorphic_subdir" | $as_tr_sh` ' acx_subdir_extra_run_0'
                as_fn_append acx_subdir_run_after_`$as_echo "$polymorphic_subdir" | $as_tr_sh` ' acx_subdir_extra_run_1'
    polymorphic_subdir=
@@ -5174,12 +5174,11 @@ else
                      as_fn_append acx_subdir_run_after_bundled_picky ' acx_subdir_extra_run_3'
 fi
 
-                     acx_subdir_srcdirs_fn "bundled/build/threaded_hello"
-   acx_subdir_run_cmd_bundled_threaded_hello="'$ac_top_srcdir/bundled/threaded_hello/configure'"
-   acx_subdir_run_dir_bundled_threaded_hello="bundled/build/threaded_hello"
-   acx_subdir_build_type_bundled_threaded_hello='config'
+                        acx_subdir_srcdirs_fn "bundled/build/threaded_hello"
+   acx_subdir_run_cmd_bundled_build_threaded_hello="'$ac_top_srcdir/bundled/threaded_hello/configure'"
+   acx_subdir_build_type_bundled_build_threaded_hello='config'
          acx_subdir_pre_adjust_config_args
-      acx_subdir_run_args_bundled_threaded_hello=$acx_subdir_pre_adjusted_config_args
+      acx_subdir_run_args_bundled_build_threaded_hello=$acx_subdir_pre_adjusted_config_args
       if test "x$cache_file" = x'/dev/null'; then :
   acx_tmp=$cache_file
 else
@@ -5199,12 +5198,12 @@ fi
   *) :
      ;;
 esac
-     as_fn_append acx_subdir_run_args_bundled_threaded_hello " '$acx_tmp'"
+     as_fn_append acx_subdir_run_args_bundled_build_threaded_hello " '$acx_tmp'"
    done
-      as_fn_append extra_src_subdirs " bundled/threaded_hello"
-   acx_subdir_run_condition_bundled_threaded_hello=yes
-eval "set dummy $acx_subdir_run_args_bundled_threaded_hello"; shift
-   acx_subdir_run_args_bundled_threaded_hello=
+      as_fn_append extra_build_subdirs " bundled/build/threaded_hello"
+   acx_subdir_run_bundled_build_threaded_hello=yes
+eval "set dummy $acx_subdir_run_args_bundled_build_threaded_hello"; shift
+   acx_subdir_run_args_bundled_build_threaded_hello=
    while test $# != 0; do
      acx_tmp=$1
      case $acx_tmp in #(
@@ -5223,7 +5222,7 @@ eval "set dummy $acx_subdir_run_args_bundled_threaded_hello"; shift
   *) :
      ;;
 esac
-        as_fn_append acx_subdir_run_args_bundled_threaded_hello " '$acx_tmp'" ;;
+        as_fn_append acx_subdir_run_args_bundled_build_threaded_hello " '$acx_tmp'" ;;
 esac
      shift
    done
@@ -5235,23 +5234,22 @@ set dummy --enable-static --disable-shared --disable-maintainer-mode --enable-si
   *) :
      ;;
 esac
-     as_fn_append acx_subdir_run_args_bundled_threaded_hello " '$acx_tmp'"
+     as_fn_append acx_subdir_run_args_bundled_build_threaded_hello " '$acx_tmp'"
    done
 as_fn_append BUNDLED_FCFLAGS "${FC_MOD_IN}bundled/build/threaded_hello "
 BUNDLED_LIBFILES="bundled/build/threaded_hello/.libs/libthreaded_hello_f.a $BUNDLED_LIBFILES"
-case " $extra_src_subdirs " in #(
-  *' bundled/threaded_hello '*) :
+case " $extra_build_subdirs " in #(
+  *' bundled/build/threaded_hello '*) :
     as_fn_append DEPGEN_EXTERNAL_MODS ',mo_threaded_hello' ;; #(
   *) :
      ;;
 esac
 
-                     acx_subdir_srcdirs_fn "bundled/delayed"
-   acx_subdir_run_cmd_bundled_delayed="'$ac_srcdir/configure'"
-   acx_subdir_run_dir_bundled_delayed="bundled/delayed"
-   acx_subdir_build_type_bundled_delayed='config'
+                        acx_subdir_srcdirs_fn "bundled/build/delayed"
+   acx_subdir_run_cmd_bundled_build_delayed="'$ac_top_srcdir/bundled/delayed/configure'"
+   acx_subdir_build_type_bundled_build_delayed='config'
          acx_subdir_pre_adjust_config_args
-      acx_subdir_run_args_bundled_delayed=$acx_subdir_pre_adjusted_config_args
+      acx_subdir_run_args_bundled_build_delayed=$acx_subdir_pre_adjusted_config_args
       if test "x$cache_file" = x'/dev/null'; then :
   acx_tmp=$cache_file
 else
@@ -5263,7 +5261,7 @@ else
 esac
          acx_tmp="$acx_tmp.bundled.delayed"
 fi
-      set dummy "--cache-file=$acx_tmp" "--srcdir=$ac_srcdir"; shift
+      set dummy "--cache-file=$acx_tmp" "--srcdir=$ac_top_srcdir/bundled/delayed"; shift
    for acx_tmp; do
      case $acx_tmp in #(
   *\'*) :
@@ -5271,12 +5269,12 @@ fi
   *) :
      ;;
 esac
-     as_fn_append acx_subdir_run_args_bundled_delayed " '$acx_tmp'"
+     as_fn_append acx_subdir_run_args_bundled_build_delayed " '$acx_tmp'"
    done
-      as_fn_append extra_src_subdirs " bundled/delayed"
-   acx_subdir_run_condition_bundled_delayed=no
-eval "set dummy $acx_subdir_run_args_bundled_delayed"; shift
-   acx_subdir_run_args_bundled_delayed=
+      as_fn_append extra_build_subdirs " bundled/build/delayed"
+   acx_subdir_run_bundled_build_delayed=no
+eval "set dummy $acx_subdir_run_args_bundled_build_delayed"; shift
+   acx_subdir_run_args_bundled_build_delayed=
    while test $# != 0; do
      acx_tmp=$1
      case $acx_tmp in #(
@@ -5289,7 +5287,7 @@ eval "set dummy $acx_subdir_run_args_bundled_delayed"; shift
   *) :
      ;;
 esac
-        as_fn_append acx_subdir_run_args_bundled_delayed " '$acx_tmp'" ;;
+        as_fn_append acx_subdir_run_args_bundled_build_delayed " '$acx_tmp'" ;;
 esac
      shift
    done
@@ -5301,39 +5299,100 @@ set dummy --enable-silent-rules="$enable_silent_rules"; shift
   *) :
      ;;
 esac
-     as_fn_append acx_subdir_run_args_bundled_delayed " '$acx_tmp'"
+     as_fn_append acx_subdir_run_args_bundled_build_delayed " '$acx_tmp'"
    done
-as_fn_append BUNDLED_FCFLAGS "${FC_MOD_IN}bundled/delayed "
-BUNDLED_LIBFILES="bundled/delayed/libdelayed.a $BUNDLED_LIBFILES"
-case " $extra_src_subdirs " in #(
-  *' bundled/delayed '*) :
+as_fn_append BUNDLED_FCFLAGS "${FC_MOD_IN}bundled/build/delayed "
+BUNDLED_LIBFILES="bundled/build/delayed/libdelayed.a $BUNDLED_LIBFILES"
+case " $extra_build_subdirs " in #(
+  *' bundled/build/delayed '*) :
     as_fn_append DEPGEN_EXTERNAL_MODS ',mo_delayed' ;; #(
   *) :
      ;;
 esac
 
-CMAKE=${CMAKE-cmake}
-                  acx_subdir_run_cmd_bundled_cmake_based="\"\${CMAKE}\""
-   acx_subdir_run_dir_bundled_cmake_based="bundled/cmake_based/build"
-   acx_subdir_build_type_bundled_cmake_based='cmake'
-                                             acx_subdir_pre_adjust_cmake_args
-      acx_subdir_run_args_bundled_cmake_based=$acx_subdir_pre_adjusted_cmake_args
-         acx_subdir_srcdirs_fn "bundled/cmake_based/build"
-         case $ac_srcdir in #(
-  .) :
-    acx_tmp='..' ;; #(
+                        acx_subdir_srcdirs_fn "bundled/build/delayed_mangled"
+   acx_subdir_run_cmd_bundled_build_delayed_mangled="'$ac_top_srcdir/bundled/delayed/configure'"
+   acx_subdir_build_type_bundled_build_delayed_mangled='config'
+         acx_subdir_pre_adjust_config_args
+      acx_subdir_run_args_bundled_build_delayed_mangled=$acx_subdir_pre_adjusted_config_args
+      if test "x$cache_file" = x'/dev/null'; then :
+  acx_tmp=$cache_file
+else
+  case $cache_file in #(
+  [\\/]* | ?:[\\/]*) :
+    acx_tmp=$cache_file ;; #(
   *) :
-    acx_tmp="$ac_top_srcdir/bundled/cmake_based" ;;
+    acx_tmp="$ac_top_build_prefix$cache_file" ;;
 esac
+         acx_tmp="$acx_tmp.bundled.delayed"
+fi
+      set dummy "--cache-file=$acx_tmp" "--srcdir=$ac_top_srcdir/bundled/delayed"; shift
+   for acx_tmp; do
+     case $acx_tmp in #(
+  *\'*) :
+    acx_tmp=`$as_echo "$acx_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+  *) :
+     ;;
+esac
+     as_fn_append acx_subdir_run_args_bundled_build_delayed_mangled " '$acx_tmp'"
+   done
+      as_fn_append extra_build_subdirs " bundled/build/delayed_mangled"
+   acx_subdir_run_bundled_build_delayed_mangled=no
+eval "set dummy $acx_subdir_run_args_bundled_build_delayed_mangled"; shift
+   acx_subdir_run_args_bundled_build_delayed_mangled=
+   while test $# != 0; do
+     acx_tmp=$1
+     case $acx_tmp in #(
+  CPPFLAGS=*) :
+     ;; #(
+  -enable-silent-rules|-enable-silent-rules=*|--enable-silent-rules|--enable-silent-rules=*|-disable-silent-rules|--disable-silent-rules) :
+     ;; #(
+  *) :
+           case $acx_tmp in #(
+  *\'*) :
+    acx_tmp=`$as_echo "$acx_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+  *) :
+     ;;
+esac
+        as_fn_append acx_subdir_run_args_bundled_build_delayed_mangled " '$acx_tmp'" ;;
+esac
+     shift
+   done
+set dummy CPPFLAGS="${acx_cv_fc_macro_flag}MANGLE" --enable-silent-rules="$enable_silent_rules"; shift
+   for acx_tmp; do
+     case $acx_tmp in #(
+  *\'*) :
+    acx_tmp=`$as_echo "$acx_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+  *) :
+     ;;
+esac
+     as_fn_append acx_subdir_run_args_bundled_build_delayed_mangled " '$acx_tmp'"
+   done
+as_fn_append BUNDLED_FCFLAGS "${FC_MOD_IN}bundled/build/delayed_mangled "
+BUNDLED_LIBFILES="bundled/build/delayed_mangled/libdelayed.a $BUNDLED_LIBFILES"
+case " $extra_build_subdirs " in #(
+  *' bundled/build/delayed_mangled '*) :
+    as_fn_append DEPGEN_EXTERNAL_MODS ',mo_delayed_mangled' ;; #(
+  *) :
+     ;;
+esac
+
+CMAKE=${CMAKE-cmake}
+                     acx_subdir_run_cmd_bundled_cmake_based_build="\"\${CMAKE}\""
+   acx_subdir_build_type_bundled_cmake_based_build='cmake'
+                                             acx_subdir_pre_adjust_cmake_args
+      acx_subdir_run_args_bundled_cmake_based_build=$acx_subdir_pre_adjusted_cmake_args
+         acx_subdir_srcdirs_fn "bundled/cmake_based/build"
+         acx_tmp="$ac_top_srcdir/bundled/cmake_based"
       case $acx_tmp in #(
   *\'*) :
     acx_tmp=`$as_echo "$acx_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
   *) :
      ;;
 esac
-      as_fn_append acx_subdir_run_args_bundled_cmake_based " '$acx_tmp'"
-      as_fn_append extra_src_subdirs " bundled/cmake_based"
-   acx_subdir_run_condition_bundled_cmake_based=no
+      as_fn_append acx_subdir_run_args_bundled_cmake_based_build " '$acx_tmp'"
+      as_fn_append extra_build_subdirs " bundled/cmake_based/build"
+   acx_subdir_run_bundled_cmake_based_build=no
 set dummy -DBUILD_SHARED_LIBS:BOOL=OFF   -DCMAKE_BUILD_TYPE=NOEXTRAFLAGS; shift
    for acx_tmp; do
      case $acx_tmp in #(
@@ -5342,18 +5401,18 @@ set dummy -DBUILD_SHARED_LIBS:BOOL=OFF   -DCMAKE_BUILD_TYPE=NOEXTRAFLAGS; shift
   *) :
      ;;
 esac
-     as_fn_append acx_subdir_run_args_bundled_cmake_based " '$acx_tmp'"
+     as_fn_append acx_subdir_run_args_bundled_cmake_based_build " '$acx_tmp'"
    done
 as_fn_append BUNDLED_FCFLAGS "${FC_MOD_IN}bundled/cmake_based/build/mod "
 BUNDLED_LIBFILES="bundled/cmake_based/build/libCMakeBasedHello.a $BUNDLED_LIBFILES"
-case " $extra_src_subdirs " in #(
-  *' bundled/cmake_based '*) :
+case " $extra_build_subdirs " in #(
+  *' bundled/cmake_based/build '*) :
     as_fn_append DEPGEN_EXTERNAL_MODS ',mo_cmake_based' ;; #(
   *) :
      ;;
 esac
 if test "x$enable_delayed_config" = xno; then :
-  acx_subdir_run_condition_bundled_cmake_based=yes
+  acx_subdir_run_bundled_cmake_based=yes
 fi
 
 bundled_ready_config_subdirs=''
@@ -5361,15 +5420,14 @@ bundled_delayed_config_subdirs=''
 bundled_ready_cmake_subdirs=''
 bundled_delayed_cmake_subdirs=''
 mkhelper_rule_separator=''
-for mkhelper_src_subdir in $extra_src_subdirs; do
-  eval mkhelper_build_subdir=\$acx_subdir_run_dir_`$as_echo "$mkhelper_src_subdir" | $as_tr_sh`
-  eval mkhelper_build_type=\$acx_subdir_build_type_`$as_echo "$mkhelper_src_subdir" | $as_tr_sh`
-  eval as_val=\$acx_subdir_run_condition_`$as_echo "$mkhelper_src_subdir" | $as_tr_sh`
+for mkhelper_build_subdir in $extra_build_subdirs; do
+  eval mkhelper_build_type=\$acx_subdir_build_type_`$as_echo "$mkhelper_build_subdir" | $as_tr_sh`
+  eval as_val=\$acx_subdir_run_`$as_echo "$mkhelper_build_subdir" | $as_tr_sh`
    if test "x$as_val" = xyes; then :
   as_fn_append bundled_ready_${mkhelper_build_type}_subdirs " $mkhelper_build_subdir"
 else
   as_fn_append bundled_delayed_${mkhelper_build_type}_subdirs " $mkhelper_build_subdir"
-     mkhelper_subdir_cmd="`eval 'as_val=${'acx_subdir_run_cmd_\`$as_echo "$mkhelper_src_subdir" | $as_tr_sh\`'};$as_echo "$as_val"'` `eval 'as_val=${'acx_subdir_run_args_\`$as_echo "$mkhelper_src_subdir" | $as_tr_sh\`'};$as_echo "$as_val"'`"
+     mkhelper_subdir_cmd="`eval 'as_val=${'acx_subdir_run_cmd_\`$as_echo "$mkhelper_build_subdir" | $as_tr_sh\`'};$as_echo "$as_val"'` `eval 'as_val=${'acx_subdir_run_args_\`$as_echo "$mkhelper_build_subdir" | $as_tr_sh\`'};$as_echo "$as_val"'`"
      if test "x$mkhelper_build_type" = xcmake; then :
   mkhelper_silent_var='silent_CMAKE'
         mkhelper_silent_suffix='>/dev/null'
@@ -5544,32 +5602,31 @@ else
   acx_subdir_silent_arg=
 fi
             acx_subdir_run_any=no
-            for acx_subdir_srcdir in $extra_src_subdirs; do
-              eval as_val=\$acx_subdir_run_condition_`$as_echo "$acx_subdir_srcdir" | $as_tr_sh`
+            for acx_subdir_builddir in $extra_build_subdirs; do
+              eval as_val=\$acx_subdir_run_`$as_echo "$acx_subdir_builddir" | $as_tr_sh`
    if test "x$as_val" = xyes; then :
   acx_subdir_run_any=yes
-                 eval acx_subdir_builddir=\$acx_subdir_run_dir_`$as_echo "$acx_subdir_srcdir" | $as_tr_sh`
-                 eval acx_subdir_fns=\$acx_subdir_run_before_`$as_echo "$acx_subdir_srcdir" | $as_tr_sh`
+                 eval acx_subdir_fns=\$acx_subdir_run_before_`$as_echo "$acx_subdir_builddir" | $as_tr_sh`
                  if test -n "$acx_subdir_fns"; then :
-  acx_tmp="=== running extra commands before configuring $acx_subdir_srcdir"
+  acx_tmp="=== running extra commands before configuring $acx_subdir_builddir"
                     $as_echo "$as_me:${as_lineno-$LINENO}: $acx_tmp" >&5
                     $as_echo "$acx_tmp" >&6
                     for acx_tmp in $acx_subdir_fns; do
                       eval "$acx_tmp"
                     done
 fi
-                 acx_tmp="=== configuring $acx_subdir_srcdir (in $acx_subdir_builddir)"
+                 acx_tmp="=== configuring $acx_subdir_builddir"
                  $as_echo "$as_me:${as_lineno-$LINENO}: $acx_tmp" >&5
                  $as_echo "$acx_tmp" >&6
                  as_dir="$acx_subdir_builddir"; as_fn_mkdir_p
-                 acx_subdir_run_cmd="`eval 'as_val=${'acx_subdir_run_cmd_\`$as_echo "$acx_subdir_srcdir" | $as_tr_sh\`'};$as_echo "$as_val"'` `eval 'as_val=${'acx_subdir_run_args_\`$as_echo "$acx_subdir_srcdir" | $as_tr_sh\`'};$as_echo "$as_val"'`"
+                 acx_subdir_run_cmd="`eval 'as_val=${'acx_subdir_run_cmd_\`$as_echo "$acx_subdir_builddir" | $as_tr_sh\`'};$as_echo "$as_val"'` `eval 'as_val=${'acx_subdir_run_args_\`$as_echo "$acx_subdir_builddir" | $as_tr_sh\`'};$as_echo "$as_val"'`"
                  acx_subdir_run_cmd="( cd '$acx_subdir_builddir' && $acx_subdir_run_cmd $acx_subdir_silent_arg)"
                  { $as_echo "$as_me:${as_lineno-$LINENO}: running $acx_subdir_run_cmd" >&5
 $as_echo "$as_me: running $acx_subdir_run_cmd" >&6;}
-                 eval "$acx_subdir_run_cmd" || as_fn_error $? "configuration of $acx_subdir_srcdir failed" "$LINENO" 5
-                 eval acx_subdir_fns=\$acx_subdir_run_after_`$as_echo "$acx_subdir_srcdir" | $as_tr_sh`
+                 eval "$acx_subdir_run_cmd" || as_fn_error $? "configuration of $acx_subdir_builddir failed" "$LINENO" 5
+                 eval acx_subdir_fns=\$acx_subdir_run_after_`$as_echo "$acx_subdir_builddir" | $as_tr_sh`
                  if test -n "$acx_subdir_fns"; then :
-  acx_tmp="=== running extra commands after configuring $acx_subdir_srcdir"
+  acx_tmp="=== running extra commands after configuring $acx_subdir_builddir"
                     $as_echo "$as_me:${as_lineno-$LINENO}: $acx_tmp" >&5
                     $as_echo "$acx_tmp" >&6
                     for acx_tmp in $acx_subdir_fns; do
@@ -5583,17 +5640,17 @@ fi
                   $as_echo "$as_me:${as_lineno-$LINENO}: ===" >&5
 fi
 fi
-acx_tmp=`$as_echo @LDFLAGS@ | "$acx_subdir_run_dir_bundled_threaded_hello/config.status" -q --file=- 2>/dev/null`
+acx_tmp=`$as_echo @LDFLAGS@ | "bundled/build/threaded_hello/config.status" -q --file=- 2>/dev/null`
    if test $? -eq 0; then :
   mkhelper_LDFLAGS=$acx_tmp
 else
-  as_fn_error $? "unable to run '$acx_subdir_run_dir_bundled_threaded_hello/config.status'" "$LINENO" 5
+  as_fn_error $? "unable to run 'bundled/build/threaded_hello/config.status'" "$LINENO" 5
 fi
-   acx_tmp=`$as_echo @LIBS@ | "$acx_subdir_run_dir_bundled_threaded_hello/config.status" -q --file=- 2>/dev/null`
+   acx_tmp=`$as_echo @LIBS@ | "bundled/build/threaded_hello/config.status" -q --file=- 2>/dev/null`
    if test $? -eq 0; then :
   mkhelper_LIBS=$acx_tmp
 else
-  as_fn_error $? "unable to run '$acx_subdir_run_dir_bundled_threaded_hello/config.status'" "$LINENO" 5
+  as_fn_error $? "unable to run 'bundled/build/threaded_hello/config.status'" "$LINENO" 5
 fi
    if test -n "$mkhelper_LDFLAGS"; then :
   as_fn_append LDFLAGS " $mkhelper_LDFLAGS"
@@ -5627,11 +5684,11 @@ esac
 fi
       done
 fi
-   acx_tmp=`$as_echo ' @PTHREAD_CFLAGS@' | "$acx_subdir_run_dir_bundled_threaded_hello/config.status" -q --file=- 2>/dev/null`
+   acx_tmp=`$as_echo ' @PTHREAD_CFLAGS@' | "bundled/build/threaded_hello/config.status" -q --file=- 2>/dev/null`
    if test $? -eq 0; then :
   mkhelper_PTHREAD_CFLAGS=$acx_tmp
 else
-  as_fn_error $? "unable to run '$acx_subdir_run_dir_bundled_threaded_hello/config.status'" "$LINENO" 5
+  as_fn_error $? "unable to run 'bundled/build/threaded_hello/config.status'" "$LINENO" 5
 fi
    if test -n "$mkhelper_PTHREAD_CFLAGS"; then :
   if test "x$FC_VENDOR" = xnag; then :

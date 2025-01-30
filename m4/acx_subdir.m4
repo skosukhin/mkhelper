@@ -57,9 +57,8 @@
 # (defaults to 'configure') script from the BUILD-SUBDIR (path relative to the
 # top build directory of the top-level project, defaults to SUBDIR) directory.
 #
-# Sets variable extra_src_subdirs to the space-separated lists of all
-# initialized SUBDIRs and BUILD-SUBDIRs (accounting for possible shell
-# branching).
+# Sets variable extra_build_subdirs to the space-separated lists of all
+# initialized BUILD-SUBDIRs (accounting for possible shell branching).
 #
 AC_DEFUN([ACX_SUBDIR_INIT_CONFIG],
   [m4_ifblank([$1], [m4_fatal([SUBDIR ('$1') cannot be blank])])dnl
@@ -81,12 +80,13 @@ AC_DEFUN([ACX_SUBDIR_INIT_CONFIG],
 ])],
         [m4_fatal([option ']acx_subdir_opt_recursive_help[' requires ]dnl
 [SUBDIR ('$1') to have a literal value])])])dnl
-   ASX_SRCDIRS("m4_default([$3], [$1])")
-   AS_VAR_SET([_ACX_SUBDIR_RUN_CMD_VAR([$1])],
+   m4_pushdef([acx_subdir_build_subdir], [m4_default([$3], [$1])])dnl
+   ASX_SRCDIRS("acx_subdir_build_subdir")
+   AS_VAR_SET([_ACX_SUBDIR_RUN_CMD_VAR([acx_subdir_build_subdir])],
      ["'m4_ifval([$3], [$ac_top_srcdir/$1], [$ac_srcdir])/]dnl
 [m4_ifval([$4], ['$4], [configure'])"])
-   AS_VAR_SET([_ACX_SUBDIR_RUN_DIR_VAR([$1])], ["m4_default([$3], [$1])"])
-   AS_VAR_SET([_ACX_SUBDIR_BUILD_TYPE_VAR([$1])], ['config'])
+   AS_VAR_SET(
+     [_ACX_SUBDIR_BUILD_TYPE_VAR([acx_subdir_build_subdir])], ['config'])
    m4_cond([acx_subdir_opt_adjust_args], [adjust-args],
      [AC_REQUIRE_SHELL_FN([acx_subdir_pre_adjust_config_args], [],
         [AS_VAR_SET_IF([acx_subdir_pre_adjusted_config_args], [],
@@ -109,7 +109,7 @@ AC_DEFUN([ACX_SUBDIR_INIT_CONFIG],
             AS_VAR_APPEND([acx_subdir_pre_adjusted_config_args],
               [" '$acx_tmp'"])])])dnl
       acx_subdir_pre_adjust_config_args
-      AS_VAR_SET([_ACX_SUBDIR_RUN_ARG_VAR([$1])],
+      AS_VAR_SET([_ACX_SUBDIR_RUN_ARG_VAR([acx_subdir_build_subdir])],
         [$acx_subdir_pre_adjusted_config_args])
       AS_VAR_IF([cache_file], ['/dev/null'],
         [acx_tmp=$cache_file],
@@ -120,16 +120,22 @@ AC_DEFUN([ACX_SUBDIR_INIT_CONFIG],
          acx_tmp="$acx_tmp.AS_LITERAL_IF([$1],
                              [m4_translit([$1], [/], [.])],
                              [`echo "$1" | tr / .`])"])
-      _ACX_SUBDIR_APPEND_ARGS([_ACX_SUBDIR_RUN_ARG_VAR([$1])],
+      _ACX_SUBDIR_APPEND_ARGS(
+        [_ACX_SUBDIR_RUN_ARG_VAR([acx_subdir_build_subdir])],
         ["--cache-file=$acx_tmp"],
         ["--srcdir=m4_ifval([$3], [$ac_top_srcdir/$1], [$ac_srcdir])"])],
-     [AS_VAR_SET([_ACX_SUBDIR_RUN_ARG_VAR([$1])], [$ac_configure_args])])
-   m4_divert_once([DEFAULTS], [extra_src_subdirs=])dnl
-   AS_VAR_APPEND([extra_src_subdirs], [" $1"])
+     [AS_VAR_SET(
+       [_ACX_SUBDIR_RUN_ARG_VAR([acx_subdir_build_subdir])],
+       [$ac_configure_args])])
+   m4_divert_once([DEFAULTS], [extra_build_subdirs=])dnl
+   AS_VAR_APPEND([extra_build_subdirs], [" acx_subdir_build_subdir"])
    m4_cond([acx_subdir_opt_run], [run],
-     [AS_VAR_SET([_ACX_SUBDIR_RUN_YESNO_VAR([$1])], [yes])[]dnl
+     [AS_VAR_SET(
+        [_ACX_SUBDIR_RUN_YESNO_VAR([acx_subdir_build_subdir])], [yes])[]dnl
       _ACX_SUBDIR_COMMANDS_PRE],
-     [AS_VAR_SET([_ACX_SUBDIR_RUN_YESNO_VAR([$1])], [no])])[]dnl
+     [AS_VAR_SET(
+        [_ACX_SUBDIR_RUN_YESNO_VAR([acx_subdir_build_subdir])], [no])])[]dnl
+   m4_popdef([acx_subdir_build_subdir])dnl
    m4_popdef([acx_subdir_opt_recursive_help])dnl
    m4_popdef([acx_subdir_opt_adjust_args])dnl
    m4_popdef([acx_subdir_opt_run])])
@@ -171,9 +177,8 @@ AC_DEFUN([ACX_SUBDIR_INIT_CONFIG],
 # (defaults to 'cmake') from the BUILD-SUBDIR (path relative to the top build
 # directory of the top-level project, defaults to SUBDIR/build) directory.
 #
-# Sets variable extra_src_subdirs to the space-separated lists of all
-# initialized SUBDIRs and BUILD-SUBDIRs (accounting for possible shell
-# branching).
+# Sets variable extra_build_subdirs to the space-separated lists of all
+# initialized BUILD-SUBDIRs (accounting for possible shell branching).
 #
 AC_DEFUN([ACX_SUBDIR_INIT_CMAKE],
   [m4_ifblank([$1], [m4_fatal([SUBDIR ('$1') cannot be blank])])dnl
@@ -192,10 +197,11 @@ AC_DEFUN([ACX_SUBDIR_INIT_CMAKE],
         [^\(no-\)?run$],
         [m4_define([acx_subdir_opt_run], opt)],
         [m4_fatal([unknown option ']opt['])])])dnl
-   AS_VAR_SET([_ACX_SUBDIR_RUN_CMD_VAR([$1])], ["m4_default([$4], ['cmake'])"])
-   AS_VAR_SET([_ACX_SUBDIR_RUN_DIR_VAR([$1])],
-     ["m4_default([$3], [$1/build])"])
-   AS_VAR_SET([_ACX_SUBDIR_BUILD_TYPE_VAR([$1])], ['cmake'])
+   m4_pushdef([acx_subdir_build_subdir], [m4_default([$3], [$1/build])])dnl
+   AS_VAR_SET([_ACX_SUBDIR_RUN_CMD_VAR([acx_subdir_build_subdir])],
+     ["m4_default([$4], ['cmake'])"])
+   AS_VAR_SET([_ACX_SUBDIR_BUILD_TYPE_VAR([acx_subdir_build_subdir])],
+     ['cmake'])
    m4_cond([acx_subdir_opt_adjust_args], [adjust-args],
      [m4_pushdef([acx_subdir_pre_adjust_suffix])dnl
       m4_if(acx_subdir_opt_adjust_compilers, [no-adjust-compilers],
@@ -402,7 +408,8 @@ dnl Append the transformed arguments:
             done
             m4_popdef([acx_subdir_known_args])])])dnl
       acx_subdir_pre_adjust_cmake_fn
-      AS_VAR_SET([_ACX_SUBDIR_RUN_ARG_VAR([$1])],
+      AS_VAR_SET(
+        [_ACX_SUBDIR_RUN_ARG_VAR([acx_subdir_build_subdir])],
         [$acx_subdir_pre_adjust_cmake_cv])
       m4_ifval([$3],
         [ASX_SRCDIRS(["$3"])
@@ -412,48 +419,52 @@ dnl Append the transformed arguments:
            [.], [acx_tmp='..'],
            [acx_tmp="$ac_top_srcdir/$1"])])
       ASX_ESCAPE_SINGLE_QUOTE([acx_tmp])
-      AS_VAR_APPEND([_ACX_SUBDIR_RUN_ARG_VAR([$1])], [" '$acx_tmp'"])dnl
+      AS_VAR_APPEND([_ACX_SUBDIR_RUN_ARG_VAR([acx_subdir_build_subdir])],
+        [" '$acx_tmp'"])dnl
       m4_popdef([acx_subdir_pre_adjust_cmake_fn])dnl
       m4_popdef([acx_subdir_pre_adjust_cmake_cv])],
-     [AS_VAR_SET([_ACX_SUBDIR_RUN_ARG_VAR([$1])])])
-   m4_divert_once([DEFAULTS], [extra_src_subdirs=])dnl
-   AS_VAR_APPEND([extra_src_subdirs], [" $1"])
+     [AS_VAR_SET([_ACX_SUBDIR_RUN_ARG_VAR([acx_subdir_build_subdir])])])
+   m4_divert_once([DEFAULTS], [extra_build_subdirs=])dnl
+   AS_VAR_APPEND([extra_build_subdirs], [" acx_subdir_build_subdir"])
    m4_cond([acx_subdir_opt_run], [run],
-     [AS_VAR_SET([_ACX_SUBDIR_RUN_YESNO_VAR([$1])], [yes])[]dnl
+     [AS_VAR_SET(
+        [_ACX_SUBDIR_RUN_YESNO_VAR([acx_subdir_build_subdir])], [yes])[]dnl
       _ACX_SUBDIR_COMMANDS_PRE],
-     [AS_VAR_SET([_ACX_SUBDIR_RUN_YESNO_VAR([$1])], [no])])[]dnl
+     [AS_VAR_SET(
+        [_ACX_SUBDIR_RUN_YESNO_VAR([acx_subdir_build_subdir])], [no])])[]dnl
+   m4_popdef([acx_subdir_build_subdir])dnl
    m4_popdef([acx_subdir_opt_adjust_args])dnl
    m4_popdef([acx_subdir_opt_adjust_compilers])dnl
    m4_popdef([acx_subdir_opt_run])])
 
-# ACX_SUBDIR_INIT_IFELSE(SUBDIR,
+# ACX_SUBDIR_INIT_IFELSE(BUILD-SUBDIR,
 #                        [ACTION-IF-INITIALIZED],
 #                        [ACTION-IF-NOT-INITIALIZED])
 # -----------------------------------------------------------------------------
-# Checks whether SUBDIR was actually (accounting for possible shell branching)
-# initialized and runs ACTION-IF-INITIALIZED if that is the case. Otherwise,
-# runs ACTION-IF-NOT-INITIALIZED.
+# Checks whether BUILD-SUBDIR was actually (accounting for possible shell
+# branching) initialized and runs ACTION-IF-INITIALIZED if that is the case.
+# Otherwise, runs ACTION-IF-NOT-INITIALIZED.
 #
 # For example, the top-level configure script needs to run 'some-command'
 # inside AC_CONFIG_COMMANDS_PRE but only if 'subdir/configure' was actually
 # run. A way to implement that is to expand the following:
 #
 # AS_IF([some_complex_condition],
-#   [ACX_SUBDIR_INIT_CONFIG([subdir])], [run])
+#   [ACX_SUBDIR_INIT_CONFIG([build-subdir])], [run])
 # AC_CONFIG_COMMANDS_PRE(
-#   [ACX_SUBDIR_INIT_IFELSE([subdir], [some-command])])
+#   [ACX_SUBDIR_INIT_IFELSE([build-subdir], [some-command])])
 #
 AC_DEFUN([ACX_SUBDIR_INIT_IFELSE],
-  [AS_CASE([" $extra_src_subdirs "], [*' $1 '*], [$2], [$3])])
+  [AS_CASE([" $extra_build_subdirs "], [*' $1 '*], [$2], [$3])])
 
-# ACX_SUBDIR_REMOVE_ARGS(SUBDIR,
+# ACX_SUBDIR_REMOVE_ARGS(BUILD-SUBDIR,
 #                        [PATTERN...])
 # -----------------------------------------------------------------------------
 # Expands to the shell script that removes all argument of the configuration
-# command for SUBDIR that match PATTERNs. A PATTERN can be either a shell case
-# pattern or a comma-separated pair of a shell case pattern and a non-negative
-# integer representing the number of arguments that must be dropped after the
-# pattern match.
+# command for BUILD-SUBDIR that match PATTERNs. A PATTERN can be either a shell
+# case pattern or a comma-separated pair of a shell case pattern and a
+# non-negative integer representing the number of arguments that must be
+# dropped after the pattern match.
 #
 # Consider using ACX_SUBDIR_CONFIG_PATTERN_ENABLE,
 # ACX_SUBDIR_CONFIG_PATTERN_WITH, ACX_SUBDIR_CONFIG_PATTERN_STDOPT and
@@ -511,29 +522,29 @@ AC_DEFUN([ACX_SUBDIR_CONFIG_PATTERN_STDPOS],
 m4_for([index], m4_decr(m4_len([$1])), m4_if([$1], [srcdir], [2], [1]), [-1],
      [|--m4_substr([$1], [0], index)])])
 
-# ACX_SUBDIR_APPEND_ARGS(SUBDIR,
+# ACX_SUBDIR_APPEND_ARGS(BUILD-SUBDIR,
 #                        [ARG...])
 # -----------------------------------------------------------------------------
 # Expands to a shell script that appends arguments ARGs for the command that
-# configures the SUBDIR directory.
+# configures the BUILD-SUBDIR directory.
 #
 AC_DEFUN([ACX_SUBDIR_APPEND_ARGS],
   [_ACX_SUBDIR_APPEND_ARGS(_ACX_SUBDIR_RUN_ARG_VAR([$1]),
      m4_unquote(m4_cdr($@)))])
 
-# ACX_SUBDIR_RUN_RESET(SUBDIR,
+# ACX_SUBDIR_RUN_RESET(BUILD-SUBDIR,
 #                      [VALUE = SWAP])
 # -----------------------------------------------------------------------------
-# Expands to a shell script that adds/removes SUBDIR on/from the list of
+# Expands to a shell script that adds/removes BUILD-SUBDIR on/from the list of
 # directories that must be configured by the top-level configure script.
 #
 # The macro provides a way to override the [no-]run option of the
 # ACX_SUBDIR_INIT_CONFIG macro (see above) at the run-time of the top-level
 # configure script. If the VALUE argument of the macro is provided, it must
 # be a literal or a shell expressions that evaluates either to 'yes' (add
-# SUBDIR on the list) or to 'no' (remove SUBDIR from the list). An omitted
-# VALUE implies that SUBDIR is added on the list if it is not there and removed
-# from it otherwise.
+# BUILD-SUBDIR on the list) or to 'no' (remove BUILD-SUBDIR from the list). An
+# omitted VALUE implies that BUILD-SUBDIR is added on the list if it is not
+# there and removed from it otherwise.
 #
 AC_DEFUN([ACX_SUBDIR_RUN_RESET],
   [m4_ifval([$2],
@@ -543,15 +554,15 @@ AC_DEFUN([ACX_SUBDIR_RUN_RESET],
       AS_VAR_COPY([_ACX_SUBDIR_RUN_YESNO_VAR([$1])], [acx_tmp])])[]dnl
    _ACX_SUBDIR_COMMANDS_PRE])
 
-# ACX_SUBDIR_RUN_EXTRA(SUBDIR,
+# ACX_SUBDIR_RUN_EXTRA(BUILD-SUBDIR,
 #                      [BEFORE],
 #                      [AFTER])
 # -----------------------------------------------------------------------------
 # Expands to a shell script that registers additional shell commands that must
-# be run BEFORE or AFTER the configuration of SUBDIR done by the top-level
-# configure (that is, the resulting script has no effect if SUBDIR is removed
-# from the list of directories that must be configured by the top-level
-# configure script).
+# be run BEFORE or AFTER the configuration of BUILD-SUBDIR done by the
+# top-level configure (that is, the resulting script has no effect if
+# BUILD-SUBDIR is removed from the list of directories that must be configured
+# by the top-level configure script).
 #
 # The additional commands are run in the top build directory of the top-level
 # project.
@@ -563,33 +574,22 @@ AC_DEFUN([ACX_SUBDIR_RUN_EXTRA],
      [m4_ifval([$2],[
 ])_ACX_SUBDIR_RUN_EXTRA([_ACX_SUBDIR_RUN_AFTER_VAR([$1])], [$3])])])
 
-# ACX_SUBDIR_RUN_IFELSE(SUBDIR,
+# ACX_SUBDIR_RUN_IFELSE(BUILD-SUBDIR,
 #                       [ACTION-IF-RUN],
 #                       [ACTION-IF-NO-RUN])
 # -----------------------------------------------------------------------------
-# Checks whether SUBDIR is on the list of directories that must be configured
-# by the top-level configure script and runs ACTION-IF-RUN if that is the case.
-# Otherwise, runs ACTION-IF-NO-RUN.
+# Checks whether BUILD-SUBDIR is on the list of directories that must be
+# configured by the top-level configure script and runs ACTION-IF-RUN if that
+# is the case. Otherwise, runs ACTION-IF-NO-RUN.
 #
 AC_DEFUN([ACX_SUBDIR_RUN_IFELSE],
   [AS_VAR_IF([_ACX_SUBDIR_RUN_YESNO_VAR([$1])], [yes], [$2], [$3])])
 
-# ACX_SUBDIR_GET_BUILD_DIR(VARIABLE,
-#                          SUBDIR)
-# -----------------------------------------------------------------------------
-# Expands to a shell script that sets the shell variable VARIABLE to the name
-# of build directory that corresponds to the SUBDIR source directory (i.e. to
-# the value of the BUILD-SUBDIR option provided to the respective expansion of
-# the ACX_SUBDIR_INIT_CONFIG macro).
-#
-AC_DEFUN([ACX_SUBDIR_GET_BUILD_DIR],
-  [AS_VAR_COPY([$1], [_ACX_SUBDIR_RUN_DIR_VAR([$2])])])
-
 # ACX_SUBDIR_GET_BUILD_TYPE(VARIABLE,
-#                           SUBDIR)
+#                           BUILD-SUBDIR)
 # -----------------------------------------------------------------------------
 # Expands to a shell script that sets the shell variable VARIABLE to the type
-# of the build system of the SUBDIR source directory.
+# of the build system of the BUILD-SUBDIR source directory.
 #
 # Possible out values are:
 #   "config" - Autoconf-based build system;
@@ -599,17 +599,16 @@ AC_DEFUN([ACX_SUBDIR_GET_BUILD_TYPE],
   [AS_VAR_COPY([$1], [_ACX_SUBDIR_BUILD_TYPE_VAR([$2])])])
 
 # ACX_SUBDIR_GET_RUN_CMD(VARIABLE,
-#                        SUBDIR)
+#                        BUILD-SUBDIR)
 # -----------------------------------------------------------------------------
 # Expands to a shell script that sets the shell variable VARIABLE to the full
-# command (together with the arguments) that configures SUBDIR when run from
-# the corresponding build directory (i.e. from BUILD-SUBDIR provided to the
-# respective expansion of the ACX_SUBDIR_INIT_CONFIG macro).
+# command (together with the arguments) that configures BUILD-SUBDIR when run
+# from BUILD-SUBDIR.
 #
-# The command neither creates the build directory nor switches to it.
-# Therefore, if SUBDIR is not on the list of directories that must be
-# configured by the top-level configure script, it is the user's responsibility
-# to extend the command accordingly.
+# The command neither creates BUILD-SUBDIR nor switches to it. Therefore, if
+# BUILD-SUBDIR is not on the list of directories that must be configured by the
+# top-level configure script, it is the user's responsibility to extend the
+# command accordingly.
 #
 AC_DEFUN([ACX_SUBDIR_GET_RUN_CMD],
   [AS_VAR_SET([$1],
@@ -617,14 +616,14 @@ AC_DEFUN([ACX_SUBDIR_GET_RUN_CMD],
 AS_VAR_GET(_ACX_SUBDIR_RUN_ARG_VAR([$2]))"])])
 
 # ACX_SUBDIR_QUERY_CONFIG_STATUS(VARIABLE,
-#                                SUBDIR,
+#                                BUILD-SUBDIR,
 #                                TEMPLATE)
 # -----------------------------------------------------------------------------
 # Expands to a shell script that sets the shell variable VARIABLE to the result
 # of the variable substitution TEMPLATE done by the config.status script
-# residing inside the build directory that corresponds to the SUBDIR source
-# directory. The macro provides means of getting the results of the configure
-# script from the subdirectory to the top-level configure script.
+# residing inside BUILD-SUBDIR. The macro provides means of getting the results
+# of the configure script from the subdirectory to the top-level configure
+# script.
 #
 # For example, 'subdir/configure' sets an output variable 'LIBM' and its value
 # needs to be known in the top-level configure script. A way to implement that
@@ -636,14 +635,10 @@ AS_VAR_GET(_ACX_SUBDIR_RUN_ARG_VAR([$2]))"])])
 #    AC_SUBST([SUBDIR_VAR])])
 #
 AC_DEFUN([ACX_SUBDIR_QUERY_CONFIG_STATUS],
-  [acx_tmp=`AS_ECHO([$3]) | dnl
-"AS_VAR_GET(_ACX_SUBDIR_RUN_DIR_VAR([$2]))/config.status" dnl
--q --file=- 2>/dev/null`
+  [acx_tmp=`AS_ECHO([$3]) | "$2/config.status" -q --file=- 2>/dev/null`
    AS_IF([test $? -eq 0],
      [AS_VAR_COPY([$1], [acx_tmp])],
-     [AC_MSG_ERROR(
-        [unable to run ]dnl
-['AS_VAR_GET(_ACX_SUBDIR_RUN_DIR_VAR([$2]))/config.status'])])])
+     [AC_MSG_ERROR([unable to run '$2/config.status'])])])
 
 # _ACX_SUBDIR_COMMANDS_PRE()
 # -----------------------------------------------------------------------------
@@ -660,39 +655,37 @@ m4_define([_ACX_SUBDIR_COMMANDS_PRE],
               [acx_subdir_silent_arg="'--silent'"],
               [acx_subdir_silent_arg=])
             acx_subdir_run_any=no
-            for acx_subdir_srcdir in $extra_src_subdirs; do
+            for acx_subdir_builddir in $extra_build_subdirs; do
               AS_VAR_IF(
-                [_ACX_SUBDIR_RUN_YESNO_VAR([$acx_subdir_srcdir])], [yes],
+                [_ACX_SUBDIR_RUN_YESNO_VAR([$acx_subdir_builddir])], [yes],
                 [acx_subdir_run_any=yes
-                 AS_VAR_COPY([acx_subdir_builddir],
-                   [_ACX_SUBDIR_RUN_DIR_VAR([$acx_subdir_srcdir])])
                  AS_VAR_COPY([acx_subdir_fns],
-                   [_ACX_SUBDIR_RUN_BEFORE_VAR([$acx_subdir_srcdir])])
+                   [_ACX_SUBDIR_RUN_BEFORE_VAR([$acx_subdir_builddir])])
                  AS_IF([test -n "$acx_subdir_fns"],
                    [acx_tmp=dnl
-"=== running extra commands before configuring $acx_subdir_srcdir"
+"=== running extra commands before configuring $acx_subdir_builddir"
                     _AS_ECHO_LOG([$acx_tmp])
                     _AS_ECHO([$acx_tmp])
                     for acx_tmp in $acx_subdir_fns; do
                       eval "$acx_tmp"
                     done])
                  acx_tmp=dnl
-"=== configuring $acx_subdir_srcdir (in $acx_subdir_builddir)"
+"=== configuring $acx_subdir_builddir"
                  _AS_ECHO_LOG([$acx_tmp])
                  _AS_ECHO([$acx_tmp])
                  AS_MKDIR_P(["$acx_subdir_builddir"])
                  ACX_SUBDIR_GET_RUN_CMD([acx_subdir_run_cmd],
-                   [$acx_subdir_srcdir])
+                   [$acx_subdir_builddir])
                  acx_subdir_run_cmd=dnl
 "( cd '$acx_subdir_builddir' && $acx_subdir_run_cmd $acx_subdir_silent_arg)"
                  AC_MSG_NOTICE([running $acx_subdir_run_cmd])
                  eval "$acx_subdir_run_cmd" || dnl
-AC_MSG_ERROR([configuration of $acx_subdir_srcdir failed])
+AC_MSG_ERROR([configuration of $acx_subdir_builddir failed])
                  AS_VAR_COPY([acx_subdir_fns],
-                   [_ACX_SUBDIR_RUN_AFTER_VAR([$acx_subdir_srcdir])])
+                   [_ACX_SUBDIR_RUN_AFTER_VAR([$acx_subdir_builddir])])
                  AS_IF([test -n "$acx_subdir_fns"],
                    [acx_tmp=dnl
-"=== running extra commands after configuring $acx_subdir_srcdir"
+"=== running extra commands after configuring $acx_subdir_builddir"
                     _AS_ECHO_LOG([$acx_tmp])
                     _AS_ECHO([$acx_tmp])
                     for acx_tmp in $acx_subdir_fns; do
@@ -766,59 +759,47 @@ m4_define([_ACX_SUBDIR_RUN_EXTRA],
    m4_popdef([acx_subdir_extra_run_name])dnl
    m4_popdef([acx_subdir_extra_run_idx])])
 
-# _ACX_SUBDIR_RUN_YESNO_VAR(SUBDIR)
+# _ACX_SUBDIR_RUN_YESNO_VAR(BUILD-SUBDIR)
 # -----------------------------------------------------------------------------
-# Expands to the name of shell variable that holds the condition ('yes' or
+# Expands to the name of shell variable that holds the boolean value ('yes' or
 # 'no') of whether the configure script runs the configuration command for
-# directory SUBDIR.
+# directory BUILD-SUBDIR.
 #
-m4_define([_ACX_SUBDIR_RUN_YESNO_VAR],
-  [acx_subdir_run_condition_[]AS_TR_SH([$1])])
+m4_define([_ACX_SUBDIR_RUN_YESNO_VAR], [acx_subdir_run_[]AS_TR_SH([$1])])
 
-# _ACX_SUBDIR_RUN_BEFORE_VAR(SUBDIR)
+# _ACX_SUBDIR_RUN_BEFORE_VAR(BUILD-SUBDIR)
 # -----------------------------------------------------------------------------
 # Expands to the name of shell variable that holds names of the functions that
-# must be run before configuring in directory SUBDIR.
+# must be run before configuring in directory BUILD-SUBDIR.
 #
 m4_define([_ACX_SUBDIR_RUN_BEFORE_VAR],
   [acx_subdir_run_before_[]AS_TR_SH([$1])])
 
-# _ACX_SUBDIR_RUN_AFTER_VAR(SUBDIR)
+# _ACX_SUBDIR_RUN_AFTER_VAR(BUILD-SUBDIR)
 # -----------------------------------------------------------------------------
 # Expands to the name of shell variable that holds names of the functions that
-# must be run after configuring in directory SUBDIR.
+# must be run after configuring in directory BUILD-SUBDIR.
 #
-m4_define([_ACX_SUBDIR_RUN_AFTER_VAR],
-  [acx_subdir_run_after_[]AS_TR_SH([$1])])
+m4_define([_ACX_SUBDIR_RUN_AFTER_VAR], [acx_subdir_run_after_[]AS_TR_SH([$1])])
 
-# _ACX_SUBDIR_RUN_DIR_VAR(SUBDIR)
-# -----------------------------------------------------------------------------
-# Expands to the name of shell variable that holds the name of the run (build)
-# directory of the configuration command of the source directory SUBDIR.
-#
-m4_define([_ACX_SUBDIR_RUN_DIR_VAR],
-  [acx_subdir_run_dir_[]AS_TR_SH([$1])])
-
-# _ACX_SUBDIR_BUILD_TYPE_VAR(SUBDIR)
+# _ACX_SUBDIR_BUILD_TYPE_VAR(BUILD-SUBDIR)
 # -----------------------------------------------------------------------------
 # Expands to the name of shell variable that holds the type of the build system
-# of the source directory SUBDIR.
+# of the build directory BUILD-SUBDIR.
 #
 m4_define([_ACX_SUBDIR_BUILD_TYPE_VAR],
   [acx_subdir_build_type_[]AS_TR_SH([$1])])
 
-# _ACX_SUBDIR_RUN_CMD_VAR(SUBDIR)
+# _ACX_SUBDIR_RUN_CMD_VAR(BUILD-SUBDIR)
 # -----------------------------------------------------------------------------
 # Expands to the name of shell variable that holds the command (without the
-# arguments) that configures directory SUBDIR.
+# arguments) that configures directory BUILD-SUBDIR.
 #
-m4_define([_ACX_SUBDIR_RUN_CMD_VAR],
-  [acx_subdir_run_cmd_[]AS_TR_SH([$1])])
+m4_define([_ACX_SUBDIR_RUN_CMD_VAR], [acx_subdir_run_cmd_[]AS_TR_SH([$1])])
 
-# _ACX_SUBDIR_RUN_ARG_VAR(SUBDIR)
+# _ACX_SUBDIR_RUN_ARG_VAR(BUILD-SUBDIR)
 # -----------------------------------------------------------------------------
 # Expands to the name of shell variable that holds arguments of the command
-# that configures directory SUBDIR.
+# that configures directory BUILD-SUBDIR.
 #
-m4_define([_ACX_SUBDIR_RUN_ARG_VAR],
-  [acx_subdir_run_args_[]AS_TR_SH([$1])])
+m4_define([_ACX_SUBDIR_RUN_ARG_VAR], [acx_subdir_run_args_[]AS_TR_SH([$1])])
