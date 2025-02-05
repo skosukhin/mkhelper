@@ -168,8 +168,8 @@ m4_define([_ACX_SHLIB_RPATH_FLAG],
    AC_CACHE_CHECK([for _AC_LANG compiler flag needed to add a directory to dnl
 the runtime library search path], [acx_cache_var],
      [AS_CASE([AS_VAR_GET([acx_cv_[]_AC_LANG_ABBREV[]_compiler_vendor])],
-        [nag], [acx_cache_var="-Wl,-Wl,,-rpath -Wl,-Wl,,"],
-        [acx_cache_var="-Wl,-rpath -Wl,"])])
+        [nag], [acx_cache_var="-Wl,-Wl,,-rpath,,"],
+        [acx_cache_var="-Wl,-rpath,"])])
    m4_popdef([acx_cache_var])])
 
 # _ACX_SHLIB_PIC_FLAG([COMMON-EXTRA-FLAG])

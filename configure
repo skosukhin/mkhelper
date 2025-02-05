@@ -3074,9 +3074,9 @@ if ${acx_cv_fc_rpath_flag+:} false; then :
 else
   case $acx_cv_fc_compiler_vendor in #(
   nag) :
-    acx_cv_fc_rpath_flag="-Wl,-Wl,,-rpath -Wl,-Wl,," ;; #(
+    acx_cv_fc_rpath_flag="-Wl,-Wl,,-rpath,," ;; #(
   *) :
-    acx_cv_fc_rpath_flag="-Wl,-rpath -Wl," ;;
+    acx_cv_fc_rpath_flag="-Wl,-rpath," ;;
 esac
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_rpath_flag" >&5
