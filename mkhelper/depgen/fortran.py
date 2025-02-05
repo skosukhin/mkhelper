@@ -329,6 +329,6 @@ class Parser:
         for line in stream:
             comment_idx = find_unquoted_string("!", line)
             if comment_idx >= 0:
-                line = line[:comment_idx]
+                line = line[:comment_idx] + "\n"
             if line and not line.isspace():
                 yield line
