@@ -5061,7 +5061,11 @@ $as_echo "$MKDIR_P" >&6; }
 
 
 mkhelper_some_prog='true -a -b -c'
-   acx_prog_search_abspath=unknown
+case $mkhelper_some_prog in #(
+  [\\/]* | ?:[\\/]*) :
+     ;; #(
+  *) :
+       acx_prog_search_abspath=unknown
    set dummy $mkhelper_some_prog; shift; acx_prog_exec=$1; shift; acx_prog_args="$@"
    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for the absolute path to $acx_prog_exec" >&5
 $as_echo_n "checking for the absolute path to $acx_prog_exec... " >&6; }
@@ -5069,13 +5073,16 @@ $as_echo_n "checking for the absolute path to $acx_prog_exec... " >&6; }
    { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_prog_search_abspath" >&5
 $as_echo "$acx_prog_search_abspath" >&6; }
    if test "x$acx_prog_search_abspath" = xunknown; then :
-  :
+  set dummy $mkhelper_some_prog; shift
+            { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: unable to find the absolute path to $1" >&5
+$as_echo "$as_me: WARNING: unable to find the absolute path to $1" >&2;}
 else
   if test -n "$acx_prog_args"; then :
   as_fn_append acx_prog_search_abspath " $acx_prog_args"
 fi
-
-fi
+      mkhelper_some_prog="$acx_prog_search_abspath"
+fi ;;
+esac
 
 BUNDLED_FCFLAGS=''
 

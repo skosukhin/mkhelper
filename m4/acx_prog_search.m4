@@ -137,3 +137,30 @@ dnl one.
      [AS_IF([test -n "$acx_prog_args"],
         [AS_VAR_APPEND([acx_prog_search_abspath], [" $acx_prog_args"])])
       $2])])
+
+# ACX_PROG_SEARCH_ABSPATH_IF_NOT_ABSPATH(VARIABLE,
+#                                        [ACTION-IF-SUCCESS],
+#                                        [ACTION-IF-FAILURE = WARNING],
+#                                        [PATH = $PATH])
+# -----------------------------------------------------------------------------
+# Gets the name of an executable stored in the shell variable VARIABLE and
+# searches for the absolute path to it. If the name is already an absolute
+# path, silently skips all checks (does not even check whether the provided
+# path exists and points to an executable). Otherwise, expands
+# ACX_PROG_SEARCH_ABSPATH with the value of the VARIABLE as the
+# PROG-TO-CHECK-FOR argument (see ACX_PROG_SEARCH_ABSPATH).
+#
+# If successful, runs ACTION-IF-SUCCESS (defaults to assigning the shell
+# variable VARIABLE with the result of the check), otherwise runs
+# ACTION-IF-FAILURE (defaults to a warning message).
+#
+AC_DEFUN([ACX_PROG_SEARCH_ABSPATH_IF_NOT_ABSPATH],
+  [AS_CASE([AS_VAR_GET([$1])],
+     [[[\\/]]* | ?:[[\\/]]*], [],
+     [ACX_PROG_SEARCH_ABSPATH([AS_VAR_GET([$1])],
+        [m4_default([$2], [AS_VAR_SET([$1], ["$acx_prog_search_abspath"])])],
+        [m4_default([$3],
+           [set dummy AS_VAR_GET([$1]); shift
+            AC_MSG_WARN(
+              [unable to find the absolute path to $[]1])])],
+        [m4_default([$4], [$PATH])])])])

@@ -243,7 +243,7 @@ AC_PROG_INSTALL
 AC_PROG_MKDIR_P
 
 mkhelper_some_prog='true -a -b -c'
-ACX_PROG_SEARCH_ABSPATH([$mkhelper_some_prog], [], [:])
+ACX_PROG_SEARCH_ABSPATH_IF_NOT_ABSPATH([mkhelper_some_prog])
 
 dnl A list of flags enabling location of the include files of the enabled
 dnl bundled libraries:
