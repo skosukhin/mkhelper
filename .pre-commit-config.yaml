@@ -12,11 +12,11 @@ repos:
         exclude: '^(libtool_patches|test_inputs)/.*|(^|/)(aclocal.m4|configure|Makefile.in)$'
       - id: check-yaml
   - repo: https://github.com/pycqa/isort
-    rev: 5.13.2
+    rev: 6.0.1
     hooks:
       - id: isort
   - repo: https://github.com/psf/black-pre-commit-mirror
-    rev: 24.10.0
+    rev: 25.1.0
     hooks:
       - id: black
   - repo: https://github.com/csachs/pyproject-flake8
@@ -37,16 +37,18 @@ repos:
         types: [file]
         files: '\.cmake\.in$'
   - repo: https://github.com/fortran-lang/fprettify
-    # We have to use the untagged version because there are no releases that
-    # support the case argument in the .fprettify.rc configuration file
-    # (see https://github.com/fortran-lang/fprettify/commit/cb254022c2034ad3b8f744f4dad1bf5b7438815d):
-    rev: cb254022c2034ad3b8f744f4dad1bf5b7438815d
+    # The latest release v0.3.7 is very old and does not have a number of
+    # important bug fixes:
+    #   - https://github.com/fortran-lang/fprettify/commit/9e0108c34f651b9444582715d281672e59fa0d9c
+    #   - https://github.com/fortran-lang/fprettify/commit/cb254022c2034ad3b8f744f4dad1bf5b7438815d
+    # Therefore, we use the current HEAD of the master branch:
+    rev: ee0cf1b1890fee615942df00075cf2134c709542
     hooks:
       - id: fprettify
         name: fprettify
         files: '\.([fF]\d*|inc)$'
         exclude: '^(test_inputs/.*|src/modules/mo_mod_a.f90$)'
   - repo: https://github.com/rhysd/actionlint
-    rev: v1.7.6
+    rev: v1.7.7
     hooks:
       - id: actionlint
