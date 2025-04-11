@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (c) 2018-2024, MPI-M
+# Copyright (c) 2018-2025, MPI-M
 #
 # Author: Sergey Kosukhin <sergey.kosukhin@mpimet.mpg.de>
 #
