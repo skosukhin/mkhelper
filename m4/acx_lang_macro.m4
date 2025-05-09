@@ -211,6 +211,20 @@ printf("%s\n", STRINGIFY($1));
 m4_copy([_ACX_LANG_MACRO_PRINT_PROGRAM(C)],
   [_ACX_LANG_MACRO_PRINT_PROGRAM(C++)])
 
+# _ACX_LANG_MACRO_PRINT_PROGRAM(CUDA)(MACRO-NAME)
+# -----------------------------------------------------------------------------
+# Implementation of _ACX_LANG_MACRO_PRINT_PROGRAM for CUDA language.
+#
+m4_copy([_ACX_LANG_MACRO_PRINT_PROGRAM(C)],
+  [_ACX_LANG_MACRO_PRINT_PROGRAM(CUDA)])
+
+# _ACX_LANG_MACRO_PRINT_PROGRAM(HIP)(MACRO-NAME)
+# -----------------------------------------------------------------------------
+# Implementation of _ACX_LANG_MACRO_PRINT_PROGRAM for HIP language.
+#
+m4_copy([_ACX_LANG_MACRO_PRINT_PROGRAM(C)],
+  [_ACX_LANG_MACRO_PRINT_PROGRAM(HIP)])
+
 # _ACX_LANG_MACRO_PRINT_PROGRAM(Fortran)(MACRO-NAME,
 #                                        [INCLUDES])
 # -----------------------------------------------------------------------------
