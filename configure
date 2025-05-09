@@ -4553,22 +4553,23 @@ rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 fi
       if test "x$acx_cv_fc_macro__OPENMP_value" = xunknown; then :
-  set dummy 202111 202011 201811 201511 201307 201107 200805 200505 200011 199911 199710; shift
-            while test $# != 0; do
+  for acx_tmp in 202111 202011 201811 201511 201307 201107 200805 200505 200011 199911 199710; do
               cat > conftest.$ac_ext <<_ACEOF
       program main
-#if _OPENMP == _CONFTEST_UNDEFINED_OR_EMPTY || _OPENMP != $1
+#if _OPENMP == _CONFTEST_UNDEFINED_OR_EMPTY || _OPENMP != $acx_tmp
       choke me
 #endif
       end
 _ACEOF
 if ac_fn_fc_try_compile "$LINENO"; then :
-  acx_cv_fc_macro__OPENMP_value=$1
-                 set dummy; shift
-else
-  shift
+  acx_cv_fc_macro__OPENMP_value=$acx_tmp
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+              if test "x$acx_cv_fc_macro__OPENMP_value" = xunknown; then :
+
+else
+  break
+fi
             done
 fi
 fi

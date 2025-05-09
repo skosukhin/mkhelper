@@ -126,15 +126,13 @@ AC_DEFUN([ACX_LANG_MACRO_CHECK_VALUE],
               [AS_VAR_COPY([acx_cache_var], [acx_exec_result])])])])
       m4_ifnblank([$2],
         [AS_VAR_IF([acx_cache_var], [unknown],
-           [set dummy $2; shift
-            while test $[]@%:@ != 0; do
+           [for acx_tmp in $2; do
               AC_COMPILE_IFELSE([AC_LANG_PROGRAM([$3],
-[[#if $1 == _CONFTEST_UNDEFINED_OR_EMPTY || $1 != $][1
+[[#if $1 == _CONFTEST_UNDEFINED_OR_EMPTY || $1 != $acx_tmp
       choke me
 #endif]])],
-                [AS_VAR_COPY([acx_cache_var], [1])
-                 set dummy; shift],
-                [shift])
+                [AS_VAR_COPY([acx_cache_var], [acx_tmp])])
+              AS_VAR_IF([acx_cache_var], [unknown], [], [break])
             done])])])
    AS_VAR_COPY([acx_macro_value], [acx_cache_var])
    m4_popdef([acx_cache_var])])
