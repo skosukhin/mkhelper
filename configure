@@ -4503,8 +4503,8 @@ $as_echo_n "checking for the value of the Fortran preprocessor macro _OPENMP... 
 if ${acx_cv_fc_macro__OPENMP_value+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  acx_cv_fc_macro__OPENMP_value=unknown
-      if test "x$cross_compiling" = xno; then :
+  acx_macro_value=unknown
+   if test "x$cross_compiling" = xno; then :
   cat > conftest.$ac_ext <<_ACEOF
 #ifndef _OPENMP
       choke me
@@ -4545,16 +4545,16 @@ else
 _ACEOF
 if ac_fn_fc_try_link "$LINENO"; then :
   acx_exec_result=`./conftest$ac_exeext 2>&5`
-            if test $? -eq 0; then :
-  acx_cv_fc_macro__OPENMP_value=$acx_exec_result
+         if test $? -eq 0; then :
+  acx_macro_value=$acx_exec_result
 fi
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 fi
-      if test "x$acx_cv_fc_macro__OPENMP_value" = xunknown; then :
+   if test "x$acx_macro_value" = xunknown; then :
   for acx_tmp in 202111 202011 201811 201511 201307 201107 200805 200505 200011 199911 199710; do
-              cat > conftest.$ac_ext <<_ACEOF
+           cat > conftest.$ac_ext <<_ACEOF
       program main
 #if _OPENMP == _CONFTEST_UNDEFINED_OR_EMPTY || _OPENMP != $acx_tmp
       choke me
@@ -4562,16 +4562,13 @@ fi
       end
 _ACEOF
 if ac_fn_fc_try_compile "$LINENO"; then :
-  acx_cv_fc_macro__OPENMP_value=$acx_tmp
+  acx_macro_value=$acx_tmp
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-              if test "x$acx_cv_fc_macro__OPENMP_value" = xunknown; then :
-
-else
-  break
+           test "x$acx_macro_value" = xunknown || break
+         done
 fi
-            done
-fi
+      acx_cv_fc_macro__OPENMP_value=$acx_macro_value
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_macro__OPENMP_value" >&5
 $as_echo "$acx_cv_fc_macro__OPENMP_value" >&6; }

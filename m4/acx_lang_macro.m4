@@ -98,9 +98,9 @@ AC_DEFUN([ACX_LANG_MACRO_CHECK_DEFINED],
    AS_VAR_COPY([acx_macro_defined], [acx_cache_var])
    m4_popdef([acx_cache_var])])
 
-# ACX_LANG_MACRO_CHECK_VALUE(MACRO-NAME,
-#                            [KNOWN-INTEGER-VALUES],
-#                            [INCLUDES])
+# ACX_LANG_MACRO_CHECK_VALUE_SILENT(MACRO-NAME,
+#                                   [KNOWN-INTEGER-VALUES],
+#                                   [INCLUDES])
 # -----------------------------------------------------------------------------
 # Detects the value of the preprocessor macro MACRO-NAME with the optional
 # INCLUDE directives. First, tries to link and to run a program that prints the
@@ -110,7 +110,34 @@ AC_DEFUN([ACX_LANG_MACRO_CHECK_DEFINED],
 # checks whether MACRO-NAME expands to one of them. The result is either
 # "unknown" or the actual value of the macro.
 #
-# The result is stored in the acx_macro_value variable and cached in the
+# The result is stored in the acx_macro_value variable.
+#
+AC_DEFUN([ACX_LANG_MACRO_CHECK_VALUE_SILENT],
+  [acx_macro_value=unknown
+   AS_VAR_IF([cross_compiling], [no],
+     [AC_LINK_IFELSE([_ACX_LANG_MACRO_PRINT_PROGRAM([$1], [$3])],
+        [acx_exec_result=`./conftest$ac_exeext 2>&AS_MESSAGE_LOG_FD`
+         AS_IF([test $? -eq 0],
+           [acx_macro_value=$acx_exec_result])])])
+   m4_ifnblank([$2],
+     [AS_VAR_IF([acx_macro_value], [unknown],
+        [for acx_tmp in $2; do
+           AC_COMPILE_IFELSE([AC_LANG_PROGRAM([$3],
+[[#if $1 == _CONFTEST_UNDEFINED_OR_EMPTY || $1 != $acx_tmp
+      choke me
+#endif]])],
+             [acx_macro_value=$acx_tmp])
+           test "x$acx_macro_value" = xunknown || break
+         done])])])
+
+# ACX_LANG_MACRO_CHECK_VALUE(MACRO-NAME,
+#                            [KNOWN-INTEGER-VALUES],
+#                            [INCLUDES])
+# -----------------------------------------------------------------------------
+# The same as ACX_LANG_MACRO_CHECK_VALUE_SILENT but emits the check message and
+# caches the result.
+#
+# The result is cached in the
 # acx_cv_[]_AC_LANG_ABBREV[]_macro_[]AS_TR_SH(MACRO-NAME)_value variable.
 #
 AC_DEFUN([ACX_LANG_MACRO_CHECK_VALUE],
@@ -118,22 +145,8 @@ AC_DEFUN([ACX_LANG_MACRO_CHECK_VALUE],
      [acx_cv_[]_AC_LANG_ABBREV[]_macro_[]AS_TR_SH([$1])_value])dnl
    AC_CACHE_CHECK([for the value of the _AC_LANG preprocessor macro $1],
      [acx_cache_var],
-     [AS_VAR_SET([acx_cache_var], [unknown])
-      AS_VAR_IF([cross_compiling], [no],
-        [AC_LINK_IFELSE([_ACX_LANG_MACRO_PRINT_PROGRAM([$1], [$3])],
-           [acx_exec_result=`./conftest$ac_exeext 2>&AS_MESSAGE_LOG_FD`
-            AS_IF([test $? -eq 0],
-              [AS_VAR_COPY([acx_cache_var], [acx_exec_result])])])])
-      m4_ifnblank([$2],
-        [AS_VAR_IF([acx_cache_var], [unknown],
-           [for acx_tmp in $2; do
-              AC_COMPILE_IFELSE([AC_LANG_PROGRAM([$3],
-[[#if $1 == _CONFTEST_UNDEFINED_OR_EMPTY || $1 != $acx_tmp
-      choke me
-#endif]])],
-                [AS_VAR_COPY([acx_cache_var], [acx_tmp])])
-              AS_VAR_IF([acx_cache_var], [unknown], [], [break])
-            done])])])
+     [ACX_LANG_MACRO_CHECK_VALUE_SILENT($@)
+      AS_VAR_COPY([acx_cache_var], [acx_macro_value])])
    AS_VAR_COPY([acx_macro_value], [acx_cache_var])
    m4_popdef([acx_cache_var])])
 
