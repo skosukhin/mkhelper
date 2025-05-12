@@ -68,15 +68,36 @@ ${acx_lang_macro_flag}CONFTEST_ONE ${acx_lang_macro_flag}CONFTEST_TWO=42"
 define a preprocessor macro])])], [$1])
    m4_popdef([acx_cache_var])])
 
-# ACX_LANG_MACRO_CHECK_DEFINED(MACRO-NAME,
-#                              [INCLUDES])
+# ACX_LANG_MACRO_CHECK_DEFINED_SILENT(MACRO-NAME,
+#                                     [INCLUDES])
 # -----------------------------------------------------------------------------
 # Checks whether the preprocessor macro MACRO-NAME is defined with optional
 # INCLUDE directives. The result is either "yes", "no" or "unsupported" (if the
 # current language does not support preprocessor directives or the INCLUDE
 # directives lead to a compilation error).
 #
-# The result is stored in the acx_macro_defined variable and cached in the
+# The result is stored in the acx_macro_defined variable.
+#
+AC_DEFUN([ACX_LANG_MACRO_CHECK_DEFINED_SILENT],
+  [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([$2], [[#ifdef $1
+#else
+      choke me
+#endif]])],
+     [AS_VAR_SET([acx_macro_defined], [yes])],
+     [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([$2], [[#ifndef $1
+#else
+      choke me
+#endif]])],
+        [AS_VAR_SET([acx_macro_defined], [no])],
+        [AS_VAR_SET([acx_macro_defined], [unsupported])])])])
+
+# ACX_LANG_MACRO_CHECK_DEFINED(MACRO-NAME,
+#                              [INCLUDES])
+# -----------------------------------------------------------------------------
+# The same as ACX_LANG_MACRO_CHECK_DEFINED_SILENT but emits the check message
+# and caches the result.
+#
+# The result is cached in the
 # acx_cv_[]_AC_LANG_ABBREV[]_macro_[]AS_TR_SH(MACRO-NAME)_defined variable.
 #
 AC_DEFUN([ACX_LANG_MACRO_CHECK_DEFINED],
@@ -84,17 +105,8 @@ AC_DEFUN([ACX_LANG_MACRO_CHECK_DEFINED],
      [acx_cv_[]_AC_LANG_ABBREV[]_macro_[]AS_TR_SH([$1])_defined])dnl
    AC_CACHE_CHECK([whether the _AC_LANG preprocessor macro $1 is defined],
      [acx_cache_var],
-     [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([$2], [[#ifdef $1
-#else
-      choke me
-#endif]])],
-        [AS_VAR_SET([acx_cache_var], [yes])],
-        [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([$2], [[#ifndef $1
-#else
-      choke me
-#endif]])],
-           [AS_VAR_SET([acx_cache_var], [no])],
-           [AS_VAR_SET([acx_cache_var], [unsupported])])])])
+     [ACX_LANG_MACRO_CHECK_DEFINED_SILENT($@)
+      AS_VAR_COPY([acx_cache_var], [acx_macro_defined])])
    AS_VAR_COPY([acx_macro_defined], [acx_cache_var])
    m4_popdef([acx_cache_var])])
 

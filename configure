@@ -4599,7 +4599,7 @@ else
       end
 _ACEOF
 if ac_fn_fc_try_compile "$LINENO"; then :
-  acx_cv_fc_macro__OPENMP_defined=yes
+  acx_macro_defined=yes
 else
   cat > conftest.$ac_ext <<_ACEOF
       program main
@@ -4610,13 +4610,14 @@ else
       end
 _ACEOF
 if ac_fn_fc_try_compile "$LINENO"; then :
-  acx_cv_fc_macro__OPENMP_defined=no
+  acx_macro_defined=no
 else
-  acx_cv_fc_macro__OPENMP_defined=unsupported
+  acx_macro_defined=unsupported
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+      acx_cv_fc_macro__OPENMP_defined=$acx_macro_defined
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_macro__OPENMP_defined" >&5
 $as_echo "$acx_cv_fc_macro__OPENMP_defined" >&6; }
