@@ -84,12 +84,14 @@ AC_DEFUN([ACX_LANG_MACRO_CHECK_DEFINED_SILENT],
       choke me
 #endif]])],
      [AS_VAR_SET([acx_macro_defined], [yes])],
-     [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([$2], [[#ifndef $1
+     [m4_bmatch(_AC_LANG, [^C\|C++\|CUDA\|HIP$],
+       [AS_VAR_SET([acx_macro_defined], [no])],
+       [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([$2], [[#ifndef $1
 #else
       choke me
 #endif]])],
-        [AS_VAR_SET([acx_macro_defined], [no])],
-        [AS_VAR_SET([acx_macro_defined], [unsupported])])])])
+          [AS_VAR_SET([acx_macro_defined], [no])],
+          [AS_VAR_SET([acx_macro_defined], [unsupported])])])])])
 
 # ACX_LANG_MACRO_CHECK_DEFINED(MACRO-NAME,
 #                              [INCLUDES])
