@@ -156,7 +156,7 @@ dnl one.
 #
 AC_DEFUN([ACX_PROG_SEARCH_ABSPATH_IF_NOT_ABSPATH],
   [AS_CASE([AS_VAR_GET([$1])],
-     [[[\\/]]* | ?:[[\\/]]*], [],
+     [[[\\/]]* | ?:[[\\/]]*], [$2],
      [ACX_PROG_SEARCH_ABSPATH([AS_VAR_GET([$1])],
         [m4_default([$2], [AS_VAR_SET([$1], ["$acx_prog_search_abspath"])])],
         [m4_default([$3],
