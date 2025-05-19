@@ -42,7 +42,7 @@ repos:
     #   - https://github.com/fortran-lang/fprettify/commit/9e0108c34f651b9444582715d281672e59fa0d9c
     #   - https://github.com/fortran-lang/fprettify/commit/cb254022c2034ad3b8f744f4dad1bf5b7438815d
     # Therefore, we use the current HEAD of the master branch:
-    rev: ee0cf1b1890fee615942df00075cf2134c709542
+    rev: v0.3.7
     hooks:
       - id: fprettify
         name: fprettify
