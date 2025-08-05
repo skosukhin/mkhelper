@@ -3567,9 +3567,9 @@ fi
 fi
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-fi
       cd ..
       rm -rf conftest.dir
+fi
       if test "x$acx_cv_fc_module_snaming_infix" = xunknown || test "x$acx_cv_fc_module_snaming_ext" = xunknown; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: unknown" >&5
 $as_echo "unknown" >&6; }

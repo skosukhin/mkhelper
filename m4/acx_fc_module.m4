@@ -255,9 +255,9 @@ sed "s,.*$acx_fc_module_sname\.,,"`])])
                  [acx_cv_fc_module_snaming_infix=],
                  ["$acx_fc_module_name"*"$acx_fc_module_sname"*],
                  [acx_cv_fc_module_snaming_infix=`echo $acx_tmp | dnl
-sed "s,$acx_fc_module_sname\..*,," | sed "s,^$acx_fc_module_name,,"`])])])])])
+sed "s,$acx_fc_module_sname\..*,," | sed "s,^$acx_fc_module_name,,"`])])])])
       cd ..
-      rm -rf conftest.dir
+      rm -rf conftest.dir])
       AS_IF([test "x$acx_cv_fc_module_snaming_infix" = xunknown || dnl
 test "x$acx_cv_fc_module_snaming_ext" = xunknown],
         [AC_MSG_RESULT([unknown])
