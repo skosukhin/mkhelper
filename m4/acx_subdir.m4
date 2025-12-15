@@ -628,7 +628,8 @@ AS_VAR_GET(_ACX_SUBDIR_RUN_ARG_VAR([$2]))"])])
 #    AC_SUBST([SUBDIR_VAR])])
 #
 AC_DEFUN([ACX_SUBDIR_QUERY_CONFIG_STATUS],
-  [acx_tmp=`AS_ECHO([$3]) | "$2/config.status" -q --file=- 2>/dev/null`
+  [acx_tmp=dnl
+`cd '$2' >/dev/null && AS_ECHO([$3]) | ./config.status -q --file=- 2>/dev/null`
    AS_IF([test $? -eq 0],
      [AS_VAR_COPY([$1], [acx_tmp])],
      [AC_MSG_ERROR([unable to run '$2/config.status'])])])

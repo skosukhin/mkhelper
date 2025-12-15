@@ -5646,13 +5646,13 @@ fi
                   $as_echo "$as_me:${as_lineno-$LINENO}: ===" >&5
 fi
 fi
-acx_tmp=`$as_echo @LDFLAGS@ | "bundled/build/threaded_hello/config.status" -q --file=- 2>/dev/null`
+acx_tmp=`cd 'bundled/build/threaded_hello' >/dev/null && $as_echo @LDFLAGS@ | ./config.status -q --file=- 2>/dev/null`
    if test $? -eq 0; then :
   mkhelper_LDFLAGS=$acx_tmp
 else
   as_fn_error $? "unable to run 'bundled/build/threaded_hello/config.status'" "$LINENO" 5
 fi
-   acx_tmp=`$as_echo @LIBS@ | "bundled/build/threaded_hello/config.status" -q --file=- 2>/dev/null`
+   acx_tmp=`cd 'bundled/build/threaded_hello' >/dev/null && $as_echo @LIBS@ | ./config.status -q --file=- 2>/dev/null`
    if test $? -eq 0; then :
   mkhelper_LIBS=$acx_tmp
 else
@@ -5690,7 +5690,7 @@ esac
 fi
       done
 fi
-   acx_tmp=`$as_echo ' @PTHREAD_CFLAGS@' | "bundled/build/threaded_hello/config.status" -q --file=- 2>/dev/null`
+   acx_tmp=`cd 'bundled/build/threaded_hello' >/dev/null && $as_echo ' @PTHREAD_CFLAGS@' | ./config.status -q --file=- 2>/dev/null`
    if test $? -eq 0; then :
   mkhelper_PTHREAD_CFLAGS=$acx_tmp
 else
