@@ -5145,16 +5145,7 @@ esac
 esac
      shift
    done
-set dummy FCFLAGS= --enable-always=yes; shift
-   for acx_tmp; do
-     case $acx_tmp in #(
-  *\'*) :
-    acx_tmp=`$as_echo "$acx_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
-  *) :
-     ;;
-esac
-     as_fn_append acx_subdir_run_args_bundled_picky " '$acx_tmp'"
-   done
+as_fn_append acx_subdir_run_args_bundled_picky " 'FCFLAGS=' '--enable-always=yes'"
 
 # Check whether --enable-delayed-config was given.
 if test "${enable_delayed_config+set}" = set; then :

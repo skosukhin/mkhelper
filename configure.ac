@@ -265,8 +265,8 @@ ACX_SUBDIR_REMOVE_ARGS([bundled/picky],
   [ACX_SUBDIR_CONFIG_PATTERN_ENABLE([silent-rules])],
   [ACX_SUBDIR_CONFIG_PATTERN_WITH([netcdf-root])],
   [ACX_SUBDIR_CONFIG_PATTERN_ENABLE([always])])
-ACX_SUBDIR_APPEND_ARGS([bundled/picky],
-  [FCFLAGS=], [--enable-always=yes])
+ACX_SUBDIR_APPEND_ARG_UNQUOTED([bundled/picky],
+  [" 'FCFLAGS=' '--enable-always=yes'"])
 
 AC_ARG_ENABLE([delayed-config],
   [AS_HELP_STRING([--enable-delayed-config],
