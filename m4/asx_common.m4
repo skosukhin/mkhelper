@@ -105,6 +105,16 @@ AC_DEFUN([ASX_ESCAPE_SINGLE_QUOTE],
      [AS_VAR_SET([$1], [`AS_ECHO(["AS_VAR_GET([$1])"]) | dnl
 sed "s/'/'\\\\\\\\''/g"`])])])
 
+# ASX_ESCAPE_MAKE_SYNTAX(VARIABLE)
+# -----------------------------------------------------------------------------
+# Emits shell code that modifies the value of the shell variable VARIABLE to
+# conform with Makefile syntax (e.g. each dollar sign "$" is duplicated).
+#
+AC_DEFUN([ASX_ESCAPE_MAKE_SYNTAX],
+  [AS_CASE([AS_VAR_GET([$1])], [*\$[]*],
+     [AS_VAR_SET([$1], [`AS_ECHO(["AS_VAR_GET([$1])"]) | dnl
+sed 's/\\$/$$/g'`])])])
+
 # ASX_SRCDIRS(BUILD-DIR-NAME)
 # -----------------------------------------------------------------------------
 # Receives a normalized (i.e. does not contain '/./', '..', etc.) path

@@ -2363,7 +2363,6 @@ else
 
 fi
 
-
    if test -n "$BUILD_ENV"; then :
   if $as_echo "$BUILD_ENV" | grep ';[ ]*$' >/dev/null 2>&1; then :
 
@@ -2376,7 +2375,13 @@ fi
   *) :
      ;;
 esac
-      BUILD_ENV_MAKE=`echo "$BUILD_ENV" | sed 's/\\$/$$/g'`
+      BUILD_ENV_MAKE=$BUILD_ENV
+      case $BUILD_ENV_MAKE in #(
+  *\$*) :
+    BUILD_ENV_MAKE=`$as_echo "$BUILD_ENV_MAKE" | sed 's/\\$/$$/g'` ;; #(
+  *) :
+     ;;
+esac
       { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether \$BUILD_ENV is accepted by '$SHELL -c'" >&5
 $as_echo_n "checking whether \$BUILD_ENV is accepted by '$SHELL -c'... " >&6; }
       acx_build_env_quoted=$BUILD_ENV
