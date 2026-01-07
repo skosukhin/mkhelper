@@ -47,6 +47,8 @@ AS_VAR_IF([enable_rpaths], [yes],
         [LDFLAGS="$mkhelper_rpath_flags $LDFLAGS"])])
    eval export $acx_cv_shlib_path_var])
 
+ACX_SHLIB_FC_EXPORT_DYNAMIC_FLAG
+
 ACX_COMPILER_CROSS_CHECK_NOW
 ACX_FC_LINE_LENGTH([unlimited])
 

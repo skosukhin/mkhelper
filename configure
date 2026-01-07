@@ -3166,6 +3166,57 @@ fi
    eval export $acx_cv_shlib_path_var
 fi
 
+      { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler flag needed to add all symbols to the dynamic symbol table" >&5
+$as_echo_n "checking for Fortran compiler flag needed to add all symbols to the dynamic symbol table... " >&6; }
+   if ${acx_cv_fc_export_dynamic_flag+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  acx_cv_fc_export_dynamic_flag=unknown
+      case $host_os in #(
+  darwin*) :
+    acx_cv_fc_export_dynamic_flag= ;; #(
+  *) :
+    case $acx_cv_fc_compiler_vendor in #(
+  nag) :
+    acx_cv_fc_export_dynamic_flag='-Wl,-Wl,,--export-dynamic' ;; #(
+  *) :
+    acx_cv_fc_export_dynamic_flag='-Wl,--export-dynamic' ;;
+esac ;;
+esac
+      if test -n "$acx_cv_fc_export_dynamic_flag" && test "x$acx_cv_fc_export_dynamic_flag" != xunknown; then :
+  acx_save_LDFLAGS=$LDFLAGS
+         LDFLAGS="$acx_cv_fc_export_dynamic_flag $LDFLAGS"
+         cat > conftest.$ac_ext <<_ACEOF
+      program main
+
+      end
+_ACEOF
+if ac_fn_fc_try_link "$LINENO"; then :
+
+else
+  acx_cv_fc_export_dynamic_flag=unknown
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+         LDFLAGS=$acx_save_LDFLAGS
+fi
+fi
+
+   if test -n "$acx_cv_fc_export_dynamic_flag"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_export_dynamic_flag" >&5
+$as_echo "$acx_cv_fc_export_dynamic_flag" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: none needed" >&5
+$as_echo "none needed" >&6; }
+fi
+   if test "x$acx_cv_fc_export_dynamic_flag" = xunknown; then :
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "unable to detect Fortran compiler flag needed to add all symbols to the dynamic symbol table
+See \`config.log' for more details" "$LINENO" 5; }
+fi
+
+
    cross_compiling=$acx_save_cross_compiling
    ac_tool_warned=$acx_save_ac_tool_warned
       cat > conftest.$ac_ext <<_ACEOF

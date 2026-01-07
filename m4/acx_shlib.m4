@@ -156,6 +156,48 @@ search paths for shared libraries], [acx_cv_shlib_path_var],
         [darwin*], [acx_cv_shlib_path_var=DYLD_LIBRARY_PATH],
         [acx_cv_shlib_path_var=LD_LIBRARY_PATH])])])
 
+# ACX_SHLIB_FC_EXPORT_DYNAMIC_FLAG([ACTION-IF-SUCCESS],
+#                                  [ACTION-IF-FAILURE = FAILURE])
+# -----------------------------------------------------------------------------
+# Sets the result to the Fortran compiler flag needed to add all symbols to the
+# dynamic symbol table.
+#
+# If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
+# (defaults to failing with an error message).
+#
+# The result is cached in the acx_cv_fc_export_dynamic_flag variable.
+#
+AC_DEFUN([ACX_SHLIB_FC_EXPORT_DYNAMIC_FLAG],
+  [AC_REQUIRE([ACX_COMPILER_FC_VENDOR])_ACX_SHLIB_EXPORT_DYNAMIC_FLAG($@)])
+
+# ACX_SHLIB_CC_EXPORT_DYNAMIC_FLAG([ACTION-IF-SUCCESS],
+#                                  [ACTION-IF-FAILURE = FAILURE])
+# -----------------------------------------------------------------------------
+# Sets the result to the C compiler flag needed to add all symbols to the
+# dynamic symbol table.
+#
+# If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
+# (defaults to failing with an error message).
+#
+# The result is cached in the acx_cv_c_export_dynamic_flag variable.
+#
+AC_DEFUN([ACX_SHLIB_CC_EXPORT_DYNAMIC_FLAG],
+  [AC_REQUIRE([ACX_COMPILER_CC_VENDOR])_ACX_SHLIB_EXPORT_DYNAMIC_FLAG($@)])
+
+# ACX_SHLIB_CXX_EXPORT_DYNAMIC_FLAG([ACTION-IF-SUCCESS],
+#                                   [ACTION-IF-FAILURE = FAILURE])
+# -----------------------------------------------------------------------------
+# Sets the result to the C++ compiler flag needed to add all symbols to the
+# dynamic symbol table.
+#
+# If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
+# (defaults to failing with an error message).
+#
+# The result is cached in the acx_cv_cxx_export_dynamic_flag variable.
+#
+AC_DEFUN([ACX_SHLIB_CXX_EXPORT_DYNAMIC_FLAG],
+  [AC_REQUIRE([ACX_COMPILER_CXX_VENDOR])_ACX_SHLIB_EXPORT_DYNAMIC_FLAG($@)])
+
 # _ACX_SHLIB_RPATH_FLAG()
 # -----------------------------------------------------------------------------
 # Sets the result to the compiler flag needed to add a directory to the runtime
@@ -191,4 +233,42 @@ m4_define([_ACX_SHLIB_PIC_FLAG],
         [ibm], [acx_cache_var='-qpic'],
         [acx_cache_var='-fPIC'])
       m4_ifnblank([$1], [AS_VAR_APPEND([acx_cache_var], [" $1"])])])
+   m4_popdef([acx_cache_var])])
+
+# _ACX_SHLIB_EXPORT_DYNAMIC_FLAG([ACTION-IF-SUCCESS],
+#                                [ACTION-IF-FAILURE = FAILURE])
+# -----------------------------------------------------------------------------
+# Sets the result to the compiler flag needed to add all symbols to the dynamic
+# symbol table (requires calling _ACX_COMPILER_VENDOR first).
+#
+# If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
+# (defaults to failing with an error message).
+#
+# The flag is cached in the acx_cv_[]_AC_LANG_ABBREV[]_export_dynamic_flag
+# variable.
+#
+m4_define([_ACX_SHLIB_EXPORT_DYNAMIC_FLAG],
+  [AC_REQUIRE([AC_CANONICAL_HOST])dnl
+   m4_pushdef([acx_cache_var],
+     [acx_cv_[]_AC_LANG_ABBREV[]_export_dynamic_flag])dnl
+   AC_MSG_CHECKING([for _AC_LANG compiler flag needed to add all symbols to dnl
+the dynamic symbol table])
+   AC_CACHE_VAL([acx_cache_var],
+     [acx_cache_var=unknown
+      AS_CASE([$host_os],
+        [darwin*], [acx_cache_var=],
+        [AS_CASE([AS_VAR_GET([acx_cv_[]_AC_LANG_ABBREV[]_compiler_vendor])],
+           [nag], [acx_cache_var='-Wl,-Wl,,--export-dynamic'],
+           [acx_cache_var='-Wl,--export-dynamic'])])
+      AS_IF([test -n "$acx_cache_var" && test "x$acx_cache_var" != xunknown],
+        [acx_save_LDFLAGS=$LDFLAGS
+         LDFLAGS="$acx_cache_var $LDFLAGS"
+         AC_LINK_IFELSE([AC_LANG_PROGRAM], [], [acx_cache_var=unknown])
+         LDFLAGS=$acx_save_LDFLAGS])])
+   AS_IF([test -n "$acx_cache_var"],
+     [AC_MSG_RESULT([$acx_cache_var])],
+     [AC_MSG_RESULT([none needed])])
+   AS_VAR_IF([acx_cache_var], [unknown], [m4_default([$2],
+     [AC_MSG_FAILURE([unable to detect _AC_LANG compiler flag needed to dnl
+add all symbols to the dynamic symbol table])])], [$1])
    m4_popdef([acx_cache_var])])
