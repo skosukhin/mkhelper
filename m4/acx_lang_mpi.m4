@@ -1,4 +1,4 @@
-# Copyright (c) 2010-2025, DKRZ, MPI-M
+# Copyright (c) 2010-2026, DKRZ, MPI-M
 #
 # Authors:
 #   Thomas Jahns <jahns@dkrz.de>
