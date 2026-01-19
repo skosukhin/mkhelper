@@ -156,6 +156,21 @@ search paths for shared libraries], [acx_cv_shlib_path_var],
         [darwin*], [acx_cv_shlib_path_var=DYLD_LIBRARY_PATH],
         [acx_cv_shlib_path_var=LD_LIBRARY_PATH])])])
 
+# ACX_SHLIB_PATH_VAR()
+# -----------------------------------------------------------------------------
+# Sets the result to the filename extension of shared libraries (without the
+# leading dot).
+#
+# The result is cached in the acx_cv_shlib_ext variable.
+#
+AC_DEFUN([ACX_SHLIB_EXT],
+  [AC_REQUIRE([AC_CANONICAL_HOST])dnl
+   AC_CACHE_CHECK([for the filename extension of shared libraries],
+     [acx_cv_shlib_ext],
+     [AS_CASE([$host_os],
+        [darwin*], [acx_cv_shlib_ext=dylib],
+        [acx_cv_shlib_ext=so])])])
+
 # ACX_SHLIB_FC_EXPORT_DYNAMIC_FLAG([ACTION-IF-SUCCESS],
 #                                  [ACTION-IF-FAILURE = FAILURE])
 # -----------------------------------------------------------------------------

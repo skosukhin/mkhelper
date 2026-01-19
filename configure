@@ -3166,6 +3166,20 @@ fi
    eval export $acx_cv_shlib_path_var
 fi
 
+   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for the filename extension of shared libraries" >&5
+$as_echo_n "checking for the filename extension of shared libraries... " >&6; }
+if ${acx_cv_shlib_ext+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  case $host_os in #(
+  darwin*) :
+    acx_cv_shlib_ext=dylib ;; #(
+  *) :
+    acx_cv_shlib_ext=so ;;
+esac
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_shlib_ext" >&5
+$as_echo "$acx_cv_shlib_ext" >&6; }
       { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler flag needed to add all symbols to the dynamic symbol table" >&5
 $as_echo_n "checking for Fortran compiler flag needed to add all symbols to the dynamic symbol table... " >&6; }
    if ${acx_cv_fc_export_dynamic_flag+:} false; then :
