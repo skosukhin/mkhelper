@@ -143,5 +143,5 @@ sed 's/\\$/$$/g'`])])])
 #     9) ac_abs_top_srcdir - absolute path to the top source directory.
 #
 AC_DEFUN([ASX_SRCDIRS],
-  [AC_REQUIRE_SHELL_FN([acx_subdir_srcdirs_fn], [], [_AC_SRCDIRS(["$[]1"])])dnl
-   acx_subdir_srcdirs_fn $1])
+  [AC_REQUIRE_SHELL_FN([asx_srcdirs_fn], [], [_AC_SRCDIRS(["$[]1"])])dnl
+   asx_srcdirs_fn $1])

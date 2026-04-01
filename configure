@@ -1613,7 +1613,7 @@ esac ;;
 esac
 } # acx_prog_search_abspath_fn
 
-acx_subdir_srcdirs_fn ()
+asx_srcdirs_fn ()
 {
 ac_builddir=.
 
@@ -1649,7 +1649,7 @@ case $srcdir in
 esac
 ac_abs_srcdir=$ac_abs_top_srcdir$ac_dir_suffix
 
-} # acx_subdir_srcdirs_fn
+} # asx_srcdirs_fn
 
 acx_subdir_pre_adjust_config_args ()
 {
@@ -5161,7 +5161,7 @@ BUNDLED_LIBFILES=''
 
 polymorphic_subdir='bundled/picky'
 polymorphic_config=''
-                        acx_subdir_srcdirs_fn "$polymorphic_subdir"
+                        asx_srcdirs_fn "$polymorphic_subdir"
    eval "acx_subdir_run_cmd_`$as_echo "$polymorphic_subdir" | $as_tr_sh`=\"'\$ac_top_srcdir/\$polymorphic_subdir/'\\\"\\\${polymorphic_config}\\\"\""
    eval "acx_subdir_build_type_`$as_echo "$polymorphic_subdir" | $as_tr_sh`='config'"
          acx_subdir_pre_adjust_config_args
@@ -5241,7 +5241,7 @@ else
                      as_fn_append acx_subdir_run_after_bundled_picky ' acx_subdir_extra_run_3'
 fi
 
-                        acx_subdir_srcdirs_fn "bundled/build/threaded_hello"
+                        asx_srcdirs_fn "bundled/build/threaded_hello"
    acx_subdir_run_cmd_bundled_build_threaded_hello="'$ac_top_srcdir/bundled/threaded_hello/configure'"
    acx_subdir_build_type_bundled_build_threaded_hello='config'
          acx_subdir_pre_adjust_config_args
@@ -5312,7 +5312,7 @@ case " $extra_build_subdirs " in #(
      ;;
 esac
 
-                        acx_subdir_srcdirs_fn "bundled/build/delayed"
+                        asx_srcdirs_fn "bundled/build/delayed"
    acx_subdir_run_cmd_bundled_build_delayed="'$ac_top_srcdir/bundled/delayed/configure'"
    acx_subdir_build_type_bundled_build_delayed='config'
          acx_subdir_pre_adjust_config_args
@@ -5377,7 +5377,7 @@ case " $extra_build_subdirs " in #(
      ;;
 esac
 
-                        acx_subdir_srcdirs_fn "bundled/build/delayed_mangled"
+                        asx_srcdirs_fn "bundled/build/delayed_mangled"
    acx_subdir_run_cmd_bundled_build_delayed_mangled="'$ac_top_srcdir/bundled/delayed/configure'"
    acx_subdir_build_type_bundled_build_delayed_mangled='config'
          acx_subdir_pre_adjust_config_args
@@ -5449,7 +5449,7 @@ CMAKE=${CMAKE-cmake}
    acx_subdir_build_type_bundled_cmake_based_build='cmake'
                                              acx_subdir_pre_adjust_cmake_args
       acx_subdir_run_args_bundled_cmake_based_build=$acx_subdir_pre_adjusted_cmake_args
-         acx_subdir_srcdirs_fn "bundled/cmake_based/build"
+         asx_srcdirs_fn "bundled/cmake_based/build"
       acx_tmp="$ac_top_srcdir/bundled/cmake_based"
       case $acx_tmp in #(
   *\'*) :
