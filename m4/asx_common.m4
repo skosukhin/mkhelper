@@ -145,3 +145,23 @@ sed 's/\\$/$$/g'`])])])
 AC_DEFUN([ASX_SRCDIRS],
   [AC_REQUIRE_SHELL_FN([asx_srcdirs_fn], [], [_AC_SRCDIRS(["$[]1"])])dnl
    asx_srcdirs_fn $1])
+
+# ASX_DIRNAME(FILE-NAME)
+# -----------------------------------------------------------------------------
+# Simulates the command 'dirname FILE-NAME', which might not be available on
+# the system. Relies on the standard AS_DIRNAME macro, but keeps the configure
+# script smaller by moving the required shell code to a shell function.
+#
+AC_DEFUN([ASX_DIRNAME],
+  [AC_REQUIRE_SHELL_FN([asx_dirname_fn], [], [AS_DIRNAME(["$[]1"])])dnl
+   asx_dirname_fn $1])
+
+# ASX_BASENAME(FILE-NAME)
+# -----------------------------------------------------------------------------
+# Simulates the command 'basename FILE-NAME', which might not be available on
+# the system. Relies on the standard AS_BASENAME macro, but keeps the configure
+# script smaller by moving the required shell code to a shell function.
+#
+AC_DEFUN([ASX_BASENAME],
+  [AC_REQUIRE_SHELL_FN([asx_basename_fn], [], [AS_BASENAME(["$[]1"])])dnl
+   asx_basename_fn $1])
