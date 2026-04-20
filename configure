@@ -5200,6 +5200,7 @@ polymorphic_config=''
                         asx_srcdirs_fn "$polymorphic_subdir"
    eval "acx_subdir_run_cmd_`$as_echo "$polymorphic_subdir" | $as_tr_sh`=\"'\$ac_top_srcdir/\$polymorphic_subdir/'\\\"\\\${polymorphic_config}\\\"\""
    eval "acx_subdir_build_type_`$as_echo "$polymorphic_subdir" | $as_tr_sh`='config'"
+   eval "acx_subdir_run_default_args_`$as_echo "$polymorphic_subdir" | $as_tr_sh`="
          acx_subdir_pre_adjust_config_args
       eval "acx_subdir_run_args_`$as_echo "$polymorphic_subdir" | $as_tr_sh`=\$acx_subdir_pre_adjusted_config_args"
       if test "x$cache_file" = x'/dev/null'; then :
@@ -5280,6 +5281,7 @@ fi
                         asx_srcdirs_fn "bundled/build/threaded_hello"
    acx_subdir_run_cmd_bundled_build_threaded_hello="'$ac_top_srcdir/bundled/threaded_hello/configure'"
    acx_subdir_build_type_bundled_build_threaded_hello='config'
+   acx_subdir_run_default_args_bundled_build_threaded_hello=
          acx_subdir_pre_adjust_config_args
       acx_subdir_run_args_bundled_build_threaded_hello=$acx_subdir_pre_adjusted_config_args
       if test "x$cache_file" = x'/dev/null'; then :
@@ -5351,6 +5353,7 @@ esac
                         asx_srcdirs_fn "bundled/build/delayed"
    acx_subdir_run_cmd_bundled_build_delayed="'$ac_top_srcdir/bundled/delayed/configure'"
    acx_subdir_build_type_bundled_build_delayed='config'
+   acx_subdir_run_default_args_bundled_build_delayed=
          acx_subdir_pre_adjust_config_args
       acx_subdir_run_args_bundled_build_delayed=$acx_subdir_pre_adjusted_config_args
       if test "x$cache_file" = x'/dev/null'; then :
@@ -5416,6 +5419,7 @@ esac
                         asx_srcdirs_fn "bundled/build/delayed_mangled"
    acx_subdir_run_cmd_bundled_build_delayed_mangled="'$ac_top_srcdir/bundled/delayed/configure'"
    acx_subdir_build_type_bundled_build_delayed_mangled='config'
+   acx_subdir_run_default_args_bundled_build_delayed_mangled=
          acx_subdir_pre_adjust_config_args
       acx_subdir_run_args_bundled_build_delayed_mangled=$acx_subdir_pre_adjusted_config_args
       if test "x$cache_file" = x'/dev/null'; then :
@@ -5496,7 +5500,8 @@ esac
       as_fn_append acx_subdir_run_args_bundled_cmake_based_build " '$acx_tmp'"
       as_fn_append extra_build_subdirs " bundled/cmake_based/build"
    acx_subdir_run_bundled_cmake_based_build=no
-set dummy -DBUILD_SHARED_LIBS:BOOL=OFF   -DCMAKE_BUILD_TYPE=NOEXTRAFLAGS; shift
+as_fn_append acx_subdir_run_default_args_bundled_cmake_based_build " '-DCMAKE_BUILD_TYPE=NOEXTRAFLAGS'"
+set dummy -DBUILD_SHARED_LIBS:BOOL=OFF; shift
    for acx_tmp; do
      case $acx_tmp in #(
   *\'*) :
@@ -5530,7 +5535,7 @@ for mkhelper_build_subdir in $extra_build_subdirs; do
   as_fn_append bundled_ready_${mkhelper_build_type}_subdirs " $mkhelper_build_subdir"
 else
   as_fn_append bundled_delayed_${mkhelper_build_type}_subdirs " $mkhelper_build_subdir"
-     mkhelper_subdir_cmd="`eval 'as_val=${'acx_subdir_run_cmd_\`$as_echo "$mkhelper_build_subdir" | $as_tr_sh\`'};$as_echo "$as_val"'` `eval 'as_val=${'acx_subdir_run_args_\`$as_echo "$mkhelper_build_subdir" | $as_tr_sh\`'};$as_echo "$as_val"'`"
+     mkhelper_subdir_cmd="`eval 'as_val=${'acx_subdir_run_cmd_\`$as_echo "$mkhelper_build_subdir" | $as_tr_sh\`'};$as_echo "$as_val"'``eval 'as_val=${'acx_subdir_run_default_args_\`$as_echo "$mkhelper_build_subdir" | $as_tr_sh\`'};$as_echo "$as_val"'` `eval 'as_val=${'acx_subdir_run_args_\`$as_echo "$mkhelper_build_subdir" | $as_tr_sh\`'};$as_echo "$as_val"'`"
      if test "x$mkhelper_build_type" = xcmake; then :
   mkhelper_silent_var='silent_CMAKE'
         mkhelper_silent_suffix='>/dev/null'
@@ -5722,7 +5727,7 @@ fi
                  $as_echo "$as_me:${as_lineno-$LINENO}: $acx_tmp" >&5
                  $as_echo "$acx_tmp" >&6
                  as_dir="$acx_subdir_builddir"; as_fn_mkdir_p
-                 acx_subdir_run_cmd="`eval 'as_val=${'acx_subdir_run_cmd_\`$as_echo "$acx_subdir_builddir" | $as_tr_sh\`'};$as_echo "$as_val"'` `eval 'as_val=${'acx_subdir_run_args_\`$as_echo "$acx_subdir_builddir" | $as_tr_sh\`'};$as_echo "$as_val"'`"
+                 acx_subdir_run_cmd="`eval 'as_val=${'acx_subdir_run_cmd_\`$as_echo "$acx_subdir_builddir" | $as_tr_sh\`'};$as_echo "$as_val"'``eval 'as_val=${'acx_subdir_run_default_args_\`$as_echo "$acx_subdir_builddir" | $as_tr_sh\`'};$as_echo "$as_val"'` `eval 'as_val=${'acx_subdir_run_args_\`$as_echo "$acx_subdir_builddir" | $as_tr_sh\`'};$as_echo "$as_val"'`"
                  acx_subdir_run_cmd="( cd '$acx_subdir_builddir' && $acx_subdir_run_cmd $acx_subdir_silent_arg)"
                  { $as_echo "$as_me:${as_lineno-$LINENO}: running $acx_subdir_run_cmd" >&5
 $as_echo "$as_me: running $acx_subdir_run_cmd" >&6;}

@@ -340,10 +340,11 @@ AC_SUBST([CMAKE], [${CMAKE-cmake}])dnl
 ACX_SUBDIR_INIT_CMAKE(
   [bundled/cmake_based], [no-run], [bundled/cmake_based/build],
   [AS_ESCAPE(["${CMAKE}"])])
+dnl By default, set non-existing build type to avoid extra compiler flags:
+ACX_SUBDIR_DEFAULT_ARG_UNQUOTED([bundled/cmake_based/build],
+  [" '-DCMAKE_BUILD_TYPE=NOEXTRAFLAGS'"])
 ACX_SUBDIR_APPEND_ARGS([bundled/cmake_based/build],
-  [-DBUILD_SHARED_LIBS:BOOL=OFF],
-dnl Set non-existing build type to avoid extra compiler flags:
-  [-DCMAKE_BUILD_TYPE=NOEXTRAFLAGS])
+  [-DBUILD_SHARED_LIBS:BOOL=OFF])
 AS_VAR_APPEND([BUNDLED_FCFLAGS], ["${FC_MOD_IN}bundled/cmake_based/build/mod "])
 BUNDLED_LIBFILES=dnl
 "bundled/cmake_based/build/libCMakeBasedHello.a $BUNDLED_LIBFILES"

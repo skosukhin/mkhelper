@@ -144,6 +144,7 @@ AC_DEFUN([ACX_SUBDIR_INIT_CONFIG],
      ["'$ac_top_srcdir/$1/m4_ifval([$4], ['$4], [configure'])"])
    AS_VAR_SET(
      [_ACX_SUBDIR_BUILD_TYPE_VAR([acx_subdir_build_subdir])], ['config'])
+   AS_VAR_SET([_ACX_SUBDIR_RUN_DEFAULT_ARG_VAR([acx_subdir_build_subdir])], [])
    m4_cond([acx_subdir_opt_adjust_args], [adjust-args],
      [AC_REQUIRE_SHELL_FN([acx_subdir_pre_adjust_config_args], [],
         [AS_VAR_SET_IF([acx_subdir_pre_adjusted_config_args], [],
@@ -513,6 +514,30 @@ dnl Append the transformed arguments:
 AC_DEFUN([ACX_SUBDIR_INIT_IFELSE],
   [AS_CASE([" $extra_build_subdirs "], [*' $1 '*], [$2], [$3])])
 
+# ACX_SUBDIR_DEFAULT_ARGS(BUILD-SUBDIR,
+#                         [ARG...])
+# -----------------------------------------------------------------------------
+# Expands to a shell script that appends default arguments ARGs for the command
+# that configures the BUILD-SUBDIR directory. The default arguments cannot be
+# removed later (see ACX_SUBDIR_REMOVE_ARGS), but can be overridden on the
+# command line (i.e. the command-line options provided to the configure script
+# of the top-level project are specified after the ARGs when configuring the
+# BUILD-SUBDIR directory).
+#
+AC_DEFUN([ACX_SUBDIR_DEFAULT_ARGS],
+  [_ACX_SUBDIR_APPEND_ARGS(_ACX_SUBDIR_RUN_DEFAULT_ARG_VAR([$1]),
+     m4_unquote(m4_cdr($@)))])
+
+# ACX_SUBDIR_DEFAULT_ARG_UNQUOTED(BUILD-SUBDIR,
+#                                 ARG)
+# -----------------------------------------------------------------------------
+# Expands to a shell script that appends default argument ARG as-is (i.e.
+# without extra quotation) for the command that configures the BUILD-SUBDIR
+# directory.
+#
+AC_DEFUN([ACX_SUBDIR_DEFAULT_ARG_UNQUOTED],
+  [AS_VAR_APPEND([_ACX_SUBDIR_RUN_DEFAULT_ARG_VAR([$1])], [$2])])
+
 # ACX_SUBDIR_REMOVE_ARGS(BUILD-SUBDIR,
 #                        [PATTERN...])
 # -----------------------------------------------------------------------------
@@ -582,7 +607,11 @@ m4_for([index], m4_decr(m4_len([$1])), m4_if([$1], [srcdir], [2], [1]), [-1],
 #                        [ARG...])
 # -----------------------------------------------------------------------------
 # Expands to a shell script that appends arguments ARGs for the command that
-# configures the BUILD-SUBDIR directory.
+# configures the BUILD-SUBDIR directory. The arguments can be removed later
+# (see ACX_SUBDIR_REMOVE_ARGS), but cannot be overridden on the command line
+# (i.e. the command-line options provided to the configure script of the
+# top-level project are specified before the ARGs when configuring the
+# BUILD-SUBDIR directory).
 #
 AC_DEFUN([ACX_SUBDIR_APPEND_ARGS],
   [_ACX_SUBDIR_APPEND_ARGS(_ACX_SUBDIR_RUN_ARG_VAR([$1]),
@@ -677,7 +706,8 @@ AC_DEFUN([ACX_SUBDIR_GET_BUILD_TYPE],
 #
 AC_DEFUN([ACX_SUBDIR_GET_RUN_CMD],
   [AS_VAR_SET([$1],
-     ["AS_VAR_GET(_ACX_SUBDIR_RUN_CMD_VAR([$2])) dnl
+     ["AS_VAR_GET(_ACX_SUBDIR_RUN_CMD_VAR([$2]))dnl
+AS_VAR_GET(_ACX_SUBDIR_RUN_DEFAULT_ARG_VAR([$2])) dnl
 AS_VAR_GET(_ACX_SUBDIR_RUN_ARG_VAR([$2]))"])])
 
 # ACX_SUBDIR_QUERY_CONFIG_STATUS(VARIABLE,
@@ -862,6 +892,14 @@ m4_define([_ACX_SUBDIR_BUILD_TYPE_VAR],
 # arguments) that configures directory BUILD-SUBDIR.
 #
 m4_define([_ACX_SUBDIR_RUN_CMD_VAR], [acx_subdir_run_cmd_[]AS_TR_SH([$1])])
+
+# _ACX_SUBDIR_RUN_DEFAULT_ARG_VAR(BUILD-SUBDIR)
+# -----------------------------------------------------------------------------
+# Expands to the name of shell variable that holds default arguments of the
+# command that configures directory BUILD-SUBDIR.
+#
+m4_define([_ACX_SUBDIR_RUN_DEFAULT_ARG_VAR],
+  [acx_subdir_run_default_args_[]AS_TR_SH([$1])])
 
 # _ACX_SUBDIR_RUN_ARG_VAR(BUILD-SUBDIR)
 # -----------------------------------------------------------------------------
