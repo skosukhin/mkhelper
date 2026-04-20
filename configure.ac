@@ -1,3 +1,4 @@
+ACX_SUBDIR_ACCEPT_CMAKE_DEFINITIONS
 ACX_POLYMORPHIC_OPTION([enable], [example-*], [acx_examples])
 
 AC_INIT([mkhelper], [1.0], [skosukhin@gmail.com])

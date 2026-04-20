@@ -28,6 +28,64 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+# ACX_SUBDIR_ACCEPT_CMAKE_DEFINITIONS()
+# -----------------------------------------------------------------------------
+# Patches the standard Autoconf macros to accept -D arguments to be passed to
+# CMake-based subprojects (see ACX_SUBDIR_INIT_CMAKE).
+#
+# The macro must be expanded before AC_INIT.
+#
+AC_DEFUN([ACX_SUBDIR_ACCEPT_CMAKE_DEFINITIONS],
+  [dnl
+dnl Check that the macro is expanded before AC_INIT (_AC_INIT_SRCDIR is the only
+dnl AC_DEFUNed macro expanded with non-AC_DEFUNed macro AC_INIT):
+   AC_PROVIDE_IFELSE([_AC_INIT_SRCDIR],
+     [m4_fatal([$0 must be expanded before AC_INIT])])
+dnl Check that that the line marker we need is present in _AC_INIT_PARSE_ARGS:
+   m4_pushdef([acx_marker_string],
+[^for ac_option
+do
+  # If the previous option needs an argument, assign it\.
+  if test -n "\$ac_prev"; then
+    eval \$ac_prev=\\\$ac_option
+    ac_prev=
+    continue
+  fi
+])
+   m4_bmatch(
+     m4_dquote(m4_defn([_AC_INIT_PARSE_ARGS])),
+     acx_marker_string, [],
+     [m4_fatal([$0 is not compatible with the version of Autoconf in use ]dnl
+[(_AC_INIT_PARSE_ARGS does not have the expected marker string)])])
+dnl Monkey-patch _AC_INIT_PARSE_ARGS:
+   m4_define([_AC_INIT_PARSE_ARGS],
+     m4_bpatsubst(
+       m4_dquote(m4_defn([_AC_INIT_PARSE_ARGS])),
+       acx_marker_string,
+       [acx_cmake_defs=
+acx_prev_D=
+\&
+  AS_IF([test -n "$acx_prev_D"],
+    [ASX_ESCAPE_SINGLE_QUOTE([ac_option])
+     AS_VAR_APPEND([acx_cmake_defs], [" '-D' '$ac_option'"])
+     acx_prev_D=
+     continue])
+  AS_CASE([$ac_option],
+    [-D], [acx_prev_D=yes; continue],
+    [-D*],
+    [ASX_ESCAPE_SINGLE_QUOTE([ac_option])
+     AS_VAR_APPEND([acx_cmake_defs], [" '$ac_option'"]); continue])
+]))
+  m4_define([acx_marker_string], [^if test -n "$ac_prev"; then$])
+  m4_define([_AC_INIT_PARSE_ARGS],
+     m4_bpatsubst(
+       m4_dquote(m4_defn([_AC_INIT_PARSE_ARGS])),
+       acx_marker_string,
+       [AS_IF([test -n "$acx_prev_D"],
+          [AC_MSG_ERROR([missing argument to -D])])
+\&]))
+  m4_popdef([acx_marker_string])])
+
 # ACX_SUBDIR_INIT_CONFIG(SUBDIR,
 #                        [OPTIONS = recursive-help adjust-args run],
 #                        [BUILD-SUBDIR = SUBDIR],
@@ -91,6 +149,8 @@ AC_DEFUN([ACX_SUBDIR_INIT_CONFIG],
         [AS_VAR_SET_IF([acx_subdir_pre_adjusted_config_args], [],
            [acx_subdir_pre_adjusted_config_args=$ac_configure_args
             _ACX_SUBDIR_REMOVE_ARGS([acx_subdir_pre_adjusted_config_args],
+              AC_PROVIDE_IFELSE([ACX_SUBDIR_ACCEPT_CMAKE_DEFINITIONS],
+                [[[-D], [1]], [[-D*], [0]],])
               [[ACX_SUBDIR_CONFIG_PATTERN_STDPOS([cache-file])| \
                 ACX_SUBDIR_CONFIG_PATTERN_STDPOS([srcdir])| \
                 ACX_SUBDIR_CONFIG_PATTERN_STDPOS([prefix])], [1]],
@@ -215,6 +275,9 @@ AC_DEFUN([ACX_SUBDIR_INIT_CMAKE],
         [AS_VAR_SET_IF([acx_subdir_pre_adjust_cmake_cv], [],
            [AS_VAR_SET([acx_subdir_pre_adjust_cmake_cv],
               ["'-Wno-dev' '--no-warn-unused-cli' '-GUnix Makefiles'"])
+            AC_PROVIDE_IFELSE([ACX_SUBDIR_ACCEPT_CMAKE_DEFINITIONS],
+              [AS_VAR_APPEND([acx_subdir_pre_adjust_cmake_cv],
+                 ["$acx_cmake_defs"])])
             eval "set dummy $ac_configure_args"; shift
 dnl Transform standard precious (influential environment) variables:
             m4_pushdef([acx_subdir_known_args],

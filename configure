@@ -769,6 +769,8 @@ mandir='${datarootdir}/man'
 
 ac_prev=
 ac_dashdash=
+acx_cmake_defs=
+acx_prev_D=
 for ac_option
 do
   # If the previous option needs an argument, assign it.
@@ -777,6 +779,32 @@ do
     ac_prev=
     continue
   fi
+
+  if test -n "$acx_prev_D"; then :
+  case $ac_option in #(
+  *\'*) :
+    ac_option=`$as_echo "$ac_option" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+  *) :
+     ;;
+esac
+     as_fn_append acx_cmake_defs " '-D' '$ac_option'"
+     acx_prev_D=
+     continue
+fi
+  case $ac_option in #(
+  -D) :
+    acx_prev_D=yes; continue ;; #(
+  -D*) :
+    case $ac_option in #(
+  *\'*) :
+    ac_option=`$as_echo "$ac_option" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+  *) :
+     ;;
+esac
+     as_fn_append acx_cmake_defs " '$ac_option'"; continue ;; #(
+  *) :
+     ;;
+esac
 
   case $ac_option in
   *=?*) ac_optarg=`expr "X$ac_option" : '[^=]*=\(.*\)'` ;;
@@ -1127,6 +1155,9 @@ Try \`$0 --help' for more information"
   esac
 done
 
+if test -n "$acx_prev_D"; then :
+  as_fn_error $? "missing argument to -D"
+fi
 if test -n "$ac_prev"; then
   ac_option=--`echo $ac_prev | sed 's/_/-/g'`
   as_fn_error $? "missing argument to $ac_option"
@@ -1662,6 +1693,10 @@ else
    while test $# != 0; do
      acx_tmp=$1
      case $acx_tmp in #(
+  -D) :
+    test 2 -gt $# || shift;  ;; #(
+  -D*) :
+     ;; #(
   -cache-file|--cache-file|--cache-fil|--cache-fi|--cache-f|--cache-|--cache|--cach|--cac|--ca|--c| \
                 -srcdir|--srcdir|--srcdi|--srcd|--src|--sr| \
                 -prefix|--prefix|--prefi|--pref|--pre|--pr|--p) :
@@ -1725,6 +1760,7 @@ if ${acx_subdir_pre_adjusted_cmake_args+:} false; then :
 
 else
   acx_subdir_pre_adjusted_cmake_args="'-Wno-dev' '--no-warn-unused-cli' '-GUnix Makefiles'"
+            as_fn_append acx_subdir_pre_adjusted_cmake_args "$acx_cmake_defs"
             eval "set dummy $ac_configure_args"; shift
                                                 acx_subdir_cmake_vars_to_transform=
             for acx_tmp; do
