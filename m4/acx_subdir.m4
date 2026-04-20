@@ -309,17 +309,17 @@ dnl and
 dnl https://gitlab.kitware.com/cmake/cmake/-/commit/211a9deac1d4144c7d7ce18ecb6c5d21c4854eaa,
 dnl respectively).
                for acx_arg_name in CC CXX FC; do
-               AS_CASE([" $acx_subdir_cmake_vars_to_transform "],
-                 [*" $acx_arg_name "*],
-                 [set dummy AS_VAR_GET([$acx_arg_name]); shift
-                  AS_VAR_COPY([acx_arg_${acx_arg_name}_EXEC], [1]); shift
-                  AS_VAR_APPEND([acx_subdir_cmake_vars_to_transform],
-                    [" ${acx_arg_name}_EXEC"])
-                  AS_VAR_COPY([acx_tmp], [@])
-                  AS_IF([test -n "$acx_tmp"],
-                    [AS_VAR_COPY([acx_arg_${acx_arg_name}_ARGS], [acx_tmp])
-                     AS_VAR_APPEND([acx_subdir_cmake_vars_to_transform],
-                       [" ${acx_arg_name}_ARGS"])])])
+                 AS_CASE([" $acx_subdir_cmake_vars_to_transform "],
+                   [*" $acx_arg_name "*],
+                   [set dummy AS_VAR_GET([$acx_arg_name]); shift
+                    AS_VAR_COPY([acx_arg_${acx_arg_name}_EXEC], [1]); shift
+                    AS_VAR_APPEND([acx_subdir_cmake_vars_to_transform],
+                      [" ${acx_arg_name}_EXEC"])
+                    AS_VAR_COPY([acx_tmp], [@])
+                    AS_IF([test -n "$acx_tmp"],
+                      [AS_VAR_COPY([acx_arg_${acx_arg_name}_ARGS], [acx_tmp])
+                       AS_VAR_APPEND([acx_subdir_cmake_vars_to_transform],
+                         [" ${acx_arg_name}_ARGS"])])])
                done
                m4_append([acx_subdir_known_args],
                  [[CC_EXEC, [CMAKE_C_COMPILER]],
