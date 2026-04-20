@@ -57,7 +57,7 @@
 AC_DEFUN([ACX_POLYMORPHIC_OPTION],
   [dnl
 dnl Check that the macro is expanded before AC_INIT (_AC_INIT_SRCDIR is the only
-dnl AC_DEFUNed macro axpanded with non-AC_DEFUNed macro AC_INIT):
+dnl AC_DEFUNed macro expanded with non-AC_DEFUNed macro AC_INIT):
    AC_PROVIDE_IFELSE([_AC_INIT_SRCDIR],
      [m4_fatal([$0 must be expanded before AC_INIT])])
 dnl Check that that the line marker we need is present in _AC_INIT_PARSE_ARGS:
@@ -110,4 +110,5 @@ for acx_opt in $ac_unrecognized_opts; do
 done
 IFS=$acx_save_IFS
 ac_unrecognized_opts=$acx_unrecognized_opts
-\&]))])
+\&]))
+   m4_popdef([acx_marker_string])])
