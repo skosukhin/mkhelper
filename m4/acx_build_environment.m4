@@ -67,7 +67,8 @@ dnl Check that $BUILD_ENV does not change variables that have been set on the
 dnl command line:
          acx_build_env_vars_to_check=
          eval "set dummy $ac_configure_args"; shift
-         for acx_arg; do
+         while test $[]# != 0; do
+           acx_arg=$[]1
            AS_CASE([$acx_arg],
              [-*], [],
              [*=*], [dnl
@@ -84,6 +85,7 @@ dnl script developers):
               [AS_VAR_APPEND([acx_build_env_vars_to_check],
                  [" $acx_arg_name"])],
               [AS_UNSET([acx_arg_${acx_arg_name}])])])
+           shift
          done
          AC_MSG_CHECKING(
            [whether \$BUILD_ENV is accepted by the current shell])

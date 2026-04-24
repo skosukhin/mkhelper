@@ -2434,7 +2434,8 @@ esac
 $as_echo "yes" >&6; }
          acx_build_env_vars_to_check=
          eval "set dummy $ac_configure_args"; shift
-         for acx_arg; do
+         while test $# != 0; do
+           acx_arg=$1
            case $acx_arg in #(
   -*) :
      ;; #(
@@ -2450,6 +2451,7 @@ fi ;; #(
   *) :
      ;;
 esac
+           shift
          done
          { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether \$BUILD_ENV is accepted by the current shell" >&5
 $as_echo_n "checking whether \$BUILD_ENV is accepted by the current shell... " >&6; }
