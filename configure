@@ -770,6 +770,7 @@ mandir='${datarootdir}/man'
 ac_prev=
 ac_dashdash=
 acx_cmake_defs=
+acx_cmake_ignored_defs=
 acx_prev_D=
 for ac_option
 do
@@ -780,31 +781,43 @@ do
     continue
   fi
 
+  acx_cmake_option=yes
   if test -n "$acx_prev_D"; then :
-  case $ac_option in #(
-  *\'*) :
-    ac_option=`$as_echo "$ac_option" | sed "s/'/'\\\\\\\\''/g"` ;; #(
-  *) :
-     ;;
-esac
-     as_fn_append acx_cmake_defs " '-D' '$ac_option'"
+  ac_option="-D$ac_option"
      acx_prev_D=
-     continue
-fi
+else
   case $ac_option in #(
   -D) :
     acx_prev_D=yes; continue ;; #(
   -D*) :
-    case $ac_option in #(
+     ;; #(
+  *) :
+    acx_cmake_option=no ;;
+esac
+fi
+  if test "x$acx_cmake_option" = xyes; then :
+  case $ac_option in #(
+  -DBUILD_SHARED_LIBS*) :
+    case ', '$acx_cmake_ignored_defs', ' in #(
+  *', '$ac_option', '*) :
+     ;; #(
+  ', '', ') :
+    as_fn_append acx_cmake_ignored_defs $ac_option ;; #(
+  *) :
+    as_fn_append acx_cmake_ignored_defs ', '; as_fn_append acx_cmake_ignored_defs $ac_option ;;
+esac ;; #(
+  *) :
+
+       case $ac_option in #(
   *\'*) :
     ac_option=`$as_echo "$ac_option" | sed "s/'/'\\\\\\\\''/g"` ;; #(
   *) :
      ;;
 esac
-     as_fn_append acx_cmake_defs " '$ac_option'"; continue ;; #(
-  *) :
-     ;;
+        as_fn_append acx_cmake_defs " '$ac_option'" ;;
 esac
+     continue
+fi
 
   case $ac_option in
   *=?*) ac_optarg=`expr "X$ac_option" : '[^=]*=\(.*\)'` ;;
@@ -1158,7 +1171,17 @@ done
 if test -n "$acx_prev_D"; then :
   as_fn_error $? "missing argument to -D"
 fi
-if test -n "$ac_prev"; then
+                   if test -n "$acx_cmake_ignored_defs"; then :
+  case $enable_option_checking in #(
+  no) :
+     ;; #(
+  fatal) :
+    as_fn_error $? "ignored CMake definitions: $acx_cmake_ignored_defs" ;; #(
+  *) :
+    $as_echo "$as_me: WARNING: ignored CMake definitions: $acx_cmake_ignored_defs" >&2 ;;
+esac
+fi
+           if test -n "$ac_prev"; then
   ac_option=--`echo $ac_prev | sed 's/_/-/g'`
   as_fn_error $? "missing argument to $ac_option"
 fi

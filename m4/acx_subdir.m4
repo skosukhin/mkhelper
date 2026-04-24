@@ -28,10 +28,11 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# ACX_SUBDIR_ACCEPT_CMAKE_DEFINITIONS()
+# ACX_SUBDIR_ACCEPT_CMAKE_DEFINITIONS([IGNORE-PATTERN...])
 # -----------------------------------------------------------------------------
-# Patches the standard Autoconf macros to accept -D arguments to be passed to
-# CMake-based subprojects (see ACX_SUBDIR_INIT_CMAKE).
+# Enables the configure script to accept CMake definitions (e.g. -D options)
+# to be passed to CMake-based subprojects (see ACX_SUBDIR_INIT_CMAKE). Any
+# argument matching one of the shell case patterns IGNORE-PATTERNs is ignored.
 #
 # The macro must be expanded before AC_INIT.
 #
@@ -63,22 +64,41 @@ dnl Monkey-patch _AC_INIT_PARSE_ARGS:
      m4_bpatsubst(m4_dquote(m4_defn([_AC_INIT_PARSE_ARGS])),
        acx_marker_string,
        [acx_cmake_defs=
+m4_ifnblank(m4_join([], $@), [acx_cmake_ignored_defs=
+])dnl
 acx_prev_D=
 \&
+  acx_cmake_option=yes
   AS_IF([test -n "$acx_prev_D"],
-    [ASX_ESCAPE_SINGLE_QUOTE([ac_option])
-     AS_VAR_APPEND([acx_cmake_defs], [" '-D' '$ac_option'"])
-     acx_prev_D=
+    [ac_option="-D$ac_option"
+     acx_prev_D=],
+    [AS_CASE([$ac_option],
+       [-D], [acx_prev_D=yes; continue],
+       [-D*], [],
+       [acx_cmake_option=no])])
+  AS_VAR_IF([acx_cmake_option], [yes],
+    [AS_CASE([$ac_option],
+       m4_foreach([pattern], [$@],
+         [m4_ifnblank(pattern,
+            [pattern,
+             [ASX_VAR_APPEND_UNIQ([acx_cmake_ignored_defs],
+                [$ac_option], [', '])],])])
+       [ASX_ESCAPE_SINGLE_QUOTE([ac_option])
+        AS_VAR_APPEND([acx_cmake_defs], [" '$ac_option'"])])
      continue])
-  AS_CASE([$ac_option],
-    [-D], [acx_prev_D=yes; continue],
-    [-D*],
-    [ASX_ESCAPE_SINGLE_QUOTE([ac_option])
-     AS_VAR_APPEND([acx_cmake_defs], [" '$ac_option'"]); continue])
 ])),
        [^if test -n "$ac_prev"; then$],
        [AS_IF([test -n "$acx_prev_D"],
           [AC_MSG_ERROR([missing argument to -D])])
+        m4_ifnblank(m4_join([], $@),
+          [m4_pushdef([acx_subdir_ignored_option_message],
+             [ignored CMake definitions: $acx_cmake_ignored_defs])dnl
+           AS_IF([test -n "$acx_cmake_ignored_defs"],
+             [AS_CASE([$enable_option_checking],
+                [no], [],
+                [fatal], [AC_MSG_ERROR([acx_subdir_ignored_option_message])],
+                [AC_MSG_WARN([acx_subdir_ignored_option_message])])])
+           m4_popdef([acx_subdir_ignored_option_message])])dnl
 \&]))
 dnl Also monkey-patch all mkhelper macros that rely on $ac_configure_args:
   m4_ifdef([ACX_BUILD_ENVIRONMENT],
