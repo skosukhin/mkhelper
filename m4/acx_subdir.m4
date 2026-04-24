@@ -84,6 +84,23 @@ acx_prev_D=
        [AS_IF([test -n "$acx_prev_D"],
           [AC_MSG_ERROR([missing argument to -D])])
 \&]))
+dnl Also monkey-patch all mkhelper macros that rely on $ac_configure_args:
+  m4_ifdef([ACX_BUILD_ENVIRONMENT],
+    [m4_define([acx_marker_string],
+       [[^           AS_CASE(\[$acx_arg\],
+             \[-\*\], \[\],$]])
+     m4_bmatch(
+       m4_dquote(m4_defn([ACX_BUILD_ENVIRONMENT])),
+       acx_marker_string, [],
+       [m4_fatal([$0 is not compatible with the version of ]dnl
+[ACX_BUILD_ENVIRONMENT in use])])
+     m4_define([ACX_BUILD_ENVIRONMENT],
+       m4_bpatsubst(
+         m4_dquote(m4_defn([ACX_BUILD_ENVIRONMENT])),
+         acx_marker_string,
+         [AS_CASE([$acx_arg],
+            [-D], [test 2 -gt $[]@%:@ || shift],
+            [-*], [],]))])
   m4_popdef([acx_marker_string])])
 
 # ACX_SUBDIR_INIT_CONFIG(SUBDIR,

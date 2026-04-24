@@ -2436,7 +2436,9 @@ $as_echo "yes" >&6; }
          eval "set dummy $ac_configure_args"; shift
          while test $# != 0; do
            acx_arg=$1
-           case $acx_arg in #(
+case $acx_arg in #(
+  -D) :
+    test 2 -gt $# || shift ;; #(
   -*) :
      ;; #(
   *=*) :
