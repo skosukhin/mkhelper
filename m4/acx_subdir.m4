@@ -51,7 +51,7 @@ do
     ac_prev=
     continue
   fi
-])
+$])
    m4_bmatch(
      m4_dquote(m4_defn([_AC_INIT_PARSE_ARGS])),
      acx_marker_string, [],
@@ -59,8 +59,8 @@ do
 [(_AC_INIT_PARSE_ARGS does not have the expected marker string)])])
 dnl Monkey-patch _AC_INIT_PARSE_ARGS:
    m4_define([_AC_INIT_PARSE_ARGS],
-     m4_bpatsubst(
-       m4_dquote(m4_defn([_AC_INIT_PARSE_ARGS])),
+     m4_bpatsubst(m4_dquote(
+     m4_bpatsubst(m4_dquote(m4_defn([_AC_INIT_PARSE_ARGS])),
        acx_marker_string,
        [acx_cmake_defs=
 acx_prev_D=
@@ -75,12 +75,8 @@ acx_prev_D=
     [-D*],
     [ASX_ESCAPE_SINGLE_QUOTE([ac_option])
      AS_VAR_APPEND([acx_cmake_defs], [" '$ac_option'"]); continue])
-]))
-  m4_define([acx_marker_string], [^if test -n "$ac_prev"; then$])
-  m4_define([_AC_INIT_PARSE_ARGS],
-     m4_bpatsubst(
-       m4_dquote(m4_defn([_AC_INIT_PARSE_ARGS])),
-       acx_marker_string,
+])),
+       [^if test -n "$ac_prev"; then$],
        [AS_IF([test -n "$acx_prev_D"],
           [AC_MSG_ERROR([missing argument to -D])])
 \&]))
