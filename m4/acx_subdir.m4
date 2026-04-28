@@ -561,15 +561,17 @@ AC_DEFUN([ACX_SUBDIR_DEFAULT_ARGS],
   [_ACX_SUBDIR_APPEND_ARGS(_ACX_SUBDIR_RUN_DEFAULT_ARG_VAR([$1]),
      m4_unquote(m4_cdr($@)))])
 
-# ACX_SUBDIR_DEFAULT_ARG_UNQUOTED(BUILD-SUBDIR,
-#                                 ARG)
+# ACX_SUBDIR_DEFAULT_ARGS_UNQUOTED(BUILD-SUBDIR,
+#                                  [ARG...])
 # -----------------------------------------------------------------------------
-# Expands to a shell script that appends default argument ARG as-is (i.e.
+# Expands to a shell script that appends default arguments ARGs as-is (i.e.
 # without extra quotation) for the command that configures the BUILD-SUBDIR
 # directory.
 #
-AC_DEFUN([ACX_SUBDIR_DEFAULT_ARG_UNQUOTED],
-  [AS_VAR_APPEND([_ACX_SUBDIR_RUN_DEFAULT_ARG_VAR([$1])], [$2])])
+AC_DEFUN([ACX_SUBDIR_DEFAULT_ARGS_UNQUOTED],
+  [m4_foreach([arg], m4_cdr($@),
+     [AS_VAR_APPEND([_ACX_SUBDIR_RUN_DEFAULT_ARG_VAR([$1])], [arg])
+])])
 
 # ACX_SUBDIR_REMOVE_ARGS(BUILD-SUBDIR,
 #                        [PATTERN...])
@@ -650,14 +652,16 @@ AC_DEFUN([ACX_SUBDIR_APPEND_ARGS],
   [_ACX_SUBDIR_APPEND_ARGS(_ACX_SUBDIR_RUN_ARG_VAR([$1]),
      m4_unquote(m4_cdr($@)))])
 
-# ACX_SUBDIR_APPEND_ARG_UNQUOTED(BUILD-SUBDIR,
-#                                ARG)
+# ACX_SUBDIR_APPEND_ARGS_UNQUOTED(BUILD-SUBDIR,
+#                                 [ARG...])
 # -----------------------------------------------------------------------------
-# Expands to a shell script that appends argument ARG as-is (i.e. without extra
-# quotation) for the command that configures the BUILD-SUBDIR directory.
+# Expands to a shell script that appends arguments ARGs as-is (i.e. without
+# extra quotation) for the command that configures the BUILD-SUBDIR directory.
 #
-AC_DEFUN([ACX_SUBDIR_APPEND_ARG_UNQUOTED],
-  [AS_VAR_APPEND([_ACX_SUBDIR_RUN_ARG_VAR([$1])], [$2])])
+AC_DEFUN([ACX_SUBDIR_APPEND_ARGS_UNQUOTED],
+  [m4_foreach([arg], m4_cdr($@),
+     [AS_VAR_APPEND([_ACX_SUBDIR_RUN_ARG_VAR([$1])], [arg])
+])])
 
 # ACX_SUBDIR_RUN_RESET(BUILD-SUBDIR,
 #                      [VALUE = SWAP])

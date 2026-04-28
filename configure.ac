@@ -269,8 +269,8 @@ ACX_SUBDIR_REMOVE_ARGS([bundled/picky],
   [ACX_SUBDIR_CONFIG_PATTERN_ENABLE([silent-rules])],
   [ACX_SUBDIR_CONFIG_PATTERN_WITH([netcdf-root])],
   [ACX_SUBDIR_CONFIG_PATTERN_ENABLE([always])])
-ACX_SUBDIR_APPEND_ARG_UNQUOTED([bundled/picky],
-  [" 'FCFLAGS=' '--enable-always=yes'"])
+ACX_SUBDIR_APPEND_ARGS_UNQUOTED([bundled/picky],
+  [" 'FCFLAGS='"], [" '--enable-always=yes'"])dnl
 
 AC_ARG_ENABLE([delayed-config],
   [AS_HELP_STRING([--enable-delayed-config],
@@ -341,8 +341,8 @@ ACX_SUBDIR_INIT_CMAKE(
   [bundled/cmake_based], [no-run], [bundled/cmake_based/build],
   [AS_ESCAPE(["${CMAKE}"])])
 dnl By default, set non-existing build type to avoid extra compiler flags:
-ACX_SUBDIR_DEFAULT_ARG_UNQUOTED([bundled/cmake_based/build],
-  [" '-DCMAKE_BUILD_TYPE=NOEXTRAFLAGS'"])
+ACX_SUBDIR_DEFAULT_ARGS_UNQUOTED([bundled/cmake_based/build],
+  [" '-DCMAKE_BUILD_TYPE=NOEXTRAFLAGS'"])dnl
 ACX_SUBDIR_APPEND_ARGS([bundled/cmake_based/build],
   [-DBUILD_SHARED_LIBS:BOOL=OFF])
 AS_VAR_APPEND([BUNDLED_FCFLAGS], ["${FC_MOD_IN}bundled/cmake_based/build/mod "])
