@@ -123,6 +123,34 @@ void conftest_foo () {omp_get_num_threads();}]])
         [AC_MSG_FAILURE(
            [Fortran compiler cannot link C code that uses OpenMP])])])])
 
+# ACX_FC_C_COMPATIBLE_PYTHON([ACTION-IF-SUCCESS],
+#                            [ACTION-IF-FAILURE = FAILURE])
+# -----------------------------------------------------------------------------
+# Checks whether the Fortran compiler can link C code that uses Python API.
+# Tries to compile a C function that make calls to Python API and to link the
+# resulting object into a Fortran program.
+#
+# The implementation implies that the Fortran compiler supports the BIND(C)
+# attribute and can link object files compiled with the C compiler.
+#
+# If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
+# (defaults to failing with an error message).
+#
+# The result is cached in the acx_cv_fc_c_compatible_python variable.
+#
+AC_DEFUN([ACX_FC_C_COMPATIBLE_PYTHON],
+  [AC_CACHE_CHECK(
+     [whether Fortran compiler can link C code that uses Python API],
+     [acx_cv_fc_c_compatible_python],
+     [_ACX_FC_C_COMPATIBLE([[
+#include <Python.h>
+void conftest_foo () {Py_Initialize();}]])
+      acx_cv_fc_c_compatible_python=$acx_fc_c_compatiable])
+   AS_VAR_IF([acx_cv_fc_c_compatible_python], [yes], [$1],
+     [m4_default([$2],
+        [AC_MSG_FAILURE(
+           [Fortran compiler cannot link C code that uses Python API])])])])
+
 # _ACX_FC_C_COMPATIBLE([FOO-C-CODE = "void conftest_foo(){}"]
 #                      [EXTRA-ACTIONS])
 # -----------------------------------------------------------------------------
