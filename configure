@@ -1652,14 +1652,14 @@ esac
   [\\/]* | ?:[\\/]*) :
      ;; #(
   *) :
-    asx_dir=`echo "$acx_prog_search_abspath" | sed 's%/[^/]*$%%' 2>/dev/null`
-         asx_file=`echo "$acx_prog_search_abspath" | sed 's%.*/%%' 2>/dev/null`
-         asx_dir=`cd "$asx_dir" >/dev/null 2>&1 && pwd 2>/dev/null`
+    mkh_dir=`echo "$acx_prog_search_abspath" | sed 's%/[^/]*$%%' 2>/dev/null`
+         mkh_file=`echo "$acx_prog_search_abspath" | sed 's%.*/%%' 2>/dev/null`
+         mkh_dir=`cd "$mkh_dir" >/dev/null 2>&1 && pwd 2>/dev/null`
          acx_prog_search_abspath=unknown
-         case $asx_dir in #(
+         case $mkh_dir in #(
   [\\/]* | ?:[\\/]*) :
-    if as_fn_executable_p "$asx_dir/$asx_file"; then :
-  acx_prog_search_abspath="$asx_dir/$asx_file"
+    if as_fn_executable_p "$mkh_dir/$mkh_file"; then :
+  acx_prog_search_abspath="$mkh_dir/$mkh_file"
 fi ;; #(
   *) :
      ;;
@@ -1667,7 +1667,7 @@ esac ;;
 esac
 } # acx_prog_search_abspath_fn
 
-asx_srcdirs_fn ()
+mkh_srcdirs_fn ()
 {
 ac_builddir=.
 
@@ -1703,7 +1703,7 @@ case $srcdir in
 esac
 ac_abs_srcdir=$ac_abs_top_srcdir$ac_dir_suffix
 
-} # asx_srcdirs_fn
+} # mkh_srcdirs_fn
 
 acx_subdir_pre_adjust_config_args ()
 {
@@ -3166,13 +3166,13 @@ fi
 $as_echo "$acx_cv_shlib_path_var" >&6; }
    eval link_cmd="\"$ac_link\""
    mkhelper_libdirs=
-   asx_extract_args_args=`echo $link_cmd`
-   asx_extract_args_args=`$as_echo "$asx_extract_args_args" | sed 's%''-L[ ]*''%_ASX_EXTRACT_ARGS_MARKER_%g'`
-   for asx_extract_args_arg in $asx_extract_args_args; do
-     case $asx_extract_args_arg in #(
-  _ASX_EXTRACT_ARGS_MARKER_*) :
-    asx_extract_args_value=`$as_echo "$asx_extract_args_arg" | sed 's%^_ASX_EXTRACT_ARGS_MARKER_%%'`
-        as_fn_append mkhelper_libdirs " $asx_extract_args_value" ;; #(
+   mkh_extract_args_args=`echo $link_cmd`
+   mkh_extract_args_args=`$as_echo "$mkh_extract_args_args" | sed 's%''-L[ ]*''%_MKH_EXTRACT_ARGS_MARKER_%g'`
+   for mkh_extract_args_arg in $mkh_extract_args_args; do
+     case $mkh_extract_args_arg in #(
+  _MKH_EXTRACT_ARGS_MARKER_*) :
+    mkh_extract_args_value=`$as_echo "$mkh_extract_args_arg" | sed 's%^_MKH_EXTRACT_ARGS_MARKER_%%'`
+        as_fn_append mkhelper_libdirs " $mkh_extract_args_value" ;; #(
   *) :
      ;;
 esac
@@ -5224,7 +5224,7 @@ BUNDLED_LIBFILES=''
 
 polymorphic_subdir='bundled/picky'
 polymorphic_config=''
-                        asx_srcdirs_fn "$polymorphic_subdir"
+                        mkh_srcdirs_fn "$polymorphic_subdir"
    eval "acx_subdir_run_cmd_`$as_echo "$polymorphic_subdir" | $as_tr_sh`=\"'\$ac_top_srcdir/\$polymorphic_subdir/'\\\"\\\${polymorphic_config}\\\"\""
    eval "acx_subdir_build_type_`$as_echo "$polymorphic_subdir" | $as_tr_sh`='config'"
    eval "acx_subdir_run_default_args_`$as_echo "$polymorphic_subdir" | $as_tr_sh`="
@@ -5306,7 +5306,7 @@ else
                      as_fn_append acx_subdir_run_after_bundled_picky ' acx_subdir_extra_run_3'
 fi
 
-                        asx_srcdirs_fn "bundled/build/threaded_hello"
+                        mkh_srcdirs_fn "bundled/build/threaded_hello"
    acx_subdir_run_cmd_bundled_build_threaded_hello="'$ac_top_srcdir/bundled/threaded_hello/configure'"
    acx_subdir_build_type_bundled_build_threaded_hello='config'
    acx_subdir_run_default_args_bundled_build_threaded_hello=
@@ -5378,7 +5378,7 @@ case " $extra_build_subdirs " in #(
      ;;
 esac
 
-                        asx_srcdirs_fn "bundled/build/delayed"
+                        mkh_srcdirs_fn "bundled/build/delayed"
    acx_subdir_run_cmd_bundled_build_delayed="'$ac_top_srcdir/bundled/delayed/configure'"
    acx_subdir_build_type_bundled_build_delayed='config'
    acx_subdir_run_default_args_bundled_build_delayed=
@@ -5444,7 +5444,7 @@ case " $extra_build_subdirs " in #(
      ;;
 esac
 
-                        asx_srcdirs_fn "bundled/build/delayed_mangled"
+                        mkh_srcdirs_fn "bundled/build/delayed_mangled"
    acx_subdir_run_cmd_bundled_build_delayed_mangled="'$ac_top_srcdir/bundled/delayed/configure'"
    acx_subdir_build_type_bundled_build_delayed_mangled='config'
    acx_subdir_run_default_args_bundled_build_delayed_mangled=
@@ -5517,7 +5517,7 @@ CMAKE=${CMAKE-cmake}
    acx_subdir_build_type_bundled_cmake_based_build='cmake'
                                              acx_subdir_pre_adjust_cmake_args
       acx_subdir_run_args_bundled_cmake_based_build=$acx_subdir_pre_adjusted_cmake_args
-         asx_srcdirs_fn "bundled/cmake_based/build"
+         mkh_srcdirs_fn "bundled/cmake_based/build"
       acx_tmp="$ac_top_srcdir/bundled/cmake_based"
       case $acx_tmp in #(
   *\'*) :
@@ -5796,13 +5796,13 @@ fi
 fi
    if test "x$enable_rpaths" = xyes; then :
   mkhelper_libdirs=
-   asx_extract_args_args="$mkhelper_LDFLAGS $mkhelper_LIBS"
-   asx_extract_args_args=`$as_echo "$asx_extract_args_args" | sed 's%''-L[ ]*''%_ASX_EXTRACT_ARGS_MARKER_%g'`
-   for asx_extract_args_arg in $asx_extract_args_args; do
-     case $asx_extract_args_arg in #(
-  _ASX_EXTRACT_ARGS_MARKER_*) :
-    asx_extract_args_value=`$as_echo "$asx_extract_args_arg" | sed 's%^_ASX_EXTRACT_ARGS_MARKER_%%'`
-        as_fn_append mkhelper_libdirs " $asx_extract_args_value" ;; #(
+   mkh_extract_args_args="$mkhelper_LDFLAGS $mkhelper_LIBS"
+   mkh_extract_args_args=`$as_echo "$mkh_extract_args_args" | sed 's%''-L[ ]*''%_MKH_EXTRACT_ARGS_MARKER_%g'`
+   for mkh_extract_args_arg in $mkh_extract_args_args; do
+     case $mkh_extract_args_arg in #(
+  _MKH_EXTRACT_ARGS_MARKER_*) :
+    mkh_extract_args_value=`$as_echo "$mkh_extract_args_arg" | sed 's%^_MKH_EXTRACT_ARGS_MARKER_%%'`
+        as_fn_append mkhelper_libdirs " $mkh_extract_args_value" ;; #(
   *) :
      ;;
 esac

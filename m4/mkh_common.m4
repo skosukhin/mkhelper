@@ -82,15 +82,15 @@ AC_DEFUN([MKH_PREPEND_LDFLAGS], [m4_foreach([arg], m4_cdr($@), [ "$1 arg"])])
 #
 AC_DEFUN([MKH_EXTRACT_ARGS],
   [AS_VAR_SET([$1])
-   asx_extract_args_args=$2
-   asx_extract_args_args=`AS_ECHO(["$asx_extract_args_args"]) | dnl
-sed 's%'$3'%_ASX_EXTRACT_ARGS_MARKER_%g'`
-   for asx_extract_args_arg in $asx_extract_args_args; do
-     AS_CASE([$asx_extract_args_arg],
-       [_ASX_EXTRACT_ARGS_MARKER_*],
-       [asx_extract_args_value=`AS_ECHO(["$asx_extract_args_arg"]) | dnl
-sed 's%^_ASX_EXTRACT_ARGS_MARKER_%%'`
-        AS_VAR_APPEND([$1], [" $asx_extract_args_value"])])
+   mkh_extract_args_args=$2
+   mkh_extract_args_args=`AS_ECHO(["$mkh_extract_args_args"]) | dnl
+sed 's%'$3'%_MKH_EXTRACT_ARGS_MARKER_%g'`
+   for mkh_extract_args_arg in $mkh_extract_args_args; do
+     AS_CASE([$mkh_extract_args_arg],
+       [_MKH_EXTRACT_ARGS_MARKER_*],
+       [mkh_extract_args_value=`AS_ECHO(["$mkh_extract_args_arg"]) | dnl
+sed 's%^_MKH_EXTRACT_ARGS_MARKER_%%'`
+        AS_VAR_APPEND([$1], [" $mkh_extract_args_value"])])
    done])
 
 # MKH_ESCAPE_SINGLE_QUOTE(VARIABLE)
@@ -143,8 +143,8 @@ sed 's/\\$/$$/g'`])])])
 #     9) ac_abs_top_srcdir - absolute path to the top source directory.
 #
 AC_DEFUN([MKH_SRCDIRS],
-  [AC_REQUIRE_SHELL_FN([asx_srcdirs_fn], [], [_AC_SRCDIRS(["$[]1"])])dnl
-   asx_srcdirs_fn $1])
+  [AC_REQUIRE_SHELL_FN([mkh_srcdirs_fn], [], [_AC_SRCDIRS(["$[]1"])])dnl
+   mkh_srcdirs_fn $1])
 
 # MKH_DIRNAME(FILE-NAME)
 # -----------------------------------------------------------------------------
@@ -153,8 +153,8 @@ AC_DEFUN([MKH_SRCDIRS],
 # script smaller by moving the required shell code to a shell function.
 #
 AC_DEFUN([MKH_DIRNAME],
-  [AC_REQUIRE_SHELL_FN([asx_dirname_fn], [], [AS_DIRNAME(["$[]1"])])dnl
-   asx_dirname_fn $1])
+  [AC_REQUIRE_SHELL_FN([mkh_dirname_fn], [], [AS_DIRNAME(["$[]1"])])dnl
+   mkh_dirname_fn $1])
 
 # MKH_BASENAME(FILE-NAME)
 # -----------------------------------------------------------------------------
@@ -163,5 +163,5 @@ AC_DEFUN([MKH_DIRNAME],
 # script smaller by moving the required shell code to a shell function.
 #
 AC_DEFUN([MKH_BASENAME],
-  [AC_REQUIRE_SHELL_FN([asx_basename_fn], [], [AS_BASENAME(["$[]1"])])dnl
-   asx_basename_fn $1])
+  [AC_REQUIRE_SHELL_FN([mkh_basename_fn], [], [AS_BASENAME(["$[]1"])])dnl
+   mkh_basename_fn $1])

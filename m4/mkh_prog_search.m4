@@ -114,17 +114,17 @@ dnl (without arguments).
       AS_CASE([$acx_prog_search_abspath],
         [unknown], [],
         [[[\\/]]* | ?:[[\\/]]*], [],
-        [asx_dir=`echo "$acx_prog_search_abspath" | dnl
+        [mkh_dir=`echo "$acx_prog_search_abspath" | dnl
 sed 's%/@<:@^/@:>@*$%%' 2>/dev/null`
-         asx_file=`echo "$acx_prog_search_abspath" | sed 's%.*/%%' 2>/dev/null`
-         asx_dir=`cd "$asx_dir" >/dev/null 2>&1 && pwd 2>/dev/null`
+         mkh_file=`echo "$acx_prog_search_abspath" | sed 's%.*/%%' 2>/dev/null`
+         mkh_dir=`cd "$mkh_dir" >/dev/null 2>&1 && pwd 2>/dev/null`
 dnl Set the result to unknown until we make sure that we can provide a correct
 dnl one.
          acx_prog_search_abspath=unknown
-         AS_CASE([$asx_dir],
+         AS_CASE([$mkh_dir],
            [[[\\/]]* | ?:[[\\/]]*],
-           [AS_IF([AS_EXECUTABLE_P(["$asx_dir/$asx_file"])],
-              [acx_prog_search_abspath="$asx_dir/$asx_file"])])])])dnl
+           [AS_IF([AS_EXECUTABLE_P(["$mkh_dir/$mkh_file"])],
+              [acx_prog_search_abspath="$mkh_dir/$mkh_file"])])])])dnl
    acx_prog_search_abspath=unknown
    set dummy $1; shift; acx_prog_exec=$[1]; shift; acx_prog_args="$[@]"
    AC_MSG_CHECKING([for the absolute path to $acx_prog_exec])
