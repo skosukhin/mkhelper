@@ -126,7 +126,7 @@ dnl one.
            [AS_IF([AS_EXECUTABLE_P(["$asx_dir/$asx_file"])],
               [acx_prog_search_abspath="$asx_dir/$asx_file"])])])])dnl
    acx_prog_search_abspath=unknown
-   set dummy $1; shift; acx_prog_exec=$[1]; shift; acx_prog_args="$[@]"
+   ACX_PROG_SEARCH_EXTRACT([$1])
    AC_MSG_CHECKING([for the absolute path to $acx_prog_exec])
    acx_prog_search_abspath_fn "$acx_prog_exec"
    AC_MSG_RESULT([$acx_prog_search_abspath])
@@ -164,3 +164,12 @@ AC_DEFUN([ACX_PROG_SEARCH_ABSPATH_IF_NOT_ABSPATH],
             AC_MSG_WARN(
               [unable to find the absolute path to $[]1])])],
         [m4_default([$4], [$PATH])])])])
+
+# ACX_PROG_SEARCH_EXTRACT(PROG-AND-ARGS)
+# -----------------------------------------------------------------------------
+# Extracts the executable and arguments from PROG-AND-ARGS. The executable is
+# stored in the shell variable acx_prog_exec and the remaining arguments are
+# stored in the shell variable acx_prog_args.
+#
+AC_DEFUN([ACX_PROG_SEARCH_EXTRACT],
+  [set dummy $1; shift; acx_prog_exec=$[1]; shift; acx_prog_args="$[@]"])
