@@ -31,7 +31,7 @@
 import os
 import re
 
-from depgen import file_in_dir
+from . import file_in_dir
 
 
 class Parser:
