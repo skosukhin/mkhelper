@@ -28,7 +28,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# ACX_PROG_SEARCH(VARIABLE,
+# MKH_PROG_SEARCH(VARIABLE,
 #                 [CANDIDATES],
 #                 [CHECK-SCRIPT = 'eval $acx_candidate'],
 #                 [ACTION-IF-SUCCESS],
@@ -48,7 +48,7 @@
 # A positive result of this test is cached in the
 # acx_cv_prog_[]AS_TR_SH(VARIABLE) variable.
 #
-AC_DEFUN([ACX_PROG_SEARCH],
+AC_DEFUN([MKH_PROG_SEARCH],
   [AS_VAR_PUSHDEF([acx_cache_var], [acx_cv_prog_$1])dnl
    AS_LITERAL_IF([$1],
      [AC_MSG_CHECKING([for m4_tolower([$1])])],
@@ -75,7 +75,7 @@ AC_DEFUN([ACX_PROG_SEARCH],
             AC_MSG_FAILURE([unable to find $acx_tmp])])])])
    AS_VAR_POPDEF([acx_cache_var])])
 
-# ACX_PROG_SEARCH_ABSPATH(PROG-TO-CHECK-FOR,
+# MKH_PROG_SEARCH_ABSPATH(PROG-TO-CHECK-FOR,
 #                         [ACTION-IF-SUCCESS],
 #                         [ACTION-IF-FAILURE = FAILURE],
 #                         [PATH = $PATH])
@@ -99,7 +99,7 @@ AC_DEFUN([ACX_PROG_SEARCH],
 #
 # The result is stored in the acx_prog_search_abspath shell variable.
 #
-AC_DEFUN([ACX_PROG_SEARCH_ABSPATH],
+AC_DEFUN([MKH_PROG_SEARCH_ABSPATH],
   [AC_REQUIRE_SHELL_FN([acx_prog_search_abspath_fn], [],
      [acx_prog_exec=$[1]
       AS_CASE([$acx_prog_exec],
@@ -138,7 +138,7 @@ dnl one.
         [AS_VAR_APPEND([acx_prog_search_abspath], [" $acx_prog_args"])])
       $2])])
 
-# ACX_PROG_SEARCH_ABSPATH_IF_NOT_ABSPATH(VARIABLE,
+# MKH_PROG_SEARCH_ABSPATH_IF_NOT_ABSPATH(VARIABLE,
 #                                        [ACTION-IF-SUCCESS],
 #                                        [ACTION-IF-FAILURE = WARNING],
 #                                        [PATH = $PATH])
@@ -147,17 +147,17 @@ dnl one.
 # searches for the absolute path to it. If the name is already an absolute
 # path, silently skips all checks (does not even check whether the provided
 # path exists and points to an executable). Otherwise, expands
-# ACX_PROG_SEARCH_ABSPATH with the value of the VARIABLE as the
-# PROG-TO-CHECK-FOR argument (see ACX_PROG_SEARCH_ABSPATH).
+# MKH_PROG_SEARCH_ABSPATH with the value of the VARIABLE as the
+# PROG-TO-CHECK-FOR argument (see MKH_PROG_SEARCH_ABSPATH).
 #
 # If successful, runs ACTION-IF-SUCCESS (defaults to assigning the shell
 # variable VARIABLE with the result of the check), otherwise runs
 # ACTION-IF-FAILURE (defaults to a warning message).
 #
-AC_DEFUN([ACX_PROG_SEARCH_ABSPATH_IF_NOT_ABSPATH],
+AC_DEFUN([MKH_PROG_SEARCH_ABSPATH_IF_NOT_ABSPATH],
   [AS_CASE([AS_VAR_GET([$1])],
      [[[\\/]]* | ?:[[\\/]]*], [$2],
-     [ACX_PROG_SEARCH_ABSPATH([AS_VAR_GET([$1])],
+     [MKH_PROG_SEARCH_ABSPATH([AS_VAR_GET([$1])],
         [m4_default([$2], [AS_VAR_SET([$1], ["$acx_prog_search_abspath"])])],
         [m4_default([$3],
            [set dummy AS_VAR_GET([$1]); shift

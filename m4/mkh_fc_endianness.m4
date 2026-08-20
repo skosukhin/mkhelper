@@ -28,7 +28,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# ACX_FC_ENDIANNESS_REAL([DOUBLE-PRECISION-KIND = KIND(1.d0)]
+# MKH_FC_ENDIANNESS_REAL([DOUBLE-PRECISION-KIND = KIND(1.d0)]
 #                        [ACTION-IF-SUCCESS],
 #                        [ACTION-IF-FAILURE = FAILURE])
 # -----------------------------------------------------------------------------
@@ -52,7 +52,7 @@
 #
 # The result is cached in the acx_cv_fc_endianness_real variable.
 #
-AC_DEFUN([ACX_FC_ENDIANNESS_REAL],
+AC_DEFUN([MKH_FC_ENDIANNESS_REAL],
   [AC_LANG_ASSERT([Fortran])dnl
    AC_MSG_CHECKING([for endianness of the target system])
    AC_CACHE_VAL([acx_cv_fc_endianness_real],

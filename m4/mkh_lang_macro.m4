@@ -28,7 +28,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# ACX_LANG_MACRO_FLAG([ACTION-IF-SUCCESS],
+# MKH_LANG_MACRO_FLAG([ACTION-IF-SUCCESS],
 #                     [ACTION-IF-FAILURE = FAILURE])
 # -----------------------------------------------------------------------------
 # Finds the compiler flag needed to specify a preprocessor macro definition.
@@ -38,9 +38,9 @@
 #
 # The flag is cached in the acx_cv_[]_AC_LANG_ABBREV[]_macro_flag variable.
 #
-# See _ACX_LANG_KNOWN_MACRO_FLAGS for the known flags.
+# See _MKH_LANG_KNOWN_MACRO_FLAGS for the known flags.
 #
-AC_DEFUN([ACX_LANG_MACRO_FLAG],
+AC_DEFUN([MKH_LANG_MACRO_FLAG],
   [m4_pushdef([acx_cache_var], [acx_cv_[]_AC_LANG_ABBREV[]_macro_flag])dnl
    AC_CACHE_CHECK([for _AC_LANG compiler flag needed to define a dnl
 preprocessor macro],
@@ -55,7 +55,7 @@ preprocessor macro],
       choke me
 #endif]])])
       acx_save_[]_AC_LANG_PREFIX[]FLAGS=$[]_AC_LANG_PREFIX[]FLAGS
-      for acx_lang_macro_flag in _ACX_LANG_KNOWN_MACRO_FLAGS; do
+      for acx_lang_macro_flag in _MKH_LANG_KNOWN_MACRO_FLAGS; do
         _AC_LANG_PREFIX[]FLAGS="${acx_save_[]_AC_LANG_PREFIX[]FLAGS} dnl
 ${acx_lang_macro_flag}CONFTEST_ONE ${acx_lang_macro_flag}CONFTEST_TWO=42"
         AC_COMPILE_IFELSE([], [acx_cache_var=$acx_lang_macro_flag])
@@ -68,7 +68,7 @@ ${acx_lang_macro_flag}CONFTEST_ONE ${acx_lang_macro_flag}CONFTEST_TWO=42"
 define a preprocessor macro])])], [$1])
    m4_popdef([acx_cache_var])])
 
-# ACX_LANG_MACRO_CHECK_DEFINED_SILENT(MACRO-NAME,
+# MKH_LANG_MACRO_CHECK_DEFINED_SILENT(MACRO-NAME,
 #                                     [INCLUDES])
 # -----------------------------------------------------------------------------
 # Checks whether the preprocessor macro MACRO-NAME is defined with optional
@@ -78,7 +78,7 @@ define a preprocessor macro])])], [$1])
 #
 # The result is stored in the acx_macro_defined variable.
 #
-AC_DEFUN([ACX_LANG_MACRO_CHECK_DEFINED_SILENT],
+AC_DEFUN([MKH_LANG_MACRO_CHECK_DEFINED_SILENT],
   [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([$2], [[#ifdef $1
 #else
       choke me
@@ -93,26 +93,26 @@ AC_DEFUN([ACX_LANG_MACRO_CHECK_DEFINED_SILENT],
           [AS_VAR_SET([acx_macro_defined], [no])],
           [AS_VAR_SET([acx_macro_defined], [unsupported])])])])])
 
-# ACX_LANG_MACRO_CHECK_DEFINED(MACRO-NAME,
+# MKH_LANG_MACRO_CHECK_DEFINED(MACRO-NAME,
 #                              [INCLUDES])
 # -----------------------------------------------------------------------------
-# The same as ACX_LANG_MACRO_CHECK_DEFINED_SILENT but emits the check message
+# The same as MKH_LANG_MACRO_CHECK_DEFINED_SILENT but emits the check message
 # and caches the result.
 #
 # The result is cached in the
 # acx_cv_[]_AC_LANG_ABBREV[]_macro_[]AS_TR_SH(MACRO-NAME)_defined variable.
 #
-AC_DEFUN([ACX_LANG_MACRO_CHECK_DEFINED],
+AC_DEFUN([MKH_LANG_MACRO_CHECK_DEFINED],
   [m4_pushdef([acx_cache_var],
      [acx_cv_[]_AC_LANG_ABBREV[]_macro_[]AS_TR_SH([$1])_defined])dnl
    AC_CACHE_CHECK([whether the _AC_LANG preprocessor macro $1 is defined],
      [acx_cache_var],
-     [ACX_LANG_MACRO_CHECK_DEFINED_SILENT($@)
+     [MKH_LANG_MACRO_CHECK_DEFINED_SILENT($@)
       AS_VAR_COPY([acx_cache_var], [acx_macro_defined])])
    AS_VAR_COPY([acx_macro_defined], [acx_cache_var])
    m4_popdef([acx_cache_var])])
 
-# ACX_LANG_MACRO_CHECK_VALUE_SILENT(MACRO-NAME,
+# MKH_LANG_MACRO_CHECK_VALUE_SILENT(MACRO-NAME,
 #                                   [KNOWN-INTEGER-VALUES],
 #                                   [INCLUDES])
 # -----------------------------------------------------------------------------
@@ -126,10 +126,10 @@ AC_DEFUN([ACX_LANG_MACRO_CHECK_DEFINED],
 #
 # The result is stored in the acx_macro_value variable.
 #
-AC_DEFUN([ACX_LANG_MACRO_CHECK_VALUE_SILENT],
+AC_DEFUN([MKH_LANG_MACRO_CHECK_VALUE_SILENT],
   [acx_macro_value=unknown
    AS_VAR_IF([cross_compiling], [no],
-     [AC_LINK_IFELSE([_ACX_LANG_MACRO_PRINT_PROGRAM([$1], [$3])],
+     [AC_LINK_IFELSE([_MKH_LANG_MACRO_PRINT_PROGRAM([$1], [$3])],
         [acx_exec_result=`./conftest$ac_exeext 2>&AS_MESSAGE_LOG_FD`
          AS_IF([test $? -eq 0],
            [acx_macro_value=$acx_exec_result])])])
@@ -144,51 +144,51 @@ AC_DEFUN([ACX_LANG_MACRO_CHECK_VALUE_SILENT],
            test "x$acx_macro_value" = xunknown || break
          done])])])
 
-# ACX_LANG_MACRO_CHECK_VALUE(MACRO-NAME,
+# MKH_LANG_MACRO_CHECK_VALUE(MACRO-NAME,
 #                            [KNOWN-INTEGER-VALUES],
 #                            [INCLUDES])
 # -----------------------------------------------------------------------------
-# The same as ACX_LANG_MACRO_CHECK_VALUE_SILENT but emits the check message and
+# The same as MKH_LANG_MACRO_CHECK_VALUE_SILENT but emits the check message and
 # caches the result.
 #
 # The result is cached in the
 # acx_cv_[]_AC_LANG_ABBREV[]_macro_[]AS_TR_SH(MACRO-NAME)_value variable.
 #
-AC_DEFUN([ACX_LANG_MACRO_CHECK_VALUE],
+AC_DEFUN([MKH_LANG_MACRO_CHECK_VALUE],
   [m4_pushdef([acx_cache_var],
      [acx_cv_[]_AC_LANG_ABBREV[]_macro_[]AS_TR_SH([$1])_value])dnl
    AC_CACHE_CHECK([for the value of the _AC_LANG preprocessor macro $1],
      [acx_cache_var],
-     [ACX_LANG_MACRO_CHECK_VALUE_SILENT($@)
+     [MKH_LANG_MACRO_CHECK_VALUE_SILENT($@)
       AS_VAR_COPY([acx_cache_var], [acx_macro_value])])
    AS_VAR_COPY([acx_macro_value], [acx_cache_var])
    m4_popdef([acx_cache_var])])
 
-# _ACX_LANG_KNOWN_MACRO_FLAGS()
+# _MKH_LANG_KNOWN_MACRO_FLAGS()
 # -----------------------------------------------------------------------------
 # Expands into a language-specific space-separated list of known flags needed
 # to specify a preprocessor macro definition. By default, expands to m4_fatal
 # with the message saying that _AC_LANG is not supported.
 #
-m4_define([_ACX_LANG_KNOWN_MACRO_FLAGS],
+m4_define([_MKH_LANG_KNOWN_MACRO_FLAGS],
   [m4_ifdef([$0(]_AC_LANG[)],
      [m4_indir([$0(]_AC_LANG[)], $@)],
      [m4_fatal([the list of known ]_AC_LANG[ compiler flags needed to ]dnl
 [specify a preprocessor macro definition is undefined])])])
 
-# _ACX_LANG_KNOWN_MACRO_FLAGS(C)()
+# _MKH_LANG_KNOWN_MACRO_FLAGS(C)()
 # -----------------------------------------------------------------------------
-# Implementation of _ACX_LANG_KNOWN_MACRO_FLAGS for C language.
+# Implementation of _MKH_LANG_KNOWN_MACRO_FLAGS for C language.
 #
-m4_define([_ACX_LANG_KNOWN_MACRO_FLAGS(C)], [-D])
+m4_define([_MKH_LANG_KNOWN_MACRO_FLAGS(C)], [-D])
 
-# _ACX_LANG_KNOWN_MACRO_FLAGS(Fortran)(HEADER-TYPE)
+# _MKH_LANG_KNOWN_MACRO_FLAGS(Fortran)(HEADER-TYPE)
 # -----------------------------------------------------------------------------
-# Implementation of _ACX_LANG_KNOWN_MACRO_FLAGS for Fortran language.
+# Implementation of _MKH_LANG_KNOWN_MACRO_FLAGS for Fortran language.
 #
-m4_define([_ACX_LANG_KNOWN_MACRO_FLAGS(Fortran)], [-D])
+m4_define([_MKH_LANG_KNOWN_MACRO_FLAGS(Fortran)], [-D])
 
-# _ACX_LANG_MACRO_PRINT_PROGRAM(MACRO-NAME,
+# _MKH_LANG_MACRO_PRINT_PROGRAM(MACRO-NAME,
 #                               [INCLUDES])
 # -----------------------------------------------------------------------------
 # Expands into the source code of a program in the current language that prints
@@ -196,18 +196,18 @@ m4_define([_ACX_LANG_KNOWN_MACRO_FLAGS(Fortran)], [-D])
 # directives. The program fails if MACRO-NAME is not defined. By default,
 # expands to m4_fatal with the message saying that _AC_LANG is not supported.
 #
-m4_define([_ACX_LANG_MACRO_PRINT_PROGRAM],
+m4_define([_MKH_LANG_MACRO_PRINT_PROGRAM],
   [m4_ifdef([$0(]_AC_LANG[)],
      [m4_indir([$0(]_AC_LANG[)], $@)],
      [m4_fatal([the macro print program is not defined for ]dnl
 _AC_LANG[ language])])])
 
-# _ACX_LANG_MACRO_PRINT_PROGRAM(C)(MACRO-NAME,
+# _MKH_LANG_MACRO_PRINT_PROGRAM(C)(MACRO-NAME,
 #                                  [INCLUDES])
 # -----------------------------------------------------------------------------
-# Implementation of _ACX_LANG_MACRO_PRINT_PROGRAM for C language.
+# Implementation of _MKH_LANG_MACRO_PRINT_PROGRAM for C language.
 #
-m4_define([_ACX_LANG_MACRO_PRINT_PROGRAM(C)],
+m4_define([_MKH_LANG_MACRO_PRINT_PROGRAM(C)],
   [AC_LANG_PROGRAM([[#include <stdio.h>
 $2]],
 [[#ifndef $1
@@ -218,38 +218,38 @@ choke me
 printf("%s\n", STRINGIFY($1));
 #endif]])])
 
-# _ACX_LANG_MACRO_PRINT_PROGRAM(C)(MACRO-NAME)
+# _MKH_LANG_MACRO_PRINT_PROGRAM(C)(MACRO-NAME)
 # -----------------------------------------------------------------------------
-# Implementation of _ACX_LANG_MACRO_PRINT_PROGRAM for C++ language.
+# Implementation of _MKH_LANG_MACRO_PRINT_PROGRAM for C++ language.
 #
-m4_copy([_ACX_LANG_MACRO_PRINT_PROGRAM(C)],
-  [_ACX_LANG_MACRO_PRINT_PROGRAM(C++)])
+m4_copy([_MKH_LANG_MACRO_PRINT_PROGRAM(C)],
+  [_MKH_LANG_MACRO_PRINT_PROGRAM(C++)])
 
-# _ACX_LANG_MACRO_PRINT_PROGRAM(CUDA)(MACRO-NAME)
+# _MKH_LANG_MACRO_PRINT_PROGRAM(CUDA)(MACRO-NAME)
 # -----------------------------------------------------------------------------
-# Implementation of _ACX_LANG_MACRO_PRINT_PROGRAM for CUDA language.
+# Implementation of _MKH_LANG_MACRO_PRINT_PROGRAM for CUDA language.
 #
-m4_copy([_ACX_LANG_MACRO_PRINT_PROGRAM(C)],
-  [_ACX_LANG_MACRO_PRINT_PROGRAM(CUDA)])
+m4_copy([_MKH_LANG_MACRO_PRINT_PROGRAM(C)],
+  [_MKH_LANG_MACRO_PRINT_PROGRAM(CUDA)])
 
-# _ACX_LANG_MACRO_PRINT_PROGRAM(HIP)(MACRO-NAME)
+# _MKH_LANG_MACRO_PRINT_PROGRAM(HIP)(MACRO-NAME)
 # -----------------------------------------------------------------------------
-# Implementation of _ACX_LANG_MACRO_PRINT_PROGRAM for HIP language.
+# Implementation of _MKH_LANG_MACRO_PRINT_PROGRAM for HIP language.
 #
-m4_copy([_ACX_LANG_MACRO_PRINT_PROGRAM(C)],
-  [_ACX_LANG_MACRO_PRINT_PROGRAM(HIP)])
+m4_copy([_MKH_LANG_MACRO_PRINT_PROGRAM(C)],
+  [_MKH_LANG_MACRO_PRINT_PROGRAM(HIP)])
 
-# _ACX_LANG_MACRO_PRINT_PROGRAM(Fortran)(MACRO-NAME,
+# _MKH_LANG_MACRO_PRINT_PROGRAM(Fortran)(MACRO-NAME,
 #                                        [INCLUDES])
 # -----------------------------------------------------------------------------
-# Implementation of _ACX_LANG_MACRO_PRINT_PROGRAM for Fortran language. The
+# Implementation of _MKH_LANG_MACRO_PRINT_PROGRAM for Fortran language. The
 # program compilation succeeds only if MACRO-NAME expands either to an integer,
 # to an empty string or to a quoted string. If MACRO-NAME expands to a quoted
 # string, the output of the program is always quoted with the double quotation
 # marks (""), even if the actual value of MACRO-NAME is a string quoted with
 # the single quotation marks ('').
 #
-m4_define([_ACX_LANG_MACRO_PRINT_PROGRAM(Fortran)],
+m4_define([_MKH_LANG_MACRO_PRINT_PROGRAM(Fortran)],
   [m4_ifval([$2], [m4_warn([syntax], [$0: ignoring INCLUDES: $2])])dnl
 AC_LANG_SOURCE([[#ifndef $1
       choke me

@@ -30,7 +30,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# ACX_PROG_MPIRUN([VARIABLE],
+# MKH_PROG_MPIRUN([VARIABLE],
 #                 [ACTION-IF-SUCCESS],
 #                 [ACTION-IF-FAILURE = FAILURE],
 #                 [CANDIDATES = mpirun mpiexec srun],
@@ -42,30 +42,30 @@
 # of the blank-separated list CANDIDATES and stops when the first valid command
 # is found. The value of VARIABLE is never set or changed. The number of MPI
 # jobs in each test is equal to MPI-JOB-COUNT (defaults to 2). See
-# _ACX_PROG_MPIRUN for more details.
+# _MKH_PROG_MPIRUN for more details.
 #
 # If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
 # (defaults to failing with an error message).
 #
 # A positive result of this test is cached in the acx_cv_prog_mpirun variable.
 #
-AC_DEFUN([ACX_PROG_MPIRUN],
-  [_ACX_PROG_MPIRUN([_ACX_PROG_MPIRUN_CHECK_PROGRAM], $@)])
+AC_DEFUN([MKH_PROG_MPIRUN],
+  [_MKH_PROG_MPIRUN([_MKH_PROG_MPIRUN_CHECK_PROGRAM], $@)])
 
-# ACX_PROG_MPIRUN_FC_HEADER([VARIABLE],
+# MKH_PROG_MPIRUN_FC_HEADER([VARIABLE],
 #                           [ACTION-IF-SUCCESS],
 #                           [ACTION-IF-FAILURE = FAILURE],
 #                           [CANDIDATES = mpirun mpiexec srun],
 #                           [MPI-JOB-COUNT = 2])
 # -----------------------------------------------------------------------------
-# The same as ACX_PROG_MPIRUN but the tests (see _ACX_PROG_MPIRUN) are based on
+# The same as MKH_PROG_MPIRUN but the tests (see _MKH_PROG_MPIRUN) are based on
 # a Fortran program that includes the header file "mpif.h" to interface the MPI
-# functionality, whereas the default Fortran program in ACX_PROG_MPIRUN uses
+# functionality, whereas the default Fortran program in MKH_PROG_MPIRUN uses
 # the Fortran module "MPI".
 #
-AC_DEFUN([ACX_PROG_MPIRUN_FC_HEADER],
+AC_DEFUN([MKH_PROG_MPIRUN_FC_HEADER],
   [AC_LANG_ASSERT([Fortran])dnl
-   _ACX_PROG_MPIRUN([AC_LANG_PROGRAM([], [[      implicit none
+   _MKH_PROG_MPIRUN([AC_LANG_PROGRAM([], [[      implicit none
       include "mpif.h"
       integer :: s, r, e1, e2
       s = -1
@@ -88,14 +88,14 @@ AC_DEFUN([ACX_PROG_MPIRUN_FC_HEADER],
         call MPI_Abort(MPI_COMM_WORLD, e1, e2)
       endif]])], $@)])
 
-# _ACX_PROG_MPIRUN(CHECK-PROGRAM,
+# _MKH_PROG_MPIRUN(CHECK-PROGRAM,
 #                  [VARIABLE],
 #                  [ACTION-IF-SUCCESS],
 #                  [ACTION-IF-FAILURE = FAILURE],
 #                  [CANDIDATES = mpirun mpiexec srun],
 #                  [MPI-JOB-COUNT = 2])
 # -----------------------------------------------------------------------------
-# Searches for the MPI launcher command as described in ACX_PROG_MPIRUN. Each
+# Searches for the MPI launcher command as described in MKH_PROG_MPIRUN. Each
 # tested command is run appended with two additional arguments:
 # "-n MPI-JOB-COUNT" (MPI-JOB-COUNT defaults to 2) and the name of the
 # executable of the program CHECK-PROGRAM. The program is expected to print a
@@ -108,7 +108,7 @@ AC_DEFUN([ACX_PROG_MPIRUN_FC_HEADER],
 #
 # A positive result of this test is cached in the acx_cv_prog_mpirun variable.
 #
-m4_define([_ACX_PROG_MPIRUN],
+m4_define([_MKH_PROG_MPIRUN],
   [AC_MSG_CHECKING([for MPI launch program])
    acx_tmp=
    AC_CACHE_VAL([acx_cv_prog_mpirun],
@@ -150,24 +150,24 @@ sed -n '/^conftest: m4_default([$6], [2])$/p'`
       m4_default([$4],
         [AC_MSG_FAILURE([unable to find a valid MPI launch program])])])])
 
-# _ACX_PROG_MPIRUN_CHECK_PROGRAM()
+# _MKH_PROG_MPIRUN_CHECK_PROGRAM()
 # -----------------------------------------------------------------------------
 # Expands into a program in the current language that prints a line
 # 'conftest: N', where N is the size of the group associated with the MPI
 # communicator MPI_COMM_WORLD. By default, expands to m4_fatal with the message
 # saying that _AC_LANG is not supported.
 #
-AC_DEFUN([_ACX_PROG_MPIRUN_CHECK_PROGRAM],
+AC_DEFUN([_MKH_PROG_MPIRUN_CHECK_PROGRAM],
   [m4_ifdef([$0(]_AC_LANG[)],
      [m4_indir([$0(]_AC_LANG[)], $@)],
      [m4_fatal([the MPI check program is not defined for ]dnl
 _AC_LANG[ language])])])
 
-# _ACX_PROG_MPIRUN_CHECK_PROGRAM(C)()
+# _MKH_PROG_MPIRUN_CHECK_PROGRAM(C)()
 # -----------------------------------------------------------------------------
-# Implementation of _ACX_PROG_MPIRUN_CHECK_PROGRAM for C language.
+# Implementation of _MKH_PROG_MPIRUN_CHECK_PROGRAM for C language.
 #
-m4_define([_ACX_PROG_MPIRUN_CHECK_PROGRAM(C)],
+m4_define([_MKH_PROG_MPIRUN_CHECK_PROGRAM(C)],
   [AC_LANG_SOURCE([[#include<stdio.h>
 #include<mpi.h>
 int main(int argc, char **argv) {
@@ -184,11 +184,11 @@ int main(int argc, char **argv) {
     MPI_Abort(MPI_COMM_WORLD, e);
   return e; }]])])
 
-# _ACX_PROG_MPIRUN_CHECK_PROGRAM(Fortran)()
+# _MKH_PROG_MPIRUN_CHECK_PROGRAM(Fortran)()
 # -----------------------------------------------------------------------------
-# Implementation of _ACX_PROG_MPIRUN_CHECK_PROGRAM for Fortran language.
+# Implementation of _MKH_PROG_MPIRUN_CHECK_PROGRAM for Fortran language.
 #
-m4_define([_ACX_PROG_MPIRUN_CHECK_PROGRAM(Fortran)],
+m4_define([_MKH_PROG_MPIRUN_CHECK_PROGRAM(Fortran)],
   [AC_LANG_PROGRAM([], [[      use mpi
       implicit none
       integer :: s, r, e1, e2

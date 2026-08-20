@@ -28,7 +28,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# ACX_POLYMORPHIC_OPTION(PREFIX,
+# MKH_POLYMORPHIC_OPTION(PREFIX,
 #                        PATTERN,
 #                        VARIABLE)
 # -----------------------------------------------------------------------------
@@ -43,7 +43,7 @@
 # '-enable-group-A', '--enable-group-B=value', '-disable-group-B', etc., and
 # the shell variable 'acx_groups' will be set to ' A B B':
 #
-#     ACX_POLYMORPHIC_OPTION([enable], [group-*], [acx_groups])
+#     MKH_POLYMORPHIC_OPTION([enable], [group-*], [acx_groups])
 #
 # The values of the options from the example above can be retrieved as follows
 # (the asterisk in the PATTERN is replaced with a value from VARIABLE):
@@ -54,7 +54,7 @@
 #
 # The macro must be expanded before AC_INIT.
 #
-AC_DEFUN([ACX_POLYMORPHIC_OPTION],
+AC_DEFUN([MKH_POLYMORPHIC_OPTION],
   [dnl
 dnl Check that the macro is expanded before AC_INIT (_AC_INIT_SRCDIR is the only
 dnl AC_DEFUNed macro expanded with non-AC_DEFUNed macro AC_INIT):

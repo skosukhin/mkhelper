@@ -28,7 +28,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# ACX_FC_MANGLING_GLOBAL()
+# MKH_FC_MANGLING_GLOBAL()
 # -----------------------------------------------------------------------------
 # Detects the name mangling scheme for the global Fortran functions. The result
 # is either "unknown" or a comma-separated pair of two strings each denoting
@@ -45,7 +45,7 @@
 #
 # The result is cached in the acx_cv_fc_mangling_global variable.
 #
-AC_DEFUN([ACX_FC_MANGLING_GLOBAL],
+AC_DEFUN([MKH_FC_MANGLING_GLOBAL],
   [AC_REQUIRE([AC_PROG_CC])dnl
    m4_pushdef([acx_cache_var], [acx_cv_fc_mangling_global])dnl
    AC_LANG_PUSH([Fortran])
@@ -108,7 +108,7 @@ AC_DEFUN([ACX_FC_MANGLING_GLOBAL],
    AC_LANG_POP([Fortran])
    m4_popdef([acx_cache_var])])
 
-# ACX_FC_MANGLING_DEFINE([MACRO-PREFIX = FC]
+# MKH_FC_MANGLING_DEFINE([MACRO-PREFIX = FC]
 #                        [ACTION-IF-SUCCESS],
 #                        [ACTION-IF-FAILURE = FAILURE])
 # -----------------------------------------------------------------------------
@@ -121,8 +121,8 @@ AC_DEFUN([ACX_FC_MANGLING_GLOBAL],
 # If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
 # (defaults to failing with an error message).
 #
-AC_DEFUN([ACX_FC_MANGLING_DEFINE],
-  [AC_REQUIRE([ACX_FC_MANGLING_GLOBAL])dnl
+AC_DEFUN([MKH_FC_MANGLING_DEFINE],
+  [AC_REQUIRE([MKH_FC_MANGLING_GLOBAL])dnl
    m4_pushdef([acx_scheme_var], [acx_cv_fc_mangling_global])dnl
    AS_VAR_IF([acx_scheme_var], [unknown], [m4_default([$3],
         [AC_MSG_FAILURE([unable to detect the name-mangling scheme for dnl
@@ -139,7 +139,7 @@ Fortran global functions])])],
       $2])
    m4_popdef([acx_scheme_var])])
 
-# ACX_FC_MANGLING_SHVAR(FUNC-NAME,
+# MKH_FC_MANGLING_SHVAR(FUNC-NAME,
 #                       [ACTION-IF-SUCCESS],
 #                       [ACTION-IF-FAILURE = FAILURE])
 # -----------------------------------------------------------------------------
@@ -152,8 +152,8 @@ Fortran global functions])])],
 # The result is stored in the acx_mangled_name variable and cached in the
 # acx_cv_fc_mangling_shvar_[]AS_TR_CPP(FUNC-NAME) variable.
 #
-AC_DEFUN([ACX_FC_MANGLING_SHVAR],
-  [AC_REQUIRE([ACX_FC_MANGLING_GLOBAL])dnl
+AC_DEFUN([MKH_FC_MANGLING_SHVAR],
+  [AC_REQUIRE([MKH_FC_MANGLING_GLOBAL])dnl
    m4_pushdef([acx_cache_var], [acx_cv_fc_mangling_shvar_[]AS_TR_CPP([$1])])dnl
    AC_CACHE_CHECK([for the mangled name of the Fortran function $1],
      [acx_cache_var],
@@ -179,7 +179,7 @@ sed "s/^name/$acx_func_name/" | tr 'm4_cr_LETTERS' 'm4_cr_letters'`])
      [AC_MSG_FAILURE([unable to detect the mangled name of dnl
 the Fortran function $1])])])])
 
-# ACX_FC_MANGLING_MAIN([ACTION-IF-SUCCESS],
+# MKH_FC_MANGLING_MAIN([ACTION-IF-SUCCESS],
 #                      [ACTION-IF-FAILURE = FAILURE])
 # -----------------------------------------------------------------------------
 # Detects the symbol name of the Fortran entry point function (i.e. the real
@@ -206,7 +206,7 @@ the Fortran function $1])])])])
 #
 # The result is cached in the acx_cv_fc_mangling_main variable.
 #
-AC_DEFUN([ACX_FC_MANGLING_MAIN],
+AC_DEFUN([MKH_FC_MANGLING_MAIN],
   [_AC_FORTRAN_ASSERT()dnl
    AC_REQUIRE([AC_PROG_CC])dnl
    m4_pushdef([acx_cache_var], [acx_cv_fc_mangling_main])dnl

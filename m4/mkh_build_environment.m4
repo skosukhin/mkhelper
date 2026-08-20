@@ -28,7 +28,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# ACX_BUILD_ENVIRONMENT()
+# MKH_BUILD_ENVIRONMENT()
 # -----------------------------------------------------------------------------
 # Declares a precious variable BUILD_ENV to be set to the initialization code
 # of the building environment. If the variable is not empty (i.e. set by the
@@ -42,7 +42,7 @@
 # holds a value of BUILD_ENV modified to conform with Makefile syntax (e.g.
 # each dollar sign "$" is duplicated).
 #
-AC_DEFUN([ACX_BUILD_ENVIRONMENT],
+AC_DEFUN([MKH_BUILD_ENVIRONMENT],
   [AC_ARG_VAR([BUILD_ENV],
      [initialization code to set up the building environment (must be a ]dnl
 [single line ending with a semicolon), e.g. ]dnl
@@ -55,10 +55,10 @@ AC_DEFUN([ACX_BUILD_ENVIRONMENT],
       AS_CASE([$BUILD_ENV], [*${as_nl}*],
         [AC_MSG_ERROR([\$BUILD_ENV contains a newline: '$BUILD_ENV'])])
       AC_SUBST([BUILD_ENV_MAKE], [$BUILD_ENV])dnl
-      ASX_ESCAPE_MAKE_SYNTAX([BUILD_ENV_MAKE])
+      MKH_ESCAPE_MAKE_SYNTAX([BUILD_ENV_MAKE])
       AC_MSG_CHECKING([whether \$BUILD_ENV is accepted by '$SHELL -c'])
       acx_build_env_quoted=$BUILD_ENV
-      ASX_ESCAPE_SINGLE_QUOTE([acx_build_env_quoted])
+      MKH_ESCAPE_SINGLE_QUOTE([acx_build_env_quoted])
       _AS_ECHO_LOG([$SHELL -c '$acx_build_env_quoted'])
       eval \$SHELL -c "'$acx_build_env_quoted'" >&AS_MESSAGE_LOG_FD 2>&1
       AS_IF([test $? -eq 0],

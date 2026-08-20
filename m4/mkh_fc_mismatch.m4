@@ -1,4 +1,4 @@
-# ACX_FC_MISMATCH([ACTION-IF-SUCCESS],
+# MKH_FC_MISMATCH([ACTION-IF-SUCCESS],
 #                 [ACTION-IF-FAILURE = FAILURE])
 # -----------------------------------------------------------------------------
 # Finds the compiler flag needed to allow routines to be called with different
@@ -14,7 +14,7 @@
 # Known flags:
 # NAGWare: -mismatch
 #
-AC_DEFUN([ACX_FC_MISMATCH],
+AC_DEFUN([MKH_FC_MISMATCH],
   [_AC_FORTRAN_ASSERT()dnl
    m4_pushdef([acx_cache_var], [acx_cv_[]_AC_LANG_ABBREV[]_mismatch_flag])dnl
    AC_MSG_CHECKING([for _AC_LANG compiler flag needed to allow routines to dnl

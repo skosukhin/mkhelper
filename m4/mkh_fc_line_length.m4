@@ -28,7 +28,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# ACX_FC_LINE_LENGTH([LENGTH = 132],
+# MKH_FC_LINE_LENGTH([LENGTH = 132],
 #                    [ACTION-IF-SUCCESS = APPEND-FCFLAGS],
 #                    [ACTION-IF-FAILURE = FAILURE])
 # -----------------------------------------------------------------------------
@@ -47,7 +47,7 @@
 # reduce the number of LANG switches and to avoid false negative results with
 # the GFortran '-fimplicit-none' flag.
 #
-AC_DEFUN([ACX_FC_LINE_LENGTH],
+AC_DEFUN([MKH_FC_LINE_LENGTH],
   [AC_LANG_ASSERT([Fortran])dnl
 dnl Fail instead of warning:
    m4_bmatch(m4_default([$1], [132]),

@@ -28,7 +28,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# ACX_LANG_CUDA_COMPATIBLE([ACTION-IF-SUCCESS],
+# MKH_LANG_CUDA_COMPATIBLE([ACTION-IF-SUCCESS],
 #                          [ACTION-IF-FAILURE = FAILURE])
 # -----------------------------------------------------------------------------
 # Checks whether the compiler for the current language can link objects
@@ -42,12 +42,12 @@
 # The result is cached in the acx_cv_[]_AC_LANG_ABBREV[]_cuda_compatible
 # variable.
 #
-AC_DEFUN([ACX_LANG_CUDA_COMPATIBLE],
+AC_DEFUN([MKH_LANG_CUDA_COMPATIBLE],
   [m4_pushdef([acx_cache_var], [acx_cv_[]_AC_LANG_ABBREV[]_cuda_compatible])dnl
    AC_CACHE_CHECK(
      [whether _AC_LANG compiler can link objects compiled with CUDA compiler],
      [acx_cache_var],
-     [_ACX_LANG_CUDA_COMPATIBLE([[
+     [_MKH_LANG_CUDA_COMPATIBLE([[
 extern "C" void conftest_cuda_foo() {
   // Call functions that require CUDA runtime library:
   float* x;
@@ -61,7 +61,7 @@ extern "C" void conftest_cuda_foo() {
 with CUDA compiler])])])
    m4_popdef([acx_cache_var])])
 
-# ACX_LANG_CUDA_COMPATIBLE_STDCXX([ACTION-IF-SUCCESS],
+# MKH_LANG_CUDA_COMPATIBLE_STDCXX([ACTION-IF-SUCCESS],
 #                                 [ACTION-IF-FAILURE = FAILURE])
 # -----------------------------------------------------------------------------
 # Checks whether the compiler for the current language can link objects
@@ -76,14 +76,14 @@ with CUDA compiler])])])
 # The result is cached in the acx_cv_[]_AC_LANG_ABBREV[]_cuda_compatible_stdcxx
 # variable.
 #
-AC_DEFUN([ACX_LANG_CUDA_COMPATIBLE_STDCXX],
+AC_DEFUN([MKH_LANG_CUDA_COMPATIBLE_STDCXX],
   [m4_pushdef([acx_cache_var],
      [acx_cv_[]_AC_LANG_ABBREV[]_cuda_compatible_stdcxx])dnl
    AC_CACHE_CHECK(
      [whether _AC_LANG compiler can link objects compiled with CUDA dnl
 compiler that require C++ standard library],
      [acx_cache_var],
-     [_ACX_LANG_CUDA_COMPATIBLE([[
+     [_MKH_LANG_CUDA_COMPATIBLE([[
 /* An attempt to write a function that would keep the dependency on the
    standard C++ library even with a high optimization level, i.e. -O3 */
 #include <vector>
@@ -98,7 +98,7 @@ extern "C" void conftest_cuda_foo() {
 with CUDA compiler that require C++ standard library])])])
    m4_popdef([acx_cache_var])])
 
-# _ACX_LANG_CUDA_COMPATIBLE(FOO-CUDA-CODE,
+# _MKH_LANG_CUDA_COMPATIBLE(FOO-CUDA-CODE,
 #                           [EXTRA-ACTIONS])
 # -----------------------------------------------------------------------------
 # Checks whether the compiler for the current language can link a program that
@@ -113,8 +113,8 @@ with CUDA compiler that require C++ standard library])])])
 #
 # The result is stored in the acx_lang_cuda_compatible variable.
 #
-m4_define([_ACX_LANG_CUDA_COMPATIBLE],
-  [AC_REQUIRE([ACX_PROG_CUDACXX])dnl
+m4_define([_MKH_LANG_CUDA_COMPATIBLE],
+  [AC_REQUIRE([MKH_PROG_CUDACXX])dnl
    AC_LANG_PUSH([CUDA])
    acx_lang_cuda_compatible=no
    AC_COMPILE_IFELSE([AC_LANG_SOURCE([$1])],
@@ -122,7 +122,7 @@ m4_define([_ACX_LANG_CUDA_COMPATIBLE],
       AC_TRY_COMMAND([mv ./conftest.$ac_objext ./conftest_cuda.$ac_objext])
       acx_save_LIBS=$LIBS; LIBS="./conftest_cuda.$ac_objext $LIBS"
       AC_LINK_IFELSE(
-        [AC_LANG_SOURCE([_ACX_LANG_CUDA_COMPATIBLE_CALL_PROGRAM])],
+        [AC_LANG_SOURCE([_MKH_LANG_CUDA_COMPATIBLE_CALL_PROGRAM])],
         [m4_ifval([$2],
            [$2
             AS_IF([test $? -eq 0], [acx_lang_cuda_compatible=yes])],
@@ -132,23 +132,23 @@ m4_define([_ACX_LANG_CUDA_COMPATIBLE],
       AC_LANG_PUSH([CUDA])])
    AC_LANG_POP([CUDA])])
 
-# _ACX_LANG_CUDA_COMPATIBLE_CALL_PROGRAM()
+# _MKH_LANG_CUDA_COMPATIBLE_CALL_PROGRAM()
 # -----------------------------------------------------------------------------
 # Expands into the source code of a program in the current language that calls
 # a C function "void conftest_cuda_foo()". By default, expands to m4_fatal with
 # the message saying that _AC_LANG is not supported.
 #
-m4_define([_ACX_LANG_CUDA_COMPATIBLE_CALL_PROGRAM],
+m4_define([_MKH_LANG_CUDA_COMPATIBLE_CALL_PROGRAM],
   [m4_ifdef([$0(]_AC_LANG[)],
      [m4_indir([$0(]_AC_LANG[)], $@)],
      [m4_fatal([the CUDA call program is not defined for ]dnl
 _AC_LANG[ language])])])
 
-# _ACX_LANG_CUDA_COMPATIBLE_CALL_PROGRAM(C)()
+# _MKH_LANG_CUDA_COMPATIBLE_CALL_PROGRAM(C)()
 # -----------------------------------------------------------------------------
-# Implementation of _ACX_LANG_CUDA_COMPATIBLE_CALL_PROGRAM for C language.
+# Implementation of _MKH_LANG_CUDA_COMPATIBLE_CALL_PROGRAM for C language.
 #
-m4_define([_ACX_LANG_CUDA_COMPATIBLE_CALL_PROGRAM(C)],
+m4_define([_MKH_LANG_CUDA_COMPATIBLE_CALL_PROGRAM(C)],
   [dnl
 dnl We do not use AC_LANG_CALL here because we want a zero exit status upon
 dnl successful run of the program.
@@ -159,26 +159,26 @@ extern "C"
 void conftest_cuda_foo();]],
 [[conftest_cuda_foo()]])])
 
-# _ACX_LANG_CUDA_COMPATIBLE_CALL_PROGRAM(C++)()
+# _MKH_LANG_CUDA_COMPATIBLE_CALL_PROGRAM(C++)()
 # -----------------------------------------------------------------------------
-# Implementation of _ACX_LANG_CUDA_COMPATIBLE_CALL_PROGRAM for C++ language.
+# Implementation of _MKH_LANG_CUDA_COMPATIBLE_CALL_PROGRAM for C++ language.
 #
-m4_copy([_ACX_LANG_CUDA_COMPATIBLE_CALL_PROGRAM(C)],
-  [_ACX_LANG_CUDA_COMPATIBLE_CALL_PROGRAM(C++)])
+m4_copy([_MKH_LANG_CUDA_COMPATIBLE_CALL_PROGRAM(C)],
+  [_MKH_LANG_CUDA_COMPATIBLE_CALL_PROGRAM(C++)])
 
-# _ACX_LANG_CUDA_COMPATIBLE_CALL_PROGRAM(CUDA)()
+# _MKH_LANG_CUDA_COMPATIBLE_CALL_PROGRAM(CUDA)()
 # -----------------------------------------------------------------------------
-# Implementation of _ACX_LANG_CUDA_COMPATIBLE_CALL_PROGRAM for CUDA language.
+# Implementation of _MKH_LANG_CUDA_COMPATIBLE_CALL_PROGRAM for CUDA language.
 #
-m4_copy([_ACX_LANG_CUDA_COMPATIBLE_CALL_PROGRAM(C)],
-  [_ACX_LANG_CUDA_COMPATIBLE_CALL_PROGRAM(CUDA)])
+m4_copy([_MKH_LANG_CUDA_COMPATIBLE_CALL_PROGRAM(C)],
+  [_MKH_LANG_CUDA_COMPATIBLE_CALL_PROGRAM(CUDA)])
 
-# _ACX_LANG_CUDA_COMPATIBLE_CALL_PROGRAM(Fortran)()
+# _MKH_LANG_CUDA_COMPATIBLE_CALL_PROGRAM(Fortran)()
 # -----------------------------------------------------------------------------
-# Implementation of _ACX_LANG_CUDA_COMPATIBLE_CALL_PROGRAM for Fortran language
+# Implementation of _MKH_LANG_CUDA_COMPATIBLE_CALL_PROGRAM for Fortran language
 # (implies that the Fortran compiler supports the BIND(C) attribute).
 #
-m4_define([_ACX_LANG_CUDA_COMPATIBLE_CALL_PROGRAM(Fortran)],
+m4_define([_MKH_LANG_CUDA_COMPATIBLE_CALL_PROGRAM(Fortran)],
   [AC_LANG_PROGRAM([],
 [[      implicit none
       interface

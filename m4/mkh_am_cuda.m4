@@ -1,6 +1,6 @@
-# AMX_CUDA_INIT()
+# MKH_AM_CUDA_INIT()
 # -----------------------------------------------------------------------------
-# Extends ACX_PROG_CUDACXX with Automake-specific checks and substitute
+# Extends MKH_PROG_CUDACXX with Automake-specific checks and substitute
 # variable definitions. Must be expanded after AM_INIT_AUTOMAKE.
 #
 # The macro does NOT provide Automake support for CUDA language, which can be
@@ -38,10 +38,10 @@
 # @AMDEP_TRUE@@am__fastdepCUDACXX_FALSE@	DEPDIR=$(DEPDIR) $(CUDACXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 # @am__fastdepCUDACXX_FALSE@	$(AM_V_CUDACXX@am__nodep@)$(CUDACOMPILE) -c -o $@ $<
 #
-AC_DEFUN([AMX_CUDA_INIT],
+AC_DEFUN([MKH_AM_CUDA_INIT],
   [AC_PROVIDE_IFELSE([AM_INIT_AUTOMAKE], [],
      [m4_fatal([$0 must be called after AM_INIT_AUTOMAKE])])dnl
-   AC_PROVIDE_IFELSE([ACX_PROG_CUDACXX],
+   AC_PROVIDE_IFELSE([MKH_PROG_CUDACXX],
      [_AM_DEPENDENCIES([CUDACXX])],
-     [m4_define([ACX_PROG_CUDACXX],
-        m4_defn([ACX_PROG_CUDACXX])[_AM_DEPENDENCIES([CUDACXX])])])])
+     [m4_define([MKH_PROG_CUDACXX],
+        m4_defn([MKH_PROG_CUDACXX])[_AM_DEPENDENCIES([CUDACXX])])])])

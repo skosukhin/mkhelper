@@ -28,7 +28,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# ACX_FC_MODULE_IN_FLAG([ACTION-IF-SUCCESS],
+# MKH_FC_MODULE_IN_FLAG([ACTION-IF-SUCCESS],
 #                       [ACTION-IF-FAILURE = FAILURE])
 # -----------------------------------------------------------------------------
 # Finds the Fortran compiler flag needed to specify module search paths.
@@ -43,7 +43,7 @@
 # reduce the number of LANG switches and to avoid false negative results with
 # the GFortran '-fmodule-private' flag.
 #
-AC_DEFUN([ACX_FC_MODULE_IN_FLAG],
+AC_DEFUN([MKH_FC_MODULE_IN_FLAG],
   [AC_LANG_ASSERT([Fortran])dnl
    m4_pushdef([ac_cv_fc_module_flag], [acx_cv_fc_module_in_flag])dnl
    m4_pushdef([AC_CACHE_CHECK],
@@ -73,7 +73,7 @@ files]))dnl
      [AC_MSG_FAILURE([unable to detect Fortran compiler flag needed to dnl
 specify search paths for module files])])], [$1])])
 
-# ACX_FC_MODULE_OUT_FLAG([ACTION-IF-SUCCESS],
+# MKH_FC_MODULE_OUT_FLAG([ACTION-IF-SUCCESS],
 #                        [ACTION-IF-FAILURE = FAILURE])
 # -----------------------------------------------------------------------------
 # Finds the Fortran compiler flag needed to specify module output path.
@@ -88,7 +88,7 @@ specify search paths for module files])])], [$1])])
 # AC_FC_MODULE_OUTPUT_FLAG to reduce the number of LANG switches and to avoid
 # false negative results with the GFortran '-fmodule-private' flag.
 #
-AC_DEFUN([ACX_FC_MODULE_OUT_FLAG],
+AC_DEFUN([MKH_FC_MODULE_OUT_FLAG],
   [AC_LANG_ASSERT([Fortran])dnl
    m4_pushdef([ac_cv_fc_module_output_flag], [acx_cv_fc_module_out_flag])dnl
    m4_pushdef([AC_CACHE_CHECK],
@@ -122,7 +122,7 @@ files]))dnl
      [AC_MSG_FAILURE([unable to detect Fortran compiler flag needed to dnl
 specify output path for module files])])], [$1])])
 
-# ACX_FC_MODULE_NAMING([ACTION-IF-SUCCESS],
+# MKH_FC_MODULE_NAMING([ACTION-IF-SUCCESS],
 #                      [ACTION-IF-FAILURE = FAILURE])
 # -----------------------------------------------------------------------------
 # Finds the Fortran compiler module file naming template.
@@ -137,7 +137,7 @@ specify output path for module files])])], [$1])])
 # leading dot. Either of the variables can have value "unknown". The result is
 # successful only if both variables are detected.
 #
-AC_DEFUN([ACX_FC_MODULE_NAMING],
+AC_DEFUN([MKH_FC_MODULE_NAMING],
   [AC_LANG_ASSERT([Fortran])dnl
    AC_MSG_CHECKING([for Fortran compiler module file naming template])
    AS_IF([AS_VAR_TEST_SET([acx_cv_fc_module_naming_upper]) && dnl
@@ -185,7 +185,7 @@ module file naming template])])],
         [AC_MSG_RESULT([{name}.$acx_cv_fc_module_naming_ext])])
       $1])])
 
-# ACX_FC_MODULE_SNAMING([ACTION-IF-SUCCESS],
+# MKH_FC_MODULE_SNAMING([ACTION-IF-SUCCESS],
 #                       [ACTION-IF-FAILURE = FAILURE])
 # -----------------------------------------------------------------------------
 # Finds the Fortran compiler submodule file naming template.
@@ -203,9 +203,9 @@ module file naming template])])],
 # extension without the leading dot. Either of the variables can have value
 # "unknown". The result is successful only if both variables are detected.
 #
-AC_DEFUN([ACX_FC_MODULE_SNAMING],
+AC_DEFUN([MKH_FC_MODULE_SNAMING],
   [AC_LANG_ASSERT([Fortran])dnl
-   AC_REQUIRE([ACX_FC_MODULE_NAMING])dnl
+   AC_REQUIRE([MKH_FC_MODULE_NAMING])dnl
    AC_MSG_CHECKING([for Fortran compiler submodule file naming template])
    AS_IF([AS_VAR_TEST_SET([acx_cv_fc_module_snaming_infix]) && dnl
 AS_VAR_TEST_SET([acx_cv_fc_module_snaming_ext])],
@@ -275,7 +275,7 @@ submodule file naming template])])],
         [$acx_tmp$acx_fc_module_sname.$acx_cv_fc_module_snaming_ext])
       $1])])
 
-# ACX_FC_MODULE_ROOT_SMOD([ACTION-IF-SUCCESS],
+# MKH_FC_MODULE_ROOT_SMOD([ACTION-IF-SUCCESS],
 #                         [ACTION-IF-FAILURE = FAILURE])
 # -----------------------------------------------------------------------------
 # Checks whether the Fortran compiler generates separate submodule files for
@@ -289,10 +289,10 @@ submodule file naming template])])],
 # acx_cv_fc_module_root_smod is "yes", and "no" otherwise. If the detection
 # fails, acx_cv_fc_module_root_smod is set to "unknown".
 #
-AC_DEFUN([ACX_FC_MODULE_ROOT_SMOD],
+AC_DEFUN([MKH_FC_MODULE_ROOT_SMOD],
   [AC_LANG_ASSERT([Fortran])dnl
-   AC_REQUIRE([ACX_FC_MODULE_NAMING])dnl
-   AC_REQUIRE([ACX_FC_MODULE_SNAMING])dnl
+   AC_REQUIRE([MKH_FC_MODULE_NAMING])dnl
+   AC_REQUIRE([MKH_FC_MODULE_SNAMING])dnl
    AC_CACHE_CHECK(
      [whether Fortran compiler generates submodule files for root ancestors],
      [acx_cv_fc_module_root_smod],
@@ -324,7 +324,7 @@ AC_DEFUN([ACX_FC_MODULE_ROOT_SMOD],
      [AC_MSG_FAILURE([unable to detect whether Fortran compiler generates dnl
 submodule files for modules])])], [$1])])
 
-# ACX_FC_MODULE_CHECK(MODULE-NAME,
+# MKH_FC_MODULE_CHECK(MODULE-NAME,
 #                     [ACTION-IF-SUCCESS],
 #                     [ACTION-IF-FAILURE = FAILURE])
 # -----------------------------------------------------------------------------
@@ -337,7 +337,7 @@ submodule files for modules])])], [$1])])
 # The result is cached in the acx_cv_fc_module_[]AS_TR_CPP(MODULE-NAME)
 # variable.
 #
-AC_DEFUN([ACX_FC_MODULE_CHECK],
+AC_DEFUN([MKH_FC_MODULE_CHECK],
   [AC_LANG_ASSERT([Fortran])dnl
    m4_pushdef([acx_cache_var], [acx_cv_fc_module_[]AS_TR_CPP([$1])])dnl
    AC_CACHE_CHECK([for Fortran module AS_TR_CPP([$1])], [acx_cache_var],
@@ -348,7 +348,7 @@ AC_DEFUN([ACX_FC_MODULE_CHECK],
      [AC_MSG_FAILURE([Fortran module 'AS_TR_CPP([$1])' is not available])])])
    m4_popdef([acx_cache_var])])
 
-# ACX_FC_MODULE_PROC_CHECK(MODULE-NAME,
+# MKH_FC_MODULE_PROC_CHECK(MODULE-NAME,
 #                          PROCEDURE-NAME,
 #                          [CALL-CODE = "      CALL PROCEDURE-NAME()"],
 #                          [ACTION-IF-SUCCESS],
@@ -369,7 +369,7 @@ AC_DEFUN([ACX_FC_MODULE_CHECK],
 # acx_cv_fc_module_proc_[]AS_TR_CPP(MODULE-NAME)_[]AS_TR_CPP(PROCEDURE-NAME)
 # variable.
 #
-AC_DEFUN([ACX_FC_MODULE_PROC_CHECK],
+AC_DEFUN([MKH_FC_MODULE_PROC_CHECK],
   [AC_LANG_ASSERT([Fortran])dnl
    m4_pushdef([acx_cache_var],
      [acx_cv_fc_module_proc_[]AS_TR_CPP([$1])_[]AS_TR_CPP([$2])])dnl
@@ -386,7 +386,7 @@ m4_default([$3], [[      call $2 ()]])])],
 module 'AS_TR_CPP([$1])' is not available])])])
    m4_popdef([acx_cache_var])])
 
-# ACX_FC_MODULE_ONLY_FLAG([ACTION-IF-SUCCESS],
+# MKH_FC_MODULE_ONLY_FLAG([ACTION-IF-SUCCESS],
 #                         [ACTION-IF-FAILURE = FAILURE])
 # -----------------------------------------------------------------------------
 # Finds the Fortran compiler flag needed to generate module files but no object
@@ -407,9 +407,9 @@ module 'AS_TR_CPP([$1])' is not available])])])
 # Cray: '-dB -M2179' (the second flag suppresses an excessive warning)
 #       or -otype=mod (undocumented and slow)
 #
-AC_DEFUN([ACX_FC_MODULE_ONLY_FLAG],
+AC_DEFUN([MKH_FC_MODULE_ONLY_FLAG],
   [AC_LANG_ASSERT([Fortran])dnl
-   AC_REQUIRE([ACX_FC_MODULE_NAMING])dnl
+   AC_REQUIRE([MKH_FC_MODULE_NAMING])dnl
    AC_CACHE_CHECK(
      [for Fortran compiler flag needed to generate module files but no dnl
 object files],

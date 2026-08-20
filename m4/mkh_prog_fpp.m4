@@ -28,7 +28,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# ACX_PROG_FPP([VARIABLE],
+# MKH_PROG_FPP([VARIABLE],
 #              [ACTION-IF-SUCCESS],
 #              [ACTION-IF-FAILURE = FAILURE],
 #              [INCLUDE-FLAG = -I],
@@ -98,11 +98,11 @@
 #
 # A positive result of this test is cached in the acx_cv_prog_fpp variable.
 #
-AC_DEFUN([ACX_PROG_FPP],
+AC_DEFUN([MKH_PROG_FPP],
   [AC_LANG_ASSERT([Fortran])dnl
    AC_PROVIDE_IFELSE([AC_FC_PP_SRCEXT], [],
      [m4_warn([syntax],
-        [ACX_PROG_FPP requires calling the Fortran compiler with a ]dnl
+        [MKH_PROG_FPP requires calling the Fortran compiler with a ]dnl
 [preprocessor but no call to AC_FC_PP_SRCEXT is detected])])dnl
    AC_MSG_CHECKING([for Fortran preprocessor command])
    AC_CACHE_VAL([acx_cv_prog_fpp],

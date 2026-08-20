@@ -28,7 +28,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# ACX_LANG_HIP_COMPATIBLE([ACTION-IF-SUCCESS],
+# MKH_LANG_HIP_COMPATIBLE([ACTION-IF-SUCCESS],
 #                         [ACTION-IF-FAILURE = FAILURE])
 # -----------------------------------------------------------------------------
 # Checks whether the compiler for the current language can link objects
@@ -42,12 +42,12 @@
 # The result is cached in the acx_cv_[]_AC_LANG_ABBREV[]_hip_compatible
 # variable.
 #
-AC_DEFUN([ACX_LANG_HIP_COMPATIBLE],
+AC_DEFUN([MKH_LANG_HIP_COMPATIBLE],
   [m4_pushdef([acx_cache_var], [acx_cv_[]_AC_LANG_ABBREV[]_hip_compatible])dnl
    AC_CACHE_CHECK(
      [whether _AC_LANG compiler can link objects compiled with HIP compiler],
      [acx_cache_var],
-     [_ACX_LANG_HIP_COMPATIBLE([[
+     [_MKH_LANG_HIP_COMPATIBLE([[
 #include <hip/hip_runtime.h>
 extern "C" void conftest_hip_foo() {
   // Call functions that require HIP runtime library:
@@ -62,7 +62,7 @@ extern "C" void conftest_hip_foo() {
 with HIP compiler])])])
    m4_popdef([acx_cache_var])])
 
-# ACX_LANG_HIP_COMPATIBLE_STDCXX([ACTION-IF-SUCCESS],
+# MKH_LANG_HIP_COMPATIBLE_STDCXX([ACTION-IF-SUCCESS],
 #                                [ACTION-IF-FAILURE = FAILURE])
 # -----------------------------------------------------------------------------
 # Checks whether the compiler for the current language can link objects
@@ -77,14 +77,14 @@ with HIP compiler])])])
 # The result is cached in the acx_cv_[]_AC_LANG_ABBREV[]_hip_compatible_stdcxx
 # variable.
 #
-AC_DEFUN([ACX_LANG_HIP_COMPATIBLE_STDCXX],
+AC_DEFUN([MKH_LANG_HIP_COMPATIBLE_STDCXX],
   [m4_pushdef([acx_cache_var],
      [acx_cv_[]_AC_LANG_ABBREV[]_hip_compatible_stdcxx])dnl
    AC_CACHE_CHECK(
      [whether _AC_LANG compiler can link objects compiled with HIP dnl
 compiler that require C++ standard library],
      [acx_cache_var],
-     [_ACX_LANG_HIP_COMPATIBLE([[
+     [_MKH_LANG_HIP_COMPATIBLE([[
 /* An attempt to write a function that would keep the dependency on the
    standard C++ library even with a high optimization level, i.e. -O3 */
 #include <vector>
@@ -99,7 +99,7 @@ extern "C" void conftest_hip_foo() {
 with HIP compiler that require C++ standard library])])])
    m4_popdef([acx_cache_var])])
 
-# _ACX_LANG_HIP_COMPATIBLE(FOO-HIP-CODE,
+# _MKH_LANG_HIP_COMPATIBLE(FOO-HIP-CODE,
 #                          [EXTRA-ACTIONS])
 # -----------------------------------------------------------------------------
 # Checks whether the compiler for the current language can link a program that
@@ -114,8 +114,8 @@ with HIP compiler that require C++ standard library])])])
 #
 # The result is stored in the acx_lang_hip_compatible variable.
 #
-m4_define([_ACX_LANG_HIP_COMPATIBLE],
-  [AC_REQUIRE([ACX_PROG_HIPCXX])dnl
+m4_define([_MKH_LANG_HIP_COMPATIBLE],
+  [AC_REQUIRE([MKH_PROG_HIPCXX])dnl
    AC_LANG_PUSH([HIP])
    acx_lang_hip_compatible=no
    AC_COMPILE_IFELSE([AC_LANG_SOURCE([$1])],
@@ -123,7 +123,7 @@ m4_define([_ACX_LANG_HIP_COMPATIBLE],
       AC_TRY_COMMAND([mv ./conftest.$ac_objext ./conftest_hip.$ac_objext])
       acx_save_LIBS=$LIBS; LIBS="./conftest_hip.$ac_objext $LIBS"
       AC_LINK_IFELSE(
-        [AC_LANG_SOURCE([_ACX_LANG_HIP_COMPATIBLE_CALL_PROGRAM])],
+        [AC_LANG_SOURCE([_MKH_LANG_HIP_COMPATIBLE_CALL_PROGRAM])],
         [m4_ifval([$2],
            [$2
             AS_IF([test $? -eq 0], [acx_lang_hip_compatible=yes])],
@@ -133,23 +133,23 @@ m4_define([_ACX_LANG_HIP_COMPATIBLE],
       AC_LANG_PUSH([HIP])])
    AC_LANG_POP([HIP])])
 
-# _ACX_LANG_HIP_COMPATIBLE_CALL_PROGRAM()
+# _MKH_LANG_HIP_COMPATIBLE_CALL_PROGRAM()
 # -----------------------------------------------------------------------------
 # Expands into the source code of a program in the current language that calls
 # a C function "void conftest_hip_foo()". By default, expands to m4_fatal with
 # the message saying that _AC_LANG is not supported.
 #
-m4_define([_ACX_LANG_HIP_COMPATIBLE_CALL_PROGRAM],
+m4_define([_MKH_LANG_HIP_COMPATIBLE_CALL_PROGRAM],
   [m4_ifdef([$0(]_AC_LANG[)],
      [m4_indir([$0(]_AC_LANG[)], $@)],
      [m4_fatal([the HIP call program is not defined for ]dnl
 _AC_LANG[ language])])])
 
-# _ACX_LANG_HIP_COMPATIBLE_CALL_PROGRAM(C)()
+# _MKH_LANG_HIP_COMPATIBLE_CALL_PROGRAM(C)()
 # -----------------------------------------------------------------------------
-# Implementation of _ACX_LANG_HIP_COMPATIBLE_CALL_PROGRAM for C language.
+# Implementation of _MKH_LANG_HIP_COMPATIBLE_CALL_PROGRAM for C language.
 #
-m4_define([_ACX_LANG_HIP_COMPATIBLE_CALL_PROGRAM(C)],
+m4_define([_MKH_LANG_HIP_COMPATIBLE_CALL_PROGRAM(C)],
   [dnl
 dnl We do not use AC_LANG_CALL here because we want a zero exit status upon
 dnl successful run of the program.
@@ -160,26 +160,26 @@ extern "C"
 void conftest_hip_foo();]],
 [[conftest_hip_foo()]])])
 
-# _ACX_LANG_HIP_COMPATIBLE_CALL_PROGRAM(C++)()
+# _MKH_LANG_HIP_COMPATIBLE_CALL_PROGRAM(C++)()
 # -----------------------------------------------------------------------------
-# Implementation of _ACX_LANG_HIP_COMPATIBLE_CALL_PROGRAM for C++ language.
+# Implementation of _MKH_LANG_HIP_COMPATIBLE_CALL_PROGRAM for C++ language.
 #
-m4_copy([_ACX_LANG_HIP_COMPATIBLE_CALL_PROGRAM(C)],
-  [_ACX_LANG_HIP_COMPATIBLE_CALL_PROGRAM(C++)])
+m4_copy([_MKH_LANG_HIP_COMPATIBLE_CALL_PROGRAM(C)],
+  [_MKH_LANG_HIP_COMPATIBLE_CALL_PROGRAM(C++)])
 
-# _ACX_LANG_HIP_COMPATIBLE_CALL_PROGRAM(HIP)()
+# _MKH_LANG_HIP_COMPATIBLE_CALL_PROGRAM(HIP)()
 # -----------------------------------------------------------------------------
-# Implementation of _ACX_LANG_HIP_COMPATIBLE_CALL_PROGRAM for HIP language.
+# Implementation of _MKH_LANG_HIP_COMPATIBLE_CALL_PROGRAM for HIP language.
 #
-m4_copy([_ACX_LANG_HIP_COMPATIBLE_CALL_PROGRAM(C)],
-  [_ACX_LANG_HIP_COMPATIBLE_CALL_PROGRAM(HIP)])
+m4_copy([_MKH_LANG_HIP_COMPATIBLE_CALL_PROGRAM(C)],
+  [_MKH_LANG_HIP_COMPATIBLE_CALL_PROGRAM(HIP)])
 
-# _ACX_LANG_HIP_COMPATIBLE_CALL_PROGRAM(Fortran)()
+# _MKH_LANG_HIP_COMPATIBLE_CALL_PROGRAM(Fortran)()
 # -----------------------------------------------------------------------------
-# Implementation of _ACX_LANG_HIP_COMPATIBLE_CALL_PROGRAM for Fortran language
+# Implementation of _MKH_LANG_HIP_COMPATIBLE_CALL_PROGRAM for Fortran language
 # (implies that the Fortran compiler supports the BIND(C) attribute).
 #
-m4_define([_ACX_LANG_HIP_COMPATIBLE_CALL_PROGRAM(Fortran)],
+m4_define([_MKH_LANG_HIP_COMPATIBLE_CALL_PROGRAM(Fortran)],
   [AC_LANG_PROGRAM([],
 [[      implicit none
       interface

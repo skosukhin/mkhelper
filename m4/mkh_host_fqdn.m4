@@ -28,7 +28,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# ACX_HOST_FQDN([ACTION-IF-SUCCESS],
+# MKH_HOST_FQDN([ACTION-IF-SUCCESS],
 #               [ACTION-IF-FAILURE = FAILURE])
 # -----------------------------------------------------------------------------
 # Detects the fully qualified domain name (FQDN) of the host. The result is
@@ -39,7 +39,7 @@
 #
 # The result is cached in the acx_cv_host_fqdn variable.
 #
-AC_DEFUN([ACX_HOST_FQDN],
+AC_DEFUN([MKH_HOST_FQDN],
   [AC_CACHE_CHECK([for the fully qualified domain name of the host],
      [acx_cv_host_fqdn],
      [dnl The easiest way to get the result:

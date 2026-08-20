@@ -28,20 +28,20 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# ACX_COMPILER_FC_VENDOR_SIMPLE()
+# MKH_COMPILER_FC_VENDOR_SIMPLE()
 # -----------------------------------------------------------------------------
 # Detects the vendor of the Fortran compiler. The result is "intel", "nag",
 # "portland", "cray", "nec", "gnu", "amd", "flang" or "unknown".
 #
-# This is a simplified version ACX_COMPILER_FC_VENDOR, which tries to detect
+# This is a simplified version MKH_COMPILER_FC_VENDOR, which tries to detect
 # the vendor based on the version output of the compiler, instead of checking
 # whether vendor-specific macros are defined.
 #
 # The result is cached in the acx_cv_fc_compiler_vendor variable.
 #
-AC_DEFUN([ACX_COMPILER_FC_VENDOR_SIMPLE],
+AC_DEFUN([MKH_COMPILER_FC_VENDOR_SIMPLE],
   [AC_LANG_ASSERT([Fortran])dnl
-   m4_provide([ACX_COMPILER_FC_VENDOR])dnl
+   m4_provide([MKH_COMPILER_FC_VENDOR])dnl
    m4_pushdef([acx_cache_var],
      [acx_cv_[]_AC_LANG_ABBREV[]_compiler_vendor])dnl
    AC_CACHE_CHECK([for _AC_LANG compiler vendor], [acx_cache_var],
@@ -75,23 +75,23 @@ grep 'clang version' >/dev/null 2>&1],
       rm -f a.out a.out.dSYM a.exe b.out])
    m4_popdef([acx_cache_var])])
 
-# ACX_COMPILER_FC_VERSION_SIMPLE()
+# MKH_COMPILER_FC_VERSION_SIMPLE()
 # -----------------------------------------------------------------------------
 # Detects the version of the C compiler. The result is either "unknown"
 # or a string in the form "[epoch:]major[.minor[.patchversion]]", where
 # "epoch:" is an optional prefix used in order to have an increasing version
 # number in case of marketing change.
 #
-# This is a simplified version ACX_COMPILER_FC_VERSION, which tries to detect
+# This is a simplified version MKH_COMPILER_FC_VERSION, which tries to detect
 # the version based on the version output of the compiler, instead of checking
 # for the values of vendor-specific macros.
 #
 # The result is cached in the acx_cv_fc_compiler_version variable.
 #
-AC_DEFUN([ACX_COMPILER_FC_VERSION_SIMPLE],
+AC_DEFUN([MKH_COMPILER_FC_VERSION_SIMPLE],
   [AC_LANG_ASSERT([Fortran])dnl
-   AC_REQUIRE([ACX_COMPILER_FC_VENDOR])dnl
-   m4_provide([ACX_COMPILER_FC_VERSION])dnl
+   AC_REQUIRE([MKH_COMPILER_FC_VENDOR])dnl
+   m4_provide([MKH_COMPILER_FC_VERSION])dnl
    m4_pushdef([acx_cache_var],
      [acx_cv_[]_AC_LANG_ABBREV[]_compiler_version])dnl
    AC_CACHE_CHECK([for _AC_LANG compiler version], [acx_cache_var],
@@ -147,20 +147,20 @@ AC_DEFUN([ACX_COMPILER_FC_VERSION_SIMPLE],
       AS_IF([test -z "$acx_cache_var"], [acx_cache_var=unknown])])
    m4_popdef([acx_cache_var])])
 
-# ACX_COMPILER_CC_VENDOR_SIMPLE()
+# MKH_COMPILER_CC_VENDOR_SIMPLE()
 # -----------------------------------------------------------------------------
 # Detects the vendor of the C compiler. The result is  "intel", "nag",
 # "portland", "cray", "nec", "gnu", "amd", "clang" or "unknown".
 #
-# This is a simplified version ACX_COMPILER_CC_VENDOR, which tries to detect
+# This is a simplified version MKH_COMPILER_CC_VENDOR, which tries to detect
 # the vendor based on the version output of the compiler, instead of checking
 # whether vendor-specific macros are defined.
 #
 # The result is cached in the acx_cv_c_compiler_vendor variable.
 #
-AC_DEFUN([ACX_COMPILER_CC_VENDOR_SIMPLE],
+AC_DEFUN([MKH_COMPILER_CC_VENDOR_SIMPLE],
   [AC_LANG_ASSERT([C])dnl
-   m4_provide([ACX_COMPILER_CC_VENDOR])dnl
+   m4_provide([MKH_COMPILER_CC_VENDOR])dnl
    m4_pushdef([acx_cache_var],
      [acx_cv_[]_AC_LANG_ABBREV[]_compiler_vendor])dnl
    AC_CACHE_CHECK([for _AC_LANG compiler vendor], [acx_cache_var],
@@ -201,23 +201,23 @@ grep 'clang version' >/dev/null 2>&1],
       rm -f a.out a.out.dSYM a.exe b.out])
    m4_popdef([acx_cache_var])])
 
-# ACX_COMPILER_CC_VERSION_SIMPLE()
+# MKH_COMPILER_CC_VERSION_SIMPLE()
 # -----------------------------------------------------------------------------
 # Detects the version of the C compiler. The result is either "unknown"
 # or a string in the form "[epoch:]major[.minor[.patchversion]]", where
 # "epoch:" is an optional prefix used in order to have an increasing version
 # number in case of marketing change.
 #
-# This is a simplified version ACX_COMPILER_CC_VERSION, which tries to detect
+# This is a simplified version MKH_COMPILER_CC_VERSION, which tries to detect
 # the version based on the version output of the compiler, instead of checking
 # for the values of vendor-specific macros.
 #
 # The result is cached in the acx_cv_c_compiler_version variable.
 #
-AC_DEFUN([ACX_COMPILER_CC_VERSION_SIMPLE],
+AC_DEFUN([MKH_COMPILER_CC_VERSION_SIMPLE],
   [AC_LANG_ASSERT([C])dnl
-   AC_REQUIRE([ACX_COMPILER_CC_VENDOR])dnl
-   m4_provide([ACX_COMPILER_CC_VERSION])dnl
+   AC_REQUIRE([MKH_COMPILER_CC_VENDOR])dnl
+   m4_provide([MKH_COMPILER_CC_VERSION])dnl
    m4_pushdef([acx_cache_var],
      [acx_cv_[]_AC_LANG_ABBREV[]_compiler_version])dnl
    AC_CACHE_CHECK([for _AC_LANG compiler version], [acx_cache_var],

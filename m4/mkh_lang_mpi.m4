@@ -30,7 +30,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# ACX_LANG_MPI_CHECK(MPIRUN,
+# MKH_LANG_MPI_CHECK(MPIRUN,
 #                    [TEST-SRC-DIR = $ac_aux_dir],
 #                    [ACTION-IF-SUCCESS],
 #                    [ACTION-IF-FAILURE = FAILURE])
@@ -60,7 +60,7 @@
 # The result if each test is cached in the
 # acx_cv_prog_[]AS_TR_SH($acx_prog_mpi_test_file) variable.
 #
-AC_DEFUN([ACX_LANG_MPI_CHECK],
+AC_DEFUN([MKH_LANG_MPI_CHECK],
   [for acx_prog_mpi_test_file in dnl
 m4_ifval([$2], ["$srcdir/$2"], ["$ac_aux_dir"])/*.$ac_ext; do
      test -f "$acx_prog_mpi_test_file" || continue
@@ -88,7 +88,7 @@ q
 "$acx_prog_mpi_test_file"])])])
    done])
 
-# ACX_LANG_MPI_CHECK_FAIL_MSG(VARIABLE,
+# MKH_LANG_MPI_CHECK_FAIL_MSG(VARIABLE,
 #                             TEST-FILE,
 #                             [TEST-DOC-DIR = $ac_aux_dir]
 #                             [DEFAULT-MESSAGE = generic message])
@@ -101,7 +101,7 @@ q
 # the file, otherwise VARIABLE is set to DEFAULT-MESSAGE (defaults to a
 # generic message saing that the test TEST-FILE failed).
 #
-AC_DEFUN([ACX_LANG_MPI_CHECK_FAIL_MSG],
+AC_DEFUN([MKH_LANG_MPI_CHECK_FAIL_MSG],
   [eval "acx_msg_file=`AS_ECHO(["$2"]) | sed 's%.*/\(.*\)\.@<:@^\.@:>@*%dnl
 m4_ifval([$3], [$srcdir/$3], [$ac_aux_dir])/\1.txt%'`"
    AS_IF([test -r "$acx_msg_file"],

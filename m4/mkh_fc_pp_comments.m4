@@ -28,7 +28,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# ACX_FC_PP_COMMENTS([ACTION-IF-SUCCESS],
+# MKH_FC_PP_COMMENTS([ACTION-IF-SUCCESS],
 #                    [ACTION-IF-FAILURE = FAILURE])
 # -----------------------------------------------------------------------------
 # Checks whether the Fortran compiler handles C-style block comments as well as
@@ -40,11 +40,11 @@
 #
 # The result is cached in the acx_cv_fc_pp_comments.
 #
-AC_DEFUN([ACX_FC_PP_COMMENTS],
+AC_DEFUN([MKH_FC_PP_COMMENTS],
   [AC_LANG_ASSERT([Fortran])dnl
    AC_PROVIDE_IFELSE([AC_FC_PP_SRCEXT], [],
      [m4_warn([syntax],
-        [ACX_FC_PP_COMMENTS requires calling the Fortran compiler with a ]dnl
+        [MKH_FC_PP_COMMENTS requires calling the Fortran compiler with a ]dnl
 [preprocessor but no call to AC_FC_PP_SRCEXT is detected])])dnl
    AC_CACHE_CHECK([whether Fortran compiler supports C-style comments],
      [acx_cv_fc_pp_comments],

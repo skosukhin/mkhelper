@@ -44,11 +44,11 @@ ac_compiler_gnu=$acx_cv_hip_compiler_gnu
 dnl Avoid mixing macro definitions that are relevant for C or C++ compiler and
 dnl might be irrelevant for HIP:
 m4_copy_force([AC_LANG_CONFTEST()], [AC_LANG_CONFTEST(HIP)])
-AC_DEFUN([AC_LANG_COMPILER(HIP)], [AC_REQUIRE([ACX_PROG_HIPCXX])])
+AC_DEFUN([AC_LANG_COMPILER(HIP)], [AC_REQUIRE([MKH_PROG_HIPCXX])])
 
-# ACX_LANG_HIP()
-# ACX_LANG_PUSH_HIP()
-# ACX_LANG_POP_HIP()
+# MKH_LANG_HIP()
+# MKH_LANG_PUSH_HIP()
+# MKH_LANG_POP_HIP()
 # -----------------------------------------------------------------------------
 # A set of macros wrapping AC_LANG([HIP]), AC_LANG_PUSH([HIP]), and
 # AC_LANG_POP([HIP]), respectively, that can be used in the "configure.ac" to
@@ -57,11 +57,11 @@ AC_DEFUN([AC_LANG_COMPILER(HIP)], [AC_REQUIRE([ACX_PROG_HIPCXX])])
 # that do not use Automake for the makefile generation and, therefore, cannot
 # specify "ACLOCAL_AMFLAGS" in the top-level "Makefile.am".
 #
-AC_DEFUN([ACX_LANG_HIP], [AC_LANG([HIP])])
-AC_DEFUN([ACX_LANG_PUSH_HIP], [AC_LANG_PUSH([HIP])])
-AC_DEFUN([ACX_LANG_POP_HIP], [AC_LANG_POP([HIP])])
+AC_DEFUN([MKH_LANG_HIP], [AC_LANG([HIP])])
+AC_DEFUN([MKH_LANG_PUSH_HIP], [AC_LANG_PUSH([HIP])])
+AC_DEFUN([MKH_LANG_POP_HIP], [AC_LANG_POP([HIP])])
 
-# ACX_PROG_HIPCXX([LIST-OF-COMPILERS = hipcc])
+# MKH_PROG_HIPCXX([LIST-OF-COMPILERS = hipcc])
 # -----------------------------------------------------------------------------
 # Searches for the HIP C++ compiler command among the values of the
 # blank-separated list LIST-OF-COMPILERS (defaults to a single value "hipcc").
@@ -81,7 +81,7 @@ AC_DEFUN([ACX_LANG_POP_HIP], [AC_LANG_POP([HIP])])
 # expected to either append the flag to HIPCXX or prepended it to HIPFLAGS
 # based on the value of the acx_prog_hipcxx_works shell variable.
 #
-AC_DEFUN_ONCE([ACX_PROG_HIPCXX],
+AC_DEFUN_ONCE([MKH_PROG_HIPCXX],
   [AC_LANG_PUSH([HIP])dnl
    AC_ARG_VAR([HIPCXX], [HIP C++ compiler command])dnl
    AC_ARG_VAR([HIPFLAGS], [HIP C++ compiler flags])dnl
@@ -122,12 +122,12 @@ AC_DEFUN_ONCE([ACX_PROG_HIPCXX],
      [AS_VAR_IF([ac_cv_hip_compiler_gnu], [yes],
         [HIPFLAGS='-O2'], [HIPFLAGS=''])])
    acx_prog_hipcxx_works=no
-   m4_map_sep([_ACX_HIP_CXX_TEST], [
+   m4_map_sep([_MKH_HIP_CXX_TEST], [
 ], [[14],[11]])
-   _ACX_HIP_BASIC_TEST
+   _MKH_HIP_BASIC_TEST
    AC_LANG_POP([HIP])])
 
-# _ACX_HIP_CXX_TEST(STANDARD)
+# _MKH_HIP_CXX_TEST(STANDARD)
 # -----------------------------------------------------------------------------
 # Checks whether the HIP C++ compiler supports the ISO C++ STANDARD (only
 # checks for ISO C++ 2014 and ISO C++ 2011 are currently supported) and can
@@ -141,9 +141,9 @@ AC_DEFUN_ONCE([ACX_PROG_HIPCXX],
 # acx_cv_prog_hipcxx_cxx[]STANDARD[]_flag to the flag that is required to
 # enable the standard.
 #
-AC_DEFUN([_ACX_HIP_CXX_TEST],
+AC_DEFUN([_MKH_HIP_CXX_TEST],
   [AC_LANG_ASSERT([HIP])dnl
-   AC_REQUIRE([_ACX_HIP_CXX$1_TEST_PROGRAM])dnl
+   AC_REQUIRE([_MKH_HIP_CXX$1_TEST_PROGRAM])dnl
    AS_VAR_IF([acx_prog_hipcxx_works], [no],
      [AC_MSG_CHECKING([for $HIPCXX option to enable C++$1 features])
       m4_pushdef([acx_cache_var], [acx_cv_prog_hipcxx_cxx$1_flag])dnl
@@ -151,7 +151,7 @@ AC_DEFUN([_ACX_HIP_CXX_TEST],
         [acx_cache_var=unsupported
          AC_LANG_CONFTEST([$acx_hip_conftest_cxx$1_program])
          acx_save_HIPFLAGS=$HIPFLAGS
-         for acx_flag in '' m4_normalize(m4_defn([_ACX_HIP_CXX$1_OPTIONS]))
+         for acx_flag in '' m4_normalize(m4_defn([_MKH_HIP_CXX$1_OPTIONS]))
          do
            HIPFLAGS="$acx_flag $acx_save_HIPFLAGS"
            _AC_COMPILE_IFELSE([], [acx_cache_var=$acx_flag])
@@ -166,7 +166,7 @@ AC_DEFUN([_ACX_HIP_CXX_TEST],
         [acx_prog_hipcxx_works=cxx$1])
       m4_popdef([acx_cache_var])])])
 
-# _ACX_HIP_BASIC_TEST()
+# _MKH_HIP_BASIC_TEST()
 # -----------------------------------------------------------------------------
 # Checks whether the HIP C++ compiler can compile a basic HIP program. The
 # check is skipped if the acx_prog_hipcxx_works shell variable is set to a
@@ -177,9 +177,9 @@ AC_DEFUN([_ACX_HIP_CXX_TEST],
 #
 # The result is cached in the acx_cv_prog_hipxx_basic variable.
 #
-AC_DEFUN([_ACX_HIP_BASIC_TEST],
+AC_DEFUN([_MKH_HIP_BASIC_TEST],
   [AC_LANG_ASSERT([HIP])dnl
-   AC_REQUIRE([_ACX_HIP_BASIC_TEST_PROGRAM])dnl
+   AC_REQUIRE([_MKH_HIP_BASIC_TEST_PROGRAM])dnl
    AS_VAR_IF([acx_prog_hipcxx_works], [no],
      [AC_CACHE_CHECK([whether $HIPCXX can compile basic HIP code],
         [acx_cv_prog_hipxx_basic],
@@ -189,37 +189,37 @@ AC_DEFUN([_ACX_HIP_BASIC_TEST],
       AS_VAR_IF([acx_cv_prog_hipxx_basic], [yes],
         [acx_prog_hipcxx_works=basic])])])
 
-# _ACX_HIP_BASIC_TEST_GLOBALS()
-# _ACX_HIP_BASIC_TEST_MAIN()
-# _ACX_HIP_BASIC_TEST_PROGRAM()
-# _ACX_HIP_CXX11_TEST_GLOBALS()
-# _ACX_HIP_CXX11_TEST_MAIN()
-# _ACX_HIP_CXX11_TEST_PROGRAM()
-# _ACX_HIP_CXX14_TEST_GLOBALS()
-# _ACX_HIP_CXX14_TEST_MAIN()
-# _ACX_HIP_CXX14_TEST_PROGRAM()
+# _MKH_HIP_BASIC_TEST_GLOBALS()
+# _MKH_HIP_BASIC_TEST_MAIN()
+# _MKH_HIP_BASIC_TEST_PROGRAM()
+# _MKH_HIP_CXX11_TEST_GLOBALS()
+# _MKH_HIP_CXX11_TEST_MAIN()
+# _MKH_HIP_CXX11_TEST_PROGRAM()
+# _MKH_HIP_CXX14_TEST_GLOBALS()
+# _MKH_HIP_CXX14_TEST_MAIN()
+# _MKH_HIP_CXX14_TEST_PROGRAM()
 # -----------------------------------------------------------------------------
 # A set of macros that expand to the shell code in the INIT_PREPARE section of
 # the configure script that assigns respective shell variables to the source
 # code of the test programs that are used when checking for the HIP C++
 # compiler features.
 #
-AC_DEFUN([_ACX_HIP_BASIC_TEST_GLOBALS],
+AC_DEFUN([_MKH_HIP_BASIC_TEST_GLOBALS],
   [m4_divert_once([INIT_PREPARE],
 [[# Basic HIP test code (global declarations):
 acx_hip_conftest_basic_globals='#include <hip/hip_runtime.h>
 __global__ void conftest_foo() {}'
 ]])])
 
-AC_DEFUN([_ACX_HIP_BASIC_TEST_MAIN],
+AC_DEFUN([_MKH_HIP_BASIC_TEST_MAIN],
   [m4_divert_once([INIT_PREPARE],
 [[# Basic HIP test code (body of main):
 acx_hip_conftest_basic_main='conftest_foo<<<1, 1>>>();'
 ]])])
 
-AC_DEFUN([_ACX_HIP_BASIC_TEST_PROGRAM],
-  [AC_REQUIRE([_ACX_HIP_BASIC_TEST_GLOBALS])dnl
-   AC_REQUIRE([_ACX_HIP_BASIC_TEST_MAIN])dnl
+AC_DEFUN([_MKH_HIP_BASIC_TEST_PROGRAM],
+  [AC_REQUIRE([_MKH_HIP_BASIC_TEST_GLOBALS])dnl
+   AC_REQUIRE([_MKH_HIP_BASIC_TEST_MAIN])dnl
    m4_divert_once([INIT_PREPARE],
 [[# Basic HIP test code (complete):
 acx_hip_conftest_basic_program="$acx_hip_conftest_basic_globals
@@ -231,7 +231,7 @@ int main (int argc, char **argv)
 "
 ]])])
 
-AC_DEFUN([_ACX_HIP_CXX11_TEST_GLOBALS],
+AC_DEFUN([_MKH_HIP_CXX11_TEST_GLOBALS],
   [m4_divert_once([INIT_PREPARE],
 [[# C++11 HIP test code (global declarations):
 acx_hip_conftest_cxx11_globals='
@@ -248,7 +248,7 @@ namespace cxx11test {
 }'
 ]])])
 
-AC_DEFUN([_ACX_HIP_CXX11_TEST_MAIN],
+AC_DEFUN([_MKH_HIP_CXX11_TEST_MAIN],
   [m4_divert_once([INIT_PREPARE],
 [[# C++11 HIP test code (body of main):
 acx_hip_conftest_cxx11_main='
@@ -260,11 +260,11 @@ pcxx11 = &icxx11;
 some_class(*pcxx11);'
 ]])])
 
-AC_DEFUN([_ACX_HIP_CXX11_TEST_PROGRAM],
-  [AC_REQUIRE([_ACX_HIP_BASIC_TEST_GLOBALS])dnl
-   AC_REQUIRE([_ACX_HIP_BASIC_TEST_MAIN])dnl
-   AC_REQUIRE([_ACX_HIP_CXX11_TEST_GLOBALS])dnl
-   AC_REQUIRE([_ACX_HIP_CXX11_TEST_MAIN])dnl
+AC_DEFUN([_MKH_HIP_CXX11_TEST_PROGRAM],
+  [AC_REQUIRE([_MKH_HIP_BASIC_TEST_GLOBALS])dnl
+   AC_REQUIRE([_MKH_HIP_BASIC_TEST_MAIN])dnl
+   AC_REQUIRE([_MKH_HIP_CXX11_TEST_GLOBALS])dnl
+   AC_REQUIRE([_MKH_HIP_CXX11_TEST_MAIN])dnl
    m4_divert_once([INIT_PREPARE],
 [[# C++11 HIP test code (complete):
 acx_hip_conftest_cxx11_program="$acx_hip_conftest_basic_globals
@@ -278,7 +278,7 @@ int main (int argc, char **argv)
 "
 ]])])
 
-AC_DEFUN([_ACX_HIP_CXX14_TEST_GLOBALS],
+AC_DEFUN([_MKH_HIP_CXX14_TEST_GLOBALS],
   [m4_divert_once([INIT_PREPARE],
 [[# C++14 HIP test code (global declarations):
 acx_hip_conftest_cxx14_globals='
@@ -288,19 +288,19 @@ acx_hip_conftest_cxx14_globals='
 '
 ]])])
 
-AC_DEFUN([_ACX_HIP_CXX14_TEST_MAIN],
+AC_DEFUN([_MKH_HIP_CXX14_TEST_MAIN],
   [m4_divert_once([INIT_PREPARE],
 [[# C++14 HIP test code (body of main):
 acx_hip_conftest_cxx14_main=''
 ]])])
 
-AC_DEFUN([_ACX_HIP_CXX14_TEST_PROGRAM],
-  [AC_REQUIRE([_ACX_HIP_BASIC_TEST_GLOBALS])dnl
-   AC_REQUIRE([_ACX_HIP_BASIC_TEST_MAIN])dnl
-   AC_REQUIRE([_ACX_HIP_CXX11_TEST_GLOBALS])dnl
-   AC_REQUIRE([_ACX_HIP_CXX11_TEST_MAIN])dnl
-   AC_REQUIRE([_ACX_HIP_CXX14_TEST_GLOBALS])dnl
-   AC_REQUIRE([_ACX_HIP_CXX14_TEST_MAIN])dnl
+AC_DEFUN([_MKH_HIP_CXX14_TEST_PROGRAM],
+  [AC_REQUIRE([_MKH_HIP_BASIC_TEST_GLOBALS])dnl
+   AC_REQUIRE([_MKH_HIP_BASIC_TEST_MAIN])dnl
+   AC_REQUIRE([_MKH_HIP_CXX11_TEST_GLOBALS])dnl
+   AC_REQUIRE([_MKH_HIP_CXX11_TEST_MAIN])dnl
+   AC_REQUIRE([_MKH_HIP_CXX14_TEST_GLOBALS])dnl
+   AC_REQUIRE([_MKH_HIP_CXX14_TEST_MAIN])dnl
    m4_divert_once([INIT_PREPARE],
 [[# C++14 HIP test code (complete):
 acx_hip_conftest_cxx14_program="$acx_hip_conftest_basic_globals
@@ -316,16 +316,16 @@ int main (int argc, char **argv)
 "
 ]])])
 
-# _ACX_HIP_CXX11_OPTIONS()
+# _MKH_HIP_CXX11_OPTIONS()
 # -----------------------------------------------------------------------------
 # Expands into a space-separated list of known flags needed to enable the
 # support for the ISO C++ 2011 standard when running the HIP C++ compiler.
 #
-m4_define([_ACX_HIP_CXX11_OPTIONS], [-std=gnu++11 -std=c++11])
+m4_define([_MKH_HIP_CXX11_OPTIONS], [-std=gnu++11 -std=c++11])
 
-# _ACX_HIP_CXX14_OPTIONS()
+# _MKH_HIP_CXX14_OPTIONS()
 # -----------------------------------------------------------------------------
 # Expands into a space-separated list of known flags needed to enable the
 # support for the ISO C++ 2014 standard when running the HIP C++ compiler.
 #
-m4_define([_ACX_HIP_CXX14_OPTIONS], [-std=gnu++14 -std=c++14])
+m4_define([_MKH_HIP_CXX14_OPTIONS], [-std=gnu++14 -std=c++14])

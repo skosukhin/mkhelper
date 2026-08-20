@@ -30,7 +30,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# ACX_LANG_PACKAGE_INIT(PACKAGE-NAME,
+# MKH_LANG_PACKAGE_INIT(PACKAGE-NAME,
 #                       [INC-SEARCH-FLAGS],
 #                       [LIB-SEARCH-FLAGS],
 #                       [INC-SEARCH-SUFFIX = /include],
@@ -63,18 +63,18 @@
 # set according to the same rules as for the variable related to the include
 # search path (LIB-SEARCH-SUFFIX defaults to /lib).
 #
-AC_DEFUN([ACX_LANG_PACKAGE_INIT],
+AC_DEFUN([MKH_LANG_PACKAGE_INIT],
   [m4_pushdef([acx_package_ROOT], [AS_TR_CPP([$1]_ROOT)])dnl
    m4_pushdef([acx_package_with_root],
-     [with_[]AS_TR_SH([ASX_TR_ARG([$1])])_root])dnl
-   AC_ARG_WITH(ASX_TR_ARG([$1])[-root],
-     [AS_HELP_STRING([--with-ASX_TR_ARG([$1])-root=[]acx_package_ROOT],
+     [with_[]AS_TR_SH([MKH_TR_ARG([$1])])_root])dnl
+   AC_ARG_WITH(MKH_TR_ARG([$1])[-root],
+     [AS_HELP_STRING([--with-MKH_TR_ARG([$1])-root=[]acx_package_ROOT],
         [root search path for $1 headers and libraries])])
    m4_ifnblank([$2],
      [m4_pushdef([acx_package_with_include],
-        [with_[]AS_TR_SH([ASX_TR_ARG([$1])])_include])dnl
-      AC_ARG_WITH(ASX_TR_ARG([$1])[-include],
-        [AS_HELP_STRING([--with-ASX_TR_ARG([$1])-include=DIR],
+        [with_[]AS_TR_SH([MKH_TR_ARG([$1])])_include])dnl
+      AC_ARG_WITH(MKH_TR_ARG([$1])[-include],
+        [AS_HELP_STRING([--with-MKH_TR_ARG([$1])-include=DIR],
            [search path for $1 headers @<:@]acx_package_ROOT[]dnl
 m4_default([$4], [/include])[@:>@])], [],
            [AS_VAR_SET_IF([acx_package_with_root],
@@ -84,16 +84,16 @@ m4_default([$4], [/include])"])])
         [exact ]_AC_LANG[ compiler flags enabling $1])
       AS_VAR_SET_IF([acx_package_with_include],
         [for acx_flag in $2; do
-           ASX_VAR_APPEND_UNIQ(
+           MKH_VAR_APPEND_UNIQ(
              [acx_[]_AC_LANG_ABBREV[]_[]AS_TR_SH([$1])_inc_search_args],
              ["${acx_flag}${acx_package_with_include}"], [" "])
          done])
       m4_popdef([acx_package_with_include])])
    m4_ifnblank([$3],
      [m4_pushdef([acx_package_with_lib],
-        [with_[]AS_TR_SH([ASX_TR_ARG([$1])])_lib])dnl
-      AC_ARG_WITH(ASX_TR_ARG([$1])[-lib],
-        [AS_HELP_STRING([--with-ASX_TR_ARG([$1])-lib=DIR],
+        [with_[]AS_TR_SH([MKH_TR_ARG([$1])])_lib])dnl
+      AC_ARG_WITH(MKH_TR_ARG([$1])[-lib],
+        [AS_HELP_STRING([--with-MKH_TR_ARG([$1])-lib=DIR],
            [search path for $1 libraries @<:@]acx_package_ROOT[]dnl
 m4_default([$5], [/lib])[@:>@])],
            [],
@@ -104,7 +104,7 @@ m4_default([$5], [/lib])"])])
         [exact linker flags enabling $1 when linking with ]_AC_LANG[ compiler])
       AS_VAR_SET_IF([acx_package_with_lib],
         [for acx_flag in $3; do
-           ASX_VAR_APPEND_UNIQ(
+           MKH_VAR_APPEND_UNIQ(
              [acx_[]_AC_LANG_ABBREV[]_[]AS_TR_SH([$1])_lib_search_args],
              ["${acx_flag}${acx_package_with_lib}"], [" "])
          done])

@@ -28,7 +28,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# ACX_FC_PP_SRCEXT(EXTENSION,
+# MKH_FC_PP_SRCEXT(EXTENSION,
 #                  [ACTION-IF-SUCCESS],
 #                  [ACTION-IF-FAILURE = FAILURE])
 # -----------------------------------------------------------------------------
@@ -55,7 +55,7 @@
 #             flags and crashes old versions of the compiler at the linking
 #             stage)
 #
-AC_DEFUN([ACX_FC_PP_SRCEXT],
+AC_DEFUN([MKH_FC_PP_SRCEXT],
   [AC_LANG_ASSERT([Fortran])dnl
    acx_ext_save=$ac_ext
    m4_pushdef([acx_cache_var], [acx_cv_fc_pp_srcext_$1])dnl

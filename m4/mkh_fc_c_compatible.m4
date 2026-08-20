@@ -28,7 +28,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# ACX_FC_C_COMPATIBLE([ACTION-IF-SUCCESS],
+# MKH_FC_C_COMPATIBLE([ACTION-IF-SUCCESS],
 #                     [ACTION-IF-FAILURE = FAILURE])
 # -----------------------------------------------------------------------------
 # Checks whether the Fortran compiler can link objects compiled with the C
@@ -43,18 +43,18 @@ $ resulting object into a Fortran program with the Fortran compiler.
 #
 # The result is cached in the acx_cv_fc_c_compatible variable.
 #
-AC_DEFUN([ACX_FC_C_COMPATIBLE],
+AC_DEFUN([MKH_FC_C_COMPATIBLE],
   [AC_CACHE_CHECK(
      [whether Fortran compiler can link objects compiled with C compiler],
      [acx_cv_fc_c_compatible],
-     [_ACX_FC_C_COMPATIBLE
+     [_MKH_FC_C_COMPATIBLE
       acx_cv_fc_c_compatible=$acx_fc_c_compatiable])
    AS_VAR_IF([acx_cv_fc_c_compatible], [yes], [$1],
      [m4_default([$2],
         [AC_MSG_FAILURE([Fortran compiler cannot link objects compiled with dnl
 C compiler])])])])
 
-# ACX_FC_C_COMPATIBLE_MPI([MPIRUN = true],
+# MKH_FC_C_COMPATIBLE_MPI([MPIRUN = true],
 #                         [ACTION-IF-SUCCESS],
 #                         [ACTION-IF-FAILURE = FAILURE])
 # -----------------------------------------------------------------------------
@@ -74,11 +74,11 @@ C compiler])])])])
 #
 # The result is cached in the acx_cv_fc_c_compatible_mpi variable.
 #
-AC_DEFUN([ACX_FC_C_COMPATIBLE_MPI],
+AC_DEFUN([MKH_FC_C_COMPATIBLE_MPI],
   [AC_CACHE_CHECK([whether Fortran and C MPI libraries are compatible],
      [acx_cv_fc_c_compatible_mpi],
      [acx_cv_fc_c_compatible_mpi=no
-      _ACX_FC_C_COMPATIBLE(
+      _MKH_FC_C_COMPATIBLE(
         [[#include <mpi.h>]],
         [[int world_size, world_rank, name_len;
 char processor_name[MPI_MAX_PROCESSOR_NAME];
@@ -94,7 +94,7 @@ MPI_Finalize()]],
      [m4_default([$3],
         [AC_MSG_FAILURE([Fortran and C MPI libraries are not compatible])])])])
 
-# ACX_FC_C_COMPATIBLE_OPENMP([ACTION-IF-SUCCESS],
+# MKH_FC_C_COMPATIBLE_OPENMP([ACTION-IF-SUCCESS],
 #                            [ACTION-IF-FAILURE = FAILURE])
 # -----------------------------------------------------------------------------
 # Checks whether the Fortran compiler can link C code that uses OpenMP. Tries
@@ -109,18 +109,18 @@ MPI_Finalize()]],
 #
 # The result is cached in the acx_cv_fc_c_compatible_openmp variable.
 #
-AC_DEFUN([ACX_FC_C_COMPATIBLE_OPENMP],
+AC_DEFUN([MKH_FC_C_COMPATIBLE_OPENMP],
   [AC_CACHE_CHECK(
      [whether Fortran compiler can link C code that uses OpenMP],
      [acx_cv_fc_c_compatible_openmp],
-     [_ACX_FC_C_COMPATIBLE([[#include <omp.h>]], [[omp_get_num_threads()]])
+     [_MKH_FC_C_COMPATIBLE([[#include <omp.h>]], [[omp_get_num_threads()]])
       acx_cv_fc_c_compatible_openmp=$acx_fc_c_compatiable])
    AS_VAR_IF([acx_cv_fc_c_compatible_openmp], [yes], [$1],
      [m4_default([$2],
         [AC_MSG_FAILURE(
            [Fortran compiler cannot link C code that uses OpenMP])])])])
 
-# ACX_FC_C_COMPATIBLE_PYTHON([ACTION-IF-SUCCESS],
+# MKH_FC_C_COMPATIBLE_PYTHON([ACTION-IF-SUCCESS],
 #                            [ACTION-IF-FAILURE = FAILURE])
 # -----------------------------------------------------------------------------
 # Checks whether the Fortran compiler can link C code that uses Python API.
@@ -135,18 +135,18 @@ AC_DEFUN([ACX_FC_C_COMPATIBLE_OPENMP],
 #
 # The result is cached in the acx_cv_fc_c_compatible_python variable.
 #
-AC_DEFUN([ACX_FC_C_COMPATIBLE_PYTHON],
+AC_DEFUN([MKH_FC_C_COMPATIBLE_PYTHON],
   [AC_CACHE_CHECK(
      [whether Fortran compiler can link C code that uses Python API],
      [acx_cv_fc_c_compatible_python],
-     [_ACX_FC_C_COMPATIBLE([[#include <Python.h>]], [[Py_Initialize()]])
+     [_MKH_FC_C_COMPATIBLE([[#include <Python.h>]], [[Py_Initialize()]])
       acx_cv_fc_c_compatible_python=$acx_fc_c_compatiable])
    AS_VAR_IF([acx_cv_fc_c_compatible_python], [yes], [$1],
      [m4_default([$2],
         [AC_MSG_FAILURE(
            [Fortran compiler cannot link C code that uses Python API])])])])
 
-# _ACX_FC_C_COMPATIBLE([PROLOGUE],
+# _MKH_FC_C_COMPATIBLE([PROLOGUE],
 #                      [BODY],
 #                      [EXTRA-ACTIONS])
 # -----------------------------------------------------------------------------
@@ -164,7 +164,7 @@ AC_DEFUN([ACX_FC_C_COMPATIBLE_PYTHON],
 #
 # The result is stored in the acx_fc_c_compatiable variable.
 #
-AC_DEFUN([_ACX_FC_C_COMPATIBLE],
+AC_DEFUN([_MKH_FC_C_COMPATIBLE],
   [AC_LANG_ASSERT([Fortran])dnl
    AC_REQUIRE([AC_PROG_CC])dnl
    AC_LANG_PUSH([C])
