@@ -228,18 +228,18 @@ AC_DEFUN([_ACX_CUDA_CXX_TEST],
 #
 # If successful, sets the shell variable acx_prog_cudacxx_works to "basic".
 #
-# The result is cached in the acx_cv_prog_cudaxx_basic variable.
+# The result is cached in the acx_cv_prog_cudacxx_basic variable.
 #
 AC_DEFUN([_ACX_CUDA_BASIC_TEST],
   [AC_LANG_ASSERT([CUDA])dnl
    AC_REQUIRE([_ACX_CUDA_BASIC_TEST_PROGRAM])dnl
    AS_VAR_IF([acx_prog_cudacxx_works], [no],
      [AC_CACHE_CHECK([whether $CUDACXX can compile basic CUDA code],
-        [acx_cv_prog_cudaxx_basic],
+        [acx_cv_prog_cudacxx_basic],
         [_AC_COMPILE_IFELSE([$acx_cuda_conftest_basic_program],
-           [acx_cv_prog_cudaxx_basic=yes],
-           [acx_cv_prog_cudaxx_basic=no])])
-      AS_VAR_IF([acx_cv_prog_cudaxx_basic], [yes],
+           [acx_cv_prog_cudacxx_basic=yes],
+           [acx_cv_prog_cudacxx_basic=no])])
+      AS_VAR_IF([acx_cv_prog_cudacxx_basic], [yes],
         [acx_prog_cudacxx_works=basic])])])
 
 # _ACX_CUDA_BASIC_TEST_GLOBALS()

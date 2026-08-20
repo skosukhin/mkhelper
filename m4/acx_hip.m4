@@ -175,18 +175,18 @@ AC_DEFUN([_ACX_HIP_CXX_TEST],
 #
 # If successful, sets the shell variable acx_prog_hipcxx_works to "basic".
 #
-# The result is cached in the acx_cv_prog_hipxx_basic variable.
+# The result is cached in the acx_cv_prog_hipcxx_basic variable.
 #
 AC_DEFUN([_ACX_HIP_BASIC_TEST],
   [AC_LANG_ASSERT([HIP])dnl
    AC_REQUIRE([_ACX_HIP_BASIC_TEST_PROGRAM])dnl
    AS_VAR_IF([acx_prog_hipcxx_works], [no],
      [AC_CACHE_CHECK([whether $HIPCXX can compile basic HIP code],
-        [acx_cv_prog_hipxx_basic],
+        [acx_cv_prog_hipcxx_basic],
         [_AC_COMPILE_IFELSE([$acx_hip_conftest_basic_program],
-           [acx_cv_prog_hipxx_basic=yes],
-           [acx_cv_prog_hipxx_basic=no])])
-      AS_VAR_IF([acx_cv_prog_hipxx_basic], [yes],
+           [acx_cv_prog_hipcxx_basic=yes],
+           [acx_cv_prog_hipcxx_basic=no])])
+      AS_VAR_IF([acx_cv_prog_hipcxx_basic], [yes],
         [acx_prog_hipcxx_works=basic])])])
 
 # _ACX_HIP_BASIC_TEST_GLOBALS()
