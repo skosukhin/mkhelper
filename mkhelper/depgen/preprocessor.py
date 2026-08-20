@@ -30,7 +30,7 @@
 
 import re
 
-from depgen import (
+from . import (
     IncludeFinder,
     StreamStack,
     file_in_dir,

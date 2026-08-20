@@ -44,7 +44,9 @@ import argparse
 import os
 import sys
 
-from depgen import exhaust, map23, open23, zip_longest23
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+from depgen import exhaust, map23, open23, zip_longest23  # noqa: E402
 
 
 class ArgumentParser(argparse.ArgumentParser):
