@@ -41,15 +41,15 @@
 #
 # For example, the following line will make the configure script accept options
 # '-enable-group-A', '--enable-group-B=value', '-disable-group-B', etc., and
-# the shell variable 'acx_groups' will be set to ' A B B':
+# the shell variable 'mkh_groups' will be set to ' A B B':
 #
-#     MKH_POLYMORPHIC_OPTION([enable], [group-*], [acx_groups])
+#     MKH_POLYMORPHIC_OPTION([enable], [group-*], [mkh_groups])
 #
 # The values of the options from the example above can be retrieved as follows
 # (the asterisk in the PATTERN is replaced with a value from VARIABLE):
-#     for acx_option in $acx_groups; do
-#       acx_option_var=AS_TR_SH([enable-group-$acx_option])
-#       acx_option_val=AS_VAR_GET([$acx_option_var])
+#     for mkh_option in $mkh_groups; do
+#       mkh_option_var=AS_TR_SH([enable-group-$mkh_option])
+#       mkh_option_val=AS_VAR_GET([$mkh_option_var])
 #     done
 #
 # The macro must be expanded before AC_INIT.
@@ -61,10 +61,10 @@ dnl AC_DEFUNed macro expanded with non-AC_DEFUNed macro AC_INIT):
    AC_PROVIDE_IFELSE([_AC_INIT_SRCDIR],
      [m4_fatal([$0 must be expanded before AC_INIT])])
 dnl Check that that the line marker we need is present in _AC_INIT_PARSE_ARGS:
-   m4_pushdef([acx_marker_string], [^if test -n "$ac_unrecognized_opts"; then$])
+   m4_pushdef([mkh_marker_string], [^if test -n "$ac_unrecognized_opts"; then$])
    m4_bmatch(
      m4_dquote(m4_defn([_AC_INIT_PARSE_ARGS])),
-     acx_marker_string, [],
+     mkh_marker_string, [],
      [m4_fatal([$0 is not compatible with the version of Autoconf in use ]dnl
 [(_AC_INIT_PARSE_ARGS does not have the expected marker string)])])
 dnl Check the first argument is either 'enable' or 'with':
@@ -83,32 +83,32 @@ dnl Monkey-patch _AC_INIT_PARSE_ARGS:
    m4_define([_AC_INIT_PARSE_ARGS],
      m4_bpatsubst(
        m4_dquote(m4_defn([_AC_INIT_PARSE_ARGS])),
-       acx_marker_string,
+       mkh_marker_string,
        [AS_VAR_SET([$3])
-acx_unrecognized_opts=
-acx_save_IFS=$IFS
+mkh_unrecognized_opts=
+mkh_save_IFS=$IFS
 IFS=','
-for acx_opt in $ac_unrecognized_opts; do
-  IFS=$acx_save_IFS
-  acx_opt=`AS_ECHO(["$acx_opt"]) | sed 's/^ //'`
-  acx_opt_recognized=no
-  AS_CASE([$acx_opt],
+for mkh_opt in $ac_unrecognized_opts; do
+  IFS=$mkh_save_IFS
+  mkh_opt=`AS_ECHO(["$mkh_opt"]) | sed 's/^ //'`
+  mkh_opt_recognized=no
+  AS_CASE([$mkh_opt],
     [--]m4_if([$1], [enable], [disable], [without])[-$2 | --$1-$2],
-    [m4_pushdef([acx_expr_pattern],
+    [m4_pushdef([mkh_expr_pattern],
        [m4_bpatsubst([$2], [\*], [\\\\(.*\\\\)])])dnl
-     acx_opt_name=`expr "$acx_opt" : dnl
+     mkh_opt_name=`expr "$mkh_opt" : dnl
 '--]m4_if([$1], [enable], [@<:@^-@:>@*able], [with@<:@^-@:>@*])[]dnl
-[-acx_expr_pattern'`
-     m4_popdef([acx_expr_pattern])dnl
-     AS_IF([test -n "$acx_opt_name"],
-       [AS_VAR_APPEND([$3], [" $acx_opt_name"])
-        acx_opt_recognized=yes])])
-  AS_VAR_IF([acx_opt_recognized], [no],
-    [AS_IF([test -n "$acx_unrecognized_opts"],
-       [AS_VAR_APPEND([acx_unrecognized_opts], [", $acx_opt"])],
-       [acx_unrecognized_opts=$acx_opt])])
+[-mkh_expr_pattern'`
+     m4_popdef([mkh_expr_pattern])dnl
+     AS_IF([test -n "$mkh_opt_name"],
+       [AS_VAR_APPEND([$3], [" $mkh_opt_name"])
+        mkh_opt_recognized=yes])])
+  AS_VAR_IF([mkh_opt_recognized], [no],
+    [AS_IF([test -n "$mkh_unrecognized_opts"],
+       [AS_VAR_APPEND([mkh_unrecognized_opts], [", $mkh_opt"])],
+       [mkh_unrecognized_opts=$mkh_opt])])
 done
-IFS=$acx_save_IFS
-ac_unrecognized_opts=$acx_unrecognized_opts
+IFS=$mkh_save_IFS
+ac_unrecognized_opts=$mkh_unrecognized_opts
 \&]))
-   m4_popdef([acx_marker_string])])
+   m4_popdef([mkh_marker_string])])

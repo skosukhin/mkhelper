@@ -33,7 +33,7 @@
 # Sets the result to the Fortran compiler flag needed to add a directory to the
 # runtime library search path.
 #
-# The result is cached in the acx_cv_fc_rpath_flag variable.
+# The result is cached in the mkh_cv_fc_rpath_flag variable.
 #
 AC_DEFUN([MKH_SHLIB_FC_RPATH_FLAG],
   [AC_REQUIRE([MKH_COMPILER_FC_VENDOR])_MKH_SHLIB_RPATH_FLAG])
@@ -43,7 +43,7 @@ AC_DEFUN([MKH_SHLIB_FC_RPATH_FLAG],
 # Sets the result to the C compiler flag needed to add a directory to the
 # runtime library search path.
 #
-# The result is cached in the acx_cv_c_rpath_flag variable.
+# The result is cached in the mkh_cv_c_rpath_flag variable.
 #
 AC_DEFUN([MKH_SHLIB_CC_RPATH_FLAG],
   [AC_REQUIRE([MKH_COMPILER_CC_VENDOR])_MKH_SHLIB_RPATH_FLAG])
@@ -53,7 +53,7 @@ AC_DEFUN([MKH_SHLIB_CC_RPATH_FLAG],
 # Sets the result to the C++ compiler flag needed to add a directory to the
 # runtime library search path.
 #
-# The result is cached in the acx_cv_cxx_rpath_flag variable.
+# The result is cached in the mkh_cv_cxx_rpath_flag variable.
 #
 AC_DEFUN([MKH_SHLIB_CXX_RPATH_FLAG],
   [AC_REQUIRE([MKH_COMPILER_CXX_VENDOR])_MKH_SHLIB_RPATH_FLAG])
@@ -70,17 +70,17 @@ AC_DEFUN([MKH_SHLIB_CXX_RPATH_FLAG],
 # (defaults to failing with an error message).
 #
 AC_DEFUN([MKH_SHLIB_RPATH_FLAGS_CHECK],
-  [acx_shlib_rpath_flags_check_result=no
+  [mkh_shlib_rpath_flags_check_result=no
    AC_MSG_CHECKING([whether _AC_LANG compiler accepts the automatically dnl
 generated RPATH flags])
    m4_ifnblank([$1],
-     [acx_save_LDFLAGS=$LDFLAGS
+     [mkh_save_LDFLAGS=$LDFLAGS
       LDFLAGS="$1 $LDFLAGS"])
    AC_LINK_IFELSE([AC_LANG_PROGRAM],
-     [acx_shlib_rpath_flags_check_result=yes])
-   m4_ifnblank([$1], [LDFLAGS=$acx_save_LDFLAGS])
-   AC_MSG_RESULT([$acx_shlib_rpath_flags_check_result])
-   AS_VAR_IF([acx_shlib_rpath_flags_check_result], [yes], [$2],
+     [mkh_shlib_rpath_flags_check_result=yes])
+   m4_ifnblank([$1], [LDFLAGS=$mkh_save_LDFLAGS])
+   AC_MSG_RESULT([$mkh_shlib_rpath_flags_check_result])
+   AS_VAR_IF([mkh_shlib_rpath_flags_check_result], [yes], [$2],
      [m4_default([$3], [AC_MSG_FAILURE([_AC_LANG compiler does not accept dnl
 the automatically generated RPATH flags[]m4_ifnblank([$1],[ '$1'])])])])])
 
@@ -89,7 +89,7 @@ the automatically generated RPATH flags[]m4_ifnblank([$1],[ '$1'])])])])])
 # Sets the result to the Fortran compiler flag needed to generate the position
 # independent code (PIC).
 #
-# The result is cached in the acx_cv_fc_pic_flag variable.
+# The result is cached in the mkh_cv_fc_pic_flag variable.
 #
 AC_DEFUN([MKH_SHLIB_FC_PIC_FLAG],
   [AC_REQUIRE([MKH_COMPILER_FC_VENDOR])_MKH_SHLIB_PIC_FLAG])
@@ -99,7 +99,7 @@ AC_DEFUN([MKH_SHLIB_FC_PIC_FLAG],
 # Sets the result to the C compiler flag needed to generate the position
 # independent code (PIC).
 #
-# The result is cached in the acx_cv_c_pic_flag variable.
+# The result is cached in the mkh_cv_c_pic_flag variable.
 #
 AC_DEFUN([MKH_SHLIB_CC_PIC_FLAG],
   [AC_REQUIRE([MKH_COMPILER_CC_VENDOR])_MKH_SHLIB_PIC_FLAG([-DPIC])])
@@ -109,7 +109,7 @@ AC_DEFUN([MKH_SHLIB_CC_PIC_FLAG],
 # Sets the result to the C++ compiler flag needed to generate the position
 # independent code (PIC).
 #
-# The result is cached in the acx_cv_cxx_pic_flag variable.
+# The result is cached in the mkh_cv_cxx_pic_flag variable.
 #
 AC_DEFUN([MKH_SHLIB_CXX_PIC_FLAG],
   [AC_REQUIRE([MKH_COMPILER_CXX_VENDOR])_MKH_SHLIB_PIC_FLAG([-DPIC])])
@@ -126,18 +126,18 @@ AC_DEFUN([MKH_SHLIB_CXX_PIC_FLAG],
 # (defaults to failing with an error message).
 #
 AC_DEFUN([MKH_SHLIB_PIC_FLAGS_CHECK],
-  [acx_shlib_pic_flags_check_result=no
+  [mkh_shlib_pic_flags_check_result=no
    AC_MSG_CHECKING([whether _AC_LANG compiler accepts the automatically dnl
 generated PIC flags])
    m4_ifnblank([$1],
-     [acx_save_[]_AC_LANG_PREFIX[]FLAGS=$[]_AC_LANG_PREFIX[]FLAGS
+     [mkh_save_[]_AC_LANG_PREFIX[]FLAGS=$[]_AC_LANG_PREFIX[]FLAGS
       AS_VAR_APPEND([_AC_LANG_PREFIX[]FLAGS], [" $1"])])
    AC_LINK_IFELSE([AC_LANG_PROGRAM],
-     [acx_shlib_pic_flags_check_result=yes])
+     [mkh_shlib_pic_flags_check_result=yes])
    m4_ifnblank([$1],
-     [_AC_LANG_PREFIX[]FLAGS=$acx_save_[]_AC_LANG_PREFIX[]FLAGS])
-   AC_MSG_RESULT([$acx_shlib_pic_flags_check_result])
-   AS_VAR_IF([acx_shlib_pic_flags_check_result], [yes], [$2],
+     [_AC_LANG_PREFIX[]FLAGS=$mkh_save_[]_AC_LANG_PREFIX[]FLAGS])
+   AC_MSG_RESULT([$mkh_shlib_pic_flags_check_result])
+   AS_VAR_IF([mkh_shlib_pic_flags_check_result], [yes], [$2],
      [m4_default([$3], [AC_MSG_FAILURE([_AC_LANG compiler does not accept dnl
 the automatically generated PIC flags[]m4_ifnblank([$1],[ '$1'])])])])])
 
@@ -146,30 +146,30 @@ the automatically generated PIC flags[]m4_ifnblank([$1],[ '$1'])])])])])
 # Sets the result to the name of the environment variable specifying the search
 # paths for shared libraries.
 #
-# The result is cached in the acx_cv_shlib_path_var variable.
+# The result is cached in the mkh_cv_shlib_path_var variable.
 #
 AC_DEFUN([MKH_SHLIB_PATH_VAR],
   [AC_REQUIRE([AC_CANONICAL_HOST])dnl
    AC_CACHE_CHECK([for the name of the environment variable specifying the dnl
-search paths for shared libraries], [acx_cv_shlib_path_var],
+search paths for shared libraries], [mkh_cv_shlib_path_var],
      [AS_CASE([$host_os],
-        [darwin*], [acx_cv_shlib_path_var=DYLD_LIBRARY_PATH],
-        [acx_cv_shlib_path_var=LD_LIBRARY_PATH])])])
+        [darwin*], [mkh_cv_shlib_path_var=DYLD_LIBRARY_PATH],
+        [mkh_cv_shlib_path_var=LD_LIBRARY_PATH])])])
 
 # MKH_SHLIB_PATH_VAR()
 # -----------------------------------------------------------------------------
 # Sets the result to the filename extension of shared libraries (without the
 # leading dot).
 #
-# The result is cached in the acx_cv_shlib_ext variable.
+# The result is cached in the mkh_cv_shlib_ext variable.
 #
 AC_DEFUN([MKH_SHLIB_EXT],
   [AC_REQUIRE([AC_CANONICAL_HOST])dnl
    AC_CACHE_CHECK([for the filename extension of shared libraries],
-     [acx_cv_shlib_ext],
+     [mkh_cv_shlib_ext],
      [AS_CASE([$host_os],
-        [darwin*], [acx_cv_shlib_ext=dylib],
-        [acx_cv_shlib_ext=so])])])
+        [darwin*], [mkh_cv_shlib_ext=dylib],
+        [mkh_cv_shlib_ext=so])])])
 
 # MKH_SHLIB_FC_EXPORT_DYNAMIC_FLAG([ACTION-IF-SUCCESS],
 #                                  [ACTION-IF-FAILURE = FAILURE])
@@ -180,7 +180,7 @@ AC_DEFUN([MKH_SHLIB_EXT],
 # If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
 # (defaults to failing with an error message).
 #
-# The result is cached in the acx_cv_fc_export_dynamic_flag variable.
+# The result is cached in the mkh_cv_fc_export_dynamic_flag variable.
 #
 AC_DEFUN([MKH_SHLIB_FC_EXPORT_DYNAMIC_FLAG],
   [AC_REQUIRE([MKH_COMPILER_FC_VENDOR])_MKH_SHLIB_EXPORT_DYNAMIC_FLAG($@)])
@@ -194,7 +194,7 @@ AC_DEFUN([MKH_SHLIB_FC_EXPORT_DYNAMIC_FLAG],
 # If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
 # (defaults to failing with an error message).
 #
-# The result is cached in the acx_cv_c_export_dynamic_flag variable.
+# The result is cached in the mkh_cv_c_export_dynamic_flag variable.
 #
 AC_DEFUN([MKH_SHLIB_CC_EXPORT_DYNAMIC_FLAG],
   [AC_REQUIRE([MKH_COMPILER_CC_VENDOR])_MKH_SHLIB_EXPORT_DYNAMIC_FLAG($@)])
@@ -208,7 +208,7 @@ AC_DEFUN([MKH_SHLIB_CC_EXPORT_DYNAMIC_FLAG],
 # If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
 # (defaults to failing with an error message).
 #
-# The result is cached in the acx_cv_cxx_export_dynamic_flag variable.
+# The result is cached in the mkh_cv_cxx_export_dynamic_flag variable.
 #
 AC_DEFUN([MKH_SHLIB_CXX_EXPORT_DYNAMIC_FLAG],
   [AC_REQUIRE([MKH_COMPILER_CXX_VENDOR])_MKH_SHLIB_EXPORT_DYNAMIC_FLAG($@)])
@@ -218,16 +218,16 @@ AC_DEFUN([MKH_SHLIB_CXX_EXPORT_DYNAMIC_FLAG],
 # Sets the result to the compiler flag needed to add a directory to the runtime
 # library search path (requires calling _MKH_COMPILER_VENDOR first).
 #
-# The flag is cached in the acx_cv_[]_AC_LANG_ABBREV[]_rpath_flag variable.
+# The flag is cached in the mkh_cv_[]_AC_LANG_ABBREV[]_rpath_flag variable.
 #
 m4_define([_MKH_SHLIB_RPATH_FLAG],
-  [m4_pushdef([acx_cache_var], [acx_cv_[]_AC_LANG_ABBREV[]_rpath_flag])dnl
+  [m4_pushdef([mkh_cache_var], [mkh_cv_[]_AC_LANG_ABBREV[]_rpath_flag])dnl
    AC_CACHE_CHECK([for _AC_LANG compiler flag needed to add a directory to dnl
-the runtime library search path], [acx_cache_var],
-     [AS_CASE([AS_VAR_GET([acx_cv_[]_AC_LANG_ABBREV[]_compiler_vendor])],
-        [nag], [acx_cache_var="-Wl,-Wl,,-rpath,,"],
-        [acx_cache_var="-Wl,-rpath,"])])
-   m4_popdef([acx_cache_var])])
+the runtime library search path], [mkh_cache_var],
+     [AS_CASE([AS_VAR_GET([mkh_cv_[]_AC_LANG_ABBREV[]_compiler_vendor])],
+        [nag], [mkh_cache_var="-Wl,-Wl,,-rpath,,"],
+        [mkh_cache_var="-Wl,-rpath,"])])
+   m4_popdef([mkh_cache_var])])
 
 # _MKH_SHLIB_PIC_FLAG([COMMON-EXTRA-FLAG])
 # -----------------------------------------------------------------------------
@@ -235,20 +235,20 @@ the runtime library search path], [acx_cache_var],
 # independent code (PIC) (requires calling _MKH_COMPILER_VENDOR first). When
 # provided, COMMON-EXTRA-FLAG is appended to the result.
 #
-# The flag is cached in the acx_cv_[]_AC_LANG_ABBREV[]_pic_flag variable.
+# The flag is cached in the mkh_cv_[]_AC_LANG_ABBREV[]_pic_flag variable.
 #
 m4_define([_MKH_SHLIB_PIC_FLAG],
-  [m4_pushdef([acx_cache_var], [acx_cv_[]_AC_LANG_ABBREV[]_pic_flag])dnl
+  [m4_pushdef([mkh_cache_var], [mkh_cv_[]_AC_LANG_ABBREV[]_pic_flag])dnl
    AC_CACHE_CHECK([for _AC_LANG compiler flag needed to produce PIC],
-     [acx_cache_var],
-     [AS_CASE([AS_VAR_GET([acx_cv_[]_AC_LANG_ABBREV[]_compiler_vendor])],
-        [nag], [acx_cache_var='-PIC'],
-        [portland], [acx_cache_var='-fpic'],
-        [sun], [acx_cache_var='-KPIC'],
-        [ibm], [acx_cache_var='-qpic'],
-        [acx_cache_var='-fPIC'])
-      m4_ifnblank([$1], [AS_VAR_APPEND([acx_cache_var], [" $1"])])])
-   m4_popdef([acx_cache_var])])
+     [mkh_cache_var],
+     [AS_CASE([AS_VAR_GET([mkh_cv_[]_AC_LANG_ABBREV[]_compiler_vendor])],
+        [nag], [mkh_cache_var='-PIC'],
+        [portland], [mkh_cache_var='-fpic'],
+        [sun], [mkh_cache_var='-KPIC'],
+        [ibm], [mkh_cache_var='-qpic'],
+        [mkh_cache_var='-fPIC'])
+      m4_ifnblank([$1], [AS_VAR_APPEND([mkh_cache_var], [" $1"])])])
+   m4_popdef([mkh_cache_var])])
 
 # _MKH_SHLIB_EXPORT_DYNAMIC_FLAG([ACTION-IF-SUCCESS],
 #                                [ACTION-IF-FAILURE = FAILURE])
@@ -259,31 +259,31 @@ m4_define([_MKH_SHLIB_PIC_FLAG],
 # If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
 # (defaults to failing with an error message).
 #
-# The flag is cached in the acx_cv_[]_AC_LANG_ABBREV[]_export_dynamic_flag
+# The flag is cached in the mkh_cv_[]_AC_LANG_ABBREV[]_export_dynamic_flag
 # variable.
 #
 m4_define([_MKH_SHLIB_EXPORT_DYNAMIC_FLAG],
   [AC_REQUIRE([AC_CANONICAL_HOST])dnl
-   m4_pushdef([acx_cache_var],
-     [acx_cv_[]_AC_LANG_ABBREV[]_export_dynamic_flag])dnl
+   m4_pushdef([mkh_cache_var],
+     [mkh_cv_[]_AC_LANG_ABBREV[]_export_dynamic_flag])dnl
    AC_MSG_CHECKING([for _AC_LANG compiler flag needed to add all symbols to dnl
 the dynamic symbol table])
-   AC_CACHE_VAL([acx_cache_var],
-     [acx_cache_var=unknown
+   AC_CACHE_VAL([mkh_cache_var],
+     [mkh_cache_var=unknown
       AS_CASE([$host_os],
-        [darwin*], [acx_cache_var=],
-        [AS_CASE([AS_VAR_GET([acx_cv_[]_AC_LANG_ABBREV[]_compiler_vendor])],
-           [nag], [acx_cache_var='-Wl,-Wl,,--export-dynamic'],
-           [acx_cache_var='-Wl,--export-dynamic'])])
-      AS_IF([test -n "$acx_cache_var" && test "x$acx_cache_var" != xunknown],
-        [acx_save_LDFLAGS=$LDFLAGS
-         LDFLAGS="$acx_cache_var $LDFLAGS"
-         AC_LINK_IFELSE([AC_LANG_PROGRAM], [], [acx_cache_var=unknown])
-         LDFLAGS=$acx_save_LDFLAGS])])
-   AS_IF([test -n "$acx_cache_var"],
-     [AC_MSG_RESULT([$acx_cache_var])],
+        [darwin*], [mkh_cache_var=],
+        [AS_CASE([AS_VAR_GET([mkh_cv_[]_AC_LANG_ABBREV[]_compiler_vendor])],
+           [nag], [mkh_cache_var='-Wl,-Wl,,--export-dynamic'],
+           [mkh_cache_var='-Wl,--export-dynamic'])])
+      AS_IF([test -n "$mkh_cache_var" && test "x$mkh_cache_var" != xunknown],
+        [mkh_save_LDFLAGS=$LDFLAGS
+         LDFLAGS="$mkh_cache_var $LDFLAGS"
+         AC_LINK_IFELSE([AC_LANG_PROGRAM], [], [mkh_cache_var=unknown])
+         LDFLAGS=$mkh_save_LDFLAGS])])
+   AS_IF([test -n "$mkh_cache_var"],
+     [AC_MSG_RESULT([$mkh_cache_var])],
      [AC_MSG_RESULT([none needed])])
-   AS_VAR_IF([acx_cache_var], [unknown], [m4_default([$2],
+   AS_VAR_IF([mkh_cache_var], [unknown], [m4_default([$2],
      [AC_MSG_FAILURE([unable to detect _AC_LANG compiler flag needed to dnl
 add all symbols to the dynamic symbol table])])], [$1])
-   m4_popdef([acx_cache_var])])
+   m4_popdef([mkh_cache_var])])

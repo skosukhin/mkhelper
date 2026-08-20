@@ -38,7 +38,7 @@
 # If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
 # (defaults to failing with an error message).
 #
-# The result is cached in the acx_cv_fc_pp_comments.
+# The result is cached in the mkh_cv_fc_pp_comments.
 #
 AC_DEFUN([MKH_FC_PP_COMMENTS],
   [AC_LANG_ASSERT([Fortran])dnl
@@ -47,8 +47,8 @@ AC_DEFUN([MKH_FC_PP_COMMENTS],
         [MKH_FC_PP_COMMENTS requires calling the Fortran compiler with a ]dnl
 [preprocessor but no call to AC_FC_PP_SRCEXT is detected])])dnl
    AC_CACHE_CHECK([whether Fortran compiler supports C-style comments],
-     [acx_cv_fc_pp_comments],
-     [acx_cv_fc_pp_comments=no
+     [mkh_cv_fc_pp_comments],
+     [mkh_cv_fc_pp_comments=no
       AC_COMPILE_IFELSE([AC_LANG_PROGRAM([],
 [[/* block
 comment */
@@ -60,8 +60,8 @@ comment */
 #ifndef CONFTEST_MACRO2
       choke me
 #endif]])],
-        [acx_cv_fc_pp_comments=yes])])
-   AS_VAR_IF([acx_cv_fc_pp_comments], [yes], [$1],
+        [mkh_cv_fc_pp_comments=yes])])
+   AS_VAR_IF([mkh_cv_fc_pp_comments], [yes], [$1],
      [m4_default([$2],
         [AC_MSG_FAILURE(
            [Fortran compiler does not support C-style comments])])])])

@@ -45,7 +45,7 @@
 # and ac_ext unchanged, and runs ACTION-IF-FAILURE (defaults to failing with an
 # error message).
 #
-# The flag is cached in the acx_cv_fc_pp_srcext_[]EXTENSION, which may contain
+# The flag is cached in the mkh_cv_fc_pp_srcext_[]EXTENSION, which may contain
 # whitespaces.
 #
 # The implementation patches the standard Autoconf macro AC_FC_PP_SRCEXT to
@@ -57,9 +57,9 @@
 #
 AC_DEFUN([MKH_FC_PP_SRCEXT],
   [AC_LANG_ASSERT([Fortran])dnl
-   acx_ext_save=$ac_ext
-   m4_pushdef([acx_cache_var], [acx_cv_fc_pp_srcext_$1])dnl
-   m4_pushdef([ac_cv_fc_pp_srcext_$1], [acx_cache_var])dnl
+   mkh_ext_save=$ac_ext
+   m4_pushdef([mkh_cache_var], [mkh_cv_fc_pp_srcext_$1])dnl
+   m4_pushdef([ac_cv_fc_pp_srcext_$1], [mkh_cache_var])dnl
    m4_pushdef([AC_CACHE_CHECK],
      m4_bpatsubst(m4_dquote(m4_defn([AC_CACHE_CHECK])),
        [\$][1],
@@ -72,11 +72,11 @@ AC_DEFUN([MKH_FC_PP_SRCEXT],
    m4_popdef([AC_FC_PP_SRCEXT])dnl
    m4_popdef([AC_CACHE_CHECK])dnl
    m4_popdef([ac_cv_fc_pp_srcext_$1])dnl
-   AS_VAR_IF([acx_cache_var], [unknown],
-     [ac_ext=$acx_ext_save
+   AS_VAR_IF([mkh_cache_var], [unknown],
+     [ac_ext=$mkh_ext_save
       m4_default([$3],
         [AC_MSG_FAILURE([unable to detect Fortran compiler flag needed to dnl
 compile preprocessed .$1 files])])],
      [ac_ext=$ac_fc_srcext
       $2])
-   m4_popdef([acx_cache_var])])
+   m4_popdef([mkh_cache_var])])

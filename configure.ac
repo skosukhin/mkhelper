@@ -1,5 +1,5 @@
 MKH_SUBDIR_ACCEPT_CMAKE_DEFINITIONS([-DBUILD_SHARED_LIBS*])
-MKH_POLYMORPHIC_OPTION([enable], [example-*], [acx_examples])
+MKH_POLYMORPHIC_OPTION([enable], [example-*], [mkh_examples])
 
 AC_INIT([mkhelper], [1.0], [skosukhin@gmail.com])
 AC_PREREQ([2.69])
@@ -11,7 +11,7 @@ AC_CONFIG_MACRO_DIR([m4])
 AC_PREFIX_DEFAULT(["`pwd`/install"])
 
 AC_CANONICAL_HOST
-MKH_HOST_FQDN([AC_SUBST([host_fqdn], [$acx_cv_host_fqdn])])
+MKH_HOST_FQDN([AC_SUBST([host_fqdn], [$mkh_cv_host_fqdn])])
 
 MKH_BUILD_ENVIRONMENT
 
@@ -28,7 +28,7 @@ export FC
 AC_LANG([Fortran])
 MKH_FC_PP_SRCEXT([f90])
 MKH_COMPILER_FC_VERSION
-AC_SUBST([FC_VENDOR], [$acx_cv_fc_compiler_vendor])
+AC_SUBST([FC_VENDOR], [$mkh_cv_fc_compiler_vendor])
 
 AS_VAR_IF([enable_rpaths], [yes],
   [MKH_SHLIB_FC_RPATH_FLAG
@@ -39,14 +39,14 @@ AS_VAR_IF([enable_rpaths], [yes],
    for mkhelper_libdir in $mkhelper_libdirs; do
      AS_IF([test -d "$mkhelper_libdir"],
        [MKH_VAR_APPEND_UNIQ([mkhelper_rpath_flags],
-          ["$acx_cv_fc_rpath_flag$mkhelper_libdir"], [' '])
-        MKH_VAR_APPEND_UNIQ([$acx_cv_shlib_path_var],
+          ["$mkh_cv_fc_rpath_flag$mkhelper_libdir"], [' '])
+        MKH_VAR_APPEND_UNIQ([$mkh_cv_shlib_path_var],
           ["$mkhelper_libdir"], [':'])])
    done
    AS_IF([test -n "$mkhelper_rpath_flags"],
      [MKH_SHLIB_RPATH_FLAGS_CHECK([$mkhelper_rpath_flags],
         [LDFLAGS="$mkhelper_rpath_flags $LDFLAGS"])])
-   eval export $acx_cv_shlib_path_var])
+   eval export $mkh_cv_shlib_path_var])
 
 MKH_SHLIB_EXT
 MKH_SHLIB_FC_EXPORT_DYNAMIC_FLAG
@@ -63,19 +63,19 @@ AC_SUBST([DEPGEN_INTRINSIC_MODS],
 [ieee_features,omp_lib,omp_lib_kinds,openacc]])
 AC_SUBST([DEPGEN_EXTERNAL_MODS])
 
-MKH_FC_MODULE_IN_FLAG([AC_SUBST([FC_MOD_IN], [$acx_cv_fc_module_in_flag])])
-MKH_FC_MODULE_OUT_FLAG([AC_SUBST([FC_MOD_OUT], [$acx_cv_fc_module_out_flag])])
+MKH_FC_MODULE_IN_FLAG([AC_SUBST([FC_MOD_IN], [$mkh_cv_fc_module_in_flag])])
+MKH_FC_MODULE_OUT_FLAG([AC_SUBST([FC_MOD_OUT], [$mkh_cv_fc_module_out_flag])])
 
 MKH_FC_MODULE_NAMING(
-  [AC_SUBST([FC_MOD_FILE_UPPER], [$acx_cv_fc_module_naming_upper])
-   AC_SUBST([FC_MOD_FILE_EXT], [$acx_cv_fc_module_naming_ext])])
+  [AC_SUBST([FC_MOD_FILE_UPPER], [$mkh_cv_fc_module_naming_upper])
+   AC_SUBST([FC_MOD_FILE_EXT], [$mkh_cv_fc_module_naming_ext])])
 
 MKH_FC_MODULE_SNAMING(
-  [AC_SUBST([FC_SMOD_FILE_INFIX], [$acx_cv_fc_module_snaming_infix])
-   AC_SUBST([FC_SMOD_FILE_EXT], [$acx_cv_fc_module_snaming_ext])])
+  [AC_SUBST([FC_SMOD_FILE_INFIX], [$mkh_cv_fc_module_snaming_infix])
+   AC_SUBST([FC_SMOD_FILE_EXT], [$mkh_cv_fc_module_snaming_ext])])
 
 MKH_FC_MODULE_ROOT_SMOD(
-  [AC_SUBST([FC_ROOT_SMOD], [$acx_cv_fc_module_root_smod])])
+  [AC_SUBST([FC_ROOT_SMOD], [$mkh_cv_fc_module_root_smod])])
 
 AC_ARG_ENABLE([separate-mods],
   [AS_HELP_STRING([--enable-separate-mods],
@@ -83,7 +83,7 @@ AC_ARG_ENABLE([separate-mods],
 @<:@default=yes@:>@])], [],
   [enable_separate_mods=yes])
 AS_VAR_IF([enable_separate_mods], [yes],
-  [MKH_FC_MODULE_ONLY_FLAG([FC_MOD_ONLY=$acx_cv_fc_module_only_flag])
+  [MKH_FC_MODULE_ONLY_FLAG([FC_MOD_ONLY=$mkh_cv_fc_module_only_flag])
    SEPARATE_MODS_ENABLED=''
    SEPARATE_MODS_DISABLED='#'],
   [FC_MOD_ONLY=
@@ -94,31 +94,31 @@ AC_SUBST([SEPARATE_MODS_ENABLED])
 AC_SUBST([SEPARATE_MODS_DISABLED])
 
 MKH_FC_INCLUDE_FLAG(
-  [AC_SUBST([FC_INC_FLAG], [$acx_cv_fc_ftn_include_flag])])
+  [AC_SUBST([FC_INC_FLAG], [$mkh_cv_fc_ftn_include_flag])])
 MKH_FC_INCLUDE_ORDER(
-  [FC_INC_ORDER=$acx_cv_fc_ftn_include_order],
+  [FC_INC_ORDER=$mkh_cv_fc_ftn_include_order],
   [FC_INC_ORDER=src,flg])
 AC_SUBST([FC_INC_ORDER])
 
 MKH_FC_INCLUDE_FLAG_PP(
-  [AC_SUBST([FC_INC_FLAG_PP_f90], [$acx_cv_fc_pp_include_flag])])
+  [AC_SUBST([FC_INC_FLAG_PP_f90], [$mkh_cv_fc_pp_include_flag])])
 MKH_FC_INCLUDE_ORDER_PP(
-  [FC_INC_ORDER_PP_f90=$acx_cv_fc_pp_include_order],
+  [FC_INC_ORDER_PP_f90=$mkh_cv_fc_pp_include_order],
   [FC_INC_ORDER_PP_f90=inc,flg])
 AC_SUBST([FC_INC_ORDER_PP_f90])
 
 MKH_FC_INCLUDE_FLAG_PP_SYS(
-  [AS_IF([test "x$acx_cv_fc_pp_sys_include_flag" != dnl
-"x$acx_cv_fc_pp_include_flag"],
+  [AS_IF([test "x$mkh_cv_fc_pp_sys_include_flag" != dnl
+"x$mkh_cv_fc_pp_include_flag"],
      [AC_MSG_ERROR([Different flags needed to specify search paths for the dnl
 quoted and the angle-bracket forms of the "#include" directive are not dnl
 supported])])])
 MKH_FC_INCLUDE_ORDER_PP_SYS(
-  [FC_INC_ORDER_PP_SYS_f90=$acx_cv_fc_pp_sys_include_order],
+  [FC_INC_ORDER_PP_SYS_f90=$mkh_cv_fc_pp_sys_include_order],
   [FC_INC_ORDER_PP_SYS_f90=flg])
 AC_SUBST([FC_INC_ORDER_PP_SYS_f90])
 
-MKH_LANG_MACRO_FLAG([AC_SUBST([FC_PP_DEF], [$acx_cv_fc_macro_flag])])
+MKH_LANG_MACRO_FLAG([AC_SUBST([FC_PP_DEF], [$mkh_cv_fc_macro_flag])])
 
 MKH_FC_PP_COMMENTS([], [:])
 
@@ -129,7 +129,7 @@ MKH_FC_ENDIANNESS_REAL([], [], [:])
 AC_SUBST([config_FCFLAGS])
 
 AC_ARG_VAR([FPP], [Fortran preprocessor command])
-MKH_PROG_FPP([FPP], [FPP=$acx_cv_prog_fpp], [FPP=],
+MKH_PROG_FPP([FPP], [FPP=$mkh_cv_prog_fpp], [FPP=],
   [$FC_INC_FLAG_PP_f90], [$FC_PP_DEF])
 
 AC_ARG_ENABLE([silent-rules],
@@ -146,7 +146,7 @@ AC_ARG_ENABLE([additional-mods],
   [], [enable_additional_mods=yes])
 AS_VAR_IF([enable_additional_mods], [yes],
   [AS_VAR_APPEND([config_FCFLAGS],
-     [" ${acx_cv_fc_macro_flag}INCLUDE_MODULES"])])
+     [" ${mkh_cv_fc_macro_flag}INCLUDE_MODULES"])])
 
 AC_ARG_ENABLE([openmp],
   [AS_HELP_STRING([--enable-openmp],
@@ -154,17 +154,17 @@ AC_ARG_ENABLE([openmp],
   [], [enable_openmp=yes])
 AS_VAR_IF([enable_openmp], [yes],
   [MKH_LANG_OPENMP_FLAG(
-     [AS_VAR_APPEND([FCFLAGS], [" $acx_cv_fc_openmp_flag"])
+     [AS_VAR_APPEND([FCFLAGS], [" $mkh_cv_fc_openmp_flag"])
       MKH_LANG_MACRO_CHECK_VALUE([_OPENMP],
         [202111 202011 201811 201511 201307 201107 200805 200505 200011 dnl
 199911 199710])
-      AS_VAR_IF([acx_macro_value], [unknown],
+      AS_VAR_IF([mkh_macro_value], [unknown],
         [AC_MSG_FAILURE([unable to detect the value of the Fortran dnl
 preprocessor macro _OPENMP])],
         [AS_VAR_APPEND([DEPGEN_FCFLAGS],
-           [" ${acx_cv_fc_macro_flag}_OPENMP=$acx_macro_value"])])])],
+           [" ${mkh_cv_fc_macro_flag}_OPENMP=$mkh_macro_value"])])])],
   [MKH_LANG_MACRO_CHECK_DEFINED([_OPENMP])
-   AS_VAR_IF([acx_macro_defined], [yes],
+   AS_VAR_IF([mkh_macro_defined], [yes],
      [AC_MSG_ERROR([Fortran compiler enables OpenMP support by default: set dnl
 FCFLAGS accordingly to disable it])])])
 
@@ -175,7 +175,7 @@ AC_ARG_ENABLE([module-nature-test],
   [], [enable_module_nature_test=yes])
 AS_VAR_IF([enable_module_nature_test], [yes],
   [AS_VAR_APPEND([config_FCFLAGS],
-     [" ${acx_cv_fc_macro_flag}TEST_MODULE_NATURE"])])
+     [" ${mkh_cv_fc_macro_flag}TEST_MODULE_NATURE"])])
 
 AC_ARG_ENABLE([invalid-test],
   [AS_HELP_STRING([--enable-invalid-test],
@@ -184,43 +184,43 @@ AC_ARG_ENABLE([invalid-test],
   [], [enable_invalid_test=no])
 AS_VAR_IF([enable_invalid_test], [yes],
   [AS_VAR_APPEND([config_FCFLAGS],
-     [" ${acx_cv_fc_macro_flag}TEST_INVALID"])
+     [" ${mkh_cv_fc_macro_flag}TEST_INVALID"])
    AC_SUBST([INVALID_DISABLED], ['#'])],
   [AC_SUBST([INVALID_DISABLED], [''])])
 
 mkhelper_linker_flags="'-L'"
 AS_VAR_IF([enable_rpaths], [yes],
-  [AS_VAR_APPEND([mkhelper_linker_flags], [" '$acx_cv_fc_rpath_flag'"])])
+  [AS_VAR_APPEND([mkhelper_linker_flags], [" '$mkh_cv_fc_rpath_flag'"])])
 eval "set dummy $mkhelper_linker_flags; shift"
-MKH_LANG_PACKAGE_INIT([NetCDF], [$acx_cv_fc_ftn_include_flag], ["$@"])
-acx_NETCDF_found=no
-acx_save_FCFLAGS=$FCFLAGS
-NETCDF_FCFLAGS=${NETCDF_FCFLAGS-$acx_fc_NetCDF_inc_search_args}
+MKH_LANG_PACKAGE_INIT([NetCDF], [$mkh_cv_fc_ftn_include_flag], ["$@"])
+mkh_NETCDF_found=no
+mkh_save_FCFLAGS=$FCFLAGS
+NETCDF_FCFLAGS=${NETCDF_FCFLAGS-$mkh_fc_NetCDF_inc_search_args}
 FCFLAGS="$NETCDF_FCFLAGS $FCFLAGS"
 MKH_FC_INCLUDE_CHECK([netcdf.inc],
   [MKH_LANG_LIB_SEARCH([NETCDF_FCLIBS], [nf_open],
-     [MKH_PREPEND_LDFLAGS([$acx_fc_NetCDF_lib_search_args], [-lnetcdff])],
-     [NETCDF_FCLIBS=$acx_cv_fc_lib_func_NF_OPEN
-      acx_NETCDF_found=yes], [:])], [:])
-FCFLAGS=$acx_save_FCFLAGS
-AS_VAR_IF([acx_NETCDF_found], [no],
-  [AS_VAR_APPEND([config_FCFLAGS], [" ${acx_cv_fc_macro_flag}NO_NETCDF"])
+     [MKH_PREPEND_LDFLAGS([$mkh_fc_NetCDF_lib_search_args], [-lnetcdff])],
+     [NETCDF_FCLIBS=$mkh_cv_fc_lib_func_NF_OPEN
+      mkh_NETCDF_found=yes], [:])], [:])
+FCFLAGS=$mkh_save_FCFLAGS
+AS_VAR_IF([mkh_NETCDF_found], [no],
+  [AS_VAR_APPEND([config_FCFLAGS], [" ${mkh_cv_fc_macro_flag}NO_NETCDF"])
    NETCDF_FCFLAGS=;NETCDF_FCLIBS=])
 
 AC_MSG_CHECKING([for names of the polymorphic example options])
-AS_IF([test -n "$acx_examples"],
-  [acx_seen_example_options=
-   for acx_option in $acx_examples; do
-     MKH_VAR_APPEND_UNIQ([acx_seen_example_options], [$acx_option], [','])
+AS_IF([test -n "$mkh_examples"],
+  [mkh_seen_example_options=
+   for mkh_option in $mkh_examples; do
+     MKH_VAR_APPEND_UNIQ([mkh_seen_example_options], [$mkh_option], [','])
    done
-   AC_MSG_RESULT([$acx_seen_example_options])
-   acx_save_IFS=$IFS
+   AC_MSG_RESULT([$mkh_seen_example_options])
+   mkh_save_IFS=$IFS
    IFS=','
-   for acx_option in $acx_seen_example_options; do
-     IFS=$acx_save_IFS
-     AC_MSG_NOTICE([$acx_option: AS_VAR_GET([enable_example_$acx_option])])
+   for mkh_option in $mkh_seen_example_options; do
+     IFS=$mkh_save_IFS
+     AC_MSG_NOTICE([$mkh_option: AS_VAR_GET([enable_example_$mkh_option])])
    done
-   IFS=$acx_save_IFS],
+   IFS=$mkh_save_IFS],
   [AC_MSG_RESULT([none provided])])
 
 AC_ARG_VAR([AR], [the archiver command])dnl
@@ -228,20 +228,20 @@ AC_ARG_VAR([ARFLAGS], [archiver flags])dnl
 ARFLAGS=${ARFLAGS-cr}
 MKH_PROG_SEARCH([AR], [ar],
   [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([], [])],
-     [mkhelper_ar_try="$acx_candidate ${ARFLAGS} libconftest.a dnl
+     [mkhelper_ar_try="$mkh_candidate ${ARFLAGS} libconftest.a dnl
 conftest.$ac_objext >&AS_MESSAGE_LOG_FD"
       _AC_DO_VAR([mkhelper_ar_try])
       rm -f libconftest.a])
    test "$ac_status" -eq 0 >/dev/null 2>&1],
-  [AR=$acx_cv_prog_AR])
+  [AR=$mkh_cv_prog_AR])
 
 AC_ARG_VAR([PYTHON],
   [Python interpreter command (used for Fortran dependency generation)])dnl
 MKH_PROG_SEARCH([PYTHON], [python python3],
-  [mkhelper_depgen_try='$acx_candidate dnl
+  [mkhelper_depgen_try='$mkh_candidate dnl
 $srcdir/mkhelper/depgen.py -h > /dev/null'
    AC_TRY_EVAL([mkhelper_depgen_try])],
-  [PYTHON=$acx_cv_prog_PYTHON])
+  [PYTHON=$mkh_cv_prog_PYTHON])
 
 AC_PROG_INSTALL
 AC_PROG_MKDIR_P
@@ -328,7 +328,7 @@ MKH_SUBDIR_REMOVE_ARGS([bundled/build/delayed_mangled],
   [CPPFLAGS=*],
   [MKH_SUBDIR_CONFIG_PATTERN_ENABLE([silent-rules])])
 MKH_SUBDIR_APPEND_ARGS([bundled/build/delayed_mangled],
-  [CPPFLAGS="${acx_cv_fc_macro_flag}MANGLE"],
+  [CPPFLAGS="${mkh_cv_fc_macro_flag}MANGLE"],
   [--enable-silent-rules="$enable_silent_rules"])
 AS_VAR_APPEND([BUNDLED_FCFLAGS], ["${FC_MOD_IN}bundled/build/delayed_mangled "])
 BUNDLED_LIBFILES="bundled/build/delayed_mangled/libdelayed.a $BUNDLED_LIBFILES"
@@ -397,7 +397,7 @@ dnl Except for RPATH flags:
       for mkhelper_libdir in $mkhelper_libdirs; do
         AS_IF([test -d "$mkhelper_libdir"],
           [MKH_VAR_APPEND_UNIQ([LDFLAGS],
-             ["$acx_cv_fc_rpath_flag$mkhelper_libdir"], [' '])])
+             ["$mkh_cv_fc_rpath_flag$mkhelper_libdir"], [' '])])
       done])
 dnl We need to link to pthread library, which might require PTHREAD_CFLAGS
    MKH_SUBDIR_QUERY_CONFIG_STATUS([mkhelper_PTHREAD_CFLAGS],

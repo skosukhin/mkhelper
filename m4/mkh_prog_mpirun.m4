@@ -47,7 +47,7 @@
 # If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
 # (defaults to failing with an error message).
 #
-# A positive result of this test is cached in the acx_cv_prog_mpirun variable.
+# A positive result of this test is cached in the mkh_cv_prog_mpirun variable.
 #
 AC_DEFUN([MKH_PROG_MPIRUN],
   [_MKH_PROG_MPIRUN([_MKH_PROG_MPIRUN_CHECK_PROGRAM], $@)])
@@ -106,12 +106,12 @@ AC_DEFUN([MKH_PROG_MPIRUN_FC_HEADER],
 # If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
 # (defaults to failing with an error message).
 #
-# A positive result of this test is cached in the acx_cv_prog_mpirun variable.
+# A positive result of this test is cached in the mkh_cv_prog_mpirun variable.
 #
 m4_define([_MKH_PROG_MPIRUN],
   [AC_MSG_CHECKING([for MPI launch program])
-   acx_tmp=
-   AC_CACHE_VAL([acx_cv_prog_mpirun],
+   mkh_tmp=
+   AC_CACHE_VAL([mkh_cv_prog_mpirun],
      [AC_LINK_IFELSE([$1],
         [m4_ifval([$2],
            [AS_VAR_SET_IF([$2],
@@ -119,34 +119,34 @@ m4_define([_MKH_PROG_MPIRUN],
              [set dummy m4_default([$5], [mpirun mpiexec srun])])],
            [set dummy m4_default([$5], [mpirun mpiexec srun])])
          shift
-         for acx_candidate in "$[@]"; do
+         for mkh_candidate in "$[@]"; do
             _AS_ECHO_LOG(
-              [acx_exec_result=`$acx_candidate -n m4_default([$6], [2]) dnl
+              [mkh_exec_result=`$mkh_candidate -n m4_default([$6], [2]) dnl
 ./conftest$ac_exeext 2>&AS_MESSAGE_LOG_FD`])
-            acx_exec_result=dnl
-`$acx_candidate -n m4_default([$6], [2]) dnl
+            mkh_exec_result=dnl
+`$mkh_candidate -n m4_default([$6], [2]) dnl
 ./conftest$ac_exeext 2>&AS_MESSAGE_LOG_FD`
-            acx_status=$?
-            _AS_ECHO_LOG([\$? = $acx_status])
-            AS_IF([test $acx_status -eq 0],
-              [_AS_ECHO_LOG([\$acx_exec_result = $acx_exec_result])
+            mkh_status=$?
+            _AS_ECHO_LOG([\$? = $mkh_status])
+            AS_IF([test $mkh_status -eq 0],
+              [_AS_ECHO_LOG([\$mkh_exec_result = $mkh_exec_result])
                _AS_ECHO_LOG(
-                 [acx_exec_result=`AS_ECHO(["\$acx_exec_result"]) | dnl
+                 [mkh_exec_result=`AS_ECHO(["\$mkh_exec_result"]) | dnl
 sed -n '/^conftest: m4_default([$6], [2])$/p'`])
-               acx_exec_result=`AS_ECHO(["$acx_exec_result"]) | dnl
+               mkh_exec_result=`AS_ECHO(["$mkh_exec_result"]) | dnl
 sed -n '/^conftest: m4_default([$6], [2])$/p'`
-               _AS_ECHO_LOG([\$acx_exec_result = $acx_exec_result])
-               AS_VAR_IF([acx_exec_result],
+               _AS_ECHO_LOG([\$mkh_exec_result = $mkh_exec_result])
+               AS_VAR_IF([mkh_exec_result],
                  ['conftest: m4_default([$6], [2])'],
-                 [acx_cv_prog_mpirun=$acx_candidate
+                 [mkh_cv_prog_mpirun=$mkh_candidate
                   break])])
          done],
-        [acx_tmp='failed to link MPI test program'])])
-   AS_VAR_SET_IF([acx_cv_prog_mpirun],
-     [AC_MSG_RESULT([$acx_cv_prog_mpirun])
+        [mkh_tmp='failed to link MPI test program'])])
+   AS_VAR_SET_IF([mkh_cv_prog_mpirun],
+     [AC_MSG_RESULT([$mkh_cv_prog_mpirun])
       $3],
      [AC_MSG_RESULT([unknown])
-      AS_IF([test -n "$acx_tmp"], [AC_MSG_WARN([$acx_tmp])])
+      AS_IF([test -n "$mkh_tmp"], [AC_MSG_WARN([$mkh_tmp])])
       m4_default([$4],
         [AC_MSG_FAILURE([unable to find a valid MPI launch program])])])])
 

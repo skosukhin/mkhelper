@@ -57,34 +57,34 @@ AC_DEFUN([MKH_BUILD_ENVIRONMENT],
       AC_SUBST([BUILD_ENV_MAKE], [$BUILD_ENV])dnl
       MKH_ESCAPE_MAKE_SYNTAX([BUILD_ENV_MAKE])
       AC_MSG_CHECKING([whether \$BUILD_ENV is accepted by '$SHELL -c'])
-      acx_build_env_quoted=$BUILD_ENV
-      MKH_ESCAPE_SINGLE_QUOTE([acx_build_env_quoted])
-      _AS_ECHO_LOG([$SHELL -c '$acx_build_env_quoted'])
-      eval \$SHELL -c "'$acx_build_env_quoted'" >&AS_MESSAGE_LOG_FD 2>&1
+      mkh_build_env_quoted=$BUILD_ENV
+      MKH_ESCAPE_SINGLE_QUOTE([mkh_build_env_quoted])
+      _AS_ECHO_LOG([$SHELL -c '$mkh_build_env_quoted'])
+      eval \$SHELL -c "'$mkh_build_env_quoted'" >&AS_MESSAGE_LOG_FD 2>&1
       AS_IF([test $? -eq 0],
         [AC_MSG_RESULT([yes])
 dnl Check that $BUILD_ENV does not change variables that have been set on the
 dnl command line:
-         acx_build_env_vars_to_check=
+         mkh_build_env_vars_to_check=
          eval "set dummy $ac_configure_args"; shift
          while test $[]# != 0; do
-           acx_arg=$[]1
-           AS_CASE([$acx_arg],
+           mkh_arg=$[]1
+           AS_CASE([$mkh_arg],
              [-*], [],
              [*=*], [dnl
 dnl The configure script has already checked that all arguments matching
 dnl pattern '*=*' have valid shell variable names on the left-hand side.
-            acx_arg_name=`expr "x$acx_arg" : 'x\(@<:@^=@:>@*\)='`
-            acx_arg_cmd_value=`expr "x$acx_arg" : '@<:@^=@:>@*=\(.*\)'`
-            AS_VAR_COPY([acx_arg_${acx_arg_name}], [$acx_arg_name])
+            mkh_arg_name=`expr "x$mkh_arg" : 'x\(@<:@^=@:>@*\)='`
+            mkh_arg_cmd_value=`expr "x$mkh_arg" : '@<:@^=@:>@*=\(.*\)'`
+            AS_VAR_COPY([mkh_arg_${mkh_arg_name}], [$mkh_arg_name])
 dnl Check only those variables that have not been modified since they were set
 dnl on the command line (otherwise, it is responsibility of the configure
 dnl script developers):
             AS_VAR_IF(
-              [acx_arg_cmd_value], ["AS_VAR_GET([acx_arg_${acx_arg_name}])"],
-              [AS_VAR_APPEND([acx_build_env_vars_to_check],
-                 [" $acx_arg_name"])],
-              [AS_UNSET([acx_arg_${acx_arg_name}])])])
+              [mkh_arg_cmd_value], ["AS_VAR_GET([mkh_arg_${mkh_arg_name}])"],
+              [AS_VAR_APPEND([mkh_build_env_vars_to_check],
+                 [" $mkh_arg_name"])],
+              [AS_UNSET([mkh_arg_${mkh_arg_name}])])])
            shift
          done
          AC_MSG_CHECKING(
@@ -93,24 +93,24 @@ dnl script developers):
          eval "$BUILD_ENV" >&AS_MESSAGE_LOG_FD 2>&1
          AS_IF([test $? -eq 0],
            [AC_MSG_RESULT([yes])
-            AS_IF([test -n "$acx_build_env_vars_to_check"],
-              [for acx_arg_name in $acx_build_env_vars_to_check; do
-                 AS_IF([test x"AS_VAR_GET([$acx_arg_name])" != \
-x"AS_VAR_GET([acx_arg_${acx_arg_name}])"],
+            AS_IF([test -n "$mkh_build_env_vars_to_check"],
+              [for mkh_arg_name in $mkh_build_env_vars_to_check; do
+                 AS_IF([test x"AS_VAR_GET([$mkh_arg_name])" != \
+x"AS_VAR_GET([mkh_arg_${mkh_arg_name}])"],
                    [AC_MSG_WARN([\$BUILD_ENV has modified variable dnl
-'$acx_arg_name', which was set on the command line to dnl
-"AS_VAR_GET([acx_arg_${acx_arg_name}])": new value of the variable is dnl
-"AS_VAR_GET([$acx_arg_name])"])])
-                 AS_UNSET([acx_arg_${acx_arg_name}])
+'$mkh_arg_name', which was set on the command line to dnl
+"AS_VAR_GET([mkh_arg_${mkh_arg_name}])": new value of the variable is dnl
+"AS_VAR_GET([$mkh_arg_name])"])])
+                 AS_UNSET([mkh_arg_${mkh_arg_name}])
                done])],
            [AC_MSG_RESULT([no])])],
         [AC_MSG_RESULT([no])
-         acx_failMsg="failed to initialize '$SHELL' with the provided dnl
+         mkh_failMsg="failed to initialize '$SHELL' with the provided dnl
 BUILD_ENV='$BUILD_ENV'
 A possible workaround for the problem is to re-run the configuration with dnl
 the following command:
 CONFIG_SHELL=\$SHELL \$SHELL $as_myself"
-         for acx_config_arg in "$[@]"; do
-           AS_VAR_APPEND([acx_failMsg], " '$acx_config_arg'")
+         for mkh_config_arg in "$[@]"; do
+           AS_VAR_APPEND([mkh_failMsg], " '$mkh_config_arg'")
          done
-         AC_MSG_FAILURE([$acx_failMsg])])])])
+         AC_MSG_FAILURE([$mkh_failMsg])])])])

@@ -30,13 +30,13 @@
 
 # MKH_PROG_SEARCH(VARIABLE,
 #                 [CANDIDATES],
-#                 [CHECK-SCRIPT = 'eval $acx_candidate'],
+#                 [CHECK-SCRIPT = 'eval $mkh_candidate'],
 #                 [ACTION-IF-SUCCESS],
 #                 [ACTION-IF-FAILURE = FAILURE])
 # -----------------------------------------------------------------------------
 # Searches for the program (command) that results into a zero exit status of
 # the CHECK-SCRIPT (defaults to running the candidate command). CHECK-SCRIPT
-# can get the tested command from the shell variable $acx_candidate. If the
+# can get the tested command from the shell variable $mkh_candidate. If the
 # shell variable VARIABLE is set, checks whether the value it stores passes the
 # test. If VARIABLE is not set, iterates over the values of the blank-separated
 # list CANDIDATES and stops when the first valid command is found. The value of
@@ -46,34 +46,34 @@
 # (defaults to failing with an error message).
 #
 # A positive result of this test is cached in the
-# acx_cv_prog_[]AS_TR_SH(VARIABLE) variable.
+# mkh_cv_prog_[]AS_TR_SH(VARIABLE) variable.
 #
 AC_DEFUN([MKH_PROG_SEARCH],
-  [AS_VAR_PUSHDEF([acx_cache_var], [acx_cv_prog_$1])dnl
+  [AS_VAR_PUSHDEF([mkh_cache_var], [mkh_cv_prog_$1])dnl
    AS_LITERAL_IF([$1],
      [AC_MSG_CHECKING([for m4_tolower([$1])])],
-     [acx_tmp=`AS_ECHO(["$1"]) | tr 'm4_cr_LETTERS' 'm4_cr_letters'`
-      AC_MSG_CHECKING([for $acx_tmp])])
-   AC_CACHE_VAL([acx_cache_var],
+     [mkh_tmp=`AS_ECHO(["$1"]) | tr 'm4_cr_LETTERS' 'm4_cr_letters'`
+      AC_MSG_CHECKING([for $mkh_tmp])])
+   AC_CACHE_VAL([mkh_cache_var],
      [AS_VAR_SET_IF([$1], [set dummy "AS_VAR_GET([$1])"], [set dummy $2])
       shift
-      for acx_candidate in "$[@]"; do
+      for mkh_candidate in "$[@]"; do
         m4_default([$3],
-          [AC_TRY_COMMAND([$acx_candidate >&AS_MESSAGE_LOG_FD])])
+          [AC_TRY_COMMAND([$mkh_candidate >&AS_MESSAGE_LOG_FD])])
         AS_IF([test $? -eq 0],
-          [AS_VAR_SET([acx_cache_var], [$acx_candidate])
+          [AS_VAR_SET([mkh_cache_var], [$mkh_candidate])
            break])
       done])
-   AS_VAR_SET_IF([acx_cache_var],
-     [AC_MSG_RESULT([AS_VAR_GET(acx_cache_var)])
+   AS_VAR_SET_IF([mkh_cache_var],
+     [AC_MSG_RESULT([AS_VAR_GET(mkh_cache_var)])
       $4],
      [AC_MSG_RESULT([unknown])
       m4_default([$5],
         [AS_LITERAL_IF([$1],
            [AC_MSG_FAILURE([unable to find m4_tolower([$1])])],
-           [acx_tmp=`AS_ECHO(["$1"]) | tr 'm4_cr_LETTERS' 'm4_cr_letters'`
-            AC_MSG_FAILURE([unable to find $acx_tmp])])])])
-   AS_VAR_POPDEF([acx_cache_var])])
+           [mkh_tmp=`AS_ECHO(["$1"]) | tr 'm4_cr_LETTERS' 'm4_cr_letters'`
+            AC_MSG_FAILURE([unable to find $mkh_tmp])])])])
+   AS_VAR_POPDEF([mkh_cache_var])])
 
 # MKH_PROG_SEARCH_ABSPATH(PROG-TO-CHECK-FOR,
 #                         [ACTION-IF-SUCCESS],
@@ -97,45 +97,45 @@ AC_DEFUN([MKH_PROG_SEARCH],
 # If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
 # (defaults to failing with an error message).
 #
-# The result is stored in the acx_prog_search_abspath shell variable.
+# The result is stored in the mkh_prog_search_abspath shell variable.
 #
 AC_DEFUN([MKH_PROG_SEARCH_ABSPATH],
-  [AC_REQUIRE_SHELL_FN([acx_prog_search_abspath_fn], [],
-     [acx_prog_exec=$[1]
-      AS_CASE([$acx_prog_exec],
+  [AC_REQUIRE_SHELL_FN([mkh_prog_search_abspath_fn], [],
+     [mkh_prog_exec=$[1]
+      AS_CASE([$mkh_prog_exec],
         [*[[\\/]]*],
-        [AS_IF([AS_EXECUTABLE_P([$acx_prog_exec])],
-           [acx_prog_search_abspath=$acx_prog_exec])],
+        [AS_IF([AS_EXECUTABLE_P([$mkh_prog_exec])],
+           [mkh_prog_search_abspath=$mkh_prog_exec])],
         [_AS_PATH_WALK([$4],
-           [AS_IF([AS_EXECUTABLE_P(["$as_dir/$acx_prog_exec"])],
-              [acx_prog_search_abspath="$as_dir/$acx_prog_exec"; break])])])
-dnl If acx_prog_search_abspath is not "unknown", it is a path to an executable
+           [AS_IF([AS_EXECUTABLE_P(["$as_dir/$mkh_prog_exec"])],
+              [mkh_prog_search_abspath="$as_dir/$mkh_prog_exec"; break])])])
+dnl If mkh_prog_search_abspath is not "unknown", it is a path to an executable
 dnl (without arguments).
-      AS_CASE([$acx_prog_search_abspath],
+      AS_CASE([$mkh_prog_search_abspath],
         [unknown], [],
         [[[\\/]]* | ?:[[\\/]]*], [],
-        [mkh_dir=`echo "$acx_prog_search_abspath" | dnl
+        [mkh_dir=`echo "$mkh_prog_search_abspath" | dnl
 sed 's%/@<:@^/@:>@*$%%' 2>/dev/null`
-         mkh_file=`echo "$acx_prog_search_abspath" | sed 's%.*/%%' 2>/dev/null`
+         mkh_file=`echo "$mkh_prog_search_abspath" | sed 's%.*/%%' 2>/dev/null`
          mkh_dir=`cd "$mkh_dir" >/dev/null 2>&1 && pwd 2>/dev/null`
 dnl Set the result to unknown until we make sure that we can provide a correct
 dnl one.
-         acx_prog_search_abspath=unknown
+         mkh_prog_search_abspath=unknown
          AS_CASE([$mkh_dir],
            [[[\\/]]* | ?:[[\\/]]*],
            [AS_IF([AS_EXECUTABLE_P(["$mkh_dir/$mkh_file"])],
-              [acx_prog_search_abspath="$mkh_dir/$mkh_file"])])])])dnl
-   acx_prog_search_abspath=unknown
-   set dummy $1; shift; acx_prog_exec=$[1]; shift; acx_prog_args="$[@]"
-   AC_MSG_CHECKING([for the absolute path to $acx_prog_exec])
-   acx_prog_search_abspath_fn "$acx_prog_exec"
-   AC_MSG_RESULT([$acx_prog_search_abspath])
-   AS_VAR_IF([acx_prog_search_abspath], [unknown],
+              [mkh_prog_search_abspath="$mkh_dir/$mkh_file"])])])])dnl
+   mkh_prog_search_abspath=unknown
+   set dummy $1; shift; mkh_prog_exec=$[1]; shift; mkh_prog_args="$[@]"
+   AC_MSG_CHECKING([for the absolute path to $mkh_prog_exec])
+   mkh_prog_search_abspath_fn "$mkh_prog_exec"
+   AC_MSG_RESULT([$mkh_prog_search_abspath])
+   AS_VAR_IF([mkh_prog_search_abspath], [unknown],
      [m4_default([$3],
         [AC_MSG_FAILURE(
-           [unable to find the absolute path to $acx_prog_exec])])],
-     [AS_IF([test -n "$acx_prog_args"],
-        [AS_VAR_APPEND([acx_prog_search_abspath], [" $acx_prog_args"])])
+           [unable to find the absolute path to $mkh_prog_exec])])],
+     [AS_IF([test -n "$mkh_prog_args"],
+        [AS_VAR_APPEND([mkh_prog_search_abspath], [" $mkh_prog_args"])])
       $2])])
 
 # MKH_PROG_SEARCH_ABSPATH_IF_NOT_ABSPATH(VARIABLE,
@@ -158,7 +158,7 @@ AC_DEFUN([MKH_PROG_SEARCH_ABSPATH_IF_NOT_ABSPATH],
   [AS_CASE([AS_VAR_GET([$1])],
      [[[\\/]]* | ?:[[\\/]]*], [$2],
      [MKH_PROG_SEARCH_ABSPATH([AS_VAR_GET([$1])],
-        [m4_default([$2], [AS_VAR_SET([$1], ["$acx_prog_search_abspath"])])],
+        [m4_default([$2], [AS_VAR_SET([$1], ["$mkh_prog_search_abspath"])])],
         [m4_default([$3],
            [set dummy AS_VAR_GET([$1]); shift
             AC_MSG_WARN(

@@ -39,14 +39,14 @@
 # If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
 # (defaults to failing with an error message).
 #
-# The result is cached in the acx_cv_[]_AC_LANG_ABBREV[]_cuda_compatible
+# The result is cached in the mkh_cv_[]_AC_LANG_ABBREV[]_cuda_compatible
 # variable.
 #
 AC_DEFUN([MKH_LANG_CUDA_COMPATIBLE],
-  [m4_pushdef([acx_cache_var], [acx_cv_[]_AC_LANG_ABBREV[]_cuda_compatible])dnl
+  [m4_pushdef([mkh_cache_var], [mkh_cv_[]_AC_LANG_ABBREV[]_cuda_compatible])dnl
    AC_CACHE_CHECK(
      [whether _AC_LANG compiler can link objects compiled with CUDA compiler],
-     [acx_cache_var],
+     [mkh_cache_var],
      [_MKH_LANG_CUDA_COMPATIBLE([[
 extern "C" void conftest_cuda_foo() {
   // Call functions that require CUDA runtime library:
@@ -54,12 +54,12 @@ extern "C" void conftest_cuda_foo() {
   cudaError_t err = cudaMalloc(&x, sizeof(float));
   err = cudaFree(x);
 }]])
-      acx_cache_var=$acx_lang_cuda_compatible])
-   AS_VAR_IF([acx_cache_var], [yes], [$1],
+      mkh_cache_var=$mkh_lang_cuda_compatible])
+   AS_VAR_IF([mkh_cache_var], [yes], [$1],
      [m4_default([$2],
         [AC_MSG_FAILURE([_AC_LANG compiler cannot link objects compiled dnl
 with CUDA compiler])])])
-   m4_popdef([acx_cache_var])])
+   m4_popdef([mkh_cache_var])])
 
 # MKH_LANG_CUDA_COMPATIBLE_STDCXX([ACTION-IF-SUCCESS],
 #                                 [ACTION-IF-FAILURE = FAILURE])
@@ -73,16 +73,16 @@ with CUDA compiler])])])
 # If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
 # (defaults to failing with an error message).
 #
-# The result is cached in the acx_cv_[]_AC_LANG_ABBREV[]_cuda_compatible_stdcxx
+# The result is cached in the mkh_cv_[]_AC_LANG_ABBREV[]_cuda_compatible_stdcxx
 # variable.
 #
 AC_DEFUN([MKH_LANG_CUDA_COMPATIBLE_STDCXX],
-  [m4_pushdef([acx_cache_var],
-     [acx_cv_[]_AC_LANG_ABBREV[]_cuda_compatible_stdcxx])dnl
+  [m4_pushdef([mkh_cache_var],
+     [mkh_cv_[]_AC_LANG_ABBREV[]_cuda_compatible_stdcxx])dnl
    AC_CACHE_CHECK(
      [whether _AC_LANG compiler can link objects compiled with CUDA dnl
 compiler that require C++ standard library],
-     [acx_cache_var],
+     [mkh_cache_var],
      [_MKH_LANG_CUDA_COMPATIBLE([[
 /* An attempt to write a function that would keep the dependency on the
    standard C++ library even with a high optimization level, i.e. -O3 */
@@ -91,12 +91,12 @@ std::vector<int>* a;
 extern "C" void conftest_cuda_foo() {
   a->push_back(1);
 }]])
-      acx_cache_var=$acx_lang_cuda_compatible])
-   AS_VAR_IF([acx_cache_var], [yes], [$1],
+      mkh_cache_var=$mkh_lang_cuda_compatible])
+   AS_VAR_IF([mkh_cache_var], [yes], [$1],
      [m4_default([$2],
         [AC_MSG_FAILURE([_AC_LANG compiler cannot link objects compiled dnl
 with CUDA compiler that require C++ standard library])])])
-   m4_popdef([acx_cache_var])])
+   m4_popdef([mkh_cache_var])])
 
 # _MKH_LANG_CUDA_COMPATIBLE(FOO-CUDA-CODE,
 #                           [EXTRA-ACTIONS])
@@ -111,23 +111,23 @@ with CUDA compiler that require C++ standard library])])])
 # that case, the result of the macro will be "yes" only if the exit code of the
 # last command listed in EXTRA-ACTIONS is zero.
 #
-# The result is stored in the acx_lang_cuda_compatible variable.
+# The result is stored in the mkh_lang_cuda_compatible variable.
 #
 m4_define([_MKH_LANG_CUDA_COMPATIBLE],
   [AC_REQUIRE([MKH_PROG_CUDACXX])dnl
    AC_LANG_PUSH([CUDA])
-   acx_lang_cuda_compatible=no
+   mkh_lang_cuda_compatible=no
    AC_COMPILE_IFELSE([AC_LANG_SOURCE([$1])],
      [AC_LANG_POP([CUDA])
       AC_TRY_COMMAND([mv ./conftest.$ac_objext ./conftest_cuda.$ac_objext])
-      acx_save_LIBS=$LIBS; LIBS="./conftest_cuda.$ac_objext $LIBS"
+      mkh_save_LIBS=$LIBS; LIBS="./conftest_cuda.$ac_objext $LIBS"
       AC_LINK_IFELSE(
         [AC_LANG_SOURCE([_MKH_LANG_CUDA_COMPATIBLE_CALL_PROGRAM])],
         [m4_ifval([$2],
            [$2
-            AS_IF([test $? -eq 0], [acx_lang_cuda_compatible=yes])],
-           [acx_lang_cuda_compatible=yes])])
-      LIBS=$acx_save_LIBS
+            AS_IF([test $? -eq 0], [mkh_lang_cuda_compatible=yes])],
+           [mkh_lang_cuda_compatible=yes])])
+      LIBS=$mkh_save_LIBS
       rm -f conftest_cuda.$ac_objext
       AC_LANG_PUSH([CUDA])])
    AC_LANG_POP([CUDA])])

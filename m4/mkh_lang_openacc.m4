@@ -43,15 +43,15 @@
 # If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
 # (defaults to failing with an error message).
 #
-# The flag is cached in the acx_cv_[]_AC_LANG_ABBREV[]_openacc_flag variable.
+# The flag is cached in the mkh_cv_[]_AC_LANG_ABBREV[]_openacc_flag variable.
 #
 # Upon successful run, you can check for the version of the standard supported
 # by the compiler by expanding:
 #   AS_VAR_APPEND([_AC_LANG_PREFIX[]FLAGS],
-#     [" $acx_cv_[]_AC_LANG_ABBREV[]_openacc_flag"])
+#     [" $mkh_cv_[]_AC_LANG_ABBREV[]_openacc_flag"])
 #   MKH_LANG_MACRO_CHECK_VALUE([_OPENACC])
 # and checking for the value of the
-# acx_cv_[]_AC_LANG_ABBREV[]_macro__OPENACC_value shell variable. The possible
+# mkh_cv_[]_AC_LANG_ABBREV[]_macro__OPENACC_value shell variable. The possible
 # (successful) values of the variable are dates, which map to the versions of
 # the standard in the following way:
 #   202111 3.2
@@ -65,28 +65,28 @@
 #   201111 1.0
 #
 AC_DEFUN([MKH_LANG_OPENACC_FLAG],
-  [m4_pushdef([acx_cache_var], [acx_cv_[]_AC_LANG_ABBREV[]_openacc_flag])dnl
+  [m4_pushdef([mkh_cache_var], [mkh_cv_[]_AC_LANG_ABBREV[]_openacc_flag])dnl
    AC_MSG_CHECKING([for _AC_LANG compiler flag needed to enable OpenACC dnl
 support])
-   AC_CACHE_VAL([acx_cache_var],
-     [acx_cache_var=unknown
-      acx_save_[]_AC_LANG_PREFIX[]FLAGS=$[]_AC_LANG_PREFIX[]FLAGS
+   AC_CACHE_VAL([mkh_cache_var],
+     [mkh_cache_var=unknown
+      mkh_save_[]_AC_LANG_PREFIX[]FLAGS=$[]_AC_LANG_PREFIX[]FLAGS
       AC_LANG_CONFTEST([_MKH_LANG_OPENACC])
-      for acx_lang_openacc_flag in '' -fopenacc -hacc -acc; do
-        _AC_LANG_PREFIX[]FLAGS="${acx_save_[]_AC_LANG_PREFIX[]FLAGS} dnl
-$acx_lang_openacc_flag"
-        AC_LINK_IFELSE([], [acx_cache_var=$acx_lang_openacc_flag])
-        test "x$acx_cache_var" != xunknown && break
+      for mkh_lang_openacc_flag in '' -fopenacc -hacc -acc; do
+        _AC_LANG_PREFIX[]FLAGS="${mkh_save_[]_AC_LANG_PREFIX[]FLAGS} dnl
+$mkh_lang_openacc_flag"
+        AC_LINK_IFELSE([], [mkh_cache_var=$mkh_lang_openacc_flag])
+        test "x$mkh_cache_var" != xunknown && break
       done
       rm -f conftest.$ac_ext
-      _AC_LANG_PREFIX[]FLAGS=$acx_save_[]_AC_LANG_PREFIX[]FLAGS])
-   AS_IF([test -n "$acx_cache_var"],
-     [AC_MSG_RESULT([$acx_cache_var])],
+      _AC_LANG_PREFIX[]FLAGS=$mkh_save_[]_AC_LANG_PREFIX[]FLAGS])
+   AS_IF([test -n "$mkh_cache_var"],
+     [AC_MSG_RESULT([$mkh_cache_var])],
      [AC_MSG_RESULT([none needed])])
-   AS_VAR_IF([acx_cache_var], [unknown], [m4_default([$2],
+   AS_VAR_IF([mkh_cache_var], [unknown], [m4_default([$2],
      [AC_MSG_FAILURE([unable to detect _AC_LANG compiler flag needed to dnl
 enable OpenACC support])])], [$1])
-   m4_popdef([acx_cache_var])])
+   m4_popdef([mkh_cache_var])])
 
 # _MKH_LANG_OPENACC()
 # -----------------------------------------------------------------------------

@@ -43,43 +43,43 @@
 # The implementation implies that the Fortran compiler can link objects
 # compiled with the C compiler.
 #
-# The result is cached in the acx_cv_fc_mangling_global variable.
+# The result is cached in the mkh_cv_fc_mangling_global variable.
 #
 AC_DEFUN([MKH_FC_MANGLING_GLOBAL],
   [AC_REQUIRE([AC_PROG_CC])dnl
-   m4_pushdef([acx_cache_var], [acx_cv_fc_mangling_global])dnl
+   m4_pushdef([mkh_cache_var], [mkh_cv_fc_mangling_global])dnl
    AC_LANG_PUSH([Fortran])
    AC_CACHE_CHECK([for the name-mangling scheme for Fortran global functions],
-     [acx_cache_var],
-     [acx_cache_var=unknown
-      acx_save_LIBS=$LIBS; LIBS="./conftest_c.$ac_objext $LIBS"
+     [mkh_cache_var],
+     [mkh_cache_var=unknown
+      mkh_save_LIBS=$LIBS; LIBS="./conftest_c.$ac_objext $LIBS"
       AC_LANG_CONFTEST([AC_LANG_SOURCE(
 [[      subroutine funcname
       end subroutine
       program main
       end program]])])
       AC_LANG_PUSH([C])
-      acx_success=no
-      for acx_name_case in 'funcname' 'FUNCNAME'; do
-        for acx_underscore in '' '_'; do
-          acx_func_name="$acx_name_case$acx_underscore"
+      mkh_success=no
+      for mkh_name_case in 'funcname' 'FUNCNAME'; do
+        for mkh_underscore in '' '_'; do
+          mkh_func_name="$mkh_name_case$mkh_underscore"
           AC_COMPILE_IFELSE([AC_LANG_CALL(
-            [[#define main conftest_c]], [$acx_func_name])],
+            [[#define main conftest_c]], [$mkh_func_name])],
             [mv ./conftest.$ac_objext ./conftest_c.$ac_objext
              AC_LANG_POP([C])
-             AC_LINK_IFELSE([], [acx_success=yes])
+             AC_LINK_IFELSE([], [mkh_success=yes])
              AC_LANG_PUSH([C])
              rm -f ./conftest_c.$ac_objext
-             test "x$acx_success" = xyes && break])
+             test "x$mkh_success" = xyes && break])
         done
-        test "x$acx_success" = xyes && break
+        test "x$mkh_success" = xyes && break
       done
-      AS_VAR_IF([acx_success], [yes],
-        [AS_VAR_IF([acx_name_case], [funcname],
-           [acx_name_case='func_name'
-            acx_cache_var="name$acx_underscore,name$acx_underscore"],
-           [acx_name_case='FUNC_NAME'
-            acx_cache_var="NAME$acx_underscore,NAME$acx_underscore"])
+      AS_VAR_IF([mkh_success], [yes],
+        [AS_VAR_IF([mkh_name_case], [funcname],
+           [mkh_name_case='func_name'
+            mkh_cache_var="name$mkh_underscore,name$mkh_underscore"],
+           [mkh_name_case='FUNC_NAME'
+            mkh_cache_var="NAME$mkh_underscore,NAME$mkh_underscore"])
          AC_LANG_POP([C])
          AC_LANG_CONFTEST([AC_LANG_SOURCE(
 [[      subroutine func_name
@@ -87,26 +87,26 @@ AC_DEFUN([MKH_FC_MANGLING_GLOBAL],
       program main
       end program]])])
          AC_LANG_PUSH([C])
-         acx_success=no
-         for acx_extra_underscore in '' '_'; do
-           acx_func_name="$acx_name_case$acx_underscore$acx_extra_underscore"
+         mkh_success=no
+         for mkh_extra_underscore in '' '_'; do
+           mkh_func_name="$mkh_name_case$mkh_underscore$mkh_extra_underscore"
            AC_COMPILE_IFELSE([AC_LANG_CALL(
-            [[#define main conftest_c]], [$acx_func_name])],
+            [[#define main conftest_c]], [$mkh_func_name])],
             [mv ./conftest.$ac_objext ./conftest_c.$ac_objext
              AC_LANG_POP([C])
-             AC_LINK_IFELSE([], [acx_success=yes])
+             AC_LINK_IFELSE([], [mkh_success=yes])
              AC_LANG_PUSH([C])
              rm -f ./conftest_c.$ac_objext
-             test "x$acx_success" = xyes && break])
+             test "x$mkh_success" = xyes && break])
          done
-         AS_VAR_IF([acx_success], [yes],
-           [AS_VAR_APPEND([acx_cache_var], ["$acx_extra_underscore"])],
-           [acx_cache_var=unknown])])
+         AS_VAR_IF([mkh_success], [yes],
+           [AS_VAR_APPEND([mkh_cache_var], ["$mkh_extra_underscore"])],
+           [mkh_cache_var=unknown])])
       AC_LANG_POP([C])
       rm -f conftest.$ac_ext
-      LIBS=$acx_save_LIBS])
+      LIBS=$mkh_save_LIBS])
    AC_LANG_POP([Fortran])
-   m4_popdef([acx_cache_var])])
+   m4_popdef([mkh_cache_var])])
 
 # MKH_FC_MANGLING_DEFINE([MACRO-PREFIX = FC]
 #                        [ACTION-IF-SUCCESS],
@@ -123,21 +123,21 @@ AC_DEFUN([MKH_FC_MANGLING_GLOBAL],
 #
 AC_DEFUN([MKH_FC_MANGLING_DEFINE],
   [AC_REQUIRE([MKH_FC_MANGLING_GLOBAL])dnl
-   m4_pushdef([acx_scheme_var], [acx_cv_fc_mangling_global])dnl
-   AS_VAR_IF([acx_scheme_var], [unknown], [m4_default([$3],
+   m4_pushdef([mkh_scheme_var], [mkh_cv_fc_mangling_global])dnl
+   AS_VAR_IF([mkh_scheme_var], [unknown], [m4_default([$3],
         [AC_MSG_FAILURE([unable to detect the name-mangling scheme for dnl
 Fortran global functions])])],
      [AC_DEFINE_UNQUOTED(m4_default([$1], [FC])[_GLOBAL(name,NAME)],
-        [`AS_ECHO(["$acx_scheme_var"]) | cut -d, -f1 | sed 's%__*% [##] &%'`],
+        [`AS_ECHO(["$mkh_scheme_var"]) | cut -d, -f1 | sed 's%__*% [##] &%'`],
         [Define to a macro mangling the given C identifier ]dnl
 [(in lower and upper case), which must not contain underscores, for ]dnl
 [linking Fortran global functions.])
       AC_DEFINE_UNQUOTED(m4_default([$1], [FC])[_GLOBAL_(name,NAME)],
-        [`AS_ECHO(["$acx_scheme_var"]) | cut -d, -f2 | sed 's%__*% [##] &%'`],
+        [`AS_ECHO(["$mkh_scheme_var"]) | cut -d, -f2 | sed 's%__*% [##] &%'`],
         [As ]m4_default([$1], [FC])[_GLOBAL, but for identifiers ]dnl
 [containing underscores.])
       $2])
-   m4_popdef([acx_scheme_var])])
+   m4_popdef([mkh_scheme_var])])
 
 # MKH_FC_MANGLING_SHVAR(FUNC-NAME,
 #                       [ACTION-IF-SUCCESS],
@@ -149,33 +149,33 @@ Fortran global functions])])],
 # If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
 # (defaults to failing with an error message).
 #
-# The result is stored in the acx_mangled_name variable and cached in the
-# acx_cv_fc_mangling_shvar_[]AS_TR_CPP(FUNC-NAME) variable.
+# The result is stored in the mkh_mangled_name variable and cached in the
+# mkh_cv_fc_mangling_shvar_[]AS_TR_CPP(FUNC-NAME) variable.
 #
 AC_DEFUN([MKH_FC_MANGLING_SHVAR],
   [AC_REQUIRE([MKH_FC_MANGLING_GLOBAL])dnl
-   m4_pushdef([acx_cache_var], [acx_cv_fc_mangling_shvar_[]AS_TR_CPP([$1])])dnl
+   m4_pushdef([mkh_cache_var], [mkh_cv_fc_mangling_shvar_[]AS_TR_CPP([$1])])dnl
    AC_CACHE_CHECK([for the mangled name of the Fortran function $1],
-     [acx_cache_var],
-     [AS_VAR_SET([acx_cache_var])
-      m4_pushdef([acx_scheme_var], [acx_cv_fc_mangling_global])dnl
-      AS_VAR_IF([acx_scheme_var], [unknown], [],
-        [acx_func_name=$1
-         AS_CASE(["$acx_func_name"],
+     [mkh_cache_var],
+     [AS_VAR_SET([mkh_cache_var])
+      m4_pushdef([mkh_scheme_var], [mkh_cv_fc_mangling_global])dnl
+      AS_VAR_IF([mkh_scheme_var], [unknown], [],
+        [mkh_func_name=$1
+         AS_CASE(["$mkh_func_name"],
            [*_*],
-           [acx_tmp=`AS_ECHO(["$acx_scheme_var"]) | cut -d, -f2`],
-           [acx_tmp=`AS_ECHO(["$acx_scheme_var"]) | cut -d, -f1`])
-         AS_CASE(["$acx_tmp"],
+           [mkh_tmp=`AS_ECHO(["$mkh_scheme_var"]) | cut -d, -f2`],
+           [mkh_tmp=`AS_ECHO(["$mkh_scheme_var"]) | cut -d, -f1`])
+         AS_CASE(["$mkh_tmp"],
            [NAME*],
-           [acx_tmp=`AS_ECHO(["$acx_tmp"]) | dnl
-sed "s/^NAME/$acx_func_name/" | tr 'm4_cr_letters' 'm4_cr_LETTERS'`],
-           [acx_tmp=`AS_ECHO(["$acx_tmp"]) | dnl
-sed "s/^name/$acx_func_name/" | tr 'm4_cr_LETTERS' 'm4_cr_letters'`])
-         AS_VAR_COPY([acx_cache_var], [acx_tmp])])
-       m4_popdef([acx_scheme_var])])
-   AS_VAR_COPY([acx_mangled_name], [acx_cache_var])
-   m4_popdef([acx_cache_var])dnl
-   AS_IF([test -n "$acx_mangled_name"], [$2], [m4_default([$3],
+           [mkh_tmp=`AS_ECHO(["$mkh_tmp"]) | dnl
+sed "s/^NAME/$mkh_func_name/" | tr 'm4_cr_letters' 'm4_cr_LETTERS'`],
+           [mkh_tmp=`AS_ECHO(["$mkh_tmp"]) | dnl
+sed "s/^name/$mkh_func_name/" | tr 'm4_cr_LETTERS' 'm4_cr_letters'`])
+         AS_VAR_COPY([mkh_cache_var], [mkh_tmp])])
+       m4_popdef([mkh_scheme_var])])
+   AS_VAR_COPY([mkh_mangled_name], [mkh_cache_var])
+   m4_popdef([mkh_cache_var])dnl
+   AS_IF([test -n "$mkh_mangled_name"], [$2], [m4_default([$3],
      [AC_MSG_FAILURE([unable to detect the mangled name of dnl
 the Fortran function $1])])])])
 
@@ -204,21 +204,21 @@ the Fortran function $1])])])])
 # If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
 # (defaults to failing with an error message).
 #
-# The result is cached in the acx_cv_fc_mangling_main variable.
+# The result is cached in the mkh_cv_fc_mangling_main variable.
 #
 AC_DEFUN([MKH_FC_MANGLING_MAIN],
   [_AC_FORTRAN_ASSERT()dnl
    AC_REQUIRE([AC_PROG_CC])dnl
-   m4_pushdef([acx_cache_var], [acx_cv_fc_mangling_main])dnl
+   m4_pushdef([mkh_cache_var], [mkh_cv_fc_mangling_main])dnl
    AC_CACHE_CHECK([for the name of _AC_LANG entry point function],
-     [acx_cache_var],
-     [acx_cache_var=unknown
-      acx_save_LIBS=$LIBS; LIBS="./conftest_c.$ac_objext $LIBS"
+     [mkh_cache_var],
+     [mkh_cache_var=unknown
+      mkh_save_LIBS=$LIBS; LIBS="./conftest_c.$ac_objext $LIBS"
       AC_LANG_CONFTEST([AC_LANG_SOURCE(
 [[      subroutine conftest
       end subroutine]])])
       AC_LANG_PUSH([C])
-      for acx_func_name in main MAIN__ MAIN_ __main MAIN _MAIN __MAIN main_ \
+      for mkh_func_name in main MAIN__ MAIN_ __main MAIN _MAIN __MAIN main_ \
 main__ _main; do
         AC_COMPILE_IFELSE([AC_LANG_PROGRAM(
 [[#ifdef __cplusplus
@@ -227,21 +227,21 @@ extern "C"
 #ifdef __INTEL_COMPILER
 __intel_new_feature_proc_init() {}
 #endif
-#define main $acx_func_name]])],
+#define main $mkh_func_name]])],
           [mv ./conftest.$ac_objext ./conftest_c.$ac_objext
            AC_LANG_POP([C])
-           AC_LINK_IFELSE([], [acx_cache_var=$acx_func_name])
+           AC_LINK_IFELSE([], [mkh_cache_var=$mkh_func_name])
            AC_LANG_PUSH([C])
            rm -f conftest_c.$ac_objext])
-        test "x$acx_cache_var" != xunknown && break
+        test "x$mkh_cache_var" != xunknown && break
       done
       AC_LANG_POP([C])
       rm -f conftest.$ac_ext
-      LIBS=$acx_save_LIBS])
-   AS_VAR_IF([acx_cache_var], [unknown],
+      LIBS=$mkh_save_LIBS])
+   AS_VAR_IF([mkh_cache_var], [unknown],
      [m4_default([$2], [AC_MSG_FAILURE([unable to detect the name of dnl
 Fortran entry point function])])],
-     [AC_DEFINE_UNQUOTED([FC_MAIN], [$acx_cache_var],
+     [AC_DEFINE_UNQUOTED([FC_MAIN], [$mkh_cache_var],
         [Define to the name of Fortran entry point function.])
       $1])
-   m4_popdef([acx_cache_var])])
+   m4_popdef([mkh_cache_var])])

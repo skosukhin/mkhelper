@@ -769,9 +769,9 @@ mandir='${datarootdir}/man'
 
 ac_prev=
 ac_dashdash=
-acx_cmake_defs=
-acx_cmake_ignored_defs=
-acx_prev_D=
+mkh_cmake_defs=
+mkh_cmake_ignored_defs=
+mkh_prev_D=
 for ac_option
 do
   # If the previous option needs an argument, assign it.
@@ -781,30 +781,30 @@ do
     continue
   fi
 
-  acx_cmake_option=yes
-  if test -n "$acx_prev_D"; then :
+  mkh_cmake_option=yes
+  if test -n "$mkh_prev_D"; then :
   ac_option="-D$ac_option"
-     acx_prev_D=
+     mkh_prev_D=
 else
   case $ac_option in #(
   -D) :
-    acx_prev_D=yes; continue ;; #(
+    mkh_prev_D=yes; continue ;; #(
   -D*) :
      ;; #(
   *) :
-    acx_cmake_option=no ;;
+    mkh_cmake_option=no ;;
 esac
 fi
-  if test "x$acx_cmake_option" = xyes; then :
+  if test "x$mkh_cmake_option" = xyes; then :
   case $ac_option in #(
   -DBUILD_SHARED_LIBS*) :
-    case ', '$acx_cmake_ignored_defs', ' in #(
+    case ', '$mkh_cmake_ignored_defs', ' in #(
   *', '$ac_option', '*) :
      ;; #(
   ', '', ') :
-    as_fn_append acx_cmake_ignored_defs $ac_option ;; #(
+    as_fn_append mkh_cmake_ignored_defs $ac_option ;; #(
   *) :
-    as_fn_append acx_cmake_ignored_defs ', '; as_fn_append acx_cmake_ignored_defs $ac_option ;;
+    as_fn_append mkh_cmake_ignored_defs ', '; as_fn_append mkh_cmake_ignored_defs $ac_option ;;
 esac ;; #(
   *) :
 
@@ -814,7 +814,7 @@ esac ;; #(
   *) :
      ;;
 esac
-        as_fn_append acx_cmake_defs " '$ac_option'" ;;
+        as_fn_append mkh_cmake_defs " '$ac_option'" ;;
 esac
      continue
 fi
@@ -1168,17 +1168,17 @@ Try \`$0 --help' for more information"
   esac
 done
 
-if test -n "$acx_prev_D"; then :
+if test -n "$mkh_prev_D"; then :
   as_fn_error $? "missing argument to -D"
 fi
-                   if test -n "$acx_cmake_ignored_defs"; then :
+                   if test -n "$mkh_cmake_ignored_defs"; then :
   case $enable_option_checking in #(
   no) :
      ;; #(
   fatal) :
-    as_fn_error $? "ignored CMake definitions: $acx_cmake_ignored_defs" ;; #(
+    as_fn_error $? "ignored CMake definitions: $mkh_cmake_ignored_defs" ;; #(
   *) :
-    $as_echo "$as_me: WARNING: ignored CMake definitions: $acx_cmake_ignored_defs" >&2 ;;
+    $as_echo "$as_me: WARNING: ignored CMake definitions: $mkh_cmake_ignored_defs" >&2 ;;
 esac
 fi
            if test -n "$ac_prev"; then
@@ -1186,34 +1186,34 @@ fi
   as_fn_error $? "missing argument to $ac_option"
 fi
 
-acx_examples=
-acx_unrecognized_opts=
-acx_save_IFS=$IFS
+mkh_examples=
+mkh_unrecognized_opts=
+mkh_save_IFS=$IFS
 IFS=','
-for acx_opt in $ac_unrecognized_opts; do
-  IFS=$acx_save_IFS
-  acx_opt=`$as_echo "$acx_opt" | sed 's/^ //'`
-  acx_opt_recognized=no
-  case $acx_opt in #(
+for mkh_opt in $ac_unrecognized_opts; do
+  IFS=$mkh_save_IFS
+  mkh_opt=`$as_echo "$mkh_opt" | sed 's/^ //'`
+  mkh_opt_recognized=no
+  case $mkh_opt in #(
   --disable-example-* | --enable-example-*) :
-         acx_opt_name=`expr "$acx_opt" : '--[^-]*able-example-\(.*\)'`
-          if test -n "$acx_opt_name"; then :
-  as_fn_append acx_examples " $acx_opt_name"
-        acx_opt_recognized=yes
+         mkh_opt_name=`expr "$mkh_opt" : '--[^-]*able-example-\(.*\)'`
+          if test -n "$mkh_opt_name"; then :
+  as_fn_append mkh_examples " $mkh_opt_name"
+        mkh_opt_recognized=yes
 fi ;; #(
   *) :
      ;;
 esac
-  if test "x$acx_opt_recognized" = xno; then :
-  if test -n "$acx_unrecognized_opts"; then :
-  as_fn_append acx_unrecognized_opts ", $acx_opt"
+  if test "x$mkh_opt_recognized" = xno; then :
+  if test -n "$mkh_unrecognized_opts"; then :
+  as_fn_append mkh_unrecognized_opts ", $mkh_opt"
 else
-  acx_unrecognized_opts=$acx_opt
+  mkh_unrecognized_opts=$mkh_opt
 fi
 fi
 done
-IFS=$acx_save_IFS
-ac_unrecognized_opts=$acx_unrecognized_opts
+IFS=$mkh_save_IFS
+ac_unrecognized_opts=$mkh_unrecognized_opts
 if test -n "$ac_unrecognized_opts"; then
   case $enable_option_checking in
     no) ;;
@@ -1625,13 +1625,13 @@ fi
 
 } # ac_fn_fc_try_link
 
-acx_prog_search_abspath_fn ()
+mkh_prog_search_abspath_fn ()
 {
-acx_prog_exec=$1
-      case $acx_prog_exec in #(
+mkh_prog_exec=$1
+      case $mkh_prog_exec in #(
   *[\\/]*) :
-    if as_fn_executable_p $acx_prog_exec; then :
-  acx_prog_search_abspath=$acx_prog_exec
+    if as_fn_executable_p $mkh_prog_exec; then :
+  mkh_prog_search_abspath=$mkh_prog_exec
 fi ;; #(
   *) :
     as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
@@ -1639,33 +1639,33 @@ for as_dir in $PATH
 do
   IFS=$as_save_IFS
   test -z "$as_dir" && as_dir=.
-    if as_fn_executable_p "$as_dir/$acx_prog_exec"; then :
-  acx_prog_search_abspath="$as_dir/$acx_prog_exec"; break
+    if as_fn_executable_p "$as_dir/$mkh_prog_exec"; then :
+  mkh_prog_search_abspath="$as_dir/$mkh_prog_exec"; break
 fi
   done
 IFS=$as_save_IFS
  ;;
 esac
-      case $acx_prog_search_abspath in #(
+      case $mkh_prog_search_abspath in #(
   unknown) :
      ;; #(
   [\\/]* | ?:[\\/]*) :
      ;; #(
   *) :
-    mkh_dir=`echo "$acx_prog_search_abspath" | sed 's%/[^/]*$%%' 2>/dev/null`
-         mkh_file=`echo "$acx_prog_search_abspath" | sed 's%.*/%%' 2>/dev/null`
+    mkh_dir=`echo "$mkh_prog_search_abspath" | sed 's%/[^/]*$%%' 2>/dev/null`
+         mkh_file=`echo "$mkh_prog_search_abspath" | sed 's%.*/%%' 2>/dev/null`
          mkh_dir=`cd "$mkh_dir" >/dev/null 2>&1 && pwd 2>/dev/null`
-         acx_prog_search_abspath=unknown
+         mkh_prog_search_abspath=unknown
          case $mkh_dir in #(
   [\\/]* | ?:[\\/]*) :
     if as_fn_executable_p "$mkh_dir/$mkh_file"; then :
-  acx_prog_search_abspath="$mkh_dir/$mkh_file"
+  mkh_prog_search_abspath="$mkh_dir/$mkh_file"
 fi ;; #(
   *) :
      ;;
 esac ;;
 esac
-} # acx_prog_search_abspath_fn
+} # mkh_prog_search_abspath_fn
 
 mkh_srcdirs_fn ()
 {
@@ -1705,17 +1705,17 @@ ac_abs_srcdir=$ac_abs_top_srcdir$ac_dir_suffix
 
 } # mkh_srcdirs_fn
 
-acx_subdir_pre_adjust_config_args ()
+mkh_subdir_pre_adjust_config_args ()
 {
-if ${acx_subdir_pre_adjusted_config_args+:} false; then :
+if ${mkh_subdir_pre_adjusted_config_args+:} false; then :
 
 else
-  acx_subdir_pre_adjusted_config_args=$ac_configure_args
-            eval "set dummy $acx_subdir_pre_adjusted_config_args"; shift
-   acx_subdir_pre_adjusted_config_args=
+  mkh_subdir_pre_adjusted_config_args=$ac_configure_args
+            eval "set dummy $mkh_subdir_pre_adjusted_config_args"; shift
+   mkh_subdir_pre_adjusted_config_args=
    while test $# != 0; do
-     acx_tmp=$1
-     case $acx_tmp in #(
+     mkh_tmp=$1
+     case $mkh_tmp in #(
   -D) :
     test 2 -gt $# || shift;  ;; #(
   -D*) :
@@ -1731,108 +1731,108 @@ else
                 -enable-option-checking|-enable-option-checking=*|--enable-option-checking|--enable-option-checking=*|-disable-option-checking|--disable-option-checking) :
      ;; #(
   *) :
-           case $acx_tmp in #(
+           case $mkh_tmp in #(
   *\'*) :
-    acx_tmp=`$as_echo "$acx_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+    mkh_tmp=`$as_echo "$mkh_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
   *) :
      ;;
 esac
-        as_fn_append acx_subdir_pre_adjusted_config_args " '$acx_tmp'" ;;
+        as_fn_append mkh_subdir_pre_adjusted_config_args " '$mkh_tmp'" ;;
 esac
      shift
    done
-            as_fn_append acx_subdir_pre_adjusted_config_args " '--disable-option-checking'"
+            as_fn_append mkh_subdir_pre_adjusted_config_args " '--disable-option-checking'"
             if test "x$prefix" = xNONE; then :
-  acx_tmp="--prefix=$ac_default_prefix"
+  mkh_tmp="--prefix=$ac_default_prefix"
 else
-  acx_tmp="--prefix=$prefix"
+  mkh_tmp="--prefix=$prefix"
 fi
-            case $acx_tmp in #(
+            case $mkh_tmp in #(
   *\'*) :
-    acx_tmp=`$as_echo "$acx_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+    mkh_tmp=`$as_echo "$mkh_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
   *) :
      ;;
 esac
-            as_fn_append acx_subdir_pre_adjusted_config_args " '$acx_tmp'"
+            as_fn_append mkh_subdir_pre_adjusted_config_args " '$mkh_tmp'"
 fi
-} # acx_subdir_pre_adjust_config_args
+} # mkh_subdir_pre_adjust_config_args
 
-acx_subdir_extra_run_0 ()
+mkh_subdir_extra_run_0 ()
 {
 echo "Run before 1"
-} # acx_subdir_extra_run_0
+} # mkh_subdir_extra_run_0
 
-acx_subdir_extra_run_1 ()
+mkh_subdir_extra_run_1 ()
 {
 echo "Run after 1"
-} # acx_subdir_extra_run_1
+} # mkh_subdir_extra_run_1
 
-acx_subdir_extra_run_2 ()
+mkh_subdir_extra_run_2 ()
 {
 echo "Run before 2"
-} # acx_subdir_extra_run_2
+} # mkh_subdir_extra_run_2
 
-acx_subdir_extra_run_3 ()
+mkh_subdir_extra_run_3 ()
 {
 echo "Run after 2"
-} # acx_subdir_extra_run_3
+} # mkh_subdir_extra_run_3
 
-acx_subdir_pre_adjust_cmake_args ()
+mkh_subdir_pre_adjust_cmake_args ()
 {
-if ${acx_subdir_pre_adjusted_cmake_args+:} false; then :
+if ${mkh_subdir_pre_adjusted_cmake_args+:} false; then :
 
 else
-  acx_subdir_pre_adjusted_cmake_args="'-Wno-dev' '--no-warn-unused-cli' '-GUnix Makefiles'"
-            as_fn_append acx_subdir_pre_adjusted_cmake_args "$acx_cmake_defs"
+  mkh_subdir_pre_adjusted_cmake_args="'-Wno-dev' '--no-warn-unused-cli' '-GUnix Makefiles'"
+            as_fn_append mkh_subdir_pre_adjusted_cmake_args "$mkh_cmake_defs"
             eval "set dummy $ac_configure_args"; shift
-                                                acx_subdir_cmake_vars_to_transform=
-            for acx_tmp; do
-              case $acx_tmp in #(
+                                                mkh_subdir_cmake_vars_to_transform=
+            for mkh_tmp; do
+              case $mkh_tmp in #(
   CFLAGS=*|CXXFLAGS=*|CPPFLAGS=*|FCFLAGS=*|LDFLAGS=*|LIBS=*|CC=*|CXX=*|FC=*|AR=*|RANLIB=*) :
-    acx_arg_name=`expr "x$acx_tmp" : 'x\([^=]*\)='`
-                 as_fn_append acx_subdir_cmake_vars_to_transform " $acx_arg_name"
-                 acx_arg_cmd_value=`expr "x$acx_tmp" : '[^=]*=\(.*\)'`
-                 eval acx_arg_${acx_arg_name}=\$acx_arg_cmd_value ;; #(
+    mkh_arg_name=`expr "x$mkh_tmp" : 'x\([^=]*\)='`
+                 as_fn_append mkh_subdir_cmake_vars_to_transform " $mkh_arg_name"
+                 mkh_arg_cmd_value=`expr "x$mkh_tmp" : '[^=]*=\(.*\)'`
+                 eval mkh_arg_${mkh_arg_name}=\$mkh_arg_cmd_value ;; #(
   *) :
      ;;
 esac
             done
-                           for acx_arg_name in CC CXX FC; do
-                 if test "x$acx_arg_name" = xCC; then :
-  acx_subdir_xFLAGS=CFLAGS
+                           for mkh_arg_name in CC CXX FC; do
+                 if test "x$mkh_arg_name" = xCC; then :
+  mkh_subdir_xFLAGS=CFLAGS
 else
-  acx_subdir_xFLAGS="${acx_arg_name}FLAGS"
+  mkh_subdir_xFLAGS="${mkh_arg_name}FLAGS"
 fi
-                 eval "acx_subdir_${acx_arg_name}_${acx_subdir_xFLAGS}="
-                 case " $acx_subdir_cmake_vars_to_transform " in #(
-  *" $acx_arg_name "*) :
-    set dummy `eval 'as_val=${'$acx_arg_name'};$as_echo "$as_val"'`; shift
-                    eval acx_arg_${acx_arg_name}_EXEC=\$1; shift
-                    as_fn_append acx_subdir_cmake_vars_to_transform " ${acx_arg_name}_EXEC"
-                    acx_tmp=$@
-                    if test -n "$acx_tmp"; then :
-  eval acx_subdir_${acx_arg_name}_${acx_subdir_xFLAGS}=\$acx_tmp
-                       case " $acx_subdir_cmake_vars_to_transform " in #(
-  *" $acx_subdir_xFLAGS "*) :
-    as_fn_append acx_tmp " `eval 'as_val=${'acx_arg_${acx_subdir_xFLAGS}'};$as_echo "$as_val"'`" ;; #(
+                 eval "mkh_subdir_${mkh_arg_name}_${mkh_subdir_xFLAGS}="
+                 case " $mkh_subdir_cmake_vars_to_transform " in #(
+  *" $mkh_arg_name "*) :
+    set dummy `eval 'as_val=${'$mkh_arg_name'};$as_echo "$as_val"'`; shift
+                    eval mkh_arg_${mkh_arg_name}_EXEC=\$1; shift
+                    as_fn_append mkh_subdir_cmake_vars_to_transform " ${mkh_arg_name}_EXEC"
+                    mkh_tmp=$@
+                    if test -n "$mkh_tmp"; then :
+  eval mkh_subdir_${mkh_arg_name}_${mkh_subdir_xFLAGS}=\$mkh_tmp
+                       case " $mkh_subdir_cmake_vars_to_transform " in #(
+  *" $mkh_subdir_xFLAGS "*) :
+    as_fn_append mkh_tmp " `eval 'as_val=${'mkh_arg_${mkh_subdir_xFLAGS}'};$as_echo "$as_val"'`" ;; #(
   *) :
-    as_fn_append acx_subdir_cmake_vars_to_transform " $acx_subdir_xFLAGS" ;;
+    as_fn_append mkh_subdir_cmake_vars_to_transform " $mkh_subdir_xFLAGS" ;;
 esac
-                       eval acx_arg_${acx_subdir_xFLAGS}=\$acx_tmp
+                       eval mkh_arg_${mkh_subdir_xFLAGS}=\$mkh_tmp
 fi ;; #(
   *) :
      ;;
 esac
                done
-                                          for acx_arg_name in AR RANLIB; do
-                 case " $acx_subdir_cmake_vars_to_transform " in #(
-  *" $acx_arg_name "*) :
-    acx_prog_search_abspath=unknown
-                    eval acx_prog_exec=\$acx_arg_${acx_arg_name}
-                    case $acx_prog_exec in #(
+                                          for mkh_arg_name in AR RANLIB; do
+                 case " $mkh_subdir_cmake_vars_to_transform " in #(
+  *" $mkh_arg_name "*) :
+    mkh_prog_search_abspath=unknown
+                    eval mkh_prog_exec=\$mkh_arg_${mkh_arg_name}
+                    case $mkh_prog_exec in #(
   *[\\/]*) :
-    if as_fn_executable_p $acx_prog_exec; then :
-  acx_prog_search_abspath=$acx_prog_exec
+    if as_fn_executable_p $mkh_prog_exec; then :
+  mkh_prog_search_abspath=$mkh_prog_exec
 fi ;; #(
   *) :
     as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
@@ -1840,102 +1840,102 @@ for as_dir in $PATH
 do
   IFS=$as_save_IFS
   test -z "$as_dir" && as_dir=.
-    if as_fn_executable_p "$as_dir/$acx_prog_exec"; then :
-  acx_prog_search_abspath="$as_dir/$acx_prog_exec"
+    if as_fn_executable_p "$as_dir/$mkh_prog_exec"; then :
+  mkh_prog_search_abspath="$as_dir/$mkh_prog_exec"
                              break
 fi
   done
 IFS=$as_save_IFS
  ;;
 esac
-                    if test "x$acx_prog_search_abspath" = xunknown; then :
-  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: unable to convert argument $acx_arg_name to its CMake equivalent(s): absolute path to \"$acx_prog_exec\" is not found" >&5
-$as_echo "$as_me: WARNING: unable to convert argument $acx_arg_name to its CMake equivalent(s): absolute path to \"$acx_prog_exec\" is not found" >&2;}
+                    if test "x$mkh_prog_search_abspath" = xunknown; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: unable to convert argument $mkh_arg_name to its CMake equivalent(s): absolute path to \"$mkh_prog_exec\" is not found" >&5
+$as_echo "$as_me: WARNING: unable to convert argument $mkh_arg_name to its CMake equivalent(s): absolute path to \"$mkh_prog_exec\" is not found" >&2;}
 else
-  eval acx_arg_${acx_arg_name}_ABSPATH=\$acx_prog_search_abspath
-                       as_fn_append acx_subdir_cmake_vars_to_transform " ${acx_arg_name}_ABSPATH"
+  eval mkh_arg_${mkh_arg_name}_ABSPATH=\$mkh_prog_search_abspath
+                       as_fn_append mkh_subdir_cmake_vars_to_transform " ${mkh_arg_name}_ABSPATH"
 fi ;; #(
   *) :
      ;;
 esac
                done
-                           case " $acx_subdir_cmake_vars_to_transform " in #(
+                           case " $mkh_subdir_cmake_vars_to_transform " in #(
   *' CPPFLAGS '*) :
-    for acx_arg_name in CFLAGS CXXFLAGS; do
-                 case " $acx_subdir_cmake_vars_to_transform " in #(
-  *" $acx_arg_name "*) :
-    as_fn_append acx_arg_${acx_arg_name} " $acx_arg_CPPFLAGS" ;; #(
+    for mkh_arg_name in CFLAGS CXXFLAGS; do
+                 case " $mkh_subdir_cmake_vars_to_transform " in #(
+  *" $mkh_arg_name "*) :
+    as_fn_append mkh_arg_${mkh_arg_name} " $mkh_arg_CPPFLAGS" ;; #(
   *) :
-    eval acx_arg_${acx_arg_name}=\$acx_arg_CPPFLAGS
-                    as_fn_append acx_subdir_cmake_vars_to_transform " $acx_arg_name" ;;
+    eval mkh_arg_${mkh_arg_name}=\$mkh_arg_CPPFLAGS
+                    as_fn_append mkh_subdir_cmake_vars_to_transform " $mkh_arg_name" ;;
 esac
                done ;; #(
   *) :
      ;;
 esac
                         if test "x$prefix" = xNONE; then :
-  acx_arg_PREFIX=$ac_default_prefix
+  mkh_arg_PREFIX=$ac_default_prefix
 else
-  acx_arg_PREFIX=$prefix
+  mkh_arg_PREFIX=$prefix
 fi
-            as_fn_append acx_subdir_cmake_vars_to_transform ' PREFIX'
-            for acx_arg_name in $acx_subdir_cmake_vars_to_transform; do
-              acx_subdir_cmake_vars_to_set=
-              case $acx_arg_name in #(
+            as_fn_append mkh_subdir_cmake_vars_to_transform ' PREFIX'
+            for mkh_arg_name in $mkh_subdir_cmake_vars_to_transform; do
+              mkh_subdir_cmake_vars_to_set=
+              case $mkh_arg_name in #(
   CFLAGS) :
-    acx_subdir_cmake_vars_to_set='CMAKE_C_FLAGS' ;; #(
+    mkh_subdir_cmake_vars_to_set='CMAKE_C_FLAGS' ;; #(
   CXXFLAGS) :
-    acx_subdir_cmake_vars_to_set='CMAKE_CXX_FLAGS' ;; #(
+    mkh_subdir_cmake_vars_to_set='CMAKE_CXX_FLAGS' ;; #(
   CPPFLAGS) :
-    acx_subdir_cmake_vars_to_set='' ;; #(
+    mkh_subdir_cmake_vars_to_set='' ;; #(
   FCFLAGS) :
-    acx_subdir_cmake_vars_to_set='CMAKE_Fortran_FLAGS' ;; #(
+    mkh_subdir_cmake_vars_to_set='CMAKE_Fortran_FLAGS' ;; #(
   LDFLAGS) :
-    acx_subdir_cmake_vars_to_set='CMAKE_EXE_LINKER_FLAGS CMAKE_MODULE_LINKER_FLAGS CMAKE_SHARED_LINKER_FLAGS' ;; #(
+    mkh_subdir_cmake_vars_to_set='CMAKE_EXE_LINKER_FLAGS CMAKE_MODULE_LINKER_FLAGS CMAKE_SHARED_LINKER_FLAGS' ;; #(
   LIBS) :
-    acx_subdir_cmake_vars_to_set='CMAKE_C_STANDARD_LIBRARIES CMAKE_CXX_STANDARD_LIBRARIES CMAKE_Fortran_STANDARD_LIBRARIES' ;; #(
+    mkh_subdir_cmake_vars_to_set='CMAKE_C_STANDARD_LIBRARIES CMAKE_CXX_STANDARD_LIBRARIES CMAKE_Fortran_STANDARD_LIBRARIES' ;; #(
   CC) :
-    acx_subdir_cmake_vars_to_set='' ;; #(
+    mkh_subdir_cmake_vars_to_set='' ;; #(
   CXX) :
-    acx_subdir_cmake_vars_to_set='' ;; #(
+    mkh_subdir_cmake_vars_to_set='' ;; #(
   FC) :
-    acx_subdir_cmake_vars_to_set='' ;; #(
+    mkh_subdir_cmake_vars_to_set='' ;; #(
   AR) :
-    acx_subdir_cmake_vars_to_set='' ;; #(
+    mkh_subdir_cmake_vars_to_set='' ;; #(
   RANLIB) :
-    acx_subdir_cmake_vars_to_set='' ;; #(
+    mkh_subdir_cmake_vars_to_set='' ;; #(
   CC_EXEC) :
-    acx_subdir_cmake_vars_to_set='CMAKE_C_COMPILER' ;; #(
+    mkh_subdir_cmake_vars_to_set='CMAKE_C_COMPILER' ;; #(
   CXX_EXEC) :
-    acx_subdir_cmake_vars_to_set='CMAKE_CXX_COMPILER' ;; #(
+    mkh_subdir_cmake_vars_to_set='CMAKE_CXX_COMPILER' ;; #(
   FC_EXEC) :
-    acx_subdir_cmake_vars_to_set='CMAKE_Fortran_COMPILER' ;; #(
+    mkh_subdir_cmake_vars_to_set='CMAKE_Fortran_COMPILER' ;; #(
   AR_ABSPATH) :
-    acx_subdir_cmake_vars_to_set='CMAKE_AR CMAKE_C_COMPILER_AR CMAKE_CXX_COMPILER_AR CMAKE_Fortran_COMPILER_AR' ;; #(
+    mkh_subdir_cmake_vars_to_set='CMAKE_AR CMAKE_C_COMPILER_AR CMAKE_CXX_COMPILER_AR CMAKE_Fortran_COMPILER_AR' ;; #(
   RANLIB_ABSPATH) :
-    acx_subdir_cmake_vars_to_set='CMAKE_RANLIB CMAKE_C_COMPILER_RANLIB CMAKE_CXX_COMPILER_RANLIB CMAKE_Fortran_COMPILER_RANLIB' ;; #(
+    mkh_subdir_cmake_vars_to_set='CMAKE_RANLIB CMAKE_C_COMPILER_RANLIB CMAKE_CXX_COMPILER_RANLIB CMAKE_Fortran_COMPILER_RANLIB' ;; #(
   PREFIX) :
-    acx_subdir_cmake_vars_to_set='CMAKE_INSTALL_PREFIX' ;; #(
+    mkh_subdir_cmake_vars_to_set='CMAKE_INSTALL_PREFIX' ;; #(
   *) :
      ;;
 esac
-              if test -n "$acx_subdir_cmake_vars_to_set"; then :
-  eval acx_subdir_quoted_value=\$acx_arg_${acx_arg_name}
-                 case $acx_subdir_quoted_value in #(
+              if test -n "$mkh_subdir_cmake_vars_to_set"; then :
+  eval mkh_subdir_quoted_value=\$mkh_arg_${mkh_arg_name}
+                 case $mkh_subdir_quoted_value in #(
   *\'*) :
-    acx_subdir_quoted_value=`$as_echo "$acx_subdir_quoted_value" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+    mkh_subdir_quoted_value=`$as_echo "$mkh_subdir_quoted_value" | sed "s/'/'\\\\\\\\''/g"` ;; #(
   *) :
      ;;
 esac
-                 for acx_subdir_cmake_var in $acx_subdir_cmake_vars_to_set; do
-                   as_fn_append acx_subdir_pre_adjusted_cmake_args " '-D$acx_subdir_cmake_var=$acx_subdir_quoted_value'"
+                 for mkh_subdir_cmake_var in $mkh_subdir_cmake_vars_to_set; do
+                   as_fn_append mkh_subdir_pre_adjusted_cmake_args " '-D$mkh_subdir_cmake_var=$mkh_subdir_quoted_value'"
                  done
 fi
-              { eval acx_arg_${acx_arg_name}=; unset acx_arg_${acx_arg_name};}
+              { eval mkh_arg_${mkh_arg_name}=; unset mkh_arg_${mkh_arg_name};}
             done
 
 fi
-} # acx_subdir_pre_adjust_cmake_args
+} # mkh_subdir_pre_adjust_cmake_args
 cat >config.log <<_ACEOF
 This file contains any messages produced by compilers while
 running configure, to aid debugging if configure makes a mistake.
@@ -2397,28 +2397,28 @@ case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for the fully qualified domain name of the host" >&5
 $as_echo_n "checking for the fully qualified domain name of the host... " >&6; }
-if ${acx_cv_host_fqdn+:} false; then :
+if ${mkh_cv_host_fqdn+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-        acx_cv_host_fqdn=`hostname -f 2>/dev/null`
-      if test $? -ne 0 || test -z "$acx_cv_host_fqdn"; then :
-  acx_cv_host_fqdn=unknown
-         acx_hostname=`(hostname || uname -n) 2>/dev/null | sed 1q`
-         test -n "$acx_hostname" || acx_hostname=$HOSTNAME
-         test -n "$acx_hostname" || acx_hostname=`cat /proc/sys/kernel/hostname 2>/dev/null`
-         test -n "$acx_hostname" && acx_cv_host_fqdn=`host "$acx_hostname" 2>/dev/null | awk '/has address/ {print $1}' 2>/dev/null`
+        mkh_cv_host_fqdn=`hostname -f 2>/dev/null`
+      if test $? -ne 0 || test -z "$mkh_cv_host_fqdn"; then :
+  mkh_cv_host_fqdn=unknown
+         mkh_hostname=`(hostname || uname -n) 2>/dev/null | sed 1q`
+         test -n "$mkh_hostname" || mkh_hostname=$HOSTNAME
+         test -n "$mkh_hostname" || mkh_hostname=`cat /proc/sys/kernel/hostname 2>/dev/null`
+         test -n "$mkh_hostname" && mkh_cv_host_fqdn=`host "$mkh_hostname" 2>/dev/null | awk '/has address/ {print $1}' 2>/dev/null`
 fi
-      test -n "$acx_cv_host_fqdn" || acx_cv_host_fqdn=unknown
+      test -n "$mkh_cv_host_fqdn" || mkh_cv_host_fqdn=unknown
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_host_fqdn" >&5
-$as_echo "$acx_cv_host_fqdn" >&6; }
-   if test "x$acx_cv_host_fqdn" = xunknown; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $mkh_cv_host_fqdn" >&5
+$as_echo "$mkh_cv_host_fqdn" >&6; }
+   if test "x$mkh_cv_host_fqdn" = xunknown; then :
   { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
 as_fn_error $? "unable to detect the fully qualified domain name of the host
 See \`config.log' for more details" "$LINENO" 5; }
 else
-  host_fqdn=$acx_cv_host_fqdn
+  host_fqdn=$mkh_cv_host_fqdn
 
 fi
 
@@ -2443,35 +2443,35 @@ esac
 esac
       { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether \$BUILD_ENV is accepted by '$SHELL -c'" >&5
 $as_echo_n "checking whether \$BUILD_ENV is accepted by '$SHELL -c'... " >&6; }
-      acx_build_env_quoted=$BUILD_ENV
-      case $acx_build_env_quoted in #(
+      mkh_build_env_quoted=$BUILD_ENV
+      case $mkh_build_env_quoted in #(
   *\'*) :
-    acx_build_env_quoted=`$as_echo "$acx_build_env_quoted" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+    mkh_build_env_quoted=`$as_echo "$mkh_build_env_quoted" | sed "s/'/'\\\\\\\\''/g"` ;; #(
   *) :
      ;;
 esac
-      $as_echo "$as_me:${as_lineno-$LINENO}: $SHELL -c '$acx_build_env_quoted'" >&5
-      eval \$SHELL -c "'$acx_build_env_quoted'" >&5 2>&1
+      $as_echo "$as_me:${as_lineno-$LINENO}: $SHELL -c '$mkh_build_env_quoted'" >&5
+      eval \$SHELL -c "'$mkh_build_env_quoted'" >&5 2>&1
       if test $? -eq 0; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
-         acx_build_env_vars_to_check=
+         mkh_build_env_vars_to_check=
          eval "set dummy $ac_configure_args"; shift
          while test $# != 0; do
-           acx_arg=$1
-case $acx_arg in #(
+           mkh_arg=$1
+case $mkh_arg in #(
   -D) :
     test 2 -gt $# || shift ;; #(
   -*) :
      ;; #(
   *=*) :
-                acx_arg_name=`expr "x$acx_arg" : 'x\([^=]*\)='`
-            acx_arg_cmd_value=`expr "x$acx_arg" : '[^=]*=\(.*\)'`
-            eval acx_arg_${acx_arg_name}=\$$acx_arg_name
-            if test "x$acx_arg_cmd_value" = x"`eval 'as_val=${'acx_arg_${acx_arg_name}'};$as_echo "$as_val"'`"; then :
-  as_fn_append acx_build_env_vars_to_check " $acx_arg_name"
+                mkh_arg_name=`expr "x$mkh_arg" : 'x\([^=]*\)='`
+            mkh_arg_cmd_value=`expr "x$mkh_arg" : '[^=]*=\(.*\)'`
+            eval mkh_arg_${mkh_arg_name}=\$$mkh_arg_name
+            if test "x$mkh_arg_cmd_value" = x"`eval 'as_val=${'mkh_arg_${mkh_arg_name}'};$as_echo "$as_val"'`"; then :
+  as_fn_append mkh_build_env_vars_to_check " $mkh_arg_name"
 else
-  { eval acx_arg_${acx_arg_name}=; unset acx_arg_${acx_arg_name};}
+  { eval mkh_arg_${mkh_arg_name}=; unset mkh_arg_${mkh_arg_name};}
 fi ;; #(
   *) :
      ;;
@@ -2485,14 +2485,14 @@ $as_echo_n "checking whether \$BUILD_ENV is accepted by the current shell... " >
          if test $? -eq 0; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
-            if test -n "$acx_build_env_vars_to_check"; then :
-  for acx_arg_name in $acx_build_env_vars_to_check; do
-                 if test x"`eval 'as_val=${'$acx_arg_name'};$as_echo "$as_val"'`" != \
-x"`eval 'as_val=${'acx_arg_${acx_arg_name}'};$as_echo "$as_val"'`"; then :
-  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: \$BUILD_ENV has modified variable '$acx_arg_name', which was set on the command line to \"`eval 'as_val=${'acx_arg_${acx_arg_name}'};$as_echo "$as_val"'`\": new value of the variable is \"`eval 'as_val=${'$acx_arg_name'};$as_echo "$as_val"'`\"" >&5
-$as_echo "$as_me: WARNING: \$BUILD_ENV has modified variable '$acx_arg_name', which was set on the command line to \"`eval 'as_val=${'acx_arg_${acx_arg_name}'};$as_echo "$as_val"'`\": new value of the variable is \"`eval 'as_val=${'$acx_arg_name'};$as_echo "$as_val"'`\"" >&2;}
+            if test -n "$mkh_build_env_vars_to_check"; then :
+  for mkh_arg_name in $mkh_build_env_vars_to_check; do
+                 if test x"`eval 'as_val=${'$mkh_arg_name'};$as_echo "$as_val"'`" != \
+x"`eval 'as_val=${'mkh_arg_${mkh_arg_name}'};$as_echo "$as_val"'`"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: \$BUILD_ENV has modified variable '$mkh_arg_name', which was set on the command line to \"`eval 'as_val=${'mkh_arg_${mkh_arg_name}'};$as_echo "$as_val"'`\": new value of the variable is \"`eval 'as_val=${'$mkh_arg_name'};$as_echo "$as_val"'`\"" >&5
+$as_echo "$as_me: WARNING: \$BUILD_ENV has modified variable '$mkh_arg_name', which was set on the command line to \"`eval 'as_val=${'mkh_arg_${mkh_arg_name}'};$as_echo "$as_val"'`\": new value of the variable is \"`eval 'as_val=${'$mkh_arg_name'};$as_echo "$as_val"'`\"" >&2;}
 fi
-                 { eval acx_arg_${acx_arg_name}=; unset acx_arg_${acx_arg_name};}
+                 { eval mkh_arg_${mkh_arg_name}=; unset mkh_arg_${mkh_arg_name};}
                done
 fi
 else
@@ -2502,15 +2502,15 @@ fi
 else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
-         acx_failMsg="failed to initialize '$SHELL' with the provided BUILD_ENV='$BUILD_ENV'
+         mkh_failMsg="failed to initialize '$SHELL' with the provided BUILD_ENV='$BUILD_ENV'
 A possible workaround for the problem is to re-run the configuration with the following command:
 CONFIG_SHELL=\$SHELL \$SHELL $as_myself"
-         for acx_config_arg in "$@"; do
-           as_fn_append acx_failMsg " '$acx_config_arg'"
+         for mkh_config_arg in "$@"; do
+           as_fn_append mkh_failMsg " '$mkh_config_arg'"
          done
          { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
-as_fn_error $? "$acx_failMsg
+as_fn_error $? "$mkh_failMsg
 See \`config.log' for more details" "$LINENO" 5; }
 fi
 fi
@@ -2523,8 +2523,8 @@ else
 fi
 
 
-acx_save_cross_compiling=$cross_compiling
-   acx_save_ac_tool_warned=$ac_tool_warned
+mkh_save_cross_compiling=$cross_compiling
+   mkh_save_ac_tool_warned=$ac_tool_warned
    cross_compiling=yes
    ac_tool_warned=yes
 
@@ -2936,16 +2936,16 @@ ac_link='$FC -o conftest$ac_exeext $FCFLAGS $LDFLAGS $ac_fcflags_srcext conftest
 ac_compiler_gnu=$ac_cv_fc_compiler_gnu
 
 
-   acx_ext_save=$ac_ext
+   mkh_ext_save=$ac_ext
                { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler flag needed to compile preprocessed .f90 files" >&5
 $as_echo_n "checking for Fortran compiler flag needed to compile preprocessed .f90 files... " >&6; }
-if ${acx_cv_fc_pp_srcext_f90+:} false; then :
+if ${mkh_cv_fc_pp_srcext_f90+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_ext=f90
 ac_fcflags_pp_srcext_save=$ac_fcflags_srcext
 ac_fcflags_srcext=
-acx_cv_fc_pp_srcext_f90=unknown
+mkh_cv_fc_pp_srcext_f90=unknown
 case $ac_ext in #(
   [fF]77) ac_try=f77-cpp-input;; #(
   *) ac_try=f95-cpp-input;;
@@ -2975,7 +2975,7 @@ _ACEOF
 if ac_fn_fc_try_compile "$LINENO"; then :
 
 else
-  acx_cv_fc_pp_srcext_f90=$ac_flag; break
+  mkh_cv_fc_pp_srcext_f90=$ac_flag; break
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 fi
@@ -2985,25 +2985,25 @@ rm -f conftest.$ac_objext conftest.f90
 ac_fcflags_srcext=$ac_fcflags_pp_srcext_save
 
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_pp_srcext_f90" >&5
-$as_echo "$acx_cv_fc_pp_srcext_f90" >&6; }
-if test "x$acx_cv_fc_pp_srcext_f90" = xunknown; then
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $mkh_cv_fc_pp_srcext_f90" >&5
+$as_echo "$mkh_cv_fc_pp_srcext_f90" >&6; }
+if test "x$mkh_cv_fc_pp_srcext_f90" = xunknown; then
   :
 else
   ac_fc_srcext=f90
-  if test "x$acx_cv_fc_pp_srcext_f90" = xnone; then
+  if test "x$mkh_cv_fc_pp_srcext_f90" = xnone; then
     ac_fcflags_srcext=""
     FCFLAGS_f90=""
   else
-    ac_fcflags_srcext=$acx_cv_fc_pp_srcext_f90
-    FCFLAGS_f90=$acx_cv_fc_pp_srcext_f90
+    ac_fcflags_srcext=$mkh_cv_fc_pp_srcext_f90
+    FCFLAGS_f90=$mkh_cv_fc_pp_srcext_f90
   fi
 
 
 fi
 
-            if test "x$acx_cv_fc_pp_srcext_f90" = xunknown; then :
-  ac_ext=$acx_ext_save
+            if test "x$mkh_cv_fc_pp_srcext_f90" = xunknown; then :
+  ac_ext=$mkh_ext_save
       { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
 as_fn_error $? "unable to detect Fortran compiler flag needed to compile preprocessed .f90 files
@@ -3015,13 +3015,13 @@ fi
 
       { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler vendor" >&5
 $as_echo_n "checking for Fortran compiler vendor... " >&6; }
-if ${acx_cv_fc_compiler_vendor+:} false; then :
+if ${mkh_cv_fc_compiler_vendor+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   if $FC --version 2>&1 | grep '^AMD clang version' >/dev/null 2>&1; then :
-  acx_cv_fc_compiler_vendor=amd
+  mkh_cv_fc_compiler_vendor=amd
 else
-  acx_compiler_vendor_options="intel: __INTEL_COMPILER,__INTEL_LLVM_COMPILER
+  mkh_compiler_vendor_options="intel: __INTEL_COMPILER,__INTEL_LLVM_COMPILER
 cray: _CRAYFTN
 nec: __NEC__
 portland: __PGI
@@ -3031,139 +3031,139 @@ gnu: __GFORTRAN__
 ibm: __xlC__
 flang: __FLANG,__flang__
 unknown: CHOKEME"
-      acx_success=no
-      for acx_compiler_vendor_test in $acx_compiler_vendor_options; do
-        case $acx_compiler_vendor_test in #(
+      mkh_success=no
+      for mkh_compiler_vendor_test in $mkh_compiler_vendor_options; do
+        case $mkh_compiler_vendor_test in #(
   *:) :
-    acx_compiler_vendor_candidate=$acx_compiler_vendor_test
+    mkh_compiler_vendor_candidate=$mkh_compiler_vendor_test
                  continue ;; #(
   *) :
-    acx_compiler_vendor_macro_defs="defined("`echo $acx_compiler_vendor_test | sed 's%,%) || defined(%g'`")" ;;
+    mkh_compiler_vendor_macro_defs="defined("`echo $mkh_compiler_vendor_test | sed 's%,%) || defined(%g'`")" ;;
 esac
         cat > conftest.$ac_ext <<_ACEOF
       program main
-#if !($acx_compiler_vendor_macro_defs)
+#if !($mkh_compiler_vendor_macro_defs)
       choke me
 #endif
       end
 _ACEOF
 if ac_fn_fc_try_compile "$LINENO"; then :
-  acx_success=yes
+  mkh_success=yes
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-        test "x$acx_success" = xyes && break
+        test "x$mkh_success" = xyes && break
       done
-      acx_cv_fc_compiler_vendor=`echo $acx_compiler_vendor_candidate | cut -d: -f1`
+      mkh_cv_fc_compiler_vendor=`echo $mkh_compiler_vendor_candidate | cut -d: -f1`
 fi
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_compiler_vendor" >&5
-$as_echo "$acx_cv_fc_compiler_vendor" >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $mkh_cv_fc_compiler_vendor" >&5
+$as_echo "$mkh_cv_fc_compiler_vendor" >&6; }
       { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler version" >&5
 $as_echo_n "checking for Fortran compiler version... " >&6; }
-if ${acx_cv_fc_compiler_version+:} false; then :
+if ${mkh_cv_fc_compiler_version+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  acx_cv_fc_compiler_version=unknown
-      case $acx_cv_fc_compiler_vendor in #(
-        intel) acx_cv_fc_compiler_version=`$FC --version 2>/dev/null | sed -n 's/^ifort (IFORT) \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`
-   if test -n "$acx_cv_fc_compiler_version"; then :
-  acx_cv_fc_compiler_version="classic:${acx_cv_fc_compiler_version}"
+  mkh_cv_fc_compiler_version=unknown
+      case $mkh_cv_fc_compiler_vendor in #(
+        intel) mkh_cv_fc_compiler_version=`$FC --version 2>/dev/null | sed -n 's/^ifort (IFORT) \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`
+   if test -n "$mkh_cv_fc_compiler_version"; then :
+  mkh_cv_fc_compiler_version="classic:${mkh_cv_fc_compiler_version}"
 else
-  acx_cv_fc_compiler_version=`$FC --version 2>/dev/null | sed -n 's/^ifx (IFORT) \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`
-      if test -n "$acx_cv_fc_compiler_version"; then :
-  acx_cv_fc_compiler_version="oneapi:${acx_cv_fc_compiler_version}"
+  mkh_cv_fc_compiler_version=`$FC --version 2>/dev/null | sed -n 's/^ifx (IFORT) \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`
+      if test -n "$mkh_cv_fc_compiler_version"; then :
+  mkh_cv_fc_compiler_version="oneapi:${mkh_cv_fc_compiler_version}"
 fi
 fi
-   if test "`echo $acx_cv_fc_compiler_version | sed 's/^.*://' | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
-  acx_cv_fc_compiler_version=unknown
+   if test "`echo $mkh_cv_fc_compiler_version | sed 's/^.*://' | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
+  mkh_cv_fc_compiler_version=unknown
 fi ;; #(
-        cray) acx_cv_fc_compiler_version=`$FC -V 2>&1 | sed -n 's/.*ersion \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`
-   if test "`echo $acx_cv_fc_compiler_version | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
-  acx_cv_fc_compiler_version=unknown
+        cray) mkh_cv_fc_compiler_version=`$FC -V 2>&1 | sed -n 's/.*ersion \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`
+   if test "`echo $mkh_cv_fc_compiler_version | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
+  mkh_cv_fc_compiler_version=unknown
 fi ;; #(
-        nec) acx_cv_fc_compiler_version=`$FC --version 2>&1 | sed -n 's/^nfort (NFORT) \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`
-   if test "`echo $acx_cv_fc_compiler_version | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
-  acx_cv_fc_compiler_version=unknown
+        nec) mkh_cv_fc_compiler_version=`$FC --version 2>&1 | sed -n 's/^nfort (NFORT) \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`
+   if test "`echo $mkh_cv_fc_compiler_version | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
+  mkh_cv_fc_compiler_version=unknown
 fi ;; #(
-        portland) acx_cv_fc_compiler_version=`$FC -V 2>/dev/null | sed -n 's/\(pgfortran\|pgf90\) \([0-9][0-9]*\.[0-9][0-9]*\)-\([0-9][0-9]*\).*/\2.\3/p'`
-   if test -n "$acx_cv_fc_compiler_version"; then :
-  acx_cv_fc_compiler_version="pg:${acx_cv_fc_compiler_version}"
+        portland) mkh_cv_fc_compiler_version=`$FC -V 2>/dev/null | sed -n 's/\(pgfortran\|pgf90\) \([0-9][0-9]*\.[0-9][0-9]*\)-\([0-9][0-9]*\).*/\2.\3/p'`
+   if test -n "$mkh_cv_fc_compiler_version"; then :
+  mkh_cv_fc_compiler_version="pg:${mkh_cv_fc_compiler_version}"
 else
-  acx_cv_fc_compiler_version=`$FC -V 2>/dev/null | sed -n 's/nvfortran \([0-9][0-9]*\.[0-9][0-9]*\)-\([0-9][0-9]*\).*/\1.\2/p'`
-      if test -n "$acx_cv_fc_compiler_version"; then :
-  acx_cv_fc_compiler_version="nv:${acx_cv_fc_compiler_version}"
+  mkh_cv_fc_compiler_version=`$FC -V 2>/dev/null | sed -n 's/nvfortran \([0-9][0-9]*\.[0-9][0-9]*\)-\([0-9][0-9]*\).*/\1.\2/p'`
+      if test -n "$mkh_cv_fc_compiler_version"; then :
+  mkh_cv_fc_compiler_version="nv:${mkh_cv_fc_compiler_version}"
 fi
 fi
-   if test "`echo $acx_cv_fc_compiler_version | sed 's/^.*://' | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
-  acx_cv_fc_compiler_version=unknown
+   if test "`echo $mkh_cv_fc_compiler_version | sed 's/^.*://' | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
+  mkh_cv_fc_compiler_version=unknown
 fi ;; #(
-        nag) acx_cv_fc_compiler_version=`$FC -V 2>&1 | sed -n 's/^NAG Fortran Compiler Release \([0-9][0-9]*\.[0-9][0-9]*\).*Build \([0-9][0-9]*\)/\1.\2/p'`
-   if test "`echo $acx_cv_fc_compiler_version | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
-  acx_cv_fc_compiler_version=unknown
+        nag) mkh_cv_fc_compiler_version=`$FC -V 2>&1 | sed -n 's/^NAG Fortran Compiler Release \([0-9][0-9]*\.[0-9][0-9]*\).*Build \([0-9][0-9]*\)/\1.\2/p'`
+   if test "`echo $mkh_cv_fc_compiler_version | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
+  mkh_cv_fc_compiler_version=unknown
 fi ;; #(
-        gnu) acx_cv_fc_compiler_version=`$FC -dumpfullversion 2>/dev/null | sed -n '/^[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*$/p'`
-   if test -z "$acx_cv_fc_compiler_version"; then :
-  acx_cv_fc_compiler_version=`$FC -dumpversion 2>/dev/null | sed -n '/^[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*$/p'`
+        gnu) mkh_cv_fc_compiler_version=`$FC -dumpfullversion 2>/dev/null | sed -n '/^[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*$/p'`
+   if test -z "$mkh_cv_fc_compiler_version"; then :
+  mkh_cv_fc_compiler_version=`$FC -dumpversion 2>/dev/null | sed -n '/^[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*$/p'`
 fi
-   if test "`echo $acx_cv_fc_compiler_version | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
-  acx_cv_fc_compiler_version=unknown
+   if test "`echo $mkh_cv_fc_compiler_version | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
+  mkh_cv_fc_compiler_version=unknown
 fi ;; #(
-        amd) acx_cv_fc_compiler_version=`$FC --version 2>/dev/null | sed -n 's/.*AOCC_\([0-9][0-9]*\)[._]\([0-9][0-9]*\)[._]\([0-9][0-9]*\).*/\1.\2.\3/p'`
-   if test "`echo $acx_cv_fc_compiler_version | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
-  acx_cv_fc_compiler_version=unknown
+        amd) mkh_cv_fc_compiler_version=`$FC --version 2>/dev/null | sed -n 's/.*AOCC_\([0-9][0-9]*\)[._]\([0-9][0-9]*\)[._]\([0-9][0-9]*\).*/\1.\2.\3/p'`
+   if test "`echo $mkh_cv_fc_compiler_version | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
+  mkh_cv_fc_compiler_version=unknown
 fi ;; #(
-        flang) acx_cv_fc_compiler_version=`$FC -V 2>&1 | sed -n 's/.*version \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\)/\1/p'`
-   if test -n "$acx_cv_fc_compiler_version"; then :
-  acx_cv_fc_compiler_version="f18:${acx_cv_fc_compiler_version}"
+        flang) mkh_cv_fc_compiler_version=`$FC -V 2>&1 | sed -n 's/.*version \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\)/\1/p'`
+   if test -n "$mkh_cv_fc_compiler_version"; then :
+  mkh_cv_fc_compiler_version="f18:${mkh_cv_fc_compiler_version}"
 else
-  acx_cv_fc_compiler_version=`$FC --version 2>/dev/null | sed -n 's/.*version \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`
-      if test -n "$acx_cv_fc_compiler_version"; then :
-  acx_cv_fc_compiler_version="classic:${acx_cv_fc_compiler_version}"
+  mkh_cv_fc_compiler_version=`$FC --version 2>/dev/null | sed -n 's/.*version \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p'`
+      if test -n "$mkh_cv_fc_compiler_version"; then :
+  mkh_cv_fc_compiler_version="classic:${mkh_cv_fc_compiler_version}"
 fi
 fi
-   if test "`echo $acx_cv_fc_compiler_version | sed 's/^.*://' | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
-  acx_cv_fc_compiler_version=unknown
+   if test "`echo $mkh_cv_fc_compiler_version | sed 's/^.*://' | sed 's/[0-9]//g' 2>/dev/null`" != '..'; then :
+  mkh_cv_fc_compiler_version=unknown
 fi ;; #(
 
-        *) : acx_cv_fc_compiler_version=unknown ;;
+        *) : mkh_cv_fc_compiler_version=unknown ;;
       esac
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_compiler_version" >&5
-$as_echo "$acx_cv_fc_compiler_version" >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $mkh_cv_fc_compiler_version" >&5
+$as_echo "$mkh_cv_fc_compiler_version" >&6; }
 
-FC_VENDOR=$acx_cv_fc_compiler_vendor
+FC_VENDOR=$mkh_cv_fc_compiler_vendor
 
 
 if test "x$enable_rpaths" = xyes; then :
      { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler flag needed to add a directory to the runtime library search path" >&5
 $as_echo_n "checking for Fortran compiler flag needed to add a directory to the runtime library search path... " >&6; }
-if ${acx_cv_fc_rpath_flag+:} false; then :
+if ${mkh_cv_fc_rpath_flag+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  case $acx_cv_fc_compiler_vendor in #(
+  case $mkh_cv_fc_compiler_vendor in #(
   nag) :
-    acx_cv_fc_rpath_flag="-Wl,-Wl,,-rpath,," ;; #(
+    mkh_cv_fc_rpath_flag="-Wl,-Wl,,-rpath,," ;; #(
   *) :
-    acx_cv_fc_rpath_flag="-Wl,-rpath," ;;
+    mkh_cv_fc_rpath_flag="-Wl,-rpath," ;;
 esac
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_rpath_flag" >&5
-$as_echo "$acx_cv_fc_rpath_flag" >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $mkh_cv_fc_rpath_flag" >&5
+$as_echo "$mkh_cv_fc_rpath_flag" >&6; }
 
       { $as_echo "$as_me:${as_lineno-$LINENO}: checking for the name of the environment variable specifying the search paths for shared libraries" >&5
 $as_echo_n "checking for the name of the environment variable specifying the search paths for shared libraries... " >&6; }
-if ${acx_cv_shlib_path_var+:} false; then :
+if ${mkh_cv_shlib_path_var+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   case $host_os in #(
   darwin*) :
-    acx_cv_shlib_path_var=DYLD_LIBRARY_PATH ;; #(
+    mkh_cv_shlib_path_var=DYLD_LIBRARY_PATH ;; #(
   *) :
-    acx_cv_shlib_path_var=LD_LIBRARY_PATH ;;
+    mkh_cv_shlib_path_var=LD_LIBRARY_PATH ;;
 esac
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_shlib_path_var" >&5
-$as_echo "$acx_cv_shlib_path_var" >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $mkh_cv_shlib_path_var" >&5
+$as_echo "$mkh_cv_shlib_path_var" >&6; }
    eval link_cmd="\"$ac_link\""
    mkhelper_libdirs=
    mkh_extract_args_args=`echo $link_cmd`
@@ -3181,28 +3181,28 @@ esac
    for mkhelper_libdir in $mkhelper_libdirs; do
      if test -d "$mkhelper_libdir"; then :
   case ' '$mkhelper_rpath_flags' ' in #(
-  *' '"$acx_cv_fc_rpath_flag$mkhelper_libdir"' '*) :
+  *' '"$mkh_cv_fc_rpath_flag$mkhelper_libdir"' '*) :
      ;; #(
   ' '' ') :
-    as_fn_append mkhelper_rpath_flags "$acx_cv_fc_rpath_flag$mkhelper_libdir" ;; #(
+    as_fn_append mkhelper_rpath_flags "$mkh_cv_fc_rpath_flag$mkhelper_libdir" ;; #(
   *) :
-    as_fn_append mkhelper_rpath_flags ' '; as_fn_append mkhelper_rpath_flags "$acx_cv_fc_rpath_flag$mkhelper_libdir" ;;
+    as_fn_append mkhelper_rpath_flags ' '; as_fn_append mkhelper_rpath_flags "$mkh_cv_fc_rpath_flag$mkhelper_libdir" ;;
 esac
-        case ':'`eval 'as_val=${'$acx_cv_shlib_path_var'};$as_echo "$as_val"'`':' in #(
+        case ':'`eval 'as_val=${'$mkh_cv_shlib_path_var'};$as_echo "$as_val"'`':' in #(
   *':'"$mkhelper_libdir"':'*) :
      ;; #(
   ':'':') :
-    as_fn_append $acx_cv_shlib_path_var "$mkhelper_libdir" ;; #(
+    as_fn_append $mkh_cv_shlib_path_var "$mkhelper_libdir" ;; #(
   *) :
-    as_fn_append $acx_cv_shlib_path_var ':'; as_fn_append $acx_cv_shlib_path_var "$mkhelper_libdir" ;;
+    as_fn_append $mkh_cv_shlib_path_var ':'; as_fn_append $mkh_cv_shlib_path_var "$mkhelper_libdir" ;;
 esac
 fi
    done
    if test -n "$mkhelper_rpath_flags"; then :
-  acx_shlib_rpath_flags_check_result=no
+  mkh_shlib_rpath_flags_check_result=no
    { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether Fortran compiler accepts the automatically generated RPATH flags" >&5
 $as_echo_n "checking whether Fortran compiler accepts the automatically generated RPATH flags... " >&6; }
-   acx_save_LDFLAGS=$LDFLAGS
+   mkh_save_LDFLAGS=$LDFLAGS
       LDFLAGS="$mkhelper_rpath_flags $LDFLAGS"
    cat > conftest.$ac_ext <<_ACEOF
       program main
@@ -3210,14 +3210,14 @@ $as_echo_n "checking whether Fortran compiler accepts the automatically generate
       end
 _ACEOF
 if ac_fn_fc_try_link "$LINENO"; then :
-  acx_shlib_rpath_flags_check_result=yes
+  mkh_shlib_rpath_flags_check_result=yes
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
-   LDFLAGS=$acx_save_LDFLAGS
-   { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_shlib_rpath_flags_check_result" >&5
-$as_echo "$acx_shlib_rpath_flags_check_result" >&6; }
-   if test "x$acx_shlib_rpath_flags_check_result" = xyes; then :
+   LDFLAGS=$mkh_save_LDFLAGS
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: $mkh_shlib_rpath_flags_check_result" >&5
+$as_echo "$mkh_shlib_rpath_flags_check_result" >&6; }
+   if test "x$mkh_shlib_rpath_flags_check_result" = xyes; then :
   LDFLAGS="$mkhelper_rpath_flags $LDFLAGS"
 else
   { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
@@ -3226,43 +3226,43 @@ as_fn_error $? "Fortran compiler does not accept the automatically generated RPA
 See \`config.log' for more details" "$LINENO" 5; }
 fi
 fi
-   eval export $acx_cv_shlib_path_var
+   eval export $mkh_cv_shlib_path_var
 fi
 
    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for the filename extension of shared libraries" >&5
 $as_echo_n "checking for the filename extension of shared libraries... " >&6; }
-if ${acx_cv_shlib_ext+:} false; then :
+if ${mkh_cv_shlib_ext+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   case $host_os in #(
   darwin*) :
-    acx_cv_shlib_ext=dylib ;; #(
+    mkh_cv_shlib_ext=dylib ;; #(
   *) :
-    acx_cv_shlib_ext=so ;;
+    mkh_cv_shlib_ext=so ;;
 esac
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_shlib_ext" >&5
-$as_echo "$acx_cv_shlib_ext" >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $mkh_cv_shlib_ext" >&5
+$as_echo "$mkh_cv_shlib_ext" >&6; }
       { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler flag needed to add all symbols to the dynamic symbol table" >&5
 $as_echo_n "checking for Fortran compiler flag needed to add all symbols to the dynamic symbol table... " >&6; }
-   if ${acx_cv_fc_export_dynamic_flag+:} false; then :
+   if ${mkh_cv_fc_export_dynamic_flag+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  acx_cv_fc_export_dynamic_flag=unknown
+  mkh_cv_fc_export_dynamic_flag=unknown
       case $host_os in #(
   darwin*) :
-    acx_cv_fc_export_dynamic_flag= ;; #(
+    mkh_cv_fc_export_dynamic_flag= ;; #(
   *) :
-    case $acx_cv_fc_compiler_vendor in #(
+    case $mkh_cv_fc_compiler_vendor in #(
   nag) :
-    acx_cv_fc_export_dynamic_flag='-Wl,-Wl,,--export-dynamic' ;; #(
+    mkh_cv_fc_export_dynamic_flag='-Wl,-Wl,,--export-dynamic' ;; #(
   *) :
-    acx_cv_fc_export_dynamic_flag='-Wl,--export-dynamic' ;;
+    mkh_cv_fc_export_dynamic_flag='-Wl,--export-dynamic' ;;
 esac ;;
 esac
-      if test -n "$acx_cv_fc_export_dynamic_flag" && test "x$acx_cv_fc_export_dynamic_flag" != xunknown; then :
-  acx_save_LDFLAGS=$LDFLAGS
-         LDFLAGS="$acx_cv_fc_export_dynamic_flag $LDFLAGS"
+      if test -n "$mkh_cv_fc_export_dynamic_flag" && test "x$mkh_cv_fc_export_dynamic_flag" != xunknown; then :
+  mkh_save_LDFLAGS=$LDFLAGS
+         LDFLAGS="$mkh_cv_fc_export_dynamic_flag $LDFLAGS"
          cat > conftest.$ac_ext <<_ACEOF
       program main
 
@@ -3271,22 +3271,22 @@ _ACEOF
 if ac_fn_fc_try_link "$LINENO"; then :
 
 else
-  acx_cv_fc_export_dynamic_flag=unknown
+  mkh_cv_fc_export_dynamic_flag=unknown
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
-         LDFLAGS=$acx_save_LDFLAGS
+         LDFLAGS=$mkh_save_LDFLAGS
 fi
 fi
 
-   if test -n "$acx_cv_fc_export_dynamic_flag"; then :
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_export_dynamic_flag" >&5
-$as_echo "$acx_cv_fc_export_dynamic_flag" >&6; }
+   if test -n "$mkh_cv_fc_export_dynamic_flag"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $mkh_cv_fc_export_dynamic_flag" >&5
+$as_echo "$mkh_cv_fc_export_dynamic_flag" >&6; }
 else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: none needed" >&5
 $as_echo "none needed" >&6; }
 fi
-   if test "x$acx_cv_fc_export_dynamic_flag" = xunknown; then :
+   if test "x$mkh_cv_fc_export_dynamic_flag" = xunknown; then :
   { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
 as_fn_error $? "unable to detect Fortran compiler flag needed to add all symbols to the dynamic symbol table
@@ -3294,8 +3294,8 @@ See \`config.log' for more details" "$LINENO" 5; }
 fi
 
 
-   cross_compiling=$acx_save_cross_compiling
-   ac_tool_warned=$acx_save_ac_tool_warned
+   cross_compiling=$mkh_save_cross_compiling
+   ac_tool_warned=$mkh_save_ac_tool_warned
       cat > conftest.$ac_ext <<_ACEOF
       program main
       open(unit=9,file='conftest.out')
@@ -3347,18 +3347,18 @@ fi
 $as_echo "$cross_compiling" >&6; }
 
    rm -f conftest.$ac_ext conftest$ac_exeext conftest.out
-               acx_fc_line_length_none_in_cache=no
-   if ${acx_cv_fc_line_length_unlimited+:} false; then :
-  case $acx_cv_fc_line_length_unlimited in #(
+               mkh_fc_line_length_none_in_cache=no
+   if ${mkh_cv_fc_line_length_unlimited+:} false; then :
+  case $mkh_cv_fc_line_length_unlimited in #(
   none) :
-    acx_fc_line_length_none_in_cache=yes ;; #(
+    mkh_fc_line_length_none_in_cache=yes ;; #(
   '') :
-    acx_cv_fc_line_length_unlimited=none ;; #(
+    mkh_cv_fc_line_length_unlimited=none ;; #(
   *) :
      ;;
 esac
 fi
-   acx_save_FCFLAGS=$FCFLAGS
+   mkh_save_FCFLAGS=$FCFLAGS
    ac_fc_line_len_string=unlimited
 	               ac_fc_line_len=0
                        ac_fc_line_length_test='
@@ -3367,10 +3367,10 @@ fi
 : ${ac_fc_line_len_string=$ac_fc_line_len}
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran flag needed to accept $ac_fc_line_len_string column source lines" >&5
 $as_echo_n "checking for Fortran flag needed to accept $ac_fc_line_len_string column source lines... " >&6; }
-if ${acx_cv_fc_line_length_unlimited+:} false; then :
+if ${mkh_cv_fc_line_length_unlimited+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  acx_cv_fc_line_length_unlimited=unknown
+  mkh_cv_fc_line_length_unlimited=unknown
 ac_fc_line_length_FCFLAGS_save=$FCFLAGS
 for ac_flag in none \
 	       -ffree-line-length-none -ffixed-line-length-none \
@@ -3389,7 +3389,7 @@ $ac_fc_line_length_test
       end subroutine
 _ACEOF
 if ac_fn_fc_try_compile "$LINENO"; then :
-  acx_cv_fc_line_length_unlimited=$ac_flag; break
+  mkh_cv_fc_line_length_unlimited=$ac_flag; break
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 done
@@ -3397,30 +3397,30 @@ rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
 FCFLAGS=$ac_fc_line_length_FCFLAGS_save
 
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_line_length_unlimited" >&5
-$as_echo "$acx_cv_fc_line_length_unlimited" >&6; }
-if test "x$acx_cv_fc_line_length_unlimited" = xunknown; then
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $mkh_cv_fc_line_length_unlimited" >&5
+$as_echo "$mkh_cv_fc_line_length_unlimited" >&6; }
+if test "x$mkh_cv_fc_line_length_unlimited" = xunknown; then
   :
 else
-  if test "x$acx_cv_fc_line_length_unlimited" != xnone; then
-    FCFLAGS="$FCFLAGS $acx_cv_fc_line_length_unlimited"
+  if test "x$mkh_cv_fc_line_length_unlimited" != xnone; then
+    FCFLAGS="$FCFLAGS $mkh_cv_fc_line_length_unlimited"
   fi
 
 fi
 
 
-   FCFLAGS=$acx_save_FCFLAGS
-         if test "x$acx_cv_fc_line_length_unlimited$acx_fc_line_length_none_in_cache" = xnoneno; then :
-  acx_cv_fc_line_length_unlimited=
+   FCFLAGS=$mkh_save_FCFLAGS
+         if test "x$mkh_cv_fc_line_length_unlimited$mkh_fc_line_length_none_in_cache" = xnoneno; then :
+  mkh_cv_fc_line_length_unlimited=
 fi
-   if test "x$acx_cv_fc_line_length_unlimited" = xunknown; then :
+   if test "x$mkh_cv_fc_line_length_unlimited" = xunknown; then :
   { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
 as_fn_error $? "unable to detect Fortran compiler flag needed to accept unlimited column source lines
 See \`config.log' for more details" "$LINENO" 5; }
 else
-  if test -n "$acx_cv_fc_line_length_unlimited"; then :
-  as_fn_append FCFLAGS " $acx_cv_fc_line_length_unlimited"
+  if test -n "$mkh_cv_fc_line_length_unlimited"; then :
+  as_fn_append FCFLAGS " $mkh_cv_fc_line_length_unlimited"
 fi
 fi
 
@@ -3435,10 +3435,10 @@ DEPGEN_INTRINSIC_MODS=iso_c_binding,iso_fortran_env,ieee_exceptions,ieee_arithme
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler flag needed to specify search paths for module files" >&5
 $as_echo_n "checking for Fortran compiler flag needed to specify search paths for module files... " >&6; }
-if ${acx_cv_fc_module_in_flag+:} false; then :
+if ${mkh_cv_fc_module_in_flag+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  acx_cv_fc_module_in_flag=unknown
+  mkh_cv_fc_module_in_flag=unknown
 mkdir conftest.dir
 cd conftest.dir
 cat > conftest.$ac_ext <<_ACEOF
@@ -3466,10 +3466,10 @@ if ac_fn_fc_try_compile "$LINENO"; then :
       end program
 _ACEOF
 if ac_fn_fc_try_compile "$LINENO"; then :
-  acx_cv_fc_module_in_flag="$ac_flag"
+  mkh_cv_fc_module_in_flag="$ac_flag"
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-     if test "$acx_cv_fc_module_in_flag" != unknown; then
+     if test "$mkh_cv_fc_module_in_flag" != unknown; then
        break
      fi
    done
@@ -3480,31 +3480,31 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 rm -rf conftest.dir
 
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_module_in_flag" >&5
-$as_echo "$acx_cv_fc_module_in_flag" >&6; }
-if test "$acx_cv_fc_module_in_flag" != unknown; then
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $mkh_cv_fc_module_in_flag" >&5
+$as_echo "$mkh_cv_fc_module_in_flag" >&6; }
+if test "$mkh_cv_fc_module_in_flag" != unknown; then
     :
 else
     :
 fi
-                  if test "x$acx_cv_fc_module_in_flag" = xunknown; then :
+                  if test "x$mkh_cv_fc_module_in_flag" = xunknown; then :
   { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
 as_fn_error $? "unable to detect Fortran compiler flag needed to specify search paths for module files
 See \`config.log' for more details" "$LINENO" 5; }
 else
-  FC_MOD_IN=$acx_cv_fc_module_in_flag
+  FC_MOD_IN=$mkh_cv_fc_module_in_flag
 
 fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler flag needed to specify output path for module files" >&5
 $as_echo_n "checking for Fortran compiler flag needed to specify output path for module files... " >&6; }
-if ${acx_cv_fc_module_out_flag+:} false; then :
+if ${mkh_cv_fc_module_out_flag+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   mkdir conftest.dir conftest.dir/sub
 cd conftest.dir
-acx_cv_fc_module_out_flag=unknown
+mkh_cv_fc_module_out_flag=unknown
 ac_fc_module_output_flag_FCFLAGS_save=$FCFLAGS
 for ac_flag in -J '-J ' -fmod= -moddir= +moddir= -qmoddir= '-mdir ' '-mod ' \
 	      '-module ' -M '-Am -M' '-e m -J '; do
@@ -3531,11 +3531,11 @@ if ac_fn_fc_try_compile "$LINENO"; then :
       end program
 _ACEOF
 if ac_fn_fc_try_compile "$LINENO"; then :
-  acx_cv_fc_module_out_flag="$ac_flag"
+  mkh_cv_fc_module_out_flag="$ac_flag"
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
      cd ..
-     if test "$acx_cv_fc_module_out_flag" != unknown; then
+     if test "$mkh_cv_fc_module_out_flag" != unknown; then
        break
      fi
 fi
@@ -3546,30 +3546,30 @@ cd ..
 rm -rf conftest.dir
 
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_module_out_flag" >&5
-$as_echo "$acx_cv_fc_module_out_flag" >&6; }
-if test "$acx_cv_fc_module_out_flag" != unknown; then
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $mkh_cv_fc_module_out_flag" >&5
+$as_echo "$mkh_cv_fc_module_out_flag" >&6; }
+if test "$mkh_cv_fc_module_out_flag" != unknown; then
     :
 else
     :
 fi
-                  if test "x$acx_cv_fc_module_out_flag" = xunknown; then :
+                  if test "x$mkh_cv_fc_module_out_flag" = xunknown; then :
   { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
 as_fn_error $? "unable to detect Fortran compiler flag needed to specify output path for module files
 See \`config.log' for more details" "$LINENO" 5; }
 else
-  FC_MOD_OUT=$acx_cv_fc_module_out_flag
+  FC_MOD_OUT=$mkh_cv_fc_module_out_flag
 
 fi
 
    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler module file naming template" >&5
 $as_echo_n "checking for Fortran compiler module file naming template... " >&6; }
-   if ${acx_cv_fc_module_naming_upper+:} false && ${acx_cv_fc_module_naming_ext+:} false; then :
+   if ${mkh_cv_fc_module_naming_upper+:} false && ${mkh_cv_fc_module_naming_ext+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  acx_cv_fc_module_naming_upper=${acx_cv_fc_module_naming_upper-unknown}
-      acx_cv_fc_module_naming_ext=${acx_cv_fc_module_naming_ext-unknown}
+  mkh_cv_fc_module_naming_upper=${mkh_cv_fc_module_naming_upper-unknown}
+      mkh_cv_fc_module_naming_ext=${mkh_cv_fc_module_naming_ext-unknown}
       as_dir=conftest.dir; as_fn_mkdir_p
       cd conftest.dir
       cat > conftest.$ac_ext <<_ACEOF
@@ -3582,27 +3582,27 @@ else
       end module
 _ACEOF
 if ac_fn_fc_try_compile "$LINENO"; then :
-  case $acx_cv_fc_module_naming_upper in #(
+  case $mkh_cv_fc_module_naming_upper in #(
   yes) :
-    acx_tmp='CONFTEST_MODULE.*' ;; #(
+    mkh_tmp='CONFTEST_MODULE.*' ;; #(
   no) :
-    acx_tmp='conftest_module.*' ;; #(
+    mkh_tmp='conftest_module.*' ;; #(
   *) :
-    if test "x$acx_cv_fc_module_naming_ext" = xunknown; then :
-  acx_tmp='CONFTEST_MODULE.* conftest_module.*'
+    if test "x$mkh_cv_fc_module_naming_ext" = xunknown; then :
+  mkh_tmp='CONFTEST_MODULE.* conftest_module.*'
 else
-  acx_tmp="CONFTEST_MODULE.$acx_cv_fc_module_naming_ext conftest_module.$acx_cv_fc_module_naming_ext"
+  mkh_tmp="CONFTEST_MODULE.$mkh_cv_fc_module_naming_ext conftest_module.$mkh_cv_fc_module_naming_ext"
 fi ;;
 esac
-         acx_tmp=`ls $acx_tmp 2>/dev/null`
-         if test 1 -eq `$as_echo "$acx_tmp" | wc -l` 2>/dev/null; then :
-  case "$acx_tmp" in #(
+         mkh_tmp=`ls $mkh_tmp 2>/dev/null`
+         if test 1 -eq `$as_echo "$mkh_tmp" | wc -l` 2>/dev/null; then :
+  case "$mkh_tmp" in #(
   CONFTEST_MODULE.*) :
-    acx_cv_fc_module_naming_upper=yes
-               acx_cv_fc_module_naming_ext=`echo $acx_tmp | sed 's,CONFTEST_MODULE\.,,'` ;; #(
+    mkh_cv_fc_module_naming_upper=yes
+               mkh_cv_fc_module_naming_ext=`echo $mkh_tmp | sed 's,CONFTEST_MODULE\.,,'` ;; #(
   conftest_module.*) :
-    acx_cv_fc_module_naming_upper=no
-               acx_cv_fc_module_naming_ext=`echo $acx_tmp | sed 's,conftest_module\.,,'` ;; #(
+    mkh_cv_fc_module_naming_upper=no
+               mkh_cv_fc_module_naming_ext=`echo $mkh_tmp | sed 's,conftest_module\.,,'` ;; #(
   *) :
      ;;
 esac
@@ -3612,7 +3612,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
       cd ..
       rm -rf conftest.dir
 fi
-   if test "x$acx_cv_fc_module_naming_upper" = xunknown || test "x$acx_cv_fc_module_naming_ext" = xunknown; then :
+   if test "x$mkh_cv_fc_module_naming_upper" = xunknown || test "x$mkh_cv_fc_module_naming_ext" = xunknown; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: unknown" >&5
 $as_echo "unknown" >&6; }
       { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
@@ -3620,26 +3620,26 @@ $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
 as_fn_error $? "unable to detect Fortran compiler module file naming template
 See \`config.log' for more details" "$LINENO" 5; }
 else
-  if test "x$acx_cv_fc_module_naming_upper" = xyes; then :
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: {NAME}.$acx_cv_fc_module_naming_ext" >&5
-$as_echo "{NAME}.$acx_cv_fc_module_naming_ext" >&6; }
+  if test "x$mkh_cv_fc_module_naming_upper" = xyes; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: {NAME}.$mkh_cv_fc_module_naming_ext" >&5
+$as_echo "{NAME}.$mkh_cv_fc_module_naming_ext" >&6; }
 else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: {name}.$acx_cv_fc_module_naming_ext" >&5
-$as_echo "{name}.$acx_cv_fc_module_naming_ext" >&6; }
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: {name}.$mkh_cv_fc_module_naming_ext" >&5
+$as_echo "{name}.$mkh_cv_fc_module_naming_ext" >&6; }
 fi
-      FC_MOD_FILE_UPPER=$acx_cv_fc_module_naming_upper
+      FC_MOD_FILE_UPPER=$mkh_cv_fc_module_naming_upper
 
-   FC_MOD_FILE_EXT=$acx_cv_fc_module_naming_ext
+   FC_MOD_FILE_EXT=$mkh_cv_fc_module_naming_ext
 
 fi
 
       { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler submodule file naming template" >&5
 $as_echo_n "checking for Fortran compiler submodule file naming template... " >&6; }
-   if ${acx_cv_fc_module_snaming_infix+:} false && ${acx_cv_fc_module_snaming_ext+:} false; then :
+   if ${mkh_cv_fc_module_snaming_infix+:} false && ${mkh_cv_fc_module_snaming_ext+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  acx_cv_fc_module_snaming_infix=${acx_cv_fc_module_snaming_infix-unknown}
-      acx_cv_fc_module_snaming_ext=${acx_cv_fc_module_snaming_ext-unknown}
+  mkh_cv_fc_module_snaming_infix=${mkh_cv_fc_module_snaming_infix-unknown}
+      mkh_cv_fc_module_snaming_ext=${mkh_cv_fc_module_snaming_ext-unknown}
       as_dir=conftest.dir; as_fn_mkdir_p
       cd conftest.dir
       cat > conftest.$ac_ext <<_ACEOF
@@ -3659,40 +3659,40 @@ else
       end submodule
 _ACEOF
 if ac_fn_fc_try_compile "$LINENO"; then :
-  if test "x$acx_cv_fc_module_naming_upper" = xyes; then :
-  acx_fc_module_name='CONFTEST_MODULE'
-            acx_fc_module_sname='CONFTEST_SUBMODULE'
+  if test "x$mkh_cv_fc_module_naming_upper" = xyes; then :
+  mkh_fc_module_name='CONFTEST_MODULE'
+            mkh_fc_module_sname='CONFTEST_SUBMODULE'
 else
-  acx_fc_module_name='conftest_module'
-            acx_fc_module_sname='conftest_submodule'
+  mkh_fc_module_name='conftest_module'
+            mkh_fc_module_sname='conftest_submodule'
 fi
-         if test "x$acx_cv_fc_module_snaming_infix" = xunknown; then :
-  acx_tmp='*'
+         if test "x$mkh_cv_fc_module_snaming_infix" = xunknown; then :
+  mkh_tmp='*'
 else
-  acx_tmp="${acx_fc_module_name}$acx_cv_fc_module_snaming_infix"
+  mkh_tmp="${mkh_fc_module_name}$mkh_cv_fc_module_snaming_infix"
 fi
-         as_fn_append acx_tmp "$acx_fc_module_sname."
-         if test "x$acx_cv_fc_module_snaming_ext" = xunknown; then :
-  as_fn_append acx_tmp '*'
+         as_fn_append mkh_tmp "$mkh_fc_module_sname."
+         if test "x$mkh_cv_fc_module_snaming_ext" = xunknown; then :
+  as_fn_append mkh_tmp '*'
 else
-  as_fn_append acx_tmp "$acx_cv_fc_module_snaming_ext"
+  as_fn_append mkh_tmp "$mkh_cv_fc_module_snaming_ext"
 fi
-         acx_tmp=`ls $acx_tmp 2>/dev/null`
-         if test 1 -eq `$as_echo "$acx_tmp" | wc -l` 2>/dev/null; then :
-  if test "x$acx_cv_fc_module_snaming_ext" = xunknown; then :
-  case $acx_tmp in #(
-  *"$acx_fc_module_sname."*) :
-    acx_cv_fc_module_snaming_ext=`echo $acx_tmp | sed "s,.*$acx_fc_module_sname\.,,"` ;; #(
+         mkh_tmp=`ls $mkh_tmp 2>/dev/null`
+         if test 1 -eq `$as_echo "$mkh_tmp" | wc -l` 2>/dev/null; then :
+  if test "x$mkh_cv_fc_module_snaming_ext" = xunknown; then :
+  case $mkh_tmp in #(
+  *"$mkh_fc_module_sname."*) :
+    mkh_cv_fc_module_snaming_ext=`echo $mkh_tmp | sed "s,.*$mkh_fc_module_sname\.,,"` ;; #(
   *) :
      ;;
 esac
 fi
-            if test "x$acx_cv_fc_module_snaming_infix" = xunknown; then :
-  case $acx_tmp in #(
-  "$acx_fc_module_sname."*) :
-    acx_cv_fc_module_snaming_infix= ;; #(
-  "$acx_fc_module_name"*"$acx_fc_module_sname"*) :
-    acx_cv_fc_module_snaming_infix=`echo $acx_tmp | sed "s,$acx_fc_module_sname\..*,," | sed "s,^$acx_fc_module_name,,"` ;; #(
+            if test "x$mkh_cv_fc_module_snaming_infix" = xunknown; then :
+  case $mkh_tmp in #(
+  "$mkh_fc_module_sname."*) :
+    mkh_cv_fc_module_snaming_infix= ;; #(
+  "$mkh_fc_module_name"*"$mkh_fc_module_sname"*) :
+    mkh_cv_fc_module_snaming_infix=`echo $mkh_tmp | sed "s,$mkh_fc_module_sname\..*,," | sed "s,^$mkh_fc_module_name,,"` ;; #(
   *) :
      ;;
 esac
@@ -3703,7 +3703,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
       cd ..
       rm -rf conftest.dir
 fi
-   if test "x$acx_cv_fc_module_snaming_infix" = xunknown || test "x$acx_cv_fc_module_snaming_ext" = xunknown; then :
+   if test "x$mkh_cv_fc_module_snaming_infix" = xunknown || test "x$mkh_cv_fc_module_snaming_ext" = xunknown; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: unknown" >&5
 $as_echo "unknown" >&6; }
       { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
@@ -3711,34 +3711,34 @@ $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
 as_fn_error $? "unable to detect Fortran compiler submodule file naming template
 See \`config.log' for more details" "$LINENO" 5; }
 else
-  if test "x$acx_cv_fc_module_naming_upper" = xyes; then :
-  acx_fc_module_name='{NAME}'
-         acx_fc_module_sname='{SNAME}'
+  if test "x$mkh_cv_fc_module_naming_upper" = xyes; then :
+  mkh_fc_module_name='{NAME}'
+         mkh_fc_module_sname='{SNAME}'
 else
-  acx_fc_module_name='{name}'
-         acx_fc_module_sname='{sname}'
+  mkh_fc_module_name='{name}'
+         mkh_fc_module_sname='{sname}'
 fi
-      if ${acx_cv_fc_module_snaming_infix:+false} :; then :
-  acx_tmp=
+      if ${mkh_cv_fc_module_snaming_infix:+false} :; then :
+  mkh_tmp=
 else
-  acx_tmp="$acx_fc_module_name$acx_cv_fc_module_snaming_infix"
+  mkh_tmp="$mkh_fc_module_name$mkh_cv_fc_module_snaming_infix"
 fi
-      { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_tmp$acx_fc_module_sname.$acx_cv_fc_module_snaming_ext" >&5
-$as_echo "$acx_tmp$acx_fc_module_sname.$acx_cv_fc_module_snaming_ext" >&6; }
-      FC_SMOD_FILE_INFIX=$acx_cv_fc_module_snaming_infix
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: $mkh_tmp$mkh_fc_module_sname.$mkh_cv_fc_module_snaming_ext" >&5
+$as_echo "$mkh_tmp$mkh_fc_module_sname.$mkh_cv_fc_module_snaming_ext" >&6; }
+      FC_SMOD_FILE_INFIX=$mkh_cv_fc_module_snaming_infix
 
-   FC_SMOD_FILE_EXT=$acx_cv_fc_module_snaming_ext
+   FC_SMOD_FILE_EXT=$mkh_cv_fc_module_snaming_ext
 
 fi
 
          { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether Fortran compiler generates submodule files for root ancestors" >&5
 $as_echo_n "checking whether Fortran compiler generates submodule files for root ancestors... " >&6; }
-if ${acx_cv_fc_module_root_smod+:} false; then :
+if ${mkh_cv_fc_module_root_smod+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  acx_cv_fc_module_root_smod=unknown
-      if test "x$acx_cv_fc_module_snaming_ext" = x"$acx_cv_fc_module_naming_ext"; then :
-  acx_cv_fc_module_root_smod=no
+  mkh_cv_fc_module_root_smod=unknown
+      if test "x$mkh_cv_fc_module_snaming_ext" = x"$mkh_cv_fc_module_naming_ext"; then :
+  mkh_cv_fc_module_root_smod=no
 else
   as_dir=conftest.dir; as_fn_mkdir_p
          cd conftest.dir
@@ -3753,15 +3753,15 @@ else
       end module
 _ACEOF
 if ac_fn_fc_try_compile "$LINENO"; then :
-  if test "x$acx_cv_fc_module_naming_upper" = xyes; then :
-  acx_fc_module_name='CONFTEST_MODULE'
+  if test "x$mkh_cv_fc_module_naming_upper" = xyes; then :
+  mkh_fc_module_name='CONFTEST_MODULE'
 else
-  acx_fc_module_name='conftest_module'
+  mkh_fc_module_name='conftest_module'
 fi
-            if test -f "$acx_fc_module_name.$acx_cv_fc_module_snaming_ext"; then :
-  acx_cv_fc_module_root_smod=yes
+            if test -f "$mkh_fc_module_name.$mkh_cv_fc_module_snaming_ext"; then :
+  mkh_cv_fc_module_root_smod=yes
 else
-  acx_cv_fc_module_root_smod=no
+  mkh_cv_fc_module_root_smod=no
 fi
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
@@ -3769,15 +3769,15 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
          rm -rf conftest.dir
 fi
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_module_root_smod" >&5
-$as_echo "$acx_cv_fc_module_root_smod" >&6; }
-   if test "x$acx_cv_fc_module_root_smod" = xunknown; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $mkh_cv_fc_module_root_smod" >&5
+$as_echo "$mkh_cv_fc_module_root_smod" >&6; }
+   if test "x$mkh_cv_fc_module_root_smod" = xunknown; then :
   { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
 as_fn_error $? "unable to detect whether Fortran compiler generates submodule files for modules
 See \`config.log' for more details" "$LINENO" 5; }
 else
-  FC_ROOT_SMOD=$acx_cv_fc_module_root_smod
+  FC_ROOT_SMOD=$mkh_cv_fc_module_root_smod
 
 fi
 
@@ -3791,24 +3791,24 @@ fi
 if test "x$enable_separate_mods" = xyes; then :
         { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler flag needed to generate module files but no object files" >&5
 $as_echo_n "checking for Fortran compiler flag needed to generate module files but no object files... " >&6; }
-if ${acx_cv_fc_module_only_flag+:} false; then :
+if ${mkh_cv_fc_module_only_flag+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  acx_cv_fc_module_only_flag=unknown
+  mkh_cv_fc_module_only_flag=unknown
       as_dir=conftest.dir; as_fn_mkdir_p
       cd conftest.dir
       cat > conftest.$ac_ext <<_ACEOF
       module conftest_module
       end module
 _ACEOF
-      if test "x$acx_cv_fc_module_naming_upper" = xyes; then :
-  acx_tmp="CONFTEST_MODULE.$acx_cv_fc_module_naming_ext"
+      if test "x$mkh_cv_fc_module_naming_upper" = xyes; then :
+  mkh_tmp="CONFTEST_MODULE.$mkh_cv_fc_module_naming_ext"
 else
-  acx_tmp="conftest_module.$acx_cv_fc_module_naming_ext"
+  mkh_tmp="conftest_module.$mkh_cv_fc_module_naming_ext"
 fi
-      acx_save_FCFLAGS=$FCFLAGS
-      for acx_flag in '-syntax-only' '-fsyntax-only' '-Msyntax-only' '-dB -M2179' '-M' '-otype=mod'; do
-        FCFLAGS="$acx_save_FCFLAGS $acx_flag"
+      mkh_save_FCFLAGS=$FCFLAGS
+      for mkh_flag in '-syntax-only' '-fsyntax-only' '-Msyntax-only' '-dB -M2179' '-M' '-otype=mod'; do
+        FCFLAGS="$mkh_save_FCFLAGS $mkh_flag"
         if { { ac_try="$ac_compile"
 case "(($ac_try" in
   *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
@@ -3819,25 +3819,25 @@ $as_echo "$ac_try_echo"; } >&5
   (eval "$ac_compile") 2>&5
   ac_status=$?
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; } && test -f $acx_tmp && test ! -f conftest.$ac_objext; then :
-  acx_cv_fc_module_only_flag=$acx_flag; break
+  test $ac_status = 0; } && test -f $mkh_tmp && test ! -f conftest.$ac_objext; then :
+  mkh_cv_fc_module_only_flag=$mkh_flag; break
 else
-  rm -f $acx_tmp conftest.$ac_objext
+  rm -f $mkh_tmp conftest.$ac_objext
 fi
       done
-      FCFLAGS=$acx_save_FCFLAGS
+      FCFLAGS=$mkh_save_FCFLAGS
       cd ..
       rm -rf conftest.dir
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_module_only_flag" >&5
-$as_echo "$acx_cv_fc_module_only_flag" >&6; }
-   if test "x$acx_cv_fc_module_only_flag" = xunknown; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $mkh_cv_fc_module_only_flag" >&5
+$as_echo "$mkh_cv_fc_module_only_flag" >&6; }
+   if test "x$mkh_cv_fc_module_only_flag" = xunknown; then :
   { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
 as_fn_error $? "unable to detect Fortran compiler flag needed to generate module files but no object files
 See \`config.log' for more details" "$LINENO" 5; }
 else
-  FC_MOD_ONLY=$acx_cv_fc_module_only_flag
+  FC_MOD_ONLY=$mkh_cv_fc_module_only_flag
 fi
    SEPARATE_MODS_ENABLED=''
    SEPARATE_MODS_DISABLED='#'
@@ -3852,10 +3852,10 @@ fi
 
       { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler flag needed to specify search paths for the \"INCLUDE\" statement" >&5
 $as_echo_n "checking for Fortran compiler flag needed to specify search paths for the \"INCLUDE\" statement... " >&6; }
-if ${acx_cv_fc_ftn_include_flag+:} false; then :
+if ${mkh_cv_fc_ftn_include_flag+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  acx_cv_fc_ftn_include_flag=unknown
+  mkh_cv_fc_ftn_include_flag=unknown
       as_dir=conftest.dir; as_fn_mkdir_p
       cat > conftest.$ac_ext <<_ACEOF
       program main
@@ -3867,38 +3867,38 @@ _ACEOF
       include "conftest.inc"
 
 _ACEOF
-      acx_save_FCFLAGS=$FCFLAGS
-      for acx_flag in -I '-I '; do
-        FCFLAGS="$acx_save_FCFLAGS ${acx_flag}conftest.dir"
+      mkh_save_FCFLAGS=$FCFLAGS
+      for mkh_flag in -I '-I '; do
+        FCFLAGS="$mkh_save_FCFLAGS ${mkh_flag}conftest.dir"
         if ac_fn_fc_try_link "$LINENO"; then :
-  acx_cv_fc_ftn_include_flag=$acx_flag
+  mkh_cv_fc_ftn_include_flag=$mkh_flag
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext
-        test "x$acx_cv_fc_ftn_include_flag" != xunknown && break
+        test "x$mkh_cv_fc_ftn_include_flag" != xunknown && break
       done
-      FCFLAGS=$acx_save_FCFLAGS
+      FCFLAGS=$mkh_save_FCFLAGS
       rm -f conftest.$ac_ext
       rm -rf conftest.dir
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_ftn_include_flag" >&5
-$as_echo "$acx_cv_fc_ftn_include_flag" >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $mkh_cv_fc_ftn_include_flag" >&5
+$as_echo "$mkh_cv_fc_ftn_include_flag" >&6; }
 
-   if test "x$acx_cv_fc_ftn_include_flag" = xunknown; then :
+   if test "x$mkh_cv_fc_ftn_include_flag" = xunknown; then :
   { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
 as_fn_error $? "unable to detect Fortran compiler flag needed to specify search paths for the \"INCLUDE\" statement
 See \`config.log' for more details" "$LINENO" 5; }
 else
-  FC_INC_FLAG=$acx_cv_fc_ftn_include_flag
+  FC_INC_FLAG=$mkh_cv_fc_ftn_include_flag
 
 fi
       { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler search path order for the \"INCLUDE\" statement" >&5
 $as_echo_n "checking for Fortran compiler search path order for the \"INCLUDE\" statement... " >&6; }
-if ${acx_cv_fc_ftn_include_order+:} false; then :
+if ${mkh_cv_fc_ftn_include_order+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  acx_cv_fc_ftn_include_order=
+  mkh_cv_fc_ftn_include_order=
       if test "x$cross_compiling" = xno; then :
   as_dir=conftest.dir/src/inc; as_fn_mkdir_p
          as_dir=conftest.dir/build; as_fn_mkdir_p
@@ -3924,15 +3924,15 @@ _ACEOF
            shift; mv conftest.$ac_ext conftest.dir${1}conftest.write; shift
          done
          cd conftest.dir/build
-         acx_save_FCFLAGS=$FCFLAGS
-         FCFLAGS="$FCFLAGS ${acx_cv_fc_ftn_include_flag}../src/inc ${acx_cv_fc_ftn_include_flag}../src/inc2"
-         acx_save_ac_link=$ac_link
+         mkh_save_FCFLAGS=$FCFLAGS
+         FCFLAGS="$FCFLAGS ${mkh_cv_fc_ftn_include_flag}../src/inc ${mkh_cv_fc_ftn_include_flag}../src/inc2"
+         mkh_save_ac_link=$ac_link
          ac_link=`$as_echo "$ac_link" | sed 's%conftest\.\$ac_ext%../src/&%'`
          while :; do
            if ac_fn_fc_try_link "$LINENO"; then :
-  acx_exec_result=`./conftest$ac_exeext`
+  mkh_exec_result=`./conftest$ac_exeext`
               if test $? -eq 0; then :
-  case $acx_exec_result in #(
+  case $mkh_exec_result in #(
   src) :
     rm -f ../src/conftest.write ;; #(
   inc) :
@@ -3944,10 +3944,10 @@ _ACEOF
   *) :
     break ;;
 esac
-                 if test -z "$acx_cv_fc_ftn_include_order"; then :
-  acx_cv_fc_ftn_include_order=$acx_exec_result
+                 if test -z "$mkh_cv_fc_ftn_include_order"; then :
+  mkh_cv_fc_ftn_include_order=$mkh_exec_result
 else
-  as_fn_append acx_cv_fc_ftn_include_order ",$acx_exec_result"
+  as_fn_append mkh_cv_fc_ftn_include_order ",$mkh_exec_result"
 fi
                  rm -f conftest$ac_exeext
 else
@@ -3959,31 +3959,31 @@ fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext
          done
-         ac_link=$acx_save_ac_link
-         FCFLAGS=$acx_save_FCFLAGS
+         ac_link=$mkh_save_ac_link
+         FCFLAGS=$mkh_save_FCFLAGS
          cd ../..
          rm -rf conftest.dir
 fi
-      if test -z "$acx_cv_fc_ftn_include_order"; then :
-  acx_cv_fc_ftn_include_order=unknown
+      if test -z "$mkh_cv_fc_ftn_include_order"; then :
+  mkh_cv_fc_ftn_include_order=unknown
 fi
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_ftn_include_order" >&5
-$as_echo "$acx_cv_fc_ftn_include_order" >&6; }
-   if test "x$acx_cv_fc_ftn_include_order" = xunknown; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $mkh_cv_fc_ftn_include_order" >&5
+$as_echo "$mkh_cv_fc_ftn_include_order" >&6; }
+   if test "x$mkh_cv_fc_ftn_include_order" = xunknown; then :
   FC_INC_ORDER=src,flg
 else
-  FC_INC_ORDER=$acx_cv_fc_ftn_include_order
+  FC_INC_ORDER=$mkh_cv_fc_ftn_include_order
 fi
 
 
 
       { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler flag needed to specify search paths for the quoted form of the \"#include\" directive" >&5
 $as_echo_n "checking for Fortran compiler flag needed to specify search paths for the quoted form of the \"#include\" directive... " >&6; }
-if ${acx_cv_fc_pp_include_flag+:} false; then :
+if ${mkh_cv_fc_pp_include_flag+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  acx_cv_fc_pp_include_flag=unknown
+  mkh_cv_fc_pp_include_flag=unknown
       as_dir=conftest.dir; as_fn_mkdir_p
       cat > conftest.$ac_ext <<_ACEOF
       program main
@@ -3995,38 +3995,38 @@ _ACEOF
 #include "conftest.inc"
 
 _ACEOF
-      acx_save_FCFLAGS=$FCFLAGS
-      for acx_flag in -I '-I ' '-WF,-I' '-Wp,-I'; do
-        FCFLAGS="$acx_save_FCFLAGS ${acx_flag}conftest.dir"
+      mkh_save_FCFLAGS=$FCFLAGS
+      for mkh_flag in -I '-I ' '-WF,-I' '-Wp,-I'; do
+        FCFLAGS="$mkh_save_FCFLAGS ${mkh_flag}conftest.dir"
         if ac_fn_fc_try_link "$LINENO"; then :
-  acx_cv_fc_pp_include_flag=$acx_flag
+  mkh_cv_fc_pp_include_flag=$mkh_flag
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext
-        test "x$acx_cv_fc_pp_include_flag" != xunknown && break
+        test "x$mkh_cv_fc_pp_include_flag" != xunknown && break
       done
-      FCFLAGS=$acx_save_FCFLAGS
+      FCFLAGS=$mkh_save_FCFLAGS
       rm -f conftest.$ac_ext
       rm -rf conftest.dir
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_pp_include_flag" >&5
-$as_echo "$acx_cv_fc_pp_include_flag" >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $mkh_cv_fc_pp_include_flag" >&5
+$as_echo "$mkh_cv_fc_pp_include_flag" >&6; }
 
-   if test "x$acx_cv_fc_pp_include_flag" = xunknown; then :
+   if test "x$mkh_cv_fc_pp_include_flag" = xunknown; then :
   { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
 as_fn_error $? "unable to detect Fortran compiler flag needed to specify search paths for the quoted form of the \"#include\" directive
 See \`config.log' for more details" "$LINENO" 5; }
 else
-  FC_INC_FLAG_PP_f90=$acx_cv_fc_pp_include_flag
+  FC_INC_FLAG_PP_f90=$mkh_cv_fc_pp_include_flag
 
 fi
       { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler search path order for the quoted form of the \"#include\" directive" >&5
 $as_echo_n "checking for Fortran compiler search path order for the quoted form of the \"#include\" directive... " >&6; }
-if ${acx_cv_fc_pp_include_order+:} false; then :
+if ${mkh_cv_fc_pp_include_order+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  acx_cv_fc_pp_include_order=
+  mkh_cv_fc_pp_include_order=
       if test "x$cross_compiling" = xno; then :
   as_dir=conftest.dir/src/inc; as_fn_mkdir_p
          as_dir=conftest.dir/build; as_fn_mkdir_p
@@ -4052,15 +4052,15 @@ _ACEOF
            shift; mv conftest.$ac_ext conftest.dir${1}conftest.write; shift
          done
          cd conftest.dir/build
-         acx_save_FCFLAGS=$FCFLAGS
-         FCFLAGS="$FCFLAGS ${acx_cv_fc_pp_include_flag}../src/inc ${acx_cv_fc_pp_include_flag}../src/inc2"
-         acx_save_ac_link=$ac_link
+         mkh_save_FCFLAGS=$FCFLAGS
+         FCFLAGS="$FCFLAGS ${mkh_cv_fc_pp_include_flag}../src/inc ${mkh_cv_fc_pp_include_flag}../src/inc2"
+         mkh_save_ac_link=$ac_link
          ac_link=`$as_echo "$ac_link" | sed 's%conftest\.\$ac_ext%../src/&%'`
          while :; do
            if ac_fn_fc_try_link "$LINENO"; then :
-  acx_exec_result=`./conftest$ac_exeext`
+  mkh_exec_result=`./conftest$ac_exeext`
               if test $? -eq 0; then :
-  case $acx_exec_result in #(
+  case $mkh_exec_result in #(
   src) :
     rm -f ../src/conftest.write ;; #(
   inc) :
@@ -4072,10 +4072,10 @@ _ACEOF
   *) :
     break ;;
 esac
-                 if test -z "$acx_cv_fc_pp_include_order"; then :
-  acx_cv_fc_pp_include_order=$acx_exec_result
+                 if test -z "$mkh_cv_fc_pp_include_order"; then :
+  mkh_cv_fc_pp_include_order=$mkh_exec_result
 else
-  as_fn_append acx_cv_fc_pp_include_order ",$acx_exec_result"
+  as_fn_append mkh_cv_fc_pp_include_order ",$mkh_exec_result"
 fi
                  rm -f conftest$ac_exeext
 else
@@ -4087,31 +4087,31 @@ fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext
          done
-         ac_link=$acx_save_ac_link
-         FCFLAGS=$acx_save_FCFLAGS
+         ac_link=$mkh_save_ac_link
+         FCFLAGS=$mkh_save_FCFLAGS
          cd ../..
          rm -rf conftest.dir
 fi
-      if test -z "$acx_cv_fc_pp_include_order"; then :
-  acx_cv_fc_pp_include_order=unknown
+      if test -z "$mkh_cv_fc_pp_include_order"; then :
+  mkh_cv_fc_pp_include_order=unknown
 fi
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_pp_include_order" >&5
-$as_echo "$acx_cv_fc_pp_include_order" >&6; }
-   if test "x$acx_cv_fc_pp_include_order" = xunknown; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $mkh_cv_fc_pp_include_order" >&5
+$as_echo "$mkh_cv_fc_pp_include_order" >&6; }
+   if test "x$mkh_cv_fc_pp_include_order" = xunknown; then :
   FC_INC_ORDER_PP_f90=inc,flg
 else
-  FC_INC_ORDER_PP_f90=$acx_cv_fc_pp_include_order
+  FC_INC_ORDER_PP_f90=$mkh_cv_fc_pp_include_order
 fi
 
 
 
       { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler flag needed to specify search paths for the angle-bracket form of the \"#include\" directive" >&5
 $as_echo_n "checking for Fortran compiler flag needed to specify search paths for the angle-bracket form of the \"#include\" directive... " >&6; }
-if ${acx_cv_fc_pp_sys_include_flag+:} false; then :
+if ${mkh_cv_fc_pp_sys_include_flag+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  acx_cv_fc_pp_sys_include_flag=unknown
+  mkh_cv_fc_pp_sys_include_flag=unknown
       as_dir=conftest.dir; as_fn_mkdir_p
       cat > conftest.$ac_ext <<_ACEOF
       program main
@@ -4123,40 +4123,40 @@ _ACEOF
 #include <conftest.inc>
 
 _ACEOF
-      acx_save_FCFLAGS=$FCFLAGS
-      for acx_flag in -I '-I ' '-WF,-I' '-Wp,-I'; do
-        FCFLAGS="$acx_save_FCFLAGS ${acx_flag}conftest.dir"
+      mkh_save_FCFLAGS=$FCFLAGS
+      for mkh_flag in -I '-I ' '-WF,-I' '-Wp,-I'; do
+        FCFLAGS="$mkh_save_FCFLAGS ${mkh_flag}conftest.dir"
         if ac_fn_fc_try_link "$LINENO"; then :
-  acx_cv_fc_pp_sys_include_flag=$acx_flag
+  mkh_cv_fc_pp_sys_include_flag=$mkh_flag
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext
-        test "x$acx_cv_fc_pp_sys_include_flag" != xunknown && break
+        test "x$mkh_cv_fc_pp_sys_include_flag" != xunknown && break
       done
-      FCFLAGS=$acx_save_FCFLAGS
+      FCFLAGS=$mkh_save_FCFLAGS
       rm -f conftest.$ac_ext
       rm -rf conftest.dir
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_pp_sys_include_flag" >&5
-$as_echo "$acx_cv_fc_pp_sys_include_flag" >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $mkh_cv_fc_pp_sys_include_flag" >&5
+$as_echo "$mkh_cv_fc_pp_sys_include_flag" >&6; }
 
-   if test "x$acx_cv_fc_pp_sys_include_flag" = xunknown; then :
+   if test "x$mkh_cv_fc_pp_sys_include_flag" = xunknown; then :
   { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
 as_fn_error $? "unable to detect Fortran compiler flag needed to specify search paths for the angle-bracket form of the \"#include\" directive
 See \`config.log' for more details" "$LINENO" 5; }
 else
-  if test "x$acx_cv_fc_pp_sys_include_flag" != "x$acx_cv_fc_pp_include_flag"; then :
+  if test "x$mkh_cv_fc_pp_sys_include_flag" != "x$mkh_cv_fc_pp_include_flag"; then :
   as_fn_error $? "Different flags needed to specify search paths for the quoted and the angle-bracket forms of the \"#include\" directive are not dnl
 supported" "$LINENO" 5
 fi
 fi
       { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler search path order for the angle-bracket form of the \"#include\" directive" >&5
 $as_echo_n "checking for Fortran compiler search path order for the angle-bracket form of the \"#include\" directive... " >&6; }
-if ${acx_cv_fc_pp_sys_include_order+:} false; then :
+if ${mkh_cv_fc_pp_sys_include_order+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  acx_cv_fc_pp_sys_include_order=
+  mkh_cv_fc_pp_sys_include_order=
       if test "x$cross_compiling" = xno; then :
   as_dir=conftest.dir/src/inc; as_fn_mkdir_p
          as_dir=conftest.dir/build; as_fn_mkdir_p
@@ -4182,15 +4182,15 @@ _ACEOF
            shift; mv conftest.$ac_ext conftest.dir${1}conftest.write; shift
          done
          cd conftest.dir/build
-         acx_save_FCFLAGS=$FCFLAGS
-         FCFLAGS="$FCFLAGS ${acx_cv_fc_pp_sys_include_flag}../src/inc ${acx_cv_fc_pp_sys_include_flag}../src/inc2"
-         acx_save_ac_link=$ac_link
+         mkh_save_FCFLAGS=$FCFLAGS
+         FCFLAGS="$FCFLAGS ${mkh_cv_fc_pp_sys_include_flag}../src/inc ${mkh_cv_fc_pp_sys_include_flag}../src/inc2"
+         mkh_save_ac_link=$ac_link
          ac_link=`$as_echo "$ac_link" | sed 's%conftest\.\$ac_ext%../src/&%'`
          while :; do
            if ac_fn_fc_try_link "$LINENO"; then :
-  acx_exec_result=`./conftest$ac_exeext`
+  mkh_exec_result=`./conftest$ac_exeext`
               if test $? -eq 0; then :
-  case $acx_exec_result in #(
+  case $mkh_exec_result in #(
   src) :
     rm -f ../src/conftest.write ;; #(
   inc) :
@@ -4202,10 +4202,10 @@ _ACEOF
   *) :
     break ;;
 esac
-                 if test -z "$acx_cv_fc_pp_sys_include_order"; then :
-  acx_cv_fc_pp_sys_include_order=$acx_exec_result
+                 if test -z "$mkh_cv_fc_pp_sys_include_order"; then :
+  mkh_cv_fc_pp_sys_include_order=$mkh_exec_result
 else
-  as_fn_append acx_cv_fc_pp_sys_include_order ",$acx_exec_result"
+  as_fn_append mkh_cv_fc_pp_sys_include_order ",$mkh_exec_result"
 fi
                  rm -f conftest$ac_exeext
 else
@@ -4217,31 +4217,31 @@ fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext
          done
-         ac_link=$acx_save_ac_link
-         FCFLAGS=$acx_save_FCFLAGS
+         ac_link=$mkh_save_ac_link
+         FCFLAGS=$mkh_save_FCFLAGS
          cd ../..
          rm -rf conftest.dir
 fi
-      if test -z "$acx_cv_fc_pp_sys_include_order"; then :
-  acx_cv_fc_pp_sys_include_order=unknown
+      if test -z "$mkh_cv_fc_pp_sys_include_order"; then :
+  mkh_cv_fc_pp_sys_include_order=unknown
 fi
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_pp_sys_include_order" >&5
-$as_echo "$acx_cv_fc_pp_sys_include_order" >&6; }
-   if test "x$acx_cv_fc_pp_sys_include_order" = xunknown; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $mkh_cv_fc_pp_sys_include_order" >&5
+$as_echo "$mkh_cv_fc_pp_sys_include_order" >&6; }
+   if test "x$mkh_cv_fc_pp_sys_include_order" = xunknown; then :
   FC_INC_ORDER_PP_SYS_f90=flg
 else
-  FC_INC_ORDER_PP_SYS_f90=$acx_cv_fc_pp_sys_include_order
+  FC_INC_ORDER_PP_SYS_f90=$mkh_cv_fc_pp_sys_include_order
 fi
 
 
 
    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler flag needed to define a preprocessor macro" >&5
 $as_echo_n "checking for Fortran compiler flag needed to define a preprocessor macro... " >&6; }
-if ${acx_cv_fc_macro_flag+:} false; then :
+if ${mkh_cv_fc_macro_flag+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  acx_cv_fc_macro_flag=unknown
+  mkh_cv_fc_macro_flag=unknown
       cat > conftest.$ac_ext <<_ACEOF
       program main
 #ifndef CONFTEST_ONE
@@ -4252,37 +4252,37 @@ else
 #endif
       end
 _ACEOF
-      acx_save_FCFLAGS=$FCFLAGS
-      for acx_lang_macro_flag in -D; do
-        FCFLAGS="${acx_save_FCFLAGS} ${acx_lang_macro_flag}CONFTEST_ONE ${acx_lang_macro_flag}CONFTEST_TWO=42"
+      mkh_save_FCFLAGS=$FCFLAGS
+      for mkh_lang_macro_flag in -D; do
+        FCFLAGS="${mkh_save_FCFLAGS} ${mkh_lang_macro_flag}CONFTEST_ONE ${mkh_lang_macro_flag}CONFTEST_TWO=42"
         if ac_fn_fc_try_compile "$LINENO"; then :
-  acx_cv_fc_macro_flag=$acx_lang_macro_flag
+  mkh_cv_fc_macro_flag=$mkh_lang_macro_flag
 fi
 rm -f core conftest.err conftest.$ac_objext
-        test "x$acx_cv_fc_macro_flag" != xunknown && break
+        test "x$mkh_cv_fc_macro_flag" != xunknown && break
       done
       rm -f conftest.$ac_ext
-      FCFLAGS=$acx_save_FCFLAGS
+      FCFLAGS=$mkh_save_FCFLAGS
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_macro_flag" >&5
-$as_echo "$acx_cv_fc_macro_flag" >&6; }
-   if test "x$acx_cv_fc_macro_flag" = xunknown; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $mkh_cv_fc_macro_flag" >&5
+$as_echo "$mkh_cv_fc_macro_flag" >&6; }
+   if test "x$mkh_cv_fc_macro_flag" = xunknown; then :
   { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
 as_fn_error $? "unable to detect Fortran compiler flag needed to define a preprocessor macro
 See \`config.log' for more details" "$LINENO" 5; }
 else
-  FC_PP_DEF=$acx_cv_fc_macro_flag
+  FC_PP_DEF=$mkh_cv_fc_macro_flag
 
 fi
 
 
       { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether Fortran compiler supports C-style comments" >&5
 $as_echo_n "checking whether Fortran compiler supports C-style comments... " >&6; }
-if ${acx_cv_fc_pp_comments+:} false; then :
+if ${mkh_cv_fc_pp_comments+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  acx_cv_fc_pp_comments=no
+  mkh_cv_fc_pp_comments=no
       cat > conftest.$ac_ext <<_ACEOF
       program main
 /* block
@@ -4298,13 +4298,13 @@ comment */
       end
 _ACEOF
 if ac_fn_fc_try_compile "$LINENO"; then :
-  acx_cv_fc_pp_comments=yes
+  mkh_cv_fc_pp_comments=yes
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_pp_comments" >&5
-$as_echo "$acx_cv_fc_pp_comments" >&6; }
-   if test "x$acx_cv_fc_pp_comments" = xyes; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $mkh_cv_fc_pp_comments" >&5
+$as_echo "$mkh_cv_fc_pp_comments" >&6; }
+   if test "x$mkh_cv_fc_pp_comments" = xyes; then :
 
 else
   :
@@ -4312,11 +4312,11 @@ fi
 
       { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler flag needed to allow routines to be called with different argument types" >&5
 $as_echo_n "checking for Fortran compiler flag needed to allow routines to be called with different argument types... " >&6; }
-   if ${acx_cv_fc_mismatch_flag+:} false; then :
+   if ${mkh_cv_fc_mismatch_flag+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  acx_cv_fc_mismatch_flag=unknown
-      acx_save_FCFLAGS=$FCFLAGS
+  mkh_cv_fc_mismatch_flag=unknown
+      mkh_save_FCFLAGS=$FCFLAGS
       cat > conftest.$ac_ext <<_ACEOF
       program main
       implicit none
@@ -4328,36 +4328,36 @@ else
       call foo1(c)
       end
 _ACEOF
-      for acx_flag in '' -mismatch; do
-        FCFLAGS="${acx_save_FCFLAGS} $acx_flag"
+      for mkh_flag in '' -mismatch; do
+        FCFLAGS="${mkh_save_FCFLAGS} $mkh_flag"
         if ac_fn_fc_try_compile "$LINENO"; then :
-  acx_cv_fc_mismatch_flag=$acx_flag
+  mkh_cv_fc_mismatch_flag=$mkh_flag
 fi
 rm -f core conftest.err conftest.$ac_objext
-        test "x$acx_cv_fc_mismatch_flag" != xunknown && break
+        test "x$mkh_cv_fc_mismatch_flag" != xunknown && break
       done
       rm -f conftest.$ac_ext
-      FCFLAGS=$acx_save_FCFLAGS
+      FCFLAGS=$mkh_save_FCFLAGS
 fi
 
-   if test -n "$acx_cv_fc_mismatch_flag"; then :
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_mismatch_flag" >&5
-$as_echo "$acx_cv_fc_mismatch_flag" >&6; }
+   if test -n "$mkh_cv_fc_mismatch_flag"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $mkh_cv_fc_mismatch_flag" >&5
+$as_echo "$mkh_cv_fc_mismatch_flag" >&6; }
 else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: none needed" >&5
 $as_echo "none needed" >&6; }
 fi
-   if test "x$acx_cv_fc_mismatch_flag" = xunknown; then :
+   if test "x$mkh_cv_fc_mismatch_flag" = xunknown; then :
   :
 fi
 
 
    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for endianness of the target system" >&5
 $as_echo_n "checking for endianness of the target system... " >&6; }
-   if ${acx_cv_fc_endianness_real+:} false; then :
+   if ${mkh_cv_fc_endianness_real+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  acx_cv_fc_endianness_real=unknown
+  mkh_cv_fc_endianness_real=unknown
       free_fmt='
       real(dp) :: b(2) = (/11436526043186408342932917319490312838905855&
       &2118841611962449784525241959417255606719874468829884522246508686&
@@ -4370,24 +4370,24 @@ else
      + 0799336906947500199989578974774280030598291952243399484779227378
      + 5162269613202128034599963034475950452228997847642131801671155898
      + 01738240.0_dp,0.0_dp/)'
-     for acx_tmp in "$free_fmt" "$fixed_fmt"; do
+     for mkh_tmp in "$free_fmt" "$fixed_fmt"; do
        cat > conftest.$ac_ext <<_ACEOF
       subroutine conftest(i, a)
       implicit none
       integer, parameter :: dp = KIND(1.d0)
       integer :: i
       real(dp) :: a
-$acx_tmp
+$mkh_tmp
       a = b(i)
       end subroutine
 _ACEOF
 if ac_fn_fc_try_compile "$LINENO"; then :
-  for acx_tmp in mkhElper replEhkm lpermkhE; do
-            if grep "$acx_tmp" conftest.$ac_objext >/dev/null; then :
-  if test "x$acx_cv_fc_endianness_real" = xunknown; then :
-  acx_cv_fc_endianness_real=$acx_tmp
+  for mkh_tmp in mkhElper replEhkm lpermkhE; do
+            if grep "$mkh_tmp" conftest.$ac_objext >/dev/null; then :
+  if test "x$mkh_cv_fc_endianness_real" = xunknown; then :
+  mkh_cv_fc_endianness_real=$mkh_tmp
 else
-  acx_cv_fc_endianness_real=unknown
+  mkh_cv_fc_endianness_real=unknown
                   break
 fi
 fi
@@ -4399,20 +4399,20 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 
 fi
 
-   acx_tmp=unknown
-   case $acx_cv_fc_endianness_real in #(
+   mkh_tmp=unknown
+   case $mkh_cv_fc_endianness_real in #(
   mkhElper) :
-    acx_tmp='little-endian' ;; #(
+    mkh_tmp='little-endian' ;; #(
   replEhkm) :
-    acx_tmp='big-endian' ;; #(
+    mkh_tmp='big-endian' ;; #(
   lpermkhE) :
-    acx_tmp='half little-endian, half big-endian' ;; #(
+    mkh_tmp='half little-endian, half big-endian' ;; #(
   *) :
      ;;
 esac
-   { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_tmp" >&5
-$as_echo "$acx_tmp" >&6; }
-   if test "x$acx_tmp" = xunknown; then :
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: $mkh_tmp" >&5
+$as_echo "$mkh_tmp" >&6; }
+   if test "x$mkh_tmp" = xunknown; then :
   :
 fi
 
@@ -4421,7 +4421,7 @@ fi
 
       { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran preprocessor command" >&5
 $as_echo_n "checking for Fortran preprocessor command... " >&6; }
-   if ${acx_cv_prog_fpp+:} false; then :
+   if ${mkh_cv_prog_fpp+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   as_dir=conftest.dir/sub; as_fn_mkdir_p
@@ -4450,7 +4450,7 @@ else
 #endif
 
 _ACEOF
-      acx_save_FCFLAGS=$FCFLAGS
+      mkh_save_FCFLAGS=$FCFLAGS
       if ${FPP+:} false; then :
   set dummy "$FPP"
 else
@@ -4488,17 +4488,17 @@ case $srcdir in
 esac
 ac_abs_srcdir=$ac_abs_top_srcdir$ac_dir_suffix
 
-         acx_prog_fpp_wrapper_dir="${ac_abs_top_srcdir}/fpp-wrappers"
+         mkh_prog_fpp_wrapper_dir="${ac_abs_top_srcdir}/fpp-wrappers"
          set dummy "$FC -E" "$FC -E $ac_fcflags_srcext" \
-                   "$SHELL ${acx_prog_fpp_wrapper_dir}/nag.sh $FC" \
+                   "$SHELL ${mkh_prog_fpp_wrapper_dir}/nag.sh $FC" \
                    "$FC -o - -Wp,-w,-P -F $ac_fcflags_srcext" \
-                   "$SHELL ${acx_prog_fpp_wrapper_dir}/cray.sh $FC" \
+                   "$SHELL ${mkh_prog_fpp_wrapper_dir}/cray.sh $FC" \
                    "$FC -F" "$FC -F $ac_fcflags_srcext"
 fi
       shift
-      acx_prog_fpp_include_flag=$FC_INC_FLAG_PP_f90
-      acx_prog_fpp_macro_flag=$FC_PP_DEF
-      for acx_candidate in "$@"; do
+      mkh_prog_fpp_include_flag=$FC_INC_FLAG_PP_f90
+      mkh_prog_fpp_macro_flag=$FC_PP_DEF
+      for mkh_candidate in "$@"; do
         cat > conftest.$ac_ext <<_ACEOF
       program main
       implicit none
@@ -4509,42 +4509,42 @@ fi
       conftest_three = 3
       end
 _ACEOF
-        rm -f conftest.acx_prog_fpp
-        acx_try_fpp="$acx_candidate \$FCFLAGS conftest.\$ac_ext >conftest.acx_prog_fpp"
-        FCFLAGS="${acx_prog_fpp_include_flag}sub ${acx_prog_fpp_macro_flag}CONFTEST_ONE ${acx_prog_fpp_macro_flag}CONFTEST_TWO=42 $acx_save_FCFLAGS"
-        { { ac_try="$acx_try_fpp"
+        rm -f conftest.mkh_prog_fpp
+        mkh_try_fpp="$mkh_candidate \$FCFLAGS conftest.\$ac_ext >conftest.mkh_prog_fpp"
+        FCFLAGS="${mkh_prog_fpp_include_flag}sub ${mkh_prog_fpp_macro_flag}CONFTEST_ONE ${mkh_prog_fpp_macro_flag}CONFTEST_TWO=42 $mkh_save_FCFLAGS"
+        { { ac_try="$mkh_try_fpp"
 case "(($ac_try" in
   *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
   *) ac_try_echo=$ac_try;;
 esac
 eval ac_try_echo="\"\$as_me:${as_lineno-$LINENO}: $ac_try_echo\""
 $as_echo "$ac_try_echo"; } >&5
-  (eval "$acx_try_fpp") 2>&5
+  (eval "$mkh_try_fpp") 2>&5
   ac_status=$?
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }
-        if test $? -eq 0 && test -f conftest.acx_prog_fpp; then :
-  acx_result=`grep -c 'integer conftest' conftest.acx_prog_fpp 2>/dev/null`
-           if test $? -eq 0 && test 4 -eq "$acx_result" 2>/dev/null; then :
-  mv conftest.acx_prog_fpp conftest.$ac_ext
-              FCFLAGS=$acx_save_FCFLAGS
+        if test $? -eq 0 && test -f conftest.mkh_prog_fpp; then :
+  mkh_result=`grep -c 'integer conftest' conftest.mkh_prog_fpp 2>/dev/null`
+           if test $? -eq 0 && test 4 -eq "$mkh_result" 2>/dev/null; then :
+  mv conftest.mkh_prog_fpp conftest.$ac_ext
+              FCFLAGS=$mkh_save_FCFLAGS
               if ac_fn_fc_try_compile "$LINENO"; then :
-  acx_cv_prog_fpp=$acx_candidate
+  mkh_cv_prog_fpp=$mkh_candidate
                  break
 fi
 rm -f core conftest.err conftest.$ac_objext
 fi
 fi
       done
-      FCFLAGS=$acx_save_FCFLAGS
+      FCFLAGS=$mkh_save_FCFLAGS
       cd ..
       rm -rf conftest.dir
 fi
 
-   if ${acx_cv_prog_fpp+:} false; then :
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_prog_fpp" >&5
-$as_echo "$acx_cv_prog_fpp" >&6; }
-      FPP=$acx_cv_prog_fpp
+   if ${mkh_cv_prog_fpp+:} false; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $mkh_cv_prog_fpp" >&5
+$as_echo "$mkh_cv_prog_fpp" >&6; }
+      FPP=$mkh_cv_prog_fpp
 else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: unknown" >&5
 $as_echo "unknown" >&6; }
@@ -4573,7 +4573,7 @@ else
 fi
 
 if test "x$enable_additional_mods" = xyes; then :
-  as_fn_append config_FCFLAGS " ${acx_cv_fc_macro_flag}INCLUDE_MODULES"
+  as_fn_append config_FCFLAGS " ${mkh_cv_fc_macro_flag}INCLUDE_MODULES"
 fi
 
 # Check whether --enable-openmp was given.
@@ -4586,11 +4586,11 @@ fi
 if test "x$enable_openmp" = xyes; then :
      { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler flag needed to enable OpenMP support" >&5
 $as_echo_n "checking for Fortran compiler flag needed to enable OpenMP support... " >&6; }
-   if ${acx_cv_fc_openmp_flag+:} false; then :
+   if ${mkh_cv_fc_openmp_flag+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  acx_cv_fc_openmp_flag=unknown
-      acx_save_FCFLAGS=$FCFLAGS
+  mkh_cv_fc_openmp_flag=unknown
+      mkh_save_FCFLAGS=$FCFLAGS
       cat > conftest.$ac_ext <<_ACEOF
 #ifndef _OPENMP
       choke me
@@ -4604,39 +4604,39 @@ else
       end
 
 _ACEOF
-      for acx_lang_openmp_flag in '' -qopenmp -openmp -fopenmp -homp -mp; do
-        FCFLAGS="${acx_save_FCFLAGS} $acx_lang_openmp_flag"
+      for mkh_lang_openmp_flag in '' -qopenmp -openmp -fopenmp -homp -mp; do
+        FCFLAGS="${mkh_save_FCFLAGS} $mkh_lang_openmp_flag"
         if ac_fn_fc_try_link "$LINENO"; then :
-  acx_cv_fc_openmp_flag=$acx_lang_openmp_flag
+  mkh_cv_fc_openmp_flag=$mkh_lang_openmp_flag
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext
-        test "x$acx_cv_fc_openmp_flag" != xunknown && break
+        test "x$mkh_cv_fc_openmp_flag" != xunknown && break
       done
       rm -f conftest.$ac_ext
-      FCFLAGS=$acx_save_FCFLAGS
+      FCFLAGS=$mkh_save_FCFLAGS
 fi
 
-   if test -n "$acx_cv_fc_openmp_flag"; then :
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_openmp_flag" >&5
-$as_echo "$acx_cv_fc_openmp_flag" >&6; }
+   if test -n "$mkh_cv_fc_openmp_flag"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $mkh_cv_fc_openmp_flag" >&5
+$as_echo "$mkh_cv_fc_openmp_flag" >&6; }
 else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: none needed" >&5
 $as_echo "none needed" >&6; }
 fi
-   if test "x$acx_cv_fc_openmp_flag" = xunknown; then :
+   if test "x$mkh_cv_fc_openmp_flag" = xunknown; then :
   { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
 as_fn_error $? "unable to detect Fortran compiler flag needed to enable OpenMP support
 See \`config.log' for more details" "$LINENO" 5; }
 else
-  as_fn_append FCFLAGS " $acx_cv_fc_openmp_flag"
+  as_fn_append FCFLAGS " $mkh_cv_fc_openmp_flag"
          { $as_echo "$as_me:${as_lineno-$LINENO}: checking for the value of the Fortran preprocessor macro _OPENMP" >&5
 $as_echo_n "checking for the value of the Fortran preprocessor macro _OPENMP... " >&6; }
-if ${acx_cv_fc_macro__OPENMP_value+:} false; then :
+if ${mkh_cv_fc_macro__OPENMP_value+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  acx_macro_value=unknown
+  mkh_macro_value=unknown
    if test "x$cross_compiling" = xno; then :
   cat > conftest.$ac_ext <<_ACEOF
 #ifndef _OPENMP
@@ -4677,50 +4677,50 @@ else
 #endif
 _ACEOF
 if ac_fn_fc_try_link "$LINENO"; then :
-  acx_exec_result=`./conftest$ac_exeext 2>&5`
+  mkh_exec_result=`./conftest$ac_exeext 2>&5`
          if test $? -eq 0; then :
-  acx_macro_value=$acx_exec_result
+  mkh_macro_value=$mkh_exec_result
 fi
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 fi
-   if test "x$acx_macro_value" = xunknown; then :
-  for acx_tmp in 202111 202011 201811 201511 201307 201107 200805 200505 200011 199911 199710; do
+   if test "x$mkh_macro_value" = xunknown; then :
+  for mkh_tmp in 202111 202011 201811 201511 201307 201107 200805 200505 200011 199911 199710; do
            cat > conftest.$ac_ext <<_ACEOF
       program main
-#if _OPENMP == _CONFTEST_UNDEFINED_OR_EMPTY || _OPENMP != $acx_tmp
+#if _OPENMP == _CONFTEST_UNDEFINED_OR_EMPTY || _OPENMP != $mkh_tmp
       choke me
 #endif
       end
 _ACEOF
 if ac_fn_fc_try_compile "$LINENO"; then :
-  acx_macro_value=$acx_tmp
+  mkh_macro_value=$mkh_tmp
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-           test "x$acx_macro_value" = xunknown || break
+           test "x$mkh_macro_value" = xunknown || break
          done
 fi
-      acx_cv_fc_macro__OPENMP_value=$acx_macro_value
+      mkh_cv_fc_macro__OPENMP_value=$mkh_macro_value
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_macro__OPENMP_value" >&5
-$as_echo "$acx_cv_fc_macro__OPENMP_value" >&6; }
-   acx_macro_value=$acx_cv_fc_macro__OPENMP_value
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $mkh_cv_fc_macro__OPENMP_value" >&5
+$as_echo "$mkh_cv_fc_macro__OPENMP_value" >&6; }
+   mkh_macro_value=$mkh_cv_fc_macro__OPENMP_value
 
-      if test "x$acx_macro_value" = xunknown; then :
+      if test "x$mkh_macro_value" = xunknown; then :
   { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
 as_fn_error $? "unable to detect the value of the Fortran preprocessor macro _OPENMP
 See \`config.log' for more details" "$LINENO" 5; }
 else
-  as_fn_append DEPGEN_FCFLAGS " ${acx_cv_fc_macro_flag}_OPENMP=$acx_macro_value"
+  as_fn_append DEPGEN_FCFLAGS " ${mkh_cv_fc_macro_flag}_OPENMP=$mkh_macro_value"
 fi
 fi
 
 else
      { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether the Fortran preprocessor macro _OPENMP is defined" >&5
 $as_echo_n "checking whether the Fortran preprocessor macro _OPENMP is defined... " >&6; }
-if ${acx_cv_fc_macro__OPENMP_defined+:} false; then :
+if ${mkh_cv_fc_macro__OPENMP_defined+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   cat > conftest.$ac_ext <<_ACEOF
@@ -4732,7 +4732,7 @@ else
       end
 _ACEOF
 if ac_fn_fc_try_compile "$LINENO"; then :
-  acx_macro_defined=yes
+  mkh_macro_defined=yes
 else
   cat > conftest.$ac_ext <<_ACEOF
       program main
@@ -4743,20 +4743,20 @@ else
       end
 _ACEOF
 if ac_fn_fc_try_compile "$LINENO"; then :
-  acx_macro_defined=no
+  mkh_macro_defined=no
 else
-  acx_macro_defined=unsupported
+  mkh_macro_defined=unsupported
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-      acx_cv_fc_macro__OPENMP_defined=$acx_macro_defined
+      mkh_cv_fc_macro__OPENMP_defined=$mkh_macro_defined
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_macro__OPENMP_defined" >&5
-$as_echo "$acx_cv_fc_macro__OPENMP_defined" >&6; }
-   acx_macro_defined=$acx_cv_fc_macro__OPENMP_defined
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $mkh_cv_fc_macro__OPENMP_defined" >&5
+$as_echo "$mkh_cv_fc_macro__OPENMP_defined" >&6; }
+   mkh_macro_defined=$mkh_cv_fc_macro__OPENMP_defined
 
-   if test "x$acx_macro_defined" = xyes; then :
+   if test "x$mkh_macro_defined" = xyes; then :
   as_fn_error $? "Fortran compiler enables OpenMP support by default: set FCFLAGS accordingly to disable it" "$LINENO" 5
 fi
 fi
@@ -4769,7 +4769,7 @@ else
 fi
 
 if test "x$enable_module_nature_test" = xyes; then :
-  as_fn_append config_FCFLAGS " ${acx_cv_fc_macro_flag}TEST_MODULE_NATURE"
+  as_fn_append config_FCFLAGS " ${mkh_cv_fc_macro_flag}TEST_MODULE_NATURE"
 fi
 
 # Check whether --enable-invalid-test was given.
@@ -4780,7 +4780,7 @@ else
 fi
 
 if test "x$enable_invalid_test" = xyes; then :
-  as_fn_append config_FCFLAGS " ${acx_cv_fc_macro_flag}TEST_INVALID"
+  as_fn_append config_FCFLAGS " ${mkh_cv_fc_macro_flag}TEST_INVALID"
    INVALID_DISABLED='#'
 
 else
@@ -4790,7 +4790,7 @@ fi
 
 mkhelper_linker_flags="'-L'"
 if test "x$enable_rpaths" = xyes; then :
-  as_fn_append mkhelper_linker_flags " '$acx_cv_fc_rpath_flag'"
+  as_fn_append mkhelper_linker_flags " '$mkh_cv_fc_rpath_flag'"
 fi
 eval "set dummy $mkhelper_linker_flags; shift"
 
@@ -4811,14 +4811,14 @@ fi
 
 
       if ${with_netcdf_include+:} false; then :
-  for acx_flag in $acx_cv_fc_ftn_include_flag; do
-           case " "$acx_fc_NetCDF_inc_search_args" " in #(
-  *" ""${acx_flag}${with_netcdf_include}"" "*) :
+  for mkh_flag in $mkh_cv_fc_ftn_include_flag; do
+           case " "$mkh_fc_NetCDF_inc_search_args" " in #(
+  *" ""${mkh_flag}${with_netcdf_include}"" "*) :
      ;; #(
   " "" ") :
-    as_fn_append acx_fc_NetCDF_inc_search_args "${acx_flag}${with_netcdf_include}" ;; #(
+    as_fn_append mkh_fc_NetCDF_inc_search_args "${mkh_flag}${with_netcdf_include}" ;; #(
   *) :
-    as_fn_append acx_fc_NetCDF_inc_search_args " "; as_fn_append acx_fc_NetCDF_inc_search_args "${acx_flag}${with_netcdf_include}" ;;
+    as_fn_append mkh_fc_NetCDF_inc_search_args " "; as_fn_append mkh_fc_NetCDF_inc_search_args "${mkh_flag}${with_netcdf_include}" ;;
 esac
          done
 fi
@@ -4835,26 +4835,26 @@ fi
 
 
       if ${with_netcdf_lib+:} false; then :
-  for acx_flag in "$@"; do
-           case " "$acx_fc_NetCDF_lib_search_args" " in #(
-  *" ""${acx_flag}${with_netcdf_lib}"" "*) :
+  for mkh_flag in "$@"; do
+           case " "$mkh_fc_NetCDF_lib_search_args" " in #(
+  *" ""${mkh_flag}${with_netcdf_lib}"" "*) :
      ;; #(
   " "" ") :
-    as_fn_append acx_fc_NetCDF_lib_search_args "${acx_flag}${with_netcdf_lib}" ;; #(
+    as_fn_append mkh_fc_NetCDF_lib_search_args "${mkh_flag}${with_netcdf_lib}" ;; #(
   *) :
-    as_fn_append acx_fc_NetCDF_lib_search_args " "; as_fn_append acx_fc_NetCDF_lib_search_args "${acx_flag}${with_netcdf_lib}" ;;
+    as_fn_append mkh_fc_NetCDF_lib_search_args " "; as_fn_append mkh_fc_NetCDF_lib_search_args "${mkh_flag}${with_netcdf_lib}" ;;
 esac
          done
 fi
 
 
-acx_NETCDF_found=no
-acx_save_FCFLAGS=$FCFLAGS
-NETCDF_FCFLAGS=${NETCDF_FCFLAGS-$acx_fc_NetCDF_inc_search_args}
+mkh_NETCDF_found=no
+mkh_save_FCFLAGS=$FCFLAGS
+NETCDF_FCFLAGS=${NETCDF_FCFLAGS-$mkh_fc_NetCDF_inc_search_args}
 FCFLAGS="$NETCDF_FCFLAGS $FCFLAGS"
       { $as_echo "$as_me:${as_lineno-$LINENO}: checking for netcdf.inc" >&5
 $as_echo_n "checking for netcdf.inc... " >&6; }
-if ${acx_cv_fc_ftn_header_netcdf_inc+:} false; then :
+if ${mkh_cv_fc_ftn_header_netcdf_inc+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   cat > conftest.$ac_ext <<_ACEOF
@@ -4864,58 +4864,58 @@ else
       end
 _ACEOF
 if ac_fn_fc_try_compile "$LINENO"; then :
-  acx_cv_fc_ftn_header_netcdf_inc=yes
+  mkh_cv_fc_ftn_header_netcdf_inc=yes
 else
-  acx_cv_fc_ftn_header_netcdf_inc=no
+  mkh_cv_fc_ftn_header_netcdf_inc=no
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_ftn_header_netcdf_inc" >&5
-$as_echo "$acx_cv_fc_ftn_header_netcdf_inc" >&6; }
-   if test "x$acx_cv_fc_ftn_header_netcdf_inc" = xyes; then :
-  acx_fc_lib_search=NF_OPEN
-      { $as_echo "$as_me:${as_lineno-$LINENO}: checking for linker flags enabling Fortran function $acx_fc_lib_search" >&5
-$as_echo_n "checking for linker flags enabling Fortran function $acx_fc_lib_search... " >&6; }
-   if { as_var=acx_cv_fc_lib_func_`$as_echo "$acx_fc_lib_search" | $as_tr_sh`; eval \${$as_var+:} false; }; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $mkh_cv_fc_ftn_header_netcdf_inc" >&5
+$as_echo "$mkh_cv_fc_ftn_header_netcdf_inc" >&6; }
+   if test "x$mkh_cv_fc_ftn_header_netcdf_inc" = xyes; then :
+  mkh_fc_lib_search=NF_OPEN
+      { $as_echo "$as_me:${as_lineno-$LINENO}: checking for linker flags enabling Fortran function $mkh_fc_lib_search" >&5
+$as_echo_n "checking for linker flags enabling Fortran function $mkh_fc_lib_search... " >&6; }
+   if { as_var=mkh_cv_fc_lib_func_`$as_echo "$mkh_fc_lib_search" | $as_tr_sh`; eval \${$as_var+:} false; }; then :
   $as_echo_n "(cached) " >&6
 else
   cat > conftest.$ac_ext <<_ACEOF
       program main
-      call $acx_fc_lib_search
+      call $mkh_fc_lib_search
       end
 _ACEOF
-      acx_save_LIBS=$LIBS
+      mkh_save_LIBS=$LIBS
       if ${NETCDF_FCLIBS+:} false; then :
   set dummy "$NETCDF_FCLIBS"
 else
-  set dummy ''  "$acx_fc_NetCDF_lib_search_args -lnetcdff"
+  set dummy ''  "$mkh_fc_NetCDF_lib_search_args -lnetcdff"
 fi
       shift
-      for acx_libs in "$@"; do
-        LIBS="$acx_libs $acx_save_LIBS"
+      for mkh_libs in "$@"; do
+        LIBS="$mkh_libs $mkh_save_LIBS"
         if ac_fn_fc_try_link "$LINENO"; then :
-  eval acx_cv_fc_lib_func_`$as_echo "$acx_fc_lib_search" | $as_tr_sh`=\$acx_libs
+  eval mkh_cv_fc_lib_func_`$as_echo "$mkh_fc_lib_search" | $as_tr_sh`=\$mkh_libs
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext
-        if { as_var=acx_cv_fc_lib_func_`$as_echo "$acx_fc_lib_search" | $as_tr_sh`; eval \${$as_var+:} false; }; then :
+        if { as_var=mkh_cv_fc_lib_func_`$as_echo "$mkh_fc_lib_search" | $as_tr_sh`; eval \${$as_var+:} false; }; then :
   break
 fi
       done
       rm -f conftest.$ac_ext
-      LIBS=$acx_save_LIBS
+      LIBS=$mkh_save_LIBS
 fi
 
-   if { as_var=acx_cv_fc_lib_func_`$as_echo "$acx_fc_lib_search" | $as_tr_sh`; eval \${$as_var+:} false; }; then :
-  if test -n "`eval 'as_val=${'acx_cv_fc_lib_func_\`$as_echo "$acx_fc_lib_search" | $as_tr_sh\`'};$as_echo "$as_val"'`"; then :
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: `eval 'as_val=${'acx_cv_fc_lib_func_\`$as_echo "$acx_fc_lib_search" | $as_tr_sh\`'};$as_echo "$as_val"'`" >&5
-$as_echo "`eval 'as_val=${'acx_cv_fc_lib_func_\`$as_echo "$acx_fc_lib_search" | $as_tr_sh\`'};$as_echo "$as_val"'`" >&6; }
+   if { as_var=mkh_cv_fc_lib_func_`$as_echo "$mkh_fc_lib_search" | $as_tr_sh`; eval \${$as_var+:} false; }; then :
+  if test -n "`eval 'as_val=${'mkh_cv_fc_lib_func_\`$as_echo "$mkh_fc_lib_search" | $as_tr_sh\`'};$as_echo "$as_val"'`"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: `eval 'as_val=${'mkh_cv_fc_lib_func_\`$as_echo "$mkh_fc_lib_search" | $as_tr_sh\`'};$as_echo "$as_val"'`" >&5
+$as_echo "`eval 'as_val=${'mkh_cv_fc_lib_func_\`$as_echo "$mkh_fc_lib_search" | $as_tr_sh\`'};$as_echo "$as_val"'`" >&6; }
 else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: none needed" >&5
 $as_echo "none needed" >&6; }
 fi
-      NETCDF_FCLIBS=$acx_cv_fc_lib_func_NF_OPEN
-      acx_NETCDF_found=yes
+      NETCDF_FCLIBS=$mkh_cv_fc_lib_func_NF_OPEN
+      mkh_NETCDF_found=yes
 else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: unknown" >&5
 $as_echo "unknown" >&6; }
@@ -4926,36 +4926,36 @@ else
   :
 fi
 
-FCFLAGS=$acx_save_FCFLAGS
-if test "x$acx_NETCDF_found" = xno; then :
-  as_fn_append config_FCFLAGS " ${acx_cv_fc_macro_flag}NO_NETCDF"
+FCFLAGS=$mkh_save_FCFLAGS
+if test "x$mkh_NETCDF_found" = xno; then :
+  as_fn_append config_FCFLAGS " ${mkh_cv_fc_macro_flag}NO_NETCDF"
    NETCDF_FCFLAGS=;NETCDF_FCLIBS=
 fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for names of the polymorphic example options" >&5
 $as_echo_n "checking for names of the polymorphic example options... " >&6; }
-if test -n "$acx_examples"; then :
-  acx_seen_example_options=
-   for acx_option in $acx_examples; do
-     case ','$acx_seen_example_options',' in #(
-  *','$acx_option','*) :
+if test -n "$mkh_examples"; then :
+  mkh_seen_example_options=
+   for mkh_option in $mkh_examples; do
+     case ','$mkh_seen_example_options',' in #(
+  *','$mkh_option','*) :
      ;; #(
   ','',') :
-    as_fn_append acx_seen_example_options $acx_option ;; #(
+    as_fn_append mkh_seen_example_options $mkh_option ;; #(
   *) :
-    as_fn_append acx_seen_example_options ','; as_fn_append acx_seen_example_options $acx_option ;;
+    as_fn_append mkh_seen_example_options ','; as_fn_append mkh_seen_example_options $mkh_option ;;
 esac
    done
-   { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_seen_example_options" >&5
-$as_echo "$acx_seen_example_options" >&6; }
-   acx_save_IFS=$IFS
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: $mkh_seen_example_options" >&5
+$as_echo "$mkh_seen_example_options" >&6; }
+   mkh_save_IFS=$IFS
    IFS=','
-   for acx_option in $acx_seen_example_options; do
-     IFS=$acx_save_IFS
-     { $as_echo "$as_me:${as_lineno-$LINENO}: $acx_option: `eval 'as_val=${'enable_example_$acx_option'};$as_echo "$as_val"'`" >&5
-$as_echo "$as_me: $acx_option: `eval 'as_val=${'enable_example_$acx_option'};$as_echo "$as_val"'`" >&6;}
+   for mkh_option in $mkh_seen_example_options; do
+     IFS=$mkh_save_IFS
+     { $as_echo "$as_me:${as_lineno-$LINENO}: $mkh_option: `eval 'as_val=${'enable_example_$mkh_option'};$as_echo "$as_val"'`" >&5
+$as_echo "$as_me: $mkh_option: `eval 'as_val=${'enable_example_$mkh_option'};$as_echo "$as_val"'`" >&6;}
    done
-   IFS=$acx_save_IFS
+   IFS=$mkh_save_IFS
 else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: none provided" >&5
 $as_echo "none provided" >&6; }
@@ -4964,7 +4964,7 @@ fi
 ARFLAGS=${ARFLAGS-cr}
    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for ar" >&5
 $as_echo_n "checking for ar... " >&6; }
-   if ${acx_cv_prog_AR+:} false; then :
+   if ${mkh_cv_prog_AR+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   if ${AR+:} false; then :
@@ -4973,14 +4973,14 @@ else
   set dummy ar
 fi
       shift
-      for acx_candidate in "$@"; do
+      for mkh_candidate in "$@"; do
         cat > conftest.$ac_ext <<_ACEOF
       program main
 
       end
 _ACEOF
 if ac_fn_fc_try_compile "$LINENO"; then :
-  mkhelper_ar_try="$acx_candidate ${ARFLAGS} libconftest.a conftest.$ac_objext >&5"
+  mkhelper_ar_try="$mkh_candidate ${ARFLAGS} libconftest.a conftest.$ac_objext >&5"
       { { ac_try="$mkhelper_ar_try"
 case "(($ac_try" in
   *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
@@ -4997,16 +4997,16 @@ fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
    test "$ac_status" -eq 0 >/dev/null 2>&1
         if test $? -eq 0; then :
-  acx_cv_prog_AR=$acx_candidate
+  mkh_cv_prog_AR=$mkh_candidate
            break
 fi
       done
 fi
 
-   if ${acx_cv_prog_AR+:} false; then :
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_prog_AR" >&5
-$as_echo "$acx_cv_prog_AR" >&6; }
-      AR=$acx_cv_prog_AR
+   if ${mkh_cv_prog_AR+:} false; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $mkh_cv_prog_AR" >&5
+$as_echo "$mkh_cv_prog_AR" >&6; }
+      AR=$mkh_cv_prog_AR
 else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: unknown" >&5
 $as_echo "unknown" >&6; }
@@ -5019,7 +5019,7 @@ fi
 
    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for python" >&5
 $as_echo_n "checking for python... " >&6; }
-   if ${acx_cv_prog_PYTHON+:} false; then :
+   if ${mkh_cv_prog_PYTHON+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   if ${PYTHON+:} false; then :
@@ -5028,24 +5028,24 @@ else
   set dummy python python3
 fi
       shift
-      for acx_candidate in "$@"; do
-        mkhelper_depgen_try='$acx_candidate $srcdir/mkhelper/depgen.py -h > /dev/null'
+      for mkh_candidate in "$@"; do
+        mkhelper_depgen_try='$mkh_candidate $srcdir/mkhelper/depgen.py -h > /dev/null'
    { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$mkhelper_depgen_try\""; } >&5
   (eval $mkhelper_depgen_try) 2>&5
   ac_status=$?
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }
         if test $? -eq 0; then :
-  acx_cv_prog_PYTHON=$acx_candidate
+  mkh_cv_prog_PYTHON=$mkh_candidate
            break
 fi
       done
 fi
 
-   if ${acx_cv_prog_PYTHON+:} false; then :
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_prog_PYTHON" >&5
-$as_echo "$acx_cv_prog_PYTHON" >&6; }
-      PYTHON=$acx_cv_prog_PYTHON
+   if ${mkh_cv_prog_PYTHON+:} false; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $mkh_cv_prog_PYTHON" >&5
+$as_echo "$mkh_cv_prog_PYTHON" >&6; }
+      PYTHON=$mkh_cv_prog_PYTHON
 else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: unknown" >&5
 $as_echo "unknown" >&6; }
@@ -5197,22 +5197,22 @@ case $mkhelper_some_prog in #(
   [\\/]* | ?:[\\/]*) :
      ;; #(
   *) :
-       acx_prog_search_abspath=unknown
-   set dummy $mkhelper_some_prog; shift; acx_prog_exec=$1; shift; acx_prog_args="$@"
-   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for the absolute path to $acx_prog_exec" >&5
-$as_echo_n "checking for the absolute path to $acx_prog_exec... " >&6; }
-   acx_prog_search_abspath_fn "$acx_prog_exec"
-   { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_prog_search_abspath" >&5
-$as_echo "$acx_prog_search_abspath" >&6; }
-   if test "x$acx_prog_search_abspath" = xunknown; then :
+       mkh_prog_search_abspath=unknown
+   set dummy $mkhelper_some_prog; shift; mkh_prog_exec=$1; shift; mkh_prog_args="$@"
+   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for the absolute path to $mkh_prog_exec" >&5
+$as_echo_n "checking for the absolute path to $mkh_prog_exec... " >&6; }
+   mkh_prog_search_abspath_fn "$mkh_prog_exec"
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: $mkh_prog_search_abspath" >&5
+$as_echo "$mkh_prog_search_abspath" >&6; }
+   if test "x$mkh_prog_search_abspath" = xunknown; then :
   set dummy $mkhelper_some_prog; shift
             { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: unable to find the absolute path to $1" >&5
 $as_echo "$as_me: WARNING: unable to find the absolute path to $1" >&2;}
 else
-  if test -n "$acx_prog_args"; then :
-  as_fn_append acx_prog_search_abspath " $acx_prog_args"
+  if test -n "$mkh_prog_args"; then :
+  as_fn_append mkh_prog_search_abspath " $mkh_prog_args"
 fi
-      mkhelper_some_prog="$acx_prog_search_abspath"
+      mkhelper_some_prog="$mkh_prog_search_abspath"
 fi ;;
 esac
 
@@ -5225,41 +5225,41 @@ BUNDLED_LIBFILES=''
 polymorphic_subdir='bundled/picky'
 polymorphic_config=''
                         mkh_srcdirs_fn "$polymorphic_subdir"
-   eval "acx_subdir_run_cmd_`$as_echo "$polymorphic_subdir" | $as_tr_sh`=\"'\$ac_top_srcdir/\$polymorphic_subdir/'\\\"\\\${polymorphic_config}\\\"\""
-   eval "acx_subdir_build_type_`$as_echo "$polymorphic_subdir" | $as_tr_sh`='config'"
-   eval "acx_subdir_run_default_args_`$as_echo "$polymorphic_subdir" | $as_tr_sh`="
-         acx_subdir_pre_adjust_config_args
-      eval "acx_subdir_run_args_`$as_echo "$polymorphic_subdir" | $as_tr_sh`=\$acx_subdir_pre_adjusted_config_args"
+   eval "mkh_subdir_run_cmd_`$as_echo "$polymorphic_subdir" | $as_tr_sh`=\"'\$ac_top_srcdir/\$polymorphic_subdir/'\\\"\\\${polymorphic_config}\\\"\""
+   eval "mkh_subdir_build_type_`$as_echo "$polymorphic_subdir" | $as_tr_sh`='config'"
+   eval "mkh_subdir_run_default_args_`$as_echo "$polymorphic_subdir" | $as_tr_sh`="
+         mkh_subdir_pre_adjust_config_args
+      eval "mkh_subdir_run_args_`$as_echo "$polymorphic_subdir" | $as_tr_sh`=\$mkh_subdir_pre_adjusted_config_args"
       if test "x$cache_file" = x'/dev/null'; then :
-  acx_tmp=$cache_file
+  mkh_tmp=$cache_file
 else
   case $cache_file in #(
   [\\/]* | ?:[\\/]*) :
-    acx_tmp=$cache_file ;; #(
+    mkh_tmp=$cache_file ;; #(
   *) :
-    acx_tmp="$ac_top_build_prefix$cache_file" ;;
+    mkh_tmp="$ac_top_build_prefix$cache_file" ;;
 esac
-         acx_tmp="$acx_tmp.`echo "$polymorphic_subdir" | tr / .`"
+         mkh_tmp="$mkh_tmp.`echo "$polymorphic_subdir" | tr / .`"
 fi
-      set dummy "--cache-file=$acx_tmp" "--srcdir=$ac_top_srcdir/$polymorphic_subdir"; shift
-   for acx_tmp; do
-     case $acx_tmp in #(
+      set dummy "--cache-file=$mkh_tmp" "--srcdir=$ac_top_srcdir/$polymorphic_subdir"; shift
+   for mkh_tmp; do
+     case $mkh_tmp in #(
   *\'*) :
-    acx_tmp=`$as_echo "$acx_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+    mkh_tmp=`$as_echo "$mkh_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
   *) :
      ;;
 esac
-     as_fn_append acx_subdir_run_args_`$as_echo "$polymorphic_subdir" | $as_tr_sh` " '$acx_tmp'"
+     as_fn_append mkh_subdir_run_args_`$as_echo "$polymorphic_subdir" | $as_tr_sh` " '$mkh_tmp'"
    done
       as_fn_append extra_build_subdirs " $polymorphic_subdir"
-   eval "acx_subdir_run_`$as_echo "$polymorphic_subdir" | $as_tr_sh`=no"
+   eval "mkh_subdir_run_`$as_echo "$polymorphic_subdir" | $as_tr_sh`=no"
 polymorphic_subdir=
 polymorphic_config='configure.gnu'
-eval "set dummy $acx_subdir_run_args_bundled_picky"; shift
-   acx_subdir_run_args_bundled_picky=
+eval "set dummy $mkh_subdir_run_args_bundled_picky"; shift
+   mkh_subdir_run_args_bundled_picky=
    while test $# != 0; do
-     acx_tmp=$1
-     case $acx_tmp in #(
+     mkh_tmp=$1
+     case $mkh_tmp in #(
   FCFLAGS=*) :
      ;; #(
   -enable-silent-rules|-enable-silent-rules=*|--enable-silent-rules|--enable-silent-rules=*|-disable-silent-rules|--disable-silent-rules) :
@@ -5269,18 +5269,18 @@ eval "set dummy $acx_subdir_run_args_bundled_picky"; shift
   -enable-always|-enable-always=*|--enable-always|--enable-always=*|-disable-always|--disable-always) :
      ;; #(
   *) :
-           case $acx_tmp in #(
+           case $mkh_tmp in #(
   *\'*) :
-    acx_tmp=`$as_echo "$acx_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+    mkh_tmp=`$as_echo "$mkh_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
   *) :
      ;;
 esac
-        as_fn_append acx_subdir_run_args_bundled_picky " '$acx_tmp'" ;;
+        as_fn_append mkh_subdir_run_args_bundled_picky " '$mkh_tmp'" ;;
 esac
      shift
    done
-as_fn_append acx_subdir_run_args_bundled_picky " 'FCFLAGS='"
-as_fn_append acx_subdir_run_args_bundled_picky " '--enable-always=yes'"
+as_fn_append mkh_subdir_run_args_bundled_picky " 'FCFLAGS='"
+as_fn_append mkh_subdir_run_args_bundled_picky " '--enable-always=yes'"
 
 # Check whether --enable-delayed-config was given.
 if test "${enable_delayed_config+set}" = set; then :
@@ -5297,49 +5297,49 @@ if test "x$enable_delayed_config" = xyes; then :
   as_fn_append DELAYED_CONFIG_RULES "export FC${as_nl}polymorphic_config:= $polymorphic_config${as_nl}"
 else
   polymorphic_subdir='bundled/picky'
-   eval "acx_subdir_run_`$as_echo "$polymorphic_subdir" | $as_tr_sh`=yes"
-                  as_fn_append acx_subdir_run_before_`$as_echo "$polymorphic_subdir" | $as_tr_sh` ' acx_subdir_extra_run_0'
-               as_fn_append acx_subdir_run_after_`$as_echo "$polymorphic_subdir" | $as_tr_sh` ' acx_subdir_extra_run_1'
+   eval "mkh_subdir_run_`$as_echo "$polymorphic_subdir" | $as_tr_sh`=yes"
+                  as_fn_append mkh_subdir_run_before_`$as_echo "$polymorphic_subdir" | $as_tr_sh` ' mkh_subdir_extra_run_0'
+               as_fn_append mkh_subdir_run_after_`$as_echo "$polymorphic_subdir" | $as_tr_sh` ' mkh_subdir_extra_run_1'
    polymorphic_subdir=
 
-                  as_fn_append acx_subdir_run_before_bundled_picky ' acx_subdir_extra_run_2'
-                     as_fn_append acx_subdir_run_after_bundled_picky ' acx_subdir_extra_run_3'
+                  as_fn_append mkh_subdir_run_before_bundled_picky ' mkh_subdir_extra_run_2'
+                     as_fn_append mkh_subdir_run_after_bundled_picky ' mkh_subdir_extra_run_3'
 fi
 
                         mkh_srcdirs_fn "bundled/build/threaded_hello"
-   acx_subdir_run_cmd_bundled_build_threaded_hello="'$ac_top_srcdir/bundled/threaded_hello/configure'"
-   acx_subdir_build_type_bundled_build_threaded_hello='config'
-   acx_subdir_run_default_args_bundled_build_threaded_hello=
-         acx_subdir_pre_adjust_config_args
-      acx_subdir_run_args_bundled_build_threaded_hello=$acx_subdir_pre_adjusted_config_args
+   mkh_subdir_run_cmd_bundled_build_threaded_hello="'$ac_top_srcdir/bundled/threaded_hello/configure'"
+   mkh_subdir_build_type_bundled_build_threaded_hello='config'
+   mkh_subdir_run_default_args_bundled_build_threaded_hello=
+         mkh_subdir_pre_adjust_config_args
+      mkh_subdir_run_args_bundled_build_threaded_hello=$mkh_subdir_pre_adjusted_config_args
       if test "x$cache_file" = x'/dev/null'; then :
-  acx_tmp=$cache_file
+  mkh_tmp=$cache_file
 else
   case $cache_file in #(
   [\\/]* | ?:[\\/]*) :
-    acx_tmp=$cache_file ;; #(
+    mkh_tmp=$cache_file ;; #(
   *) :
-    acx_tmp="$ac_top_build_prefix$cache_file" ;;
+    mkh_tmp="$ac_top_build_prefix$cache_file" ;;
 esac
-         acx_tmp="$acx_tmp.bundled.threaded_hello"
+         mkh_tmp="$mkh_tmp.bundled.threaded_hello"
 fi
-      set dummy "--cache-file=$acx_tmp" "--srcdir=$ac_top_srcdir/bundled/threaded_hello"; shift
-   for acx_tmp; do
-     case $acx_tmp in #(
+      set dummy "--cache-file=$mkh_tmp" "--srcdir=$ac_top_srcdir/bundled/threaded_hello"; shift
+   for mkh_tmp; do
+     case $mkh_tmp in #(
   *\'*) :
-    acx_tmp=`$as_echo "$acx_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+    mkh_tmp=`$as_echo "$mkh_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
   *) :
      ;;
 esac
-     as_fn_append acx_subdir_run_args_bundled_build_threaded_hello " '$acx_tmp'"
+     as_fn_append mkh_subdir_run_args_bundled_build_threaded_hello " '$mkh_tmp'"
    done
       as_fn_append extra_build_subdirs " bundled/build/threaded_hello"
-   acx_subdir_run_bundled_build_threaded_hello=yes
-eval "set dummy $acx_subdir_run_args_bundled_build_threaded_hello"; shift
-   acx_subdir_run_args_bundled_build_threaded_hello=
+   mkh_subdir_run_bundled_build_threaded_hello=yes
+eval "set dummy $mkh_subdir_run_args_bundled_build_threaded_hello"; shift
+   mkh_subdir_run_args_bundled_build_threaded_hello=
    while test $# != 0; do
-     acx_tmp=$1
-     case $acx_tmp in #(
+     mkh_tmp=$1
+     case $mkh_tmp in #(
   -enable-static|-enable-static=*|--enable-static|--enable-static=*|-disable-static|--disable-static) :
      ;; #(
   -enable-shared|-enable-shared=*|--enable-shared|--enable-shared=*|-disable-shared|--disable-shared) :
@@ -5349,25 +5349,25 @@ eval "set dummy $acx_subdir_run_args_bundled_build_threaded_hello"; shift
   -enable-silent-rules|-enable-silent-rules=*|--enable-silent-rules|--enable-silent-rules=*|-disable-silent-rules|--disable-silent-rules) :
      ;; #(
   *) :
-           case $acx_tmp in #(
+           case $mkh_tmp in #(
   *\'*) :
-    acx_tmp=`$as_echo "$acx_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+    mkh_tmp=`$as_echo "$mkh_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
   *) :
      ;;
 esac
-        as_fn_append acx_subdir_run_args_bundled_build_threaded_hello " '$acx_tmp'" ;;
+        as_fn_append mkh_subdir_run_args_bundled_build_threaded_hello " '$mkh_tmp'" ;;
 esac
      shift
    done
 set dummy --enable-static --disable-shared --disable-maintainer-mode --enable-silent-rules="$enable_silent_rules"; shift
-   for acx_tmp; do
-     case $acx_tmp in #(
+   for mkh_tmp; do
+     case $mkh_tmp in #(
   *\'*) :
-    acx_tmp=`$as_echo "$acx_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+    mkh_tmp=`$as_echo "$mkh_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
   *) :
      ;;
 esac
-     as_fn_append acx_subdir_run_args_bundled_build_threaded_hello " '$acx_tmp'"
+     as_fn_append mkh_subdir_run_args_bundled_build_threaded_hello " '$mkh_tmp'"
    done
 as_fn_append BUNDLED_FCFLAGS "${FC_MOD_IN}bundled/build/threaded_hello "
 BUNDLED_LIBFILES="bundled/build/threaded_hello/.libs/libthreaded_hello_f.a $BUNDLED_LIBFILES"
@@ -5379,61 +5379,61 @@ case " $extra_build_subdirs " in #(
 esac
 
                         mkh_srcdirs_fn "bundled/build/delayed"
-   acx_subdir_run_cmd_bundled_build_delayed="'$ac_top_srcdir/bundled/delayed/configure'"
-   acx_subdir_build_type_bundled_build_delayed='config'
-   acx_subdir_run_default_args_bundled_build_delayed=
-         acx_subdir_pre_adjust_config_args
-      acx_subdir_run_args_bundled_build_delayed=$acx_subdir_pre_adjusted_config_args
+   mkh_subdir_run_cmd_bundled_build_delayed="'$ac_top_srcdir/bundled/delayed/configure'"
+   mkh_subdir_build_type_bundled_build_delayed='config'
+   mkh_subdir_run_default_args_bundled_build_delayed=
+         mkh_subdir_pre_adjust_config_args
+      mkh_subdir_run_args_bundled_build_delayed=$mkh_subdir_pre_adjusted_config_args
       if test "x$cache_file" = x'/dev/null'; then :
-  acx_tmp=$cache_file
+  mkh_tmp=$cache_file
 else
   case $cache_file in #(
   [\\/]* | ?:[\\/]*) :
-    acx_tmp=$cache_file ;; #(
+    mkh_tmp=$cache_file ;; #(
   *) :
-    acx_tmp="$ac_top_build_prefix$cache_file" ;;
+    mkh_tmp="$ac_top_build_prefix$cache_file" ;;
 esac
-         acx_tmp="$acx_tmp.bundled.delayed"
+         mkh_tmp="$mkh_tmp.bundled.delayed"
 fi
-      set dummy "--cache-file=$acx_tmp" "--srcdir=$ac_top_srcdir/bundled/delayed"; shift
-   for acx_tmp; do
-     case $acx_tmp in #(
+      set dummy "--cache-file=$mkh_tmp" "--srcdir=$ac_top_srcdir/bundled/delayed"; shift
+   for mkh_tmp; do
+     case $mkh_tmp in #(
   *\'*) :
-    acx_tmp=`$as_echo "$acx_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+    mkh_tmp=`$as_echo "$mkh_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
   *) :
      ;;
 esac
-     as_fn_append acx_subdir_run_args_bundled_build_delayed " '$acx_tmp'"
+     as_fn_append mkh_subdir_run_args_bundled_build_delayed " '$mkh_tmp'"
    done
       as_fn_append extra_build_subdirs " bundled/build/delayed"
-   acx_subdir_run_bundled_build_delayed=no
-eval "set dummy $acx_subdir_run_args_bundled_build_delayed"; shift
-   acx_subdir_run_args_bundled_build_delayed=
+   mkh_subdir_run_bundled_build_delayed=no
+eval "set dummy $mkh_subdir_run_args_bundled_build_delayed"; shift
+   mkh_subdir_run_args_bundled_build_delayed=
    while test $# != 0; do
-     acx_tmp=$1
-     case $acx_tmp in #(
+     mkh_tmp=$1
+     case $mkh_tmp in #(
   -enable-silent-rules|-enable-silent-rules=*|--enable-silent-rules|--enable-silent-rules=*|-disable-silent-rules|--disable-silent-rules) :
      ;; #(
   *) :
-           case $acx_tmp in #(
+           case $mkh_tmp in #(
   *\'*) :
-    acx_tmp=`$as_echo "$acx_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+    mkh_tmp=`$as_echo "$mkh_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
   *) :
      ;;
 esac
-        as_fn_append acx_subdir_run_args_bundled_build_delayed " '$acx_tmp'" ;;
+        as_fn_append mkh_subdir_run_args_bundled_build_delayed " '$mkh_tmp'" ;;
 esac
      shift
    done
 set dummy --enable-silent-rules="$enable_silent_rules"; shift
-   for acx_tmp; do
-     case $acx_tmp in #(
+   for mkh_tmp; do
+     case $mkh_tmp in #(
   *\'*) :
-    acx_tmp=`$as_echo "$acx_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+    mkh_tmp=`$as_echo "$mkh_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
   *) :
      ;;
 esac
-     as_fn_append acx_subdir_run_args_bundled_build_delayed " '$acx_tmp'"
+     as_fn_append mkh_subdir_run_args_bundled_build_delayed " '$mkh_tmp'"
    done
 as_fn_append BUNDLED_FCFLAGS "${FC_MOD_IN}bundled/build/delayed "
 BUNDLED_LIBFILES="bundled/build/delayed/libdelayed.a $BUNDLED_LIBFILES"
@@ -5445,63 +5445,63 @@ case " $extra_build_subdirs " in #(
 esac
 
                         mkh_srcdirs_fn "bundled/build/delayed_mangled"
-   acx_subdir_run_cmd_bundled_build_delayed_mangled="'$ac_top_srcdir/bundled/delayed/configure'"
-   acx_subdir_build_type_bundled_build_delayed_mangled='config'
-   acx_subdir_run_default_args_bundled_build_delayed_mangled=
-         acx_subdir_pre_adjust_config_args
-      acx_subdir_run_args_bundled_build_delayed_mangled=$acx_subdir_pre_adjusted_config_args
+   mkh_subdir_run_cmd_bundled_build_delayed_mangled="'$ac_top_srcdir/bundled/delayed/configure'"
+   mkh_subdir_build_type_bundled_build_delayed_mangled='config'
+   mkh_subdir_run_default_args_bundled_build_delayed_mangled=
+         mkh_subdir_pre_adjust_config_args
+      mkh_subdir_run_args_bundled_build_delayed_mangled=$mkh_subdir_pre_adjusted_config_args
       if test "x$cache_file" = x'/dev/null'; then :
-  acx_tmp=$cache_file
+  mkh_tmp=$cache_file
 else
   case $cache_file in #(
   [\\/]* | ?:[\\/]*) :
-    acx_tmp=$cache_file ;; #(
+    mkh_tmp=$cache_file ;; #(
   *) :
-    acx_tmp="$ac_top_build_prefix$cache_file" ;;
+    mkh_tmp="$ac_top_build_prefix$cache_file" ;;
 esac
-         acx_tmp="$acx_tmp.bundled.delayed"
+         mkh_tmp="$mkh_tmp.bundled.delayed"
 fi
-      set dummy "--cache-file=$acx_tmp" "--srcdir=$ac_top_srcdir/bundled/delayed"; shift
-   for acx_tmp; do
-     case $acx_tmp in #(
+      set dummy "--cache-file=$mkh_tmp" "--srcdir=$ac_top_srcdir/bundled/delayed"; shift
+   for mkh_tmp; do
+     case $mkh_tmp in #(
   *\'*) :
-    acx_tmp=`$as_echo "$acx_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+    mkh_tmp=`$as_echo "$mkh_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
   *) :
      ;;
 esac
-     as_fn_append acx_subdir_run_args_bundled_build_delayed_mangled " '$acx_tmp'"
+     as_fn_append mkh_subdir_run_args_bundled_build_delayed_mangled " '$mkh_tmp'"
    done
       as_fn_append extra_build_subdirs " bundled/build/delayed_mangled"
-   acx_subdir_run_bundled_build_delayed_mangled=no
-eval "set dummy $acx_subdir_run_args_bundled_build_delayed_mangled"; shift
-   acx_subdir_run_args_bundled_build_delayed_mangled=
+   mkh_subdir_run_bundled_build_delayed_mangled=no
+eval "set dummy $mkh_subdir_run_args_bundled_build_delayed_mangled"; shift
+   mkh_subdir_run_args_bundled_build_delayed_mangled=
    while test $# != 0; do
-     acx_tmp=$1
-     case $acx_tmp in #(
+     mkh_tmp=$1
+     case $mkh_tmp in #(
   CPPFLAGS=*) :
      ;; #(
   -enable-silent-rules|-enable-silent-rules=*|--enable-silent-rules|--enable-silent-rules=*|-disable-silent-rules|--disable-silent-rules) :
      ;; #(
   *) :
-           case $acx_tmp in #(
+           case $mkh_tmp in #(
   *\'*) :
-    acx_tmp=`$as_echo "$acx_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+    mkh_tmp=`$as_echo "$mkh_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
   *) :
      ;;
 esac
-        as_fn_append acx_subdir_run_args_bundled_build_delayed_mangled " '$acx_tmp'" ;;
+        as_fn_append mkh_subdir_run_args_bundled_build_delayed_mangled " '$mkh_tmp'" ;;
 esac
      shift
    done
-set dummy CPPFLAGS="${acx_cv_fc_macro_flag}MANGLE" --enable-silent-rules="$enable_silent_rules"; shift
-   for acx_tmp; do
-     case $acx_tmp in #(
+set dummy CPPFLAGS="${mkh_cv_fc_macro_flag}MANGLE" --enable-silent-rules="$enable_silent_rules"; shift
+   for mkh_tmp; do
+     case $mkh_tmp in #(
   *\'*) :
-    acx_tmp=`$as_echo "$acx_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+    mkh_tmp=`$as_echo "$mkh_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
   *) :
      ;;
 esac
-     as_fn_append acx_subdir_run_args_bundled_build_delayed_mangled " '$acx_tmp'"
+     as_fn_append mkh_subdir_run_args_bundled_build_delayed_mangled " '$mkh_tmp'"
    done
 as_fn_append BUNDLED_FCFLAGS "${FC_MOD_IN}bundled/build/delayed_mangled "
 BUNDLED_LIBFILES="bundled/build/delayed_mangled/libdelayed.a $BUNDLED_LIBFILES"
@@ -5513,31 +5513,31 @@ case " $extra_build_subdirs " in #(
 esac
 
 CMAKE=${CMAKE-cmake}
-                     acx_subdir_run_cmd_bundled_cmake_based_build="\"\${CMAKE}\""
-   acx_subdir_build_type_bundled_cmake_based_build='cmake'
-                                             acx_subdir_pre_adjust_cmake_args
-      acx_subdir_run_args_bundled_cmake_based_build=$acx_subdir_pre_adjusted_cmake_args
+                     mkh_subdir_run_cmd_bundled_cmake_based_build="\"\${CMAKE}\""
+   mkh_subdir_build_type_bundled_cmake_based_build='cmake'
+                                             mkh_subdir_pre_adjust_cmake_args
+      mkh_subdir_run_args_bundled_cmake_based_build=$mkh_subdir_pre_adjusted_cmake_args
          mkh_srcdirs_fn "bundled/cmake_based/build"
-      acx_tmp="$ac_top_srcdir/bundled/cmake_based"
-      case $acx_tmp in #(
+      mkh_tmp="$ac_top_srcdir/bundled/cmake_based"
+      case $mkh_tmp in #(
   *\'*) :
-    acx_tmp=`$as_echo "$acx_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+    mkh_tmp=`$as_echo "$mkh_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
   *) :
      ;;
 esac
-      as_fn_append acx_subdir_run_args_bundled_cmake_based_build " '$acx_tmp'"
+      as_fn_append mkh_subdir_run_args_bundled_cmake_based_build " '$mkh_tmp'"
       as_fn_append extra_build_subdirs " bundled/cmake_based/build"
-   acx_subdir_run_bundled_cmake_based_build=no
-as_fn_append acx_subdir_run_default_args_bundled_cmake_based_build " '-DCMAKE_BUILD_TYPE=NOEXTRAFLAGS'"
+   mkh_subdir_run_bundled_cmake_based_build=no
+as_fn_append mkh_subdir_run_default_args_bundled_cmake_based_build " '-DCMAKE_BUILD_TYPE=NOEXTRAFLAGS'"
 set dummy -DBUILD_SHARED_LIBS:BOOL=OFF; shift
-   for acx_tmp; do
-     case $acx_tmp in #(
+   for mkh_tmp; do
+     case $mkh_tmp in #(
   *\'*) :
-    acx_tmp=`$as_echo "$acx_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
+    mkh_tmp=`$as_echo "$mkh_tmp" | sed "s/'/'\\\\\\\\''/g"` ;; #(
   *) :
      ;;
 esac
-     as_fn_append acx_subdir_run_args_bundled_cmake_based_build " '$acx_tmp'"
+     as_fn_append mkh_subdir_run_args_bundled_cmake_based_build " '$mkh_tmp'"
    done
 as_fn_append BUNDLED_FCFLAGS "${FC_MOD_IN}bundled/cmake_based/build/mod "
 BUNDLED_LIBFILES="bundled/cmake_based/build/libCMakeBasedHello.a $BUNDLED_LIBFILES"
@@ -5548,7 +5548,7 @@ case " $extra_build_subdirs " in #(
      ;;
 esac
 if test "x$enable_delayed_config" = xno; then :
-  acx_subdir_run_bundled_cmake_based=yes
+  mkh_subdir_run_bundled_cmake_based=yes
 fi
 
 bundled_ready_config_subdirs=''
@@ -5557,13 +5557,13 @@ bundled_ready_cmake_subdirs=''
 bundled_delayed_cmake_subdirs=''
 mkhelper_rule_separator=''
 for mkhelper_build_subdir in $extra_build_subdirs; do
-  eval mkhelper_build_type=\$acx_subdir_build_type_`$as_echo "$mkhelper_build_subdir" | $as_tr_sh`
-  eval as_val=\$acx_subdir_run_`$as_echo "$mkhelper_build_subdir" | $as_tr_sh`
+  eval mkhelper_build_type=\$mkh_subdir_build_type_`$as_echo "$mkhelper_build_subdir" | $as_tr_sh`
+  eval as_val=\$mkh_subdir_run_`$as_echo "$mkhelper_build_subdir" | $as_tr_sh`
    if test "x$as_val" = xyes; then :
   as_fn_append bundled_ready_${mkhelper_build_type}_subdirs " $mkhelper_build_subdir"
 else
   as_fn_append bundled_delayed_${mkhelper_build_type}_subdirs " $mkhelper_build_subdir"
-     mkhelper_subdir_cmd="`eval 'as_val=${'acx_subdir_run_cmd_\`$as_echo "$mkhelper_build_subdir" | $as_tr_sh\`'};$as_echo "$as_val"'``eval 'as_val=${'acx_subdir_run_default_args_\`$as_echo "$mkhelper_build_subdir" | $as_tr_sh\`'};$as_echo "$as_val"'` `eval 'as_val=${'acx_subdir_run_args_\`$as_echo "$mkhelper_build_subdir" | $as_tr_sh\`'};$as_echo "$as_val"'`"
+     mkhelper_subdir_cmd="`eval 'as_val=${'mkh_subdir_run_cmd_\`$as_echo "$mkhelper_build_subdir" | $as_tr_sh\`'};$as_echo "$as_val"'``eval 'as_val=${'mkh_subdir_run_default_args_\`$as_echo "$mkhelper_build_subdir" | $as_tr_sh\`'};$as_echo "$as_val"'` `eval 'as_val=${'mkh_subdir_run_args_\`$as_echo "$mkhelper_build_subdir" | $as_tr_sh\`'};$as_echo "$as_val"'`"
      if test "x$mkhelper_build_type" = xcmake; then :
   mkhelper_silent_var='silent_CMAKE'
         mkhelper_silent_suffix='>/dev/null'
@@ -5733,58 +5733,58 @@ LTLIBOBJS=$ac_ltlibobjs
 
 if test "x$no_recursion" != xyes; then :
   if test "x$silent" = xyes; then :
-  acx_subdir_silent_arg="'--silent'"
+  mkh_subdir_silent_arg="'--silent'"
 else
-  acx_subdir_silent_arg=
+  mkh_subdir_silent_arg=
 fi
-            acx_subdir_run_any=no
-            for acx_subdir_builddir in $extra_build_subdirs; do
-              eval as_val=\$acx_subdir_run_`$as_echo "$acx_subdir_builddir" | $as_tr_sh`
+            mkh_subdir_run_any=no
+            for mkh_subdir_builddir in $extra_build_subdirs; do
+              eval as_val=\$mkh_subdir_run_`$as_echo "$mkh_subdir_builddir" | $as_tr_sh`
    if test "x$as_val" = xyes; then :
-  acx_subdir_run_any=yes
-                 eval acx_subdir_fns=\$acx_subdir_run_before_`$as_echo "$acx_subdir_builddir" | $as_tr_sh`
-                 if test -n "$acx_subdir_fns"; then :
-  acx_tmp="=== running extra commands before configuring $acx_subdir_builddir"
-                    $as_echo "$as_me:${as_lineno-$LINENO}: $acx_tmp" >&5
-                    $as_echo "$acx_tmp" >&6
-                    for acx_tmp in $acx_subdir_fns; do
-                      eval "$acx_tmp"
+  mkh_subdir_run_any=yes
+                 eval mkh_subdir_fns=\$mkh_subdir_run_before_`$as_echo "$mkh_subdir_builddir" | $as_tr_sh`
+                 if test -n "$mkh_subdir_fns"; then :
+  mkh_tmp="=== running extra commands before configuring $mkh_subdir_builddir"
+                    $as_echo "$as_me:${as_lineno-$LINENO}: $mkh_tmp" >&5
+                    $as_echo "$mkh_tmp" >&6
+                    for mkh_tmp in $mkh_subdir_fns; do
+                      eval "$mkh_tmp"
                     done
 fi
-                 acx_tmp="=== configuring $acx_subdir_builddir"
-                 $as_echo "$as_me:${as_lineno-$LINENO}: $acx_tmp" >&5
-                 $as_echo "$acx_tmp" >&6
-                 as_dir="$acx_subdir_builddir"; as_fn_mkdir_p
-                 acx_subdir_run_cmd="`eval 'as_val=${'acx_subdir_run_cmd_\`$as_echo "$acx_subdir_builddir" | $as_tr_sh\`'};$as_echo "$as_val"'``eval 'as_val=${'acx_subdir_run_default_args_\`$as_echo "$acx_subdir_builddir" | $as_tr_sh\`'};$as_echo "$as_val"'` `eval 'as_val=${'acx_subdir_run_args_\`$as_echo "$acx_subdir_builddir" | $as_tr_sh\`'};$as_echo "$as_val"'`"
-                 acx_subdir_run_cmd="( cd '$acx_subdir_builddir' && $acx_subdir_run_cmd $acx_subdir_silent_arg)"
-                 { $as_echo "$as_me:${as_lineno-$LINENO}: running $acx_subdir_run_cmd" >&5
-$as_echo "$as_me: running $acx_subdir_run_cmd" >&6;}
-                 eval "$acx_subdir_run_cmd" || as_fn_error $? "configuration of $acx_subdir_builddir failed" "$LINENO" 5
-                 eval acx_subdir_fns=\$acx_subdir_run_after_`$as_echo "$acx_subdir_builddir" | $as_tr_sh`
-                 if test -n "$acx_subdir_fns"; then :
-  acx_tmp="=== running extra commands after configuring $acx_subdir_builddir"
-                    $as_echo "$as_me:${as_lineno-$LINENO}: $acx_tmp" >&5
-                    $as_echo "$acx_tmp" >&6
-                    for acx_tmp in $acx_subdir_fns; do
-                      eval "$acx_tmp"
+                 mkh_tmp="=== configuring $mkh_subdir_builddir"
+                 $as_echo "$as_me:${as_lineno-$LINENO}: $mkh_tmp" >&5
+                 $as_echo "$mkh_tmp" >&6
+                 as_dir="$mkh_subdir_builddir"; as_fn_mkdir_p
+                 mkh_subdir_run_cmd="`eval 'as_val=${'mkh_subdir_run_cmd_\`$as_echo "$mkh_subdir_builddir" | $as_tr_sh\`'};$as_echo "$as_val"'``eval 'as_val=${'mkh_subdir_run_default_args_\`$as_echo "$mkh_subdir_builddir" | $as_tr_sh\`'};$as_echo "$as_val"'` `eval 'as_val=${'mkh_subdir_run_args_\`$as_echo "$mkh_subdir_builddir" | $as_tr_sh\`'};$as_echo "$as_val"'`"
+                 mkh_subdir_run_cmd="( cd '$mkh_subdir_builddir' && $mkh_subdir_run_cmd $mkh_subdir_silent_arg)"
+                 { $as_echo "$as_me:${as_lineno-$LINENO}: running $mkh_subdir_run_cmd" >&5
+$as_echo "$as_me: running $mkh_subdir_run_cmd" >&6;}
+                 eval "$mkh_subdir_run_cmd" || as_fn_error $? "configuration of $mkh_subdir_builddir failed" "$LINENO" 5
+                 eval mkh_subdir_fns=\$mkh_subdir_run_after_`$as_echo "$mkh_subdir_builddir" | $as_tr_sh`
+                 if test -n "$mkh_subdir_fns"; then :
+  mkh_tmp="=== running extra commands after configuring $mkh_subdir_builddir"
+                    $as_echo "$as_me:${as_lineno-$LINENO}: $mkh_tmp" >&5
+                    $as_echo "$mkh_tmp" >&6
+                    for mkh_tmp in $mkh_subdir_fns; do
+                      eval "$mkh_tmp"
                     done
 fi
 fi
                done
-               if test "x$acx_subdir_run_any" = xyes; then :
+               if test "x$mkh_subdir_run_any" = xyes; then :
   $as_echo "===" >&6
                   $as_echo "$as_me:${as_lineno-$LINENO}: ===" >&5
 fi
 fi
-acx_tmp=`cd 'bundled/build/threaded_hello' >/dev/null && $as_echo @LDFLAGS@ | ./config.status -q --file=- 2>/dev/null`
+mkh_tmp=`cd 'bundled/build/threaded_hello' >/dev/null && $as_echo @LDFLAGS@ | ./config.status -q --file=- 2>/dev/null`
    if test $? -eq 0; then :
-  mkhelper_LDFLAGS=$acx_tmp
+  mkhelper_LDFLAGS=$mkh_tmp
 else
   as_fn_error $? "unable to run 'bundled/build/threaded_hello/config.status'" "$LINENO" 5
 fi
-   acx_tmp=`cd 'bundled/build/threaded_hello' >/dev/null && $as_echo @LIBS@ | ./config.status -q --file=- 2>/dev/null`
+   mkh_tmp=`cd 'bundled/build/threaded_hello' >/dev/null && $as_echo @LIBS@ | ./config.status -q --file=- 2>/dev/null`
    if test $? -eq 0; then :
-  mkhelper_LIBS=$acx_tmp
+  mkhelper_LIBS=$mkh_tmp
 else
   as_fn_error $? "unable to run 'bundled/build/threaded_hello/config.status'" "$LINENO" 5
 fi
@@ -5810,19 +5810,19 @@ esac
       for mkhelper_libdir in $mkhelper_libdirs; do
         if test -d "$mkhelper_libdir"; then :
   case ' '$LDFLAGS' ' in #(
-  *' '"$acx_cv_fc_rpath_flag$mkhelper_libdir"' '*) :
+  *' '"$mkh_cv_fc_rpath_flag$mkhelper_libdir"' '*) :
      ;; #(
   ' '' ') :
-    as_fn_append LDFLAGS "$acx_cv_fc_rpath_flag$mkhelper_libdir" ;; #(
+    as_fn_append LDFLAGS "$mkh_cv_fc_rpath_flag$mkhelper_libdir" ;; #(
   *) :
-    as_fn_append LDFLAGS ' '; as_fn_append LDFLAGS "$acx_cv_fc_rpath_flag$mkhelper_libdir" ;;
+    as_fn_append LDFLAGS ' '; as_fn_append LDFLAGS "$mkh_cv_fc_rpath_flag$mkhelper_libdir" ;;
 esac
 fi
       done
 fi
-   acx_tmp=`cd 'bundled/build/threaded_hello' >/dev/null && $as_echo ' @PTHREAD_CFLAGS@' | ./config.status -q --file=- 2>/dev/null`
+   mkh_tmp=`cd 'bundled/build/threaded_hello' >/dev/null && $as_echo ' @PTHREAD_CFLAGS@' | ./config.status -q --file=- 2>/dev/null`
    if test $? -eq 0; then :
-  mkhelper_PTHREAD_CFLAGS=$acx_tmp
+  mkhelper_PTHREAD_CFLAGS=$mkh_tmp
 else
   as_fn_error $? "unable to run 'bundled/build/threaded_hello/config.status'" "$LINENO" 5
 fi

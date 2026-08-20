@@ -39,7 +39,7 @@ AC_LANG_DEFINE([CUDA], [cuda], [CUDA], [CUDACXX], [C++],
 [ac_ext=cu
 ac_compile='$CUDACXX -c $CUDAFLAGS conftest.$ac_ext >&AS_MESSAGE_LOG_FD'
 ac_link='$CUDACXX -o conftest$ac_exeext $CUDAFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&AS_MESSAGE_LOG_FD'
-ac_compiler_gnu=$acx_cv_cuda_compiler_gnu
+ac_compiler_gnu=$mkh_cv_cuda_compiler_gnu
 ])
 dnl Avoid mixing macro definitions that are relevant for C or C++ compiler and
 dnl might be irrelevant for CUDA:
@@ -71,15 +71,15 @@ AC_DEFUN([MKH_LANG_POP_CUDA], [AC_LANG_POP([CUDA])])
 #
 # Checks whether the compiler supports an ISO C++ standard and/or whether it
 # can compile a basic CUDA program. The result of the check is stored in the
-# shell variable acx_prog_cudacxx_works, which can be either "cxx14", (ISO C++
+# shell variable mkh_prog_cudacxx_works, which can be either "cxx14", (ISO C++
 # 2014, ISO C++ 2011 and the basic CUDA features are supported), "cxx11" (ISO
 # C++ 2011 and the basic CUDA features are supported), "basic" (only the basic
 # CUDA features are supported) and "no" (the compiler cannot compile even the
 # basic CUDA program). If the compiler supports the C++ standard, the flag that
 # is required to enable it is cached in the
-# acx_cv_prog_cudacxx_${acx_prog_cudacxx_works}_flag variable. The users are
+# mkh_cv_prog_cudacxx_${mkh_prog_cudacxx_works}_flag variable. The users are
 # expected to either append the flag to CUDACXX or prepended it to CUDAFLAGS
-# based on the value of the acx_prog_cudacxx_works shell variable.
+# based on the value of the mkh_prog_cudacxx_works shell variable.
 #
 AC_DEFUN_ONCE([MKH_PROG_CUDACXX],
   [AC_LANG_PUSH([CUDA])dnl
@@ -96,32 +96,32 @@ AC_DEFUN_ONCE([MKH_PROG_CUDACXX],
    m4_expand_once([_AC_COMPILER_EXEEXT])[]dnl
    m4_expand_once([_AC_COMPILER_OBJEXT])[]dnl
    _AC_LANG_COMPILER_GNU
-   acx_test_CUDAFLAGS=${CUDAFLAGS+set}
-   acx_save_CUDAFLAGS=$CUDAFLAGS
-   AC_CACHE_CHECK([whether $CUDACXX accepts -g], [acx_cv_prog_cudac_g],
-     [acx_save_cuda_werror_flag=$ac_cuda_werror_flag
+   mkh_test_CUDAFLAGS=${CUDAFLAGS+set}
+   mkh_save_CUDAFLAGS=$CUDAFLAGS
+   AC_CACHE_CHECK([whether $CUDACXX accepts -g], [mkh_cv_prog_cudac_g],
+     [mkh_save_cuda_werror_flag=$ac_cuda_werror_flag
       ac_cuda_werror_flag=yes
-      acx_cv_prog_cudac_g=no
+      mkh_cv_prog_cudac_g=no
       CUDAFLAGS='-g'
       _AC_COMPILE_IFELSE([AC_LANG_PROGRAM],
-        [acx_cv_prog_cudac_g=yes],
+        [mkh_cv_prog_cudac_g=yes],
         [CUDAFLAGS=''
          _AC_COMPILE_IFELSE([AC_LANG_PROGRAM],
            [],
-           [ac_cuda_werror_flag=$acx_save_cuda_werror_flag
+           [ac_cuda_werror_flag=$mkh_save_cuda_werror_flag
             CUDAFLAGS='-g'
             _AC_COMPILE_IFELSE([AC_LANG_PROGRAM],
-              [acx_cv_prog_cudac_g=yes])])])
-      ac_cuda_werror_flag=$acx_save_cuda_werror_flag])
+              [mkh_cv_prog_cudac_g=yes])])])
+      ac_cuda_werror_flag=$mkh_save_cuda_werror_flag])
    AS_IF(
-     [test "$acx_test_CUDAFLAGS" = set],
-     [CUDAFLAGS=$acx_save_CUDAFLAGS],
-     [test "$acx_cv_prog_cudac_g" = yes],
+     [test "$mkh_test_CUDAFLAGS" = set],
+     [CUDAFLAGS=$mkh_save_CUDAFLAGS],
+     [test "$mkh_cv_prog_cudac_g" = yes],
      [AS_VAR_IF([ac_cv_cuda_compiler_gnu], [yes],
         [CUDAFLAGS='-g -O2'], [CUDAFLAGS='-g'])],
      [AS_VAR_IF([ac_cv_cuda_compiler_gnu], [yes],
         [CUDAFLAGS='-O2'], [CUDAFLAGS=''])])
-   acx_prog_cudacxx_works=no
+   mkh_prog_cudacxx_works=no
    m4_map_sep([_MKH_CUDA_CXX_TEST], [
 ], [[14],[11]])
    _MKH_CUDA_BASIC_TEST
@@ -137,45 +137,45 @@ AC_DEFUN_ONCE([MKH_PROG_CUDACXX],
 # CUDA objects but is linked with a compiler other than the CUDA C++ compiler.
 # Note that the result does not contain runtime libraries of the host compiler.
 #
-# The result is cached in the acx_cv_cudacxx_libs variable.
+# The result is cached in the mkh_cv_cudacxx_libs variable.
 #
 AC_DEFUN([MKH_CUDACXX_LIBRARY_LDFLAGS],
   [AC_REQUIRE([MKH_PROG_CUDACXX])dnl
    AC_LANG_PUSH([CUDA])
-   AC_CACHE_CHECK([for CUDA libraries of $CUDACXX], [acx_cv_cudacxx_libs],
-     [acx_cv_cudacxx_libs=
+   AC_CACHE_CHECK([for CUDA libraries of $CUDACXX], [mkh_cv_cudacxx_libs],
+     [mkh_cv_cudacxx_libs=
       AC_LANG_CONFTEST([AC_LANG_PROGRAM])
 dnl Get the verbose output and remove the leading '#$ ':
-      acx_save_CUDAFLAGS=$CUDAFLAGS
+      mkh_save_CUDAFLAGS=$CUDAFLAGS
       CUDAFLAGS="$CUDAFLAGS -v"
-      acx_cudacxx_v_output=`eval $ac_link AS_MESSAGE_LOG_FD>&1 2>&1 | dnl
+      mkh_cudacxx_v_output=`eval $ac_link AS_MESSAGE_LOG_FD>&1 2>&1 | dnl
 [sed 's/^#\$ *//']`
       rm -f conftest*
-      CUDAFLAGS=$acx_save_CUDAFLAGS
+      CUDAFLAGS=$mkh_save_CUDAFLAGS
 dnl Get the value of the LIBRARIES variable, which will be our marker for the
 dnl link command:
-      acx_cudacxx_link_marker=`AS_ECHO(["$acx_cudacxx_v_output"]) | dnl
+      mkh_cudacxx_link_marker=`AS_ECHO(["$mkh_cudacxx_v_output"]) | dnl
 [sed -n 's/LIBRARIES= *\(.*\)/\1/p']`
 dnl Remove all irrelevant lines from the output:
 dnl   1) variable declarations;
 dnl   2) lines starting with nvlink (contains the marker but is not what we
 dnl      need).
-      acx_cudacxx_v_output=`AS_ECHO(["$acx_cudacxx_v_output"]) | dnl
+      mkh_cudacxx_v_output=`AS_ECHO(["$mkh_cudacxx_v_output"]) | dnl
 [sed '/^[^= ][^= ]*=.*/d;/^nvlink.*/d']`
 dnl Find the link command(s):
-      acx_cudacxx_link_line=`AS_ECHO(["$acx_cudacxx_v_output"]) | dnl
-grep "$acx_cudacxx_link_marker" | tr '\n' ' '`
+      mkh_cudacxx_link_line=`AS_ECHO(["$mkh_cudacxx_v_output"]) | dnl
+grep "$mkh_cudacxx_link_marker" | tr '\n' ' '`
 dnl Extract the flags (currently, we take only -l and -L):
-      eval "set dummy $acx_cudacxx_link_line"; shift
+      eval "set dummy $mkh_cudacxx_link_line"; shift
       while test $[]@%:@ != 0; do
         AS_CASE([$[]1],
           [-[[lL]]],
           [AS_CASE([$[]2],
              ['' | -*], [],
-             [AS_VAR_APPEND([acx_cv_cudacxx_libs], [" $[]1$[]2"])
+             [AS_VAR_APPEND([mkh_cv_cudacxx_libs], [" $[]1$[]2"])
               shift])],
           [-[[lL]]*],
-          [AS_VAR_APPEND([acx_cv_cudacxx_libs], [" $[]1"])])
+          [AS_VAR_APPEND([mkh_cv_cudacxx_libs], [" $[]1"])])
         shift
       done])
    AC_LANG_POP([CUDA])])
@@ -186,61 +186,61 @@ dnl Extract the flags (currently, we take only -l and -L):
 # checks for ISO C++ 2014 and ISO C++ 2011 are currently supported) and can
 # compile a basic CUDA program. The value of STANDARD is expected to be the
 # last two digits of the standard's year (e.g. 11). The check is skipped if the
-# acx_prog_cudacxx_works shell variable is set to a value other than "no" (in a
+# mkh_prog_cudacxx_works shell variable is set to a value other than "no" (in a
 # normal scenario that means that a more recent ISO C++ standard is supported).
 #
-# If successful, sets the shell variable acx_prog_cudacxx_works to
+# If successful, sets the shell variable mkh_prog_cudacxx_works to
 # "cxx[]STANDARD" (e.g. "cxx11") and the cache variable
-# acx_cv_prog_cudacxx_cxx[]STANDARD[]_flag to the flag that is required to
+# mkh_cv_prog_cudacxx_cxx[]STANDARD[]_flag to the flag that is required to
 # enable the standard.
 #
 AC_DEFUN([_MKH_CUDA_CXX_TEST],
   [AC_LANG_ASSERT([CUDA])dnl
    AC_REQUIRE([_MKH_CUDA_CXX$1_TEST_PROGRAM])dnl
-   AS_VAR_IF([acx_prog_cudacxx_works], [no],
+   AS_VAR_IF([mkh_prog_cudacxx_works], [no],
      [AC_MSG_CHECKING([for $CUDACXX option to enable C++$1 features])
-      m4_pushdef([acx_cache_var], [acx_cv_prog_cudacxx_cxx$1_flag])dnl
-      AC_CACHE_VAL([acx_cache_var],
-        [acx_cache_var=unsupported
-         AC_LANG_CONFTEST([$acx_cuda_conftest_cxx$1_program])
-         acx_save_CUDAFLAGS=$CUDAFLAGS
-         for acx_flag in '' m4_normalize(m4_defn([_MKH_CUDA_CXX$1_OPTIONS]))
+      m4_pushdef([mkh_cache_var], [mkh_cv_prog_cudacxx_cxx$1_flag])dnl
+      AC_CACHE_VAL([mkh_cache_var],
+        [mkh_cache_var=unsupported
+         AC_LANG_CONFTEST([$mkh_cuda_conftest_cxx$1_program])
+         mkh_save_CUDAFLAGS=$CUDAFLAGS
+         for mkh_flag in '' m4_normalize(m4_defn([_MKH_CUDA_CXX$1_OPTIONS]))
          do
-           CUDAFLAGS="$acx_flag $acx_save_CUDAFLAGS"
-           _AC_COMPILE_IFELSE([], [acx_cache_var=$acx_flag])
-           test "x$acx_cache_var" != xunsupported && break
+           CUDAFLAGS="$mkh_flag $mkh_save_CUDAFLAGS"
+           _AC_COMPILE_IFELSE([], [mkh_cache_var=$mkh_flag])
+           test "x$mkh_cache_var" != xunsupported && break
          done
-         CUDAFLAGS=$acx_save_CUDAFLAGS
+         CUDAFLAGS=$mkh_save_CUDAFLAGS
          rm -f conftest.$ac_ext])
-      AS_IF([test -n "$acx_cache_var"],
-        [AC_MSG_RESULT([$acx_cache_var])],
+      AS_IF([test -n "$mkh_cache_var"],
+        [AC_MSG_RESULT([$mkh_cache_var])],
         [AC_MSG_RESULT([none needed])])
-      AS_IF([test "x$acx_cache_var" != xunsupported],
-        [acx_prog_cudacxx_works=cxx$1])
-      m4_popdef([acx_cache_var])])])
+      AS_IF([test "x$mkh_cache_var" != xunsupported],
+        [mkh_prog_cudacxx_works=cxx$1])
+      m4_popdef([mkh_cache_var])])])
 
 # _MKH_CUDA_BASIC_TEST()
 # -----------------------------------------------------------------------------
 # Checks whether the CUDA C++ compiler can compile a basic CUDA program. The
-# check is skipped if the acx_prog_cudacxx_works shell variable is set to a
+# check is skipped if the mkh_prog_cudacxx_works shell variable is set to a
 # value other than "no" (in a normal scenario that means that the compiler
 # supports an ISO C++ standard, as well as the basic CUDA features).
 #
-# If successful, sets the shell variable acx_prog_cudacxx_works to "basic".
+# If successful, sets the shell variable mkh_prog_cudacxx_works to "basic".
 #
-# The result is cached in the acx_cv_prog_cudaxx_basic variable.
+# The result is cached in the mkh_cv_prog_cudaxx_basic variable.
 #
 AC_DEFUN([_MKH_CUDA_BASIC_TEST],
   [AC_LANG_ASSERT([CUDA])dnl
    AC_REQUIRE([_MKH_CUDA_BASIC_TEST_PROGRAM])dnl
-   AS_VAR_IF([acx_prog_cudacxx_works], [no],
+   AS_VAR_IF([mkh_prog_cudacxx_works], [no],
      [AC_CACHE_CHECK([whether $CUDACXX can compile basic CUDA code],
-        [acx_cv_prog_cudaxx_basic],
-        [_AC_COMPILE_IFELSE([$acx_cuda_conftest_basic_program],
-           [acx_cv_prog_cudaxx_basic=yes],
-           [acx_cv_prog_cudaxx_basic=no])])
-      AS_VAR_IF([acx_cv_prog_cudaxx_basic], [yes],
-        [acx_prog_cudacxx_works=basic])])])
+        [mkh_cv_prog_cudaxx_basic],
+        [_AC_COMPILE_IFELSE([$mkh_cuda_conftest_basic_program],
+           [mkh_cv_prog_cudaxx_basic=yes],
+           [mkh_cv_prog_cudaxx_basic=no])])
+      AS_VAR_IF([mkh_cv_prog_cudaxx_basic], [yes],
+        [mkh_prog_cudacxx_works=basic])])])
 
 # _MKH_CUDA_BASIC_TEST_GLOBALS()
 # _MKH_CUDA_BASIC_TEST_MAIN()
@@ -260,14 +260,14 @@ AC_DEFUN([_MKH_CUDA_BASIC_TEST],
 AC_DEFUN([_MKH_CUDA_BASIC_TEST_GLOBALS],
   [m4_divert_once([INIT_PREPARE],
 [[# Basic CUDA test code (global declarations):
-acx_cuda_conftest_basic_globals='#include <cuda.h>
+mkh_cuda_conftest_basic_globals='#include <cuda.h>
 __global__ void conftest_foo() {}'
 ]])])
 
 AC_DEFUN([_MKH_CUDA_BASIC_TEST_MAIN],
   [m4_divert_once([INIT_PREPARE],
 [[# Basic CUDA test code (body of main):
-acx_cuda_conftest_basic_main='conftest_foo<<<1, 1>>>();'
+mkh_cuda_conftest_basic_main='conftest_foo<<<1, 1>>>();'
 ]])])
 
 AC_DEFUN([_MKH_CUDA_BASIC_TEST_PROGRAM],
@@ -275,10 +275,10 @@ AC_DEFUN([_MKH_CUDA_BASIC_TEST_PROGRAM],
    AC_REQUIRE([_MKH_CUDA_BASIC_TEST_MAIN])dnl
    m4_divert_once([INIT_PREPARE],
 [[# Basic CUDA test code (complete):
-acx_cuda_conftest_basic_program="$acx_cuda_conftest_basic_globals
+mkh_cuda_conftest_basic_program="$mkh_cuda_conftest_basic_globals
 int main (int argc, char **argv)
 {
-  $acx_cuda_conftest_basic_main
+  $mkh_cuda_conftest_basic_main
   return 0;
 }
 "
@@ -287,7 +287,7 @@ int main (int argc, char **argv)
 AC_DEFUN([_MKH_CUDA_CXX11_TEST_GLOBALS],
   [m4_divert_once([INIT_PREPARE],
 [[# C++11 CUDA test code (global declarations):
-acx_cuda_conftest_cxx11_globals='
+mkh_cuda_conftest_cxx11_globals='
 #if !defined __cplusplus || __cplusplus < 201103L
 # error "Compiler does not advertise C++11 conformance"
 #endif
@@ -304,7 +304,7 @@ namespace cxx11test {
 AC_DEFUN([_MKH_CUDA_CXX11_TEST_MAIN],
   [m4_divert_once([INIT_PREPARE],
 [[# C++11 CUDA test code (body of main):
-acx_cuda_conftest_cxx11_main='
+mkh_cuda_conftest_cxx11_main='
 int* pcxx11 = nullptr;
 cxx11test::ConftestClassCXX11<int> some_class =
   cxx11test::ConftestClassCXX11<int>();
@@ -320,12 +320,12 @@ AC_DEFUN([_MKH_CUDA_CXX11_TEST_PROGRAM],
    AC_REQUIRE([_MKH_CUDA_CXX11_TEST_MAIN])dnl
    m4_divert_once([INIT_PREPARE],
 [[# C++11 CUDA test code (complete):
-acx_cuda_conftest_cxx11_program="$acx_cuda_conftest_basic_globals
-$acx_cuda_conftest_cxx11_globals
+mkh_cuda_conftest_cxx11_program="$mkh_cuda_conftest_basic_globals
+$mkh_cuda_conftest_cxx11_globals
 int main (int argc, char **argv)
 {
-  $acx_cuda_conftest_basic_main
-  $acx_cuda_conftest_cxx11_main
+  $mkh_cuda_conftest_basic_main
+  $mkh_cuda_conftest_cxx11_main
   return 0;
 }
 "
@@ -334,7 +334,7 @@ int main (int argc, char **argv)
 AC_DEFUN([_MKH_CUDA_CXX14_TEST_GLOBALS],
   [m4_divert_once([INIT_PREPARE],
 [[# C++14 CUDA test code (global declarations):
-acx_cuda_conftest_cxx14_globals='
+mkh_cuda_conftest_cxx14_globals='
 #if !defined __cplusplus || __cplusplus < 201402L
 # error "Compiler does not advertise C++14 conformance"
 #endif
@@ -344,7 +344,7 @@ acx_cuda_conftest_cxx14_globals='
 AC_DEFUN([_MKH_CUDA_CXX14_TEST_MAIN],
   [m4_divert_once([INIT_PREPARE],
 [[# C++14 CUDA test code (body of main):
-acx_cuda_conftest_cxx14_main=''
+mkh_cuda_conftest_cxx14_main=''
 ]])])
 
 AC_DEFUN([_MKH_CUDA_CXX14_TEST_PROGRAM],
@@ -356,14 +356,14 @@ AC_DEFUN([_MKH_CUDA_CXX14_TEST_PROGRAM],
    AC_REQUIRE([_MKH_CUDA_CXX14_TEST_MAIN])dnl
    m4_divert_once([INIT_PREPARE],
 [[# C++14 CUDA test code (complete):
-acx_cuda_conftest_cxx14_program="$acx_cuda_conftest_basic_globals
-$acx_cuda_conftest_cxx11_globals
-$acx_cuda_conftest_cxx14_globals
+mkh_cuda_conftest_cxx14_program="$mkh_cuda_conftest_basic_globals
+$mkh_cuda_conftest_cxx11_globals
+$mkh_cuda_conftest_cxx14_globals
 int main (int argc, char **argv)
 {
-  $acx_cuda_conftest_basic_main
-  $acx_cuda_conftest_cxx11_main
-  $acx_cuda_conftest_cxx14_main
+  $mkh_cuda_conftest_basic_main
+  $mkh_cuda_conftest_cxx11_main
+  $mkh_cuda_conftest_cxx14_main
   return 0;
 }
 "

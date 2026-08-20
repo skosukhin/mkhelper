@@ -43,9 +43,9 @@
 # (defaults to failing with an error message).
 #
 # The result is cached in the
-# acx_cv_[]_AC_LANG_ABBREV[]_func_[]AS_TR_SH(FUNC-NAME) variable if the current
+# mkh_cv_[]_AC_LANG_ABBREV[]_func_[]AS_TR_SH(FUNC-NAME) variable if the current
 # language is case-sensitive (e.g. C), or in the
-# acx_cv_[]_AC_LANG_ABBREV[]_func_[]AS_TR_CPP(FUNC-NAME) variable if the
+# mkh_cv_[]_AC_LANG_ABBREV[]_func_[]AS_TR_CPP(FUNC-NAME) variable if the
 # current language is case-insensitive (e.g. Fortran).
 #
 AC_DEFUN([MKH_LANG_LIB_CHECK],
@@ -76,9 +76,9 @@ AC_DEFUN([MKH_LANG_LIB_CHECK],
 # (defaults to failing with an error message).
 #
 # A positive result of this test is cached in the
-# acx_cv_[]_AC_LANG_ABBREV[]_lib_func_[]AS_TR_SH(FUNC-NAME) variable if the
+# mkh_cv_[]_AC_LANG_ABBREV[]_lib_func_[]AS_TR_SH(FUNC-NAME) variable if the
 # current language is case-sensitive (e.g. C), or in the
-# acx_cv_[]_AC_LANG_ABBREV[]_lib_func_[]AS_TR_CPP(FUNC-NAME) variable if the
+# mkh_cv_[]_AC_LANG_ABBREV[]_lib_func_[]AS_TR_CPP(FUNC-NAME) variable if the
 # current language is case-insensitive (e.g. Fortran).
 #
 AC_DEFUN([MKH_LANG_LIB_SEARCH],
@@ -94,20 +94,20 @@ AC_DEFUN([MKH_LANG_LIB_SEARCH],
 # Default implementation of MKH_LANG_LIB_CHECK for case-sensitive languages.
 #
 # The result is cached in the
-# acx_cv_[]_AC_LANG_ABBREV[]_func_[]AS_TR_SH(FUNC-NAME) variable.
+# mkh_cv_[]_AC_LANG_ABBREV[]_func_[]AS_TR_SH(FUNC-NAME) variable.
 #
 m4_define([MKH_LANG_LIB_CHECK()],
-  [m4_pushdef([acx_cache_var],
-     [acx_cv_[]_AC_LANG_ABBREV[]_func_[]AS_TR_SH([$1])])dnl
+  [m4_pushdef([mkh_cache_var],
+     [mkh_cv_[]_AC_LANG_ABBREV[]_func_[]AS_TR_SH([$1])])dnl
    AC_CACHE_CHECK([for _AC_LANG function $1],
-     [acx_cache_var],
+     [mkh_cache_var],
      [AC_LINK_IFELSE([m4_default([$4], [AC_LANG_CALL([], [$1])])],
-        [AS_VAR_SET([acx_cache_var], [yes])],
-        [AS_VAR_SET([acx_cache_var], [no])])])
-   AS_IF([test x"AS_VAR_GET(acx_cache_var)" = xyes], [$2],
+        [AS_VAR_SET([mkh_cache_var], [yes])],
+        [AS_VAR_SET([mkh_cache_var], [no])])])
+   AS_IF([test x"AS_VAR_GET(mkh_cache_var)" = xyes], [$2],
      [m4_default([$3],
         [AC_MSG_FAILURE([_AC_LANG function $1 is not available])])])
-   m4_popdef([acx_cache_var])])
+   m4_popdef([mkh_cache_var])])
 
 # MKH_LANG_LIB_CHECK(Fortran)(FUNC-NAME,
 #                             [ACTION-IF-SUCCESS],
@@ -118,11 +118,11 @@ m4_define([MKH_LANG_LIB_CHECK()],
 # case-insensitivity of the language.
 #
 # The result is cached in the
-# acx_cv_[]_AC_LANG_ABBREV[]_func_[]AS_TR_CPP(FUNC-NAME) variable.
+# mkh_cv_[]_AC_LANG_ABBREV[]_func_[]AS_TR_CPP(FUNC-NAME) variable.
 #
 m4_define([MKH_LANG_LIB_CHECK(Fortran)],
-  [AS_VAR_SET([acx_tmp], [AS_TR_CPP([$1])])
-   m4_indir([MKH_LANG_LIB_CHECK()], [$acx_tmp], m4_shift($@))])
+  [AS_VAR_SET([mkh_tmp], [AS_TR_CPP([$1])])
+   m4_indir([MKH_LANG_LIB_CHECK()], [$mkh_tmp], m4_shift($@))])
 
 # MKH_LANG_LIB_SEARCH()(VARIABLE,
 #                       FUNC-NAME,
@@ -134,33 +134,33 @@ m4_define([MKH_LANG_LIB_CHECK(Fortran)],
 # Default implementation of MKH_LANG_LIB_SEARCH for case-sensitive languages.
 #
 # The result is cached in the
-# acx_cv_[]_AC_LANG_ABBREV[]_lib_func_[]AS_TR_SH(FUNC-NAME) variable.
+# mkh_cv_[]_AC_LANG_ABBREV[]_lib_func_[]AS_TR_SH(FUNC-NAME) variable.
 #
 m4_define([MKH_LANG_LIB_SEARCH()],
-  [m4_pushdef([acx_cache_var],
-     [acx_cv_[]_AC_LANG_ABBREV[]_lib_func_[]AS_TR_SH([$2])])dnl
+  [m4_pushdef([mkh_cache_var],
+     [mkh_cv_[]_AC_LANG_ABBREV[]_lib_func_[]AS_TR_SH([$2])])dnl
    AC_MSG_CHECKING([for linker flags enabling _AC_LANG function $2])
-   AC_CACHE_VAL([acx_cache_var],
+   AC_CACHE_VAL([mkh_cache_var],
      [AC_LANG_CONFTEST([m4_default([$6], [AC_LANG_CALL([], [$2])])])
-      acx_save_LIBS=$LIBS
+      mkh_save_LIBS=$LIBS
       AS_VAR_SET_IF([$1], [set dummy "AS_VAR_GET([$1])"], [set dummy '' $3])
       shift
-      for acx_libs in "$[@]"; do
-        LIBS="$acx_libs $acx_save_LIBS"
-        AC_LINK_IFELSE([], [AS_VAR_COPY([acx_cache_var], [acx_libs])])
-        AS_VAR_SET_IF([acx_cache_var], [break])
+      for mkh_libs in "$[@]"; do
+        LIBS="$mkh_libs $mkh_save_LIBS"
+        AC_LINK_IFELSE([], [AS_VAR_COPY([mkh_cache_var], [mkh_libs])])
+        AS_VAR_SET_IF([mkh_cache_var], [break])
       done
       rm -f conftest.$ac_ext
-      LIBS=$acx_save_LIBS])
-   AS_VAR_SET_IF([acx_cache_var],
-     [AS_IF([test -n "AS_VAR_GET(acx_cache_var)"],
-        [AC_MSG_RESULT([AS_VAR_GET(acx_cache_var)])],
+      LIBS=$mkh_save_LIBS])
+   AS_VAR_SET_IF([mkh_cache_var],
+     [AS_IF([test -n "AS_VAR_GET(mkh_cache_var)"],
+        [AC_MSG_RESULT([AS_VAR_GET(mkh_cache_var)])],
         [AC_MSG_RESULT([none needed])])
       $4],
      [AC_MSG_RESULT([unknown])
       m4_default([$5], [AC_MSG_FAILURE(
         [unable to find linker flags enabling _AC_LANG function $2])])])
-   m4_popdef([acx_cache_var])])
+   m4_popdef([mkh_cache_var])])
 
 # MKH_LANG_LIB_SEARCH(Fortran)(VARIABLE,
 #                              FUNC-NAME,
@@ -173,9 +173,9 @@ m4_define([MKH_LANG_LIB_SEARCH()],
 # case-insensitivity of the language.
 #
 # The result is cached in the
-# acx_cv_[]_AC_LANG_ABBREV[]_lib_func_[]AS_TR_CPP(FUNC-NAME) variable.
+# mkh_cv_[]_AC_LANG_ABBREV[]_lib_func_[]AS_TR_CPP(FUNC-NAME) variable.
 #
 m4_define([MKH_LANG_LIB_SEARCH(Fortran)],
-  [AS_VAR_SET([acx_fc_lib_search], [AS_TR_CPP([$2])])
+  [AS_VAR_SET([mkh_fc_lib_search], [AS_TR_CPP([$2])])
    m4_indir([MKH_LANG_LIB_SEARCH()],
-     [$1], [$acx_fc_lib_search], m4_shift2($@))])
+     [$1], [$mkh_fc_lib_search], m4_shift2($@))])

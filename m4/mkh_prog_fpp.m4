@@ -80,11 +80,11 @@
 #   Intel: "$FC -E $ac_fcflags_srcext" (the same as for gfortran but the
 #          variable $ac_fcflags_srcext is usually set to '-fpp');
 #
-#   NAGWare: "$SHELL ${acx_prog_fpp_wrapper_dir}/nag.sh $FC" or
+#   NAGWare: "$SHELL ${mkh_prog_fpp_wrapper_dir}/nag.sh $FC" or
 #            "$FC -o - -Wp,-w,-P -F $ac_fcflags_srcext" (see comments in the
 #             wrapper);
 #
-#   Cray: "$SHELL ${acx_prog_fpp_wrapper_dir}/cray.sh $FC" (uses the
+#   Cray: "$SHELL ${mkh_prog_fpp_wrapper_dir}/cray.sh $FC" (uses the
 #         wrapper);
 #
 #   PGI: "$FC -E" (the compiler does not need $ac_fcflags_srcext when called
@@ -96,7 +96,7 @@
 # If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
 # (defaults to failing with an error message).
 #
-# A positive result of this test is cached in the acx_cv_prog_fpp variable.
+# A positive result of this test is cached in the mkh_cv_prog_fpp variable.
 #
 AC_DEFUN([MKH_PROG_FPP],
   [AC_LANG_ASSERT([Fortran])dnl
@@ -105,7 +105,7 @@ AC_DEFUN([MKH_PROG_FPP],
         [MKH_PROG_FPP requires calling the Fortran compiler with a ]dnl
 [preprocessor but no call to AC_FC_PP_SRCEXT is detected])])dnl
    AC_MSG_CHECKING([for Fortran preprocessor command])
-   AC_CACHE_VAL([acx_cv_prog_fpp],
+   AC_CACHE_VAL([mkh_cv_prog_fpp],
      [AS_MKDIR_P([conftest.dir/sub])
       cd conftest.dir
       cat > sub/conftest.fpp_inc <<_ACEOF
@@ -132,48 +132,48 @@ AC_DEFUN([MKH_PROG_FPP],
 @%:@endif
 
 _ACEOF
-      acx_save_FCFLAGS=$FCFLAGS
+      mkh_save_FCFLAGS=$FCFLAGS
       AS_VAR_SET_IF([$1], [set dummy "AS_VAR_GET([$1])"],
         [_AC_SRCDIRS([.])
-         acx_prog_fpp_wrapper_dir=dnl
+         mkh_prog_fpp_wrapper_dir=dnl
 "${ac_abs_top_srcdir}/m4_default([$6], [fpp-wrappers])"
          set dummy "$FC -E" "$FC -E $ac_fcflags_srcext" \
-                   "$SHELL ${acx_prog_fpp_wrapper_dir}/nag.sh $FC" \
+                   "$SHELL ${mkh_prog_fpp_wrapper_dir}/nag.sh $FC" \
                    "$FC -o - -Wp,-w,-P -F $ac_fcflags_srcext" \
-                   "$SHELL ${acx_prog_fpp_wrapper_dir}/cray.sh $FC" \
+                   "$SHELL ${mkh_prog_fpp_wrapper_dir}/cray.sh $FC" \
                    "$FC -F" "$FC -F $ac_fcflags_srcext"])
       shift
-      acx_prog_fpp_include_flag=m4_default([$4], [-I])
-      acx_prog_fpp_macro_flag=m4_default([$5], [-D])
-      for acx_candidate in "$[@]"; do
+      mkh_prog_fpp_include_flag=m4_default([$4], [-I])
+      mkh_prog_fpp_macro_flag=m4_default([$5], [-D])
+      for mkh_candidate in "$[@]"; do
         AC_LANG_CONFTEST([AC_LANG_PROGRAM([],[      implicit none
 @%:@include "conftest.fpp_inc"
       conftest_zero = 0
       conftest_one = 1
       conftest_two = 2
       conftest_three = 3])])
-        rm -f conftest.acx_prog_fpp
-        acx_try_fpp="$acx_candidate \$FCFLAGS conftest.\$ac_ext dnl
->conftest.acx_prog_fpp"
-        FCFLAGS="${acx_prog_fpp_include_flag}sub dnl
-${acx_prog_fpp_macro_flag}CONFTEST_ONE dnl
-${acx_prog_fpp_macro_flag}CONFTEST_TWO=42 $acx_save_FCFLAGS"
-        _AC_DO_VAR([acx_try_fpp])
-        AS_IF([test $? -eq 0 && test -f conftest.acx_prog_fpp],
-          [acx_result=`grep -c 'integer conftest' dnl
-conftest.acx_prog_fpp 2>/dev/null`
-           AS_IF([test $? -eq 0 && test 4 -eq "$acx_result" 2>/dev/null],
-             [mv conftest.acx_prog_fpp conftest.$ac_ext
-              FCFLAGS=$acx_save_FCFLAGS
+        rm -f conftest.mkh_prog_fpp
+        mkh_try_fpp="$mkh_candidate \$FCFLAGS conftest.\$ac_ext dnl
+>conftest.mkh_prog_fpp"
+        FCFLAGS="${mkh_prog_fpp_include_flag}sub dnl
+${mkh_prog_fpp_macro_flag}CONFTEST_ONE dnl
+${mkh_prog_fpp_macro_flag}CONFTEST_TWO=42 $mkh_save_FCFLAGS"
+        _AC_DO_VAR([mkh_try_fpp])
+        AS_IF([test $? -eq 0 && test -f conftest.mkh_prog_fpp],
+          [mkh_result=`grep -c 'integer conftest' dnl
+conftest.mkh_prog_fpp 2>/dev/null`
+           AS_IF([test $? -eq 0 && test 4 -eq "$mkh_result" 2>/dev/null],
+             [mv conftest.mkh_prog_fpp conftest.$ac_ext
+              FCFLAGS=$mkh_save_FCFLAGS
               AC_COMPILE_IFELSE([],
-                [acx_cv_prog_fpp=$acx_candidate
+                [mkh_cv_prog_fpp=$mkh_candidate
                  break])])])
       done
-      FCFLAGS=$acx_save_FCFLAGS
+      FCFLAGS=$mkh_save_FCFLAGS
       cd ..
       rm -rf conftest.dir])
-   AS_VAR_SET_IF([acx_cv_prog_fpp],
-     [AC_MSG_RESULT([$acx_cv_prog_fpp])
+   AS_VAR_SET_IF([mkh_cv_prog_fpp],
+     [AC_MSG_RESULT([$mkh_cv_prog_fpp])
       $2],
      [AC_MSG_RESULT([unknown])
       m4_default([$3],

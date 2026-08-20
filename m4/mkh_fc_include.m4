@@ -38,11 +38,11 @@
 # If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
 # (defaults to failing with an error message).
 #
-# The result is cached in the acx_cv_fc_ftn_include_flag variable.
+# The result is cached in the mkh_cv_fc_ftn_include_flag variable.
 #
 AC_DEFUN([MKH_FC_INCLUDE_FLAG],
   [_MKH_FC_INCLUDE_FLAG
-   AS_VAR_IF([acx_cv_fc_ftn_include_flag], [unknown],
+   AS_VAR_IF([mkh_cv_fc_ftn_include_flag], [unknown],
      [m4_default([$2],
         [AC_MSG_FAILURE([unable to detect Fortran compiler flag needed to dnl
 specify search paths for _MKH_FC_INCLUDE_DESC([ftn])])])], [$1])])
@@ -57,11 +57,11 @@ specify search paths for _MKH_FC_INCLUDE_DESC([ftn])])])], [$1])])
 # If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
 # (defaults to failing with an error message).
 #
-# The result is cached in the acx_cv_fc_pp_include_flag variable.
+# The result is cached in the mkh_cv_fc_pp_include_flag variable.
 #
 AC_DEFUN([MKH_FC_INCLUDE_FLAG_PP],
   [_MKH_FC_INCLUDE_FLAG_PP
-   AS_VAR_IF([acx_cv_fc_pp_include_flag], [unknown],
+   AS_VAR_IF([mkh_cv_fc_pp_include_flag], [unknown],
      [m4_default([$2],
         [AC_MSG_FAILURE([unable to detect Fortran compiler flag needed to dnl
 specify search paths for _MKH_FC_INCLUDE_DESC([pp])])])], [$1])])
@@ -77,11 +77,11 @@ specify search paths for _MKH_FC_INCLUDE_DESC([pp])])])], [$1])])
 # If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
 # (defaults to failing with an error message).
 #
-# The result is cached in the acx_cv_fc_pp_sys_include_flag variable.
+# The result is cached in the mkh_cv_fc_pp_sys_include_flag variable.
 #
 AC_DEFUN([MKH_FC_INCLUDE_FLAG_PP_SYS],
   [_MKH_FC_INCLUDE_FLAG_PP_SYS
-   AS_VAR_IF([acx_cv_fc_pp_sys_include_flag], [unknown],
+   AS_VAR_IF([mkh_cv_fc_pp_sys_include_flag], [unknown],
      [m4_default([$2],
         [AC_MSG_FAILURE([unable to detect Fortran compiler flag needed to dnl
 specify search paths for _MKH_FC_INCLUDE_DESC([pp_sys])])])], [$1])])
@@ -102,7 +102,7 @@ specify search paths for _MKH_FC_INCLUDE_DESC([pp_sys])])])], [$1])])
 # If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
 # (defaults to failing with an error message).
 #
-# The result is cached in the acx_cv_fc_ftn_include_order variable.
+# The result is cached in the mkh_cv_fc_ftn_include_order variable.
 #
 AC_DEFUN([MKH_FC_INCLUDE_ORDER],
   [AC_REQUIRE([_MKH_FC_INCLUDE_FLAG])_MKH_FC_INCLUDE_ORDER([ftn],$@)])
@@ -117,7 +117,7 @@ AC_DEFUN([MKH_FC_INCLUDE_ORDER],
 # If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
 # (defaults to failing with an error message).
 #
-# The result is cached in the acx_cv_fc_pp_include_order variable.
+# The result is cached in the mkh_cv_fc_pp_include_order variable.
 #
 AC_DEFUN([MKH_FC_INCLUDE_ORDER_PP],
   [AC_REQUIRE([_MKH_FC_INCLUDE_FLAG_PP])_MKH_FC_INCLUDE_ORDER([pp],$@)])
@@ -132,7 +132,7 @@ AC_DEFUN([MKH_FC_INCLUDE_ORDER_PP],
 # If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
 # (defaults to failing with an error message).
 #
-# The result is cached in the acx_cv_fc_pp_sys_include_order variable.
+# The result is cached in the mkh_cv_fc_pp_sys_include_order variable.
 #
 AC_DEFUN([MKH_FC_INCLUDE_ORDER_PP_SYS],
   [AC_REQUIRE([_MKH_FC_INCLUDE_FLAG_PP_SYS])dnl
@@ -149,7 +149,7 @@ _MKH_FC_INCLUDE_ORDER([pp_sys],$@)])
 # (defaults to failing with an error message).
 #
 # The result is cached in the
-# acx_cv_fc_ftn_header_[]AS_TR_SH(HEADER-FILE) variable.
+# mkh_cv_fc_ftn_header_[]AS_TR_SH(HEADER-FILE) variable.
 #
 AC_DEFUN([MKH_FC_INCLUDE_CHECK], [_MKH_FC_INCLUDE_CHECK([ftn],$@)])
 
@@ -219,31 +219,31 @@ AC_DEFUN([_MKH_FC_INCLUDE_FLAG_PP_SYS], [__MKH_FC_INCLUDE_FLAG([pp_sys])])
 # Finds the compiler flag needed to specify search paths for the HEADER-TYPE
 # (see _MKH_FC_INCLUDE_LINE).
 #
-# The result is cached in the acx_cv_fc_[]HEADER-TYPE[]_include_flag variable.
+# The result is cached in the mkh_cv_fc_[]HEADER-TYPE[]_include_flag variable.
 #
 # See _MKH_LANG_KNOWN_INC_FLAGS for the known flags.
 #
 m4_define([__MKH_FC_INCLUDE_FLAG],
   [AC_LANG_ASSERT([Fortran])dnl
-   m4_pushdef([acx_cache_var], [acx_cv_fc_[]$1[]_include_flag])dnl
+   m4_pushdef([mkh_cache_var], [mkh_cv_fc_[]$1[]_include_flag])dnl
    AC_CACHE_CHECK([for Fortran compiler flag needed to specify search dnl
-paths for _MKH_FC_INCLUDE_DESC([$1])], [acx_cache_var],
-     [acx_cache_var=unknown
+paths for _MKH_FC_INCLUDE_DESC([$1])], [mkh_cache_var],
+     [mkh_cache_var=unknown
       AS_MKDIR_P([conftest.dir])
       AC_LANG_CONFTEST([AC_LANG_PROGRAM])
       mv conftest.$ac_ext conftest.dir/conftest.inc
       AC_LANG_CONFTEST([AC_LANG_SOURCE(
         [_MKH_FC_INCLUDE_LINE([$1], [conftest.inc])])])
-      acx_save_FCFLAGS=$FCFLAGS
-      for acx_flag in _MKH_FC_INCLUDE_KNOWN_FLAGS([$1]); do
-        FCFLAGS="$acx_save_FCFLAGS ${acx_flag}conftest.dir"
-        AC_LINK_IFELSE([], [AS_VAR_COPY([acx_cache_var], [acx_flag])])
-        test "x$acx_cache_var" != xunknown && break
+      mkh_save_FCFLAGS=$FCFLAGS
+      for mkh_flag in _MKH_FC_INCLUDE_KNOWN_FLAGS([$1]); do
+        FCFLAGS="$mkh_save_FCFLAGS ${mkh_flag}conftest.dir"
+        AC_LINK_IFELSE([], [AS_VAR_COPY([mkh_cache_var], [mkh_flag])])
+        test "x$mkh_cache_var" != xunknown && break
       done
-      FCFLAGS=$acx_save_FCFLAGS
+      FCFLAGS=$mkh_save_FCFLAGS
       rm -f conftest.$ac_ext
       rm -rf conftest.dir])
-   m4_popdef([acx_cache_var])])
+   m4_popdef([mkh_cache_var])])
 
 # _MKH_FC_INCLUDE_ORDER(HEADER-TYPE,
 #                       [ACTION-IF-SUCCESS],
@@ -259,15 +259,15 @@ paths for _MKH_FC_INCLUDE_DESC([$1])], [acx_cache_var],
 # If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
 # (defaults to failing with an error message).
 #
-# The result is cached in the acx_cv_fc_[]HEADER-TYPE[]_include_order
+# The result is cached in the mkh_cv_fc_[]HEADER-TYPE[]_include_order
 # variable.
 #
 m4_define([_MKH_FC_INCLUDE_ORDER],
   [AC_LANG_ASSERT([Fortran])dnl
-   m4_pushdef([acx_cache_var], [acx_cv_fc_[]$1[]_include_order])dnl
+   m4_pushdef([mkh_cache_var], [mkh_cv_fc_[]$1[]_include_order])dnl
    AC_CACHE_CHECK([for Fortran compiler search path order for dnl
-_MKH_FC_INCLUDE_DESC([$1])], [acx_cache_var],
-     [acx_cache_var=
+_MKH_FC_INCLUDE_DESC([$1])], [mkh_cache_var],
+     [mkh_cache_var=
       AS_VAR_IF([cross_compiling], [no],
         [AS_MKDIR_P([conftest.dir/src/inc])
          AS_MKDIR_P([conftest.dir/build])
@@ -288,38 +288,38 @@ dnl This instance of the file will be compiled.
            shift; mv conftest.$ac_ext conftest.dir${1}conftest.write; shift
          done
          cd conftest.dir/build
-         acx_save_FCFLAGS=$FCFLAGS
-         FCFLAGS="$FCFLAGS ${acx_cv_fc_[]$1[]_include_flag}../src/inc dnl
-${acx_cv_fc_[]$1[]_include_flag}../src/inc2"
-         acx_save_ac_link=$ac_link
+         mkh_save_FCFLAGS=$FCFLAGS
+         FCFLAGS="$FCFLAGS ${mkh_cv_fc_[]$1[]_include_flag}../src/inc dnl
+${mkh_cv_fc_[]$1[]_include_flag}../src/inc2"
+         mkh_save_ac_link=$ac_link
          ac_link=`AS_ECHO(["$ac_link"]) | sed 's%conftest\.\$ac_ext%../src/&%'`
          while :; do
            AC_LINK_IFELSE([],
-             [acx_exec_result=`./conftest$ac_exeext`
+             [mkh_exec_result=`./conftest$ac_exeext`
               AS_IF([test $? -eq 0],
-                [AS_CASE([$acx_exec_result],
+                [AS_CASE([$mkh_exec_result],
                    [src], [rm -f ../src/conftest.write],
                    [inc], [rm -f ../src/inc2/conftest.write],
                    [cwd], [rm -f ./conftest.write],
                    [flg], [rm -f ../src/inc/conftest.write dnl
 ../src/inc2/conftest.write],
                    [break])
-                 AS_IF([test -z "$acx_cache_var"],
-                   [acx_cache_var=$acx_exec_result],
-                   [AS_VAR_APPEND([acx_cache_var], [",$acx_exec_result"])])
+                 AS_IF([test -z "$mkh_cache_var"],
+                   [mkh_cache_var=$mkh_exec_result],
+                   [AS_VAR_APPEND([mkh_cache_var], [",$mkh_exec_result"])])
                  rm -f conftest$ac_exeext],
                 [break])],
              [break])
          done
-         ac_link=$acx_save_ac_link
-         FCFLAGS=$acx_save_FCFLAGS
+         ac_link=$mkh_save_ac_link
+         FCFLAGS=$mkh_save_FCFLAGS
          cd ../..
          rm -rf conftest.dir])
-      AS_IF([test -z "$acx_cache_var"], [acx_cache_var=unknown])])
-   AS_VAR_IF([acx_cache_var], [unknown], [m4_default([$3],
+      AS_IF([test -z "$mkh_cache_var"], [mkh_cache_var=unknown])])
+   AS_VAR_IF([mkh_cache_var], [unknown], [m4_default([$3],
      [AC_MSG_FAILURE([unable to detect Fortran compiler search path dnl
 order for _MKH_FC_INCLUDE_DESC([$1])])])], [$2])
-   m4_popdef([acx_cache_var])])
+   m4_popdef([mkh_cache_var])])
 
 # _MKH_FC_INCLUDE_CHECK(HEADER-TYPE,
 #                       HEADER-FILE,
@@ -333,18 +333,18 @@ order for _MKH_FC_INCLUDE_DESC([$1])])])], [$2])
 # (defaults to failing with an error message).
 #
 # The result is cached in the
-# acx_cv_fc_[]HEADER-TYPE[]_header_[]AS_TR_SH(HEADER-FILE)
+# mkh_cv_fc_[]HEADER-TYPE[]_header_[]AS_TR_SH(HEADER-FILE)
 # variable.
 #
 m4_define([_MKH_FC_INCLUDE_CHECK],
   [AC_LANG_ASSERT([Fortran])dnl
-   m4_pushdef([acx_cache_var], [acx_cv_fc_[]$1[]_header_[]AS_TR_SH([$2])])dnl
-   AC_CACHE_CHECK([for $2], [acx_cache_var],
+   m4_pushdef([mkh_cache_var], [mkh_cv_fc_[]$1[]_header_[]AS_TR_SH([$2])])dnl
+   AC_CACHE_CHECK([for $2], [mkh_cache_var],
      [AC_COMPILE_IFELSE(
         [AC_LANG_PROGRAM([],[_MKH_FC_INCLUDE_LINE([$1], [$2])])],
-        [AS_VAR_SET([acx_cache_var], [yes])],
-        [AS_VAR_SET([acx_cache_var], [no])])])
-   AS_VAR_IF([acx_cache_var], [yes], [$3], [m4_default([$4],
+        [AS_VAR_SET([mkh_cache_var], [yes])],
+        [AS_VAR_SET([mkh_cache_var], [no])])])
+   AS_VAR_IF([mkh_cache_var], [yes], [$3], [m4_default([$4],
      [AC_MSG_FAILURE([Fortran header file '$2' included with dnl
 _MKH_FC_INCLUDE_DESC([$1]) is not available])])])
-    m4_popdef([acx_cache_var])])
+    m4_popdef([mkh_cache_var])])

@@ -43,7 +43,7 @@ dnl AC_DEFUNed macro expanded with non-AC_DEFUNed macro AC_INIT):
    AC_PROVIDE_IFELSE([_AC_INIT_SRCDIR],
      [m4_fatal([$0 must be expanded before AC_INIT])])
 dnl Check that that the line marker we need is present in _AC_INIT_PARSE_ARGS:
-   m4_pushdef([acx_marker_string],
+   m4_pushdef([mkh_marker_string],
 [^for ac_option
 do
   # If the previous option needs an argument, assign it\.
@@ -55,69 +55,69 @@ do
 $])
    m4_bmatch(
      m4_dquote(m4_defn([_AC_INIT_PARSE_ARGS])),
-     acx_marker_string, [],
+     mkh_marker_string, [],
      [m4_fatal([$0 is not compatible with the version of Autoconf in use ]dnl
 [(_AC_INIT_PARSE_ARGS does not have the expected marker string)])])
 dnl Monkey-patch _AC_INIT_PARSE_ARGS:
    m4_define([_AC_INIT_PARSE_ARGS],
      m4_bpatsubst(m4_dquote(
      m4_bpatsubst(m4_dquote(m4_defn([_AC_INIT_PARSE_ARGS])),
-       acx_marker_string,
-       [acx_cmake_defs=
-m4_ifnblank(m4_join([], $@), [acx_cmake_ignored_defs=
+       mkh_marker_string,
+       [mkh_cmake_defs=
+m4_ifnblank(m4_join([], $@), [mkh_cmake_ignored_defs=
 ])dnl
-acx_prev_D=
+mkh_prev_D=
 \&
-  acx_cmake_option=yes
-  AS_IF([test -n "$acx_prev_D"],
+  mkh_cmake_option=yes
+  AS_IF([test -n "$mkh_prev_D"],
     [ac_option="-D$ac_option"
-     acx_prev_D=],
+     mkh_prev_D=],
     [AS_CASE([$ac_option],
-       [-D], [acx_prev_D=yes; continue],
+       [-D], [mkh_prev_D=yes; continue],
        [-D*], [],
-       [acx_cmake_option=no])])
-  AS_VAR_IF([acx_cmake_option], [yes],
+       [mkh_cmake_option=no])])
+  AS_VAR_IF([mkh_cmake_option], [yes],
     [AS_CASE([$ac_option],
        m4_foreach([pattern], [$@],
          [m4_ifnblank(pattern,
             [pattern,
-             [MKH_VAR_APPEND_UNIQ([acx_cmake_ignored_defs],
+             [MKH_VAR_APPEND_UNIQ([mkh_cmake_ignored_defs],
                 [$ac_option], [', '])],])])
        [MKH_ESCAPE_SINGLE_QUOTE([ac_option])
-        AS_VAR_APPEND([acx_cmake_defs], [" '$ac_option'"])])
+        AS_VAR_APPEND([mkh_cmake_defs], [" '$ac_option'"])])
      continue])
 ])),
        [^if test -n "$ac_prev"; then$],
-       [AS_IF([test -n "$acx_prev_D"],
+       [AS_IF([test -n "$mkh_prev_D"],
           [AC_MSG_ERROR([missing argument to -D])])
         m4_ifnblank(m4_join([], $@),
-          [m4_pushdef([acx_subdir_ignored_option_message],
-             [ignored CMake definitions: $acx_cmake_ignored_defs])dnl
-           AS_IF([test -n "$acx_cmake_ignored_defs"],
+          [m4_pushdef([mkh_subdir_ignored_option_message],
+             [ignored CMake definitions: $mkh_cmake_ignored_defs])dnl
+           AS_IF([test -n "$mkh_cmake_ignored_defs"],
              [AS_CASE([$enable_option_checking],
                 [no], [],
-                [fatal], [AC_MSG_ERROR([acx_subdir_ignored_option_message])],
-                [AC_MSG_WARN([acx_subdir_ignored_option_message])])])
-           m4_popdef([acx_subdir_ignored_option_message])])dnl
+                [fatal], [AC_MSG_ERROR([mkh_subdir_ignored_option_message])],
+                [AC_MSG_WARN([mkh_subdir_ignored_option_message])])])
+           m4_popdef([mkh_subdir_ignored_option_message])])dnl
 \&]))
 dnl Also monkey-patch all mkhelper macros that rely on $ac_configure_args:
   m4_ifdef([MKH_BUILD_ENVIRONMENT],
-    [m4_define([acx_marker_string],
-       [[^           AS_CASE(\[$acx_arg\],
+    [m4_define([mkh_marker_string],
+       [[^           AS_CASE(\[$mkh_arg\],
              \[-\*\], \[\],$]])
      m4_bmatch(
        m4_dquote(m4_defn([MKH_BUILD_ENVIRONMENT])),
-       acx_marker_string, [],
+       mkh_marker_string, [],
        [m4_fatal([$0 is not compatible with the version of ]dnl
 [MKH_BUILD_ENVIRONMENT in use])])
      m4_define([MKH_BUILD_ENVIRONMENT],
        m4_bpatsubst(
          m4_dquote(m4_defn([MKH_BUILD_ENVIRONMENT])),
-         acx_marker_string,
-         [AS_CASE([$acx_arg],
+         mkh_marker_string,
+         [AS_CASE([$mkh_arg],
             [-D], [test 2 -gt $[]@%:@ || shift],
             [-*], [],]))])
-  m4_popdef([acx_marker_string])])
+  m4_popdef([mkh_marker_string])])
 
 # MKH_SUBDIR_INIT_CONFIG(SUBDIR,
 #                        [OPTIONS = recursive-help adjust-args run],
@@ -153,36 +153,36 @@ dnl Also monkey-patch all mkhelper macros that rely on $ac_configure_args:
 #
 AC_DEFUN([MKH_SUBDIR_INIT_CONFIG],
   [m4_ifblank([$1], [m4_fatal([SUBDIR ('$1') cannot be blank])])dnl
-   m4_pushdef([acx_subdir_opt_recursive_help], [recursive-help])dnl
-   m4_pushdef([acx_subdir_opt_adjust_args], [adjust-args])dnl
-   m4_pushdef([acx_subdir_opt_run], [run])dnl
+   m4_pushdef([mkh_subdir_opt_recursive_help], [recursive-help])dnl
+   m4_pushdef([mkh_subdir_opt_adjust_args], [adjust-args])dnl
+   m4_pushdef([mkh_subdir_opt_run], [run])dnl
    m4_foreach_w([opt], [$2],
      [m4_bmatch(opt,
         [^\(no-\)?recursive-help$],
-        [m4_define([acx_subdir_opt_recursive_help], opt)],
+        [m4_define([mkh_subdir_opt_recursive_help], opt)],
         [^\(no-\)?adjust-args$],
-        [m4_define([acx_subdir_opt_adjust_args], opt)],
+        [m4_define([mkh_subdir_opt_adjust_args], opt)],
         [^\(no-\)?run$],
-        [m4_define([acx_subdir_opt_run], opt)],
+        [m4_define([mkh_subdir_opt_run], opt)],
         [m4_fatal([unknown option ']opt['])])])dnl
-   m4_cond([acx_subdir_opt_recursive_help], [recursive-help],
+   m4_cond([mkh_subdir_opt_recursive_help], [recursive-help],
      [AS_LITERAL_IF([$1],
         [m4_append([_AC_LIST_SUBDIRS], [$1], [
 ])],
-        [m4_fatal([option ']acx_subdir_opt_recursive_help[' requires ]dnl
+        [m4_fatal([option ']mkh_subdir_opt_recursive_help[' requires ]dnl
 [SUBDIR ('$1') to have a literal value])])])dnl
-   m4_pushdef([acx_subdir_build_subdir], [m4_default([$3], [$1])])dnl
-   MKH_SRCDIRS("acx_subdir_build_subdir")
-   AS_VAR_SET([_MKH_SUBDIR_RUN_CMD_VAR([acx_subdir_build_subdir])],
+   m4_pushdef([mkh_subdir_build_subdir], [m4_default([$3], [$1])])dnl
+   MKH_SRCDIRS("mkh_subdir_build_subdir")
+   AS_VAR_SET([_MKH_SUBDIR_RUN_CMD_VAR([mkh_subdir_build_subdir])],
      ["'$ac_top_srcdir/$1/m4_ifval([$4], ['$4], [configure'])"])
    AS_VAR_SET(
-     [_MKH_SUBDIR_BUILD_TYPE_VAR([acx_subdir_build_subdir])], ['config'])
-   AS_VAR_SET([_MKH_SUBDIR_RUN_DEFAULT_ARG_VAR([acx_subdir_build_subdir])], [])
-   m4_cond([acx_subdir_opt_adjust_args], [adjust-args],
-     [AC_REQUIRE_SHELL_FN([acx_subdir_pre_adjust_config_args], [],
-        [AS_VAR_SET_IF([acx_subdir_pre_adjusted_config_args], [],
-           [acx_subdir_pre_adjusted_config_args=$ac_configure_args
-            _MKH_SUBDIR_REMOVE_ARGS([acx_subdir_pre_adjusted_config_args],
+     [_MKH_SUBDIR_BUILD_TYPE_VAR([mkh_subdir_build_subdir])], ['config'])
+   AS_VAR_SET([_MKH_SUBDIR_RUN_DEFAULT_ARG_VAR([mkh_subdir_build_subdir])], [])
+   m4_cond([mkh_subdir_opt_adjust_args], [adjust-args],
+     [AC_REQUIRE_SHELL_FN([mkh_subdir_pre_adjust_config_args], [],
+        [AS_VAR_SET_IF([mkh_subdir_pre_adjusted_config_args], [],
+           [mkh_subdir_pre_adjusted_config_args=$ac_configure_args
+            _MKH_SUBDIR_REMOVE_ARGS([mkh_subdir_pre_adjusted_config_args],
               AC_PROVIDE_IFELSE([MKH_SUBDIR_ACCEPT_CMAKE_DEFINITIONS],
                 [[[-D], [1]], [[-D*], [0]],])
               [[MKH_SUBDIR_CONFIG_PATTERN_STDPOS([cache-file])| \
@@ -193,44 +193,44 @@ AC_DEFUN([MKH_SUBDIR_INIT_CONFIG],
                 MKH_SUBDIR_CONFIG_PATTERN_STDOPT([prefix])| \
                 --config-cache|-C| \
                 MKH_SUBDIR_CONFIG_PATTERN_ENABLE([option-checking])], [0]])
-            AS_VAR_APPEND([acx_subdir_pre_adjusted_config_args],
+            AS_VAR_APPEND([mkh_subdir_pre_adjusted_config_args],
               [" '--disable-option-checking'"])
             AS_VAR_IF([prefix], [NONE],
-              [acx_tmp="--prefix=$ac_default_prefix"],
-              [acx_tmp="--prefix=$prefix"])
-            MKH_ESCAPE_SINGLE_QUOTE([acx_tmp])
-            AS_VAR_APPEND([acx_subdir_pre_adjusted_config_args],
-              [" '$acx_tmp'"])])])dnl
-      acx_subdir_pre_adjust_config_args
-      AS_VAR_SET([_MKH_SUBDIR_RUN_ARG_VAR([acx_subdir_build_subdir])],
-        [$acx_subdir_pre_adjusted_config_args])
+              [mkh_tmp="--prefix=$ac_default_prefix"],
+              [mkh_tmp="--prefix=$prefix"])
+            MKH_ESCAPE_SINGLE_QUOTE([mkh_tmp])
+            AS_VAR_APPEND([mkh_subdir_pre_adjusted_config_args],
+              [" '$mkh_tmp'"])])])dnl
+      mkh_subdir_pre_adjust_config_args
+      AS_VAR_SET([_MKH_SUBDIR_RUN_ARG_VAR([mkh_subdir_build_subdir])],
+        [$mkh_subdir_pre_adjusted_config_args])
       AS_VAR_IF([cache_file], ['/dev/null'],
-        [acx_tmp=$cache_file],
+        [mkh_tmp=$cache_file],
         [AS_CASE([$cache_file],
            [[[\\/]]* | ?:[[\\/]]*],
-           [acx_tmp=$cache_file],
-           [acx_tmp="$ac_top_build_prefix$cache_file"])
-         acx_tmp="$acx_tmp.AS_LITERAL_IF([$1],
+           [mkh_tmp=$cache_file],
+           [mkh_tmp="$ac_top_build_prefix$cache_file"])
+         mkh_tmp="$mkh_tmp.AS_LITERAL_IF([$1],
                              [m4_translit([$1], [/], [.])],
                              [`echo "$1" | tr / .`])"])
       _MKH_SUBDIR_APPEND_ARGS(
-        [_MKH_SUBDIR_RUN_ARG_VAR([acx_subdir_build_subdir])],
-        ["--cache-file=$acx_tmp"], ["--srcdir=$ac_top_srcdir/$1"])],
+        [_MKH_SUBDIR_RUN_ARG_VAR([mkh_subdir_build_subdir])],
+        ["--cache-file=$mkh_tmp"], ["--srcdir=$ac_top_srcdir/$1"])],
      [AS_VAR_SET(
-       [_MKH_SUBDIR_RUN_ARG_VAR([acx_subdir_build_subdir])],
+       [_MKH_SUBDIR_RUN_ARG_VAR([mkh_subdir_build_subdir])],
        [$ac_configure_args])])
    m4_divert_once([DEFAULTS], [extra_build_subdirs=])dnl
-   AS_VAR_APPEND([extra_build_subdirs], [" acx_subdir_build_subdir"])
-   m4_cond([acx_subdir_opt_run], [run],
+   AS_VAR_APPEND([extra_build_subdirs], [" mkh_subdir_build_subdir"])
+   m4_cond([mkh_subdir_opt_run], [run],
      [AS_VAR_SET(
-        [_MKH_SUBDIR_RUN_YESNO_VAR([acx_subdir_build_subdir])], [yes])[]dnl
+        [_MKH_SUBDIR_RUN_YESNO_VAR([mkh_subdir_build_subdir])], [yes])[]dnl
       _MKH_SUBDIR_COMMANDS_PRE],
      [AS_VAR_SET(
-        [_MKH_SUBDIR_RUN_YESNO_VAR([acx_subdir_build_subdir])], [no])])[]dnl
-   m4_popdef([acx_subdir_build_subdir])dnl
-   m4_popdef([acx_subdir_opt_recursive_help])dnl
-   m4_popdef([acx_subdir_opt_adjust_args])dnl
-   m4_popdef([acx_subdir_opt_run])])
+        [_MKH_SUBDIR_RUN_YESNO_VAR([mkh_subdir_build_subdir])], [no])])[]dnl
+   m4_popdef([mkh_subdir_build_subdir])dnl
+   m4_popdef([mkh_subdir_opt_recursive_help])dnl
+   m4_popdef([mkh_subdir_opt_adjust_args])dnl
+   m4_popdef([mkh_subdir_opt_run])])
 
 # MKH_SUBDIR_INIT_CMAKE(SUBDIR,
 #                       [OPTIONS = adjust-args run],
@@ -251,7 +251,7 @@ AC_DEFUN([MKH_SUBDIR_INIT_CONFIG],
 #                              into CMake arguments. This implies that all
 #                              extra flags that are found in the CC/CXX/FC
 #                              variables will be stored in the
-#                              acx_subdir_<CC/CXX/FC>_<C/CXX/FC>FLAGS variables
+#                              mkh_subdir_<CC/CXX/FC>_<C/CXX/FC>FLAGS variables
 #                              and prepended to the respective
 #                              CMAKE_<LANG>_FLAGS CMake arguments. The argument
 #                              is ignored if the argument adjustment is
@@ -274,47 +274,47 @@ AC_DEFUN([MKH_SUBDIR_INIT_CONFIG],
 #
 AC_DEFUN([MKH_SUBDIR_INIT_CMAKE],
   [m4_ifblank([$1], [m4_fatal([SUBDIR ('$1') cannot be blank])])dnl
-   m4_pushdef([acx_subdir_opt_adjust_args], [adjust-args])dnl
-   m4_pushdef([acx_subdir_opt_adjust_compilers], [adjust-compilers])dnl
-   m4_pushdef([acx_subdir_opt_adjust_utilities], [adjust-utilities])dnl
-   m4_pushdef([acx_subdir_opt_run], [run])dnl
+   m4_pushdef([mkh_subdir_opt_adjust_args], [adjust-args])dnl
+   m4_pushdef([mkh_subdir_opt_adjust_compilers], [adjust-compilers])dnl
+   m4_pushdef([mkh_subdir_opt_adjust_utilities], [adjust-utilities])dnl
+   m4_pushdef([mkh_subdir_opt_run], [run])dnl
    m4_foreach_w([opt], [$2],
      [m4_bmatch(opt,
         [^\(no-\)?adjust-args$],
-        [m4_define([acx_subdir_opt_adjust_args], opt)],
+        [m4_define([mkh_subdir_opt_adjust_args], opt)],
         [^\(no-\)?adjust-compilers$],
-        [m4_define([acx_subdir_opt_adjust_compilers], opt)],
+        [m4_define([mkh_subdir_opt_adjust_compilers], opt)],
         [^\(no-\)?adjust-utilities$],
-        [m4_define([acx_subdir_opt_adjust_utilities], opt)],
+        [m4_define([mkh_subdir_opt_adjust_utilities], opt)],
         [^\(no-\)?run$],
-        [m4_define([acx_subdir_opt_run], opt)],
+        [m4_define([mkh_subdir_opt_run], opt)],
         [m4_fatal([unknown option ']opt['])])])dnl
-   m4_pushdef([acx_subdir_build_subdir], [m4_default([$3], [$1])])dnl
-   AS_VAR_SET([_MKH_SUBDIR_RUN_CMD_VAR([acx_subdir_build_subdir])],
+   m4_pushdef([mkh_subdir_build_subdir], [m4_default([$3], [$1])])dnl
+   AS_VAR_SET([_MKH_SUBDIR_RUN_CMD_VAR([mkh_subdir_build_subdir])],
      ["m4_default([$4], ['cmake'])"])
-   AS_VAR_SET([_MKH_SUBDIR_BUILD_TYPE_VAR([acx_subdir_build_subdir])],
+   AS_VAR_SET([_MKH_SUBDIR_BUILD_TYPE_VAR([mkh_subdir_build_subdir])],
      ['cmake'])
-   m4_cond([acx_subdir_opt_adjust_args], [adjust-args],
-     [m4_pushdef([acx_subdir_pre_adjust_suffix])dnl
-      m4_if(acx_subdir_opt_adjust_compilers, [no-adjust-compilers],
-        [m4_append([acx_subdir_pre_adjust_suffix], [_nocomps])])dnl
-      m4_if(acx_subdir_opt_adjust_utilities, [no-adjust-utilities],
-        [m4_append([acx_subdir_pre_adjust_suffix], [_noutils])])dnl
-      m4_pushdef([acx_subdir_pre_adjust_cmake_fn],
-        acx_subdir_pre_adjust_cmake_args[]acx_subdir_pre_adjust_suffix)dnl
-      m4_pushdef([acx_subdir_pre_adjust_cmake_cv],
-        acx_subdir_pre_adjusted_cmake_args[]acx_subdir_pre_adjust_suffix)dnl
-      m4_popdef([acx_subdir_pre_adjust_suffix])dnl
-      AC_REQUIRE_SHELL_FN(acx_subdir_pre_adjust_cmake_fn, [],
-        [AS_VAR_SET_IF([acx_subdir_pre_adjust_cmake_cv], [],
-           [AS_VAR_SET([acx_subdir_pre_adjust_cmake_cv],
+   m4_cond([mkh_subdir_opt_adjust_args], [adjust-args],
+     [m4_pushdef([mkh_subdir_pre_adjust_suffix])dnl
+      m4_if(mkh_subdir_opt_adjust_compilers, [no-adjust-compilers],
+        [m4_append([mkh_subdir_pre_adjust_suffix], [_nocomps])])dnl
+      m4_if(mkh_subdir_opt_adjust_utilities, [no-adjust-utilities],
+        [m4_append([mkh_subdir_pre_adjust_suffix], [_noutils])])dnl
+      m4_pushdef([mkh_subdir_pre_adjust_cmake_fn],
+        mkh_subdir_pre_adjust_cmake_args[]mkh_subdir_pre_adjust_suffix)dnl
+      m4_pushdef([mkh_subdir_pre_adjust_cmake_cv],
+        mkh_subdir_pre_adjusted_cmake_args[]mkh_subdir_pre_adjust_suffix)dnl
+      m4_popdef([mkh_subdir_pre_adjust_suffix])dnl
+      AC_REQUIRE_SHELL_FN(mkh_subdir_pre_adjust_cmake_fn, [],
+        [AS_VAR_SET_IF([mkh_subdir_pre_adjust_cmake_cv], [],
+           [AS_VAR_SET([mkh_subdir_pre_adjust_cmake_cv],
               ["'-Wno-dev' '--no-warn-unused-cli' '-GUnix Makefiles'"])
             AC_PROVIDE_IFELSE([MKH_SUBDIR_ACCEPT_CMAKE_DEFINITIONS],
-              [AS_VAR_APPEND([acx_subdir_pre_adjust_cmake_cv],
-                 ["$acx_cmake_defs"])])
+              [AS_VAR_APPEND([mkh_subdir_pre_adjust_cmake_cv],
+                 ["$mkh_cmake_defs"])])
             eval "set dummy $ac_configure_args"; shift
 dnl Transform standard precious (influential environment) variables:
-            m4_pushdef([acx_subdir_known_args],
+            m4_pushdef([mkh_subdir_known_args],
               [[CFLAGS, [CMAKE_C_FLAGS]],
                [CXXFLAGS, [CMAKE_CXX_FLAGS]],
                [CPPFLAGS],
@@ -325,22 +325,22 @@ dnl Transform standard precious (influential environment) variables:
                [LIBS, [CMAKE_C_STANDARD_LIBRARIES
                        CMAKE_CXX_STANDARD_LIBRARIES
                        CMAKE_Fortran_STANDARD_LIBRARIES]]])dnl
-            m4_if(acx_subdir_opt_adjust_compilers, [adjust-compilers],
-              [m4_append([acx_subdir_known_args],
+            m4_if(mkh_subdir_opt_adjust_compilers, [adjust-compilers],
+              [m4_append([mkh_subdir_known_args],
                  [[CC], [CXX], [FC]], [,])])dnl
-            m4_if(acx_subdir_opt_adjust_utilities, [adjust-utilities],
-              [m4_append([acx_subdir_known_args], [[AR], [RANLIB]], [,])])dnl
-            acx_subdir_cmake_vars_to_transform=
-            for acx_tmp; do
-              AS_CASE([$acx_tmp],
+            m4_if(mkh_subdir_opt_adjust_utilities, [adjust-utilities],
+              [m4_append([mkh_subdir_known_args], [[AR], [RANLIB]], [,])])dnl
+            mkh_subdir_cmake_vars_to_transform=
+            for mkh_tmp; do
+              AS_CASE([$mkh_tmp],
                 [m4_join([|],
                    m4_foreach([pair],
-                     [acx_subdir_known_args], [m4_car(pair)=*,]))],
-                [acx_arg_name=`expr "x$acx_tmp" : 'x\(@<:@^=@:>@*\)='`
-                 AS_VAR_APPEND([acx_subdir_cmake_vars_to_transform],
-                   [" $acx_arg_name"])
-                 acx_arg_cmd_value=`expr "x$acx_tmp" : '@<:@^=@:>@*=\(.*\)'`
-                 AS_VAR_COPY([acx_arg_${acx_arg_name}], [acx_arg_cmd_value])])
+                     [mkh_subdir_known_args], [m4_car(pair)=*,]))],
+                [mkh_arg_name=`expr "x$mkh_tmp" : 'x\(@<:@^=@:>@*\)='`
+                 AS_VAR_APPEND([mkh_subdir_cmake_vars_to_transform],
+                   [" $mkh_arg_name"])
+                 mkh_arg_cmd_value=`expr "x$mkh_tmp" : '@<:@^=@:>@*=\(.*\)'`
+                 AS_VAR_COPY([mkh_arg_${mkh_arg_name}], [mkh_arg_cmd_value])])
             done
 dnl CMake requires CMAKE_<LANG>_COMPILER arguments to be set either to absolute
 dnl paths or to the basenames of the executables in the PATH. Therefore, we
@@ -348,7 +348,7 @@ dnl cannot simply set the arguments to the values of the CC/CXX/FC variables,
 dnl which might contain extra arguments for the compiler. Unfortunately, there
 dnl seem to be no solution for the problem without delegating additional
 dnl responsibility to the user:
-            m4_case(acx_subdir_opt_adjust_compilers,
+            m4_case(mkh_subdir_opt_adjust_compilers,
               [adjust-compilers],
               [dnl
 dnl Prepend the extra flags to the CMAKE_<LANG>_FLAGS. This is the documented
@@ -357,34 +357,34 @@ dnl difficult for the users to override the compiler flags using the
 dnl MKH_SUBDIR_REMOVE_ARGS and MKH_SUBDIR_APPEND_ARGS macros: they have to make
 dnl sure that whatever new value they set have to be prepended with the extra
 dnl flags. A small help that we can offer is to store the flags in the
-dnl acx_subdir_<CC/CXX/FC>_<C/CXX/FC>FLAGS shell variables so that the users do
+dnl mkh_subdir_<CC/CXX/FC>_<C/CXX/FC>FLAGS shell variables so that the users do
 dnl not have to extract them again.
-               for acx_arg_name in CC CXX FC; do
-                 AS_VAR_IF([acx_arg_name], [CC],
-                   [acx_subdir_xFLAGS=CFLAGS],
-                   [acx_subdir_xFLAGS="${acx_arg_name}FLAGS"])
-                 AS_VAR_SET([acx_subdir_${acx_arg_name}_${acx_subdir_xFLAGS}])
-                 AS_CASE([" $acx_subdir_cmake_vars_to_transform "],
-                   [*" $acx_arg_name "*],
-                   [set dummy AS_VAR_GET([$acx_arg_name]); shift
-                    AS_VAR_COPY([acx_arg_${acx_arg_name}_EXEC], [1]); shift
-                    AS_VAR_APPEND([acx_subdir_cmake_vars_to_transform],
-                      [" ${acx_arg_name}_EXEC"])
-                    AS_VAR_COPY([acx_tmp], [@])
-                    AS_IF([test -n "$acx_tmp"],
+               for mkh_arg_name in CC CXX FC; do
+                 AS_VAR_IF([mkh_arg_name], [CC],
+                   [mkh_subdir_xFLAGS=CFLAGS],
+                   [mkh_subdir_xFLAGS="${mkh_arg_name}FLAGS"])
+                 AS_VAR_SET([mkh_subdir_${mkh_arg_name}_${mkh_subdir_xFLAGS}])
+                 AS_CASE([" $mkh_subdir_cmake_vars_to_transform "],
+                   [*" $mkh_arg_name "*],
+                   [set dummy AS_VAR_GET([$mkh_arg_name]); shift
+                    AS_VAR_COPY([mkh_arg_${mkh_arg_name}_EXEC], [1]); shift
+                    AS_VAR_APPEND([mkh_subdir_cmake_vars_to_transform],
+                      [" ${mkh_arg_name}_EXEC"])
+                    AS_VAR_COPY([mkh_tmp], [@])
+                    AS_IF([test -n "$mkh_tmp"],
                       [AS_VAR_COPY(
-                         [acx_subdir_${acx_arg_name}_${acx_subdir_xFLAGS}],
-                         [acx_tmp])
-                       AS_CASE([" $acx_subdir_cmake_vars_to_transform "],
-                         [*" $acx_subdir_xFLAGS "*],
-                         [AS_VAR_APPEND([acx_tmp],
-                            [" AS_VAR_GET([acx_arg_${acx_subdir_xFLAGS}])"])],
-                         [AS_VAR_APPEND([acx_subdir_cmake_vars_to_transform],
-                            [" $acx_subdir_xFLAGS"])])
-                       AS_VAR_COPY([acx_arg_${acx_subdir_xFLAGS}],
-                         [acx_tmp])])])
+                         [mkh_subdir_${mkh_arg_name}_${mkh_subdir_xFLAGS}],
+                         [mkh_tmp])
+                       AS_CASE([" $mkh_subdir_cmake_vars_to_transform "],
+                         [*" $mkh_subdir_xFLAGS "*],
+                         [AS_VAR_APPEND([mkh_tmp],
+                            [" AS_VAR_GET([mkh_arg_${mkh_subdir_xFLAGS}])"])],
+                         [AS_VAR_APPEND([mkh_subdir_cmake_vars_to_transform],
+                            [" $mkh_subdir_xFLAGS"])])
+                       AS_VAR_COPY([mkh_arg_${mkh_subdir_xFLAGS}],
+                         [mkh_tmp])])])
                done
-               m4_append([acx_subdir_known_args],
+               m4_append([mkh_subdir_known_args],
                  [[CC_EXEC, [CMAKE_C_COMPILER]],
                   [CXX_EXEC, [CMAKE_CXX_COMPILER]],
                   [FC_EXEC, [CMAKE_Fortran_COMPILER]]], [,])],
@@ -405,55 +405,55 @@ dnl https://gitlab.kitware.com/cmake/cmake/-/commit/6f1af899db4e93c960145dae12eb
 dnl and
 dnl https://gitlab.kitware.com/cmake/cmake/-/commit/211a9deac1d4144c7d7ce18ecb6c5d21c4854eaa,
 dnl respectively).
-               for acx_arg_name in CC CXX FC; do
-                 AS_CASE([" $acx_subdir_cmake_vars_to_transform "],
-                   [*" $acx_arg_name "*],
-                   [set dummy AS_VAR_GET([$acx_arg_name]); shift
-                    AS_VAR_COPY([acx_arg_${acx_arg_name}_EXEC], [1]); shift
-                    AS_VAR_APPEND([acx_subdir_cmake_vars_to_transform],
-                      [" ${acx_arg_name}_EXEC"])
-                    AS_VAR_COPY([acx_tmp], [@])
-                    AS_IF([test -n "$acx_tmp"],
-                      [AS_VAR_COPY([acx_arg_${acx_arg_name}_ARGS], [acx_tmp])
-                       AS_VAR_APPEND([acx_subdir_cmake_vars_to_transform],
-                         [" ${acx_arg_name}_ARGS"])])])
+               for mkh_arg_name in CC CXX FC; do
+                 AS_CASE([" $mkh_subdir_cmake_vars_to_transform "],
+                   [*" $mkh_arg_name "*],
+                   [set dummy AS_VAR_GET([$mkh_arg_name]); shift
+                    AS_VAR_COPY([mkh_arg_${mkh_arg_name}_EXEC], [1]); shift
+                    AS_VAR_APPEND([mkh_subdir_cmake_vars_to_transform],
+                      [" ${mkh_arg_name}_EXEC"])
+                    AS_VAR_COPY([mkh_tmp], [@])
+                    AS_IF([test -n "$mkh_tmp"],
+                      [AS_VAR_COPY([mkh_arg_${mkh_arg_name}_ARGS], [mkh_tmp])
+                       AS_VAR_APPEND([mkh_subdir_cmake_vars_to_transform],
+                         [" ${mkh_arg_name}_ARGS"])])])
                done
-               m4_append([acx_subdir_known_args],
+               m4_append([mkh_subdir_known_args],
                  [[CC_EXEC, [CMAKE_C_COMPILER]],
                   [CC_ARGS, [CMAKE_C_COMPILER_ARG1]],
                   [CXX_EXEC, [CMAKE_CXX_COMPILER]],
                   [CXX_ARGS, [CMAKE_CXX_COMPILER_ARG1]],
                   [FC_EXEC, [CMAKE_Fortran_COMPILER]],
                   [FC_ARGS, [CMAKE_Fortran_COMPILER_ARG1]]], [,])])dnl
-            m4_if(acx_subdir_opt_adjust_utilities, [adjust-utilities],
+            m4_if(mkh_subdir_opt_adjust_utilities, [adjust-utilities],
               [dnl
 dnl CMake requires the archiver and the archive indexer commands to be set as
 dnl absolute paths. Otherwise, it will try to find the executable in the build
 dnl directory. Also, AR and RANLIB are not supposed to be paths to executables
 dnl with arguments because it will cause CMake to choke:
-               for acx_arg_name in AR RANLIB; do
-                 AS_CASE([" $acx_subdir_cmake_vars_to_transform "],
-                   [*" $acx_arg_name "*],
-                   [acx_prog_search_abspath=unknown
-                    AS_VAR_COPY([acx_prog_exec], [acx_arg_${acx_arg_name}])
-                    AS_CASE([$acx_prog_exec],
+               for mkh_arg_name in AR RANLIB; do
+                 AS_CASE([" $mkh_subdir_cmake_vars_to_transform "],
+                   [*" $mkh_arg_name "*],
+                   [mkh_prog_search_abspath=unknown
+                    AS_VAR_COPY([mkh_prog_exec], [mkh_arg_${mkh_arg_name}])
+                    AS_CASE([$mkh_prog_exec],
                       [*[[\\/]]*],
-                      [AS_IF([AS_EXECUTABLE_P([$acx_prog_exec])],
-                         [acx_prog_search_abspath=$acx_prog_exec])],
+                      [AS_IF([AS_EXECUTABLE_P([$mkh_prog_exec])],
+                         [mkh_prog_search_abspath=$mkh_prog_exec])],
                       [_AS_PATH_WALK([],
-                         [AS_IF([AS_EXECUTABLE_P(["$as_dir/$acx_prog_exec"])],
-                            [acx_prog_search_abspath="$as_dir/$acx_prog_exec"
+                         [AS_IF([AS_EXECUTABLE_P(["$as_dir/$mkh_prog_exec"])],
+                            [mkh_prog_search_abspath="$as_dir/$mkh_prog_exec"
                              break])])])
-                    AS_VAR_IF([acx_prog_search_abspath], [unknown],
+                    AS_VAR_IF([mkh_prog_search_abspath], [unknown],
                       [AC_MSG_WARN([unable to convert argument dnl
-$acx_arg_name to its CMake equivalent(s): absolute path to "$acx_prog_exec" dnl
+$mkh_arg_name to its CMake equivalent(s): absolute path to "$mkh_prog_exec" dnl
 is not found])],
-                      [AS_VAR_COPY([acx_arg_${acx_arg_name}_ABSPATH],
-                         [acx_prog_search_abspath])
-                       AS_VAR_APPEND([acx_subdir_cmake_vars_to_transform],
-                         [" ${acx_arg_name}_ABSPATH"])])])
+                      [AS_VAR_COPY([mkh_arg_${mkh_arg_name}_ABSPATH],
+                         [mkh_prog_search_abspath])
+                       AS_VAR_APPEND([mkh_subdir_cmake_vars_to_transform],
+                         [" ${mkh_arg_name}_ABSPATH"])])])
                done
-               m4_append([acx_subdir_known_args],
+               m4_append([mkh_subdir_known_args],
                  [[AR_ABSPATH, [CMAKE_AR
                                 CMAKE_C_COMPILER_AR
                                 CMAKE_CXX_COMPILER_AR
@@ -465,67 +465,67 @@ is not found])],
                  [,])])dnl
 dnl CMake has no explicit support for CPPFLAGS, therefore, we append them to
 dnl CFLAGS and CXXFLAGS:
-            AS_CASE([" $acx_subdir_cmake_vars_to_transform "],
+            AS_CASE([" $mkh_subdir_cmake_vars_to_transform "],
               [*' CPPFLAGS '*],
-              [for acx_arg_name in CFLAGS CXXFLAGS; do
-                 AS_CASE([" $acx_subdir_cmake_vars_to_transform "],
-                   [*" $acx_arg_name "*],
-                   [AS_VAR_APPEND([acx_arg_${acx_arg_name}],
-                      [" $acx_arg_CPPFLAGS"])],
-                   [AS_VAR_COPY([acx_arg_${acx_arg_name}], [acx_arg_CPPFLAGS])
-                    AS_VAR_APPEND([acx_subdir_cmake_vars_to_transform],
-                      [" $acx_arg_name"])])
+              [for mkh_arg_name in CFLAGS CXXFLAGS; do
+                 AS_CASE([" $mkh_subdir_cmake_vars_to_transform "],
+                   [*" $mkh_arg_name "*],
+                   [AS_VAR_APPEND([mkh_arg_${mkh_arg_name}],
+                      [" $mkh_arg_CPPFLAGS"])],
+                   [AS_VAR_COPY([mkh_arg_${mkh_arg_name}], [mkh_arg_CPPFLAGS])
+                    AS_VAR_APPEND([mkh_subdir_cmake_vars_to_transform],
+                      [" $mkh_arg_name"])])
                done])
 dnl Also process the installation prefix:
-            m4_append([acx_subdir_known_args],
+            m4_append([mkh_subdir_known_args],
               [[PREFIX, [CMAKE_INSTALL_PREFIX]]], [,])dnl
             AS_VAR_IF([prefix], [NONE],
-              [acx_arg_PREFIX=$ac_default_prefix],
-              [acx_arg_PREFIX=$prefix])
-            AS_VAR_APPEND([acx_subdir_cmake_vars_to_transform], [' PREFIX'])
+              [mkh_arg_PREFIX=$ac_default_prefix],
+              [mkh_arg_PREFIX=$prefix])
+            AS_VAR_APPEND([mkh_subdir_cmake_vars_to_transform], [' PREFIX'])
 dnl Append the transformed arguments:
-            for acx_arg_name in $acx_subdir_cmake_vars_to_transform; do
-              acx_subdir_cmake_vars_to_set=
-              AS_CASE([$acx_arg_name],
-                m4_foreach([pair], [acx_subdir_known_args],
+            for mkh_arg_name in $mkh_subdir_cmake_vars_to_transform; do
+              mkh_subdir_cmake_vars_to_set=
+              AS_CASE([$mkh_arg_name],
+                m4_foreach([pair], [mkh_subdir_known_args],
                   [m4_quote(m4_car(pair)),
-                   m4_quote(acx_subdir_cmake_vars_to_set=dnl
+                   m4_quote(mkh_subdir_cmake_vars_to_set=dnl
 'm4_normalize(m4_cdr(pair))'),]))
-              AS_IF([test -n "$acx_subdir_cmake_vars_to_set"],
-                [AS_VAR_COPY([acx_subdir_quoted_value],
-                   [acx_arg_${acx_arg_name}])
-                 MKH_ESCAPE_SINGLE_QUOTE([acx_subdir_quoted_value])
-                 for acx_subdir_cmake_var in $acx_subdir_cmake_vars_to_set; do
-                   AS_VAR_APPEND([acx_subdir_pre_adjust_cmake_cv],
-                     [" '-D$acx_subdir_cmake_var=$acx_subdir_quoted_value'"])
+              AS_IF([test -n "$mkh_subdir_cmake_vars_to_set"],
+                [AS_VAR_COPY([mkh_subdir_quoted_value],
+                   [mkh_arg_${mkh_arg_name}])
+                 MKH_ESCAPE_SINGLE_QUOTE([mkh_subdir_quoted_value])
+                 for mkh_subdir_cmake_var in $mkh_subdir_cmake_vars_to_set; do
+                   AS_VAR_APPEND([mkh_subdir_pre_adjust_cmake_cv],
+                     [" '-D$mkh_subdir_cmake_var=$mkh_subdir_quoted_value'"])
                  done])
-              AS_UNSET([acx_arg_${acx_arg_name}])
+              AS_UNSET([mkh_arg_${mkh_arg_name}])
             done
-            m4_popdef([acx_subdir_known_args])])])dnl
-      acx_subdir_pre_adjust_cmake_fn
+            m4_popdef([mkh_subdir_known_args])])])dnl
+      mkh_subdir_pre_adjust_cmake_fn
       AS_VAR_SET(
-        [_MKH_SUBDIR_RUN_ARG_VAR([acx_subdir_build_subdir])],
-        [$acx_subdir_pre_adjust_cmake_cv])
-      MKH_SRCDIRS("acx_subdir_build_subdir")
-      acx_tmp="$ac_top_srcdir/$1"
-      MKH_ESCAPE_SINGLE_QUOTE([acx_tmp])
-      AS_VAR_APPEND([_MKH_SUBDIR_RUN_ARG_VAR([acx_subdir_build_subdir])],
-        [" '$acx_tmp'"])dnl
-      m4_popdef([acx_subdir_pre_adjust_cmake_fn])dnl
-      m4_popdef([acx_subdir_pre_adjust_cmake_cv])],
-     [AS_VAR_SET([_MKH_SUBDIR_RUN_ARG_VAR([acx_subdir_build_subdir])])])
+        [_MKH_SUBDIR_RUN_ARG_VAR([mkh_subdir_build_subdir])],
+        [$mkh_subdir_pre_adjust_cmake_cv])
+      MKH_SRCDIRS("mkh_subdir_build_subdir")
+      mkh_tmp="$ac_top_srcdir/$1"
+      MKH_ESCAPE_SINGLE_QUOTE([mkh_tmp])
+      AS_VAR_APPEND([_MKH_SUBDIR_RUN_ARG_VAR([mkh_subdir_build_subdir])],
+        [" '$mkh_tmp'"])dnl
+      m4_popdef([mkh_subdir_pre_adjust_cmake_fn])dnl
+      m4_popdef([mkh_subdir_pre_adjust_cmake_cv])],
+     [AS_VAR_SET([_MKH_SUBDIR_RUN_ARG_VAR([mkh_subdir_build_subdir])])])
    m4_divert_once([DEFAULTS], [extra_build_subdirs=])dnl
-   AS_VAR_APPEND([extra_build_subdirs], [" acx_subdir_build_subdir"])
-   m4_cond([acx_subdir_opt_run], [run],
+   AS_VAR_APPEND([extra_build_subdirs], [" mkh_subdir_build_subdir"])
+   m4_cond([mkh_subdir_opt_run], [run],
      [AS_VAR_SET(
-        [_MKH_SUBDIR_RUN_YESNO_VAR([acx_subdir_build_subdir])], [yes])[]dnl
+        [_MKH_SUBDIR_RUN_YESNO_VAR([mkh_subdir_build_subdir])], [yes])[]dnl
       _MKH_SUBDIR_COMMANDS_PRE],
      [AS_VAR_SET(
-        [_MKH_SUBDIR_RUN_YESNO_VAR([acx_subdir_build_subdir])], [no])])[]dnl
-   m4_popdef([acx_subdir_build_subdir])dnl
-   m4_popdef([acx_subdir_opt_adjust_args])dnl
-   m4_popdef([acx_subdir_opt_adjust_compilers])dnl
-   m4_popdef([acx_subdir_opt_run])])
+        [_MKH_SUBDIR_RUN_YESNO_VAR([mkh_subdir_build_subdir])], [no])])[]dnl
+   m4_popdef([mkh_subdir_build_subdir])dnl
+   m4_popdef([mkh_subdir_opt_adjust_args])dnl
+   m4_popdef([mkh_subdir_opt_adjust_compilers])dnl
+   m4_popdef([mkh_subdir_opt_run])])
 
 # MKH_SUBDIR_INIT_IFELSE(BUILD-SUBDIR,
 #                        [ACTION-IF-INITIALIZED],
@@ -680,9 +680,9 @@ AC_DEFUN([MKH_SUBDIR_APPEND_ARGS_UNQUOTED],
 AC_DEFUN([MKH_SUBDIR_RUN_RESET],
   [m4_ifval([$2],
      [AS_VAR_SET([_MKH_SUBDIR_RUN_YESNO_VAR([$1])], [$2])],
-     [acx_tmp=yes
-      AS_VAR_IF([_MKH_SUBDIR_RUN_YESNO_VAR([$1])], [yes], [acx_tmp=no])
-      AS_VAR_COPY([_MKH_SUBDIR_RUN_YESNO_VAR([$1])], [acx_tmp])])[]dnl
+     [mkh_tmp=yes
+      AS_VAR_IF([_MKH_SUBDIR_RUN_YESNO_VAR([$1])], [yes], [mkh_tmp=no])
+      AS_VAR_COPY([_MKH_SUBDIR_RUN_YESNO_VAR([$1])], [mkh_tmp])])[]dnl
    _MKH_SUBDIR_COMMANDS_PRE])
 
 # MKH_SUBDIR_RUN_EXTRA(BUILD-SUBDIR,
@@ -767,10 +767,10 @@ AS_VAR_GET(_MKH_SUBDIR_RUN_ARG_VAR([$2]))"])])
 #    AC_SUBST([SUBDIR_VAR])])
 #
 AC_DEFUN([MKH_SUBDIR_QUERY_CONFIG_STATUS],
-  [acx_tmp=dnl
+  [mkh_tmp=dnl
 `cd '$2' >/dev/null && AS_ECHO([$3]) | ./config.status -q --file=- 2>/dev/null`
    AS_IF([test $? -eq 0],
-     [AS_VAR_COPY([$1], [acx_tmp])],
+     [AS_VAR_COPY([$1], [mkh_tmp])],
      [AC_MSG_ERROR([unable to run '$2/config.status'])])])
 
 # _MKH_SUBDIR_COMMANDS_PRE()
@@ -785,47 +785,47 @@ m4_define([_MKH_SUBDIR_COMMANDS_PRE],
      [AC_CONFIG_COMMANDS_PRE(
         [AS_IF([test "x$no_recursion" != xyes],
            [AS_VAR_IF([silent], [yes],
-              [acx_subdir_silent_arg="'--silent'"],
-              [acx_subdir_silent_arg=])
-            acx_subdir_run_any=no
-            for acx_subdir_builddir in $extra_build_subdirs; do
+              [mkh_subdir_silent_arg="'--silent'"],
+              [mkh_subdir_silent_arg=])
+            mkh_subdir_run_any=no
+            for mkh_subdir_builddir in $extra_build_subdirs; do
               AS_VAR_IF(
-                [_MKH_SUBDIR_RUN_YESNO_VAR([$acx_subdir_builddir])], [yes],
-                [acx_subdir_run_any=yes
-                 AS_VAR_COPY([acx_subdir_fns],
-                   [_MKH_SUBDIR_RUN_BEFORE_VAR([$acx_subdir_builddir])])
-                 AS_IF([test -n "$acx_subdir_fns"],
-                   [acx_tmp=dnl
-"=== running extra commands before configuring $acx_subdir_builddir"
-                    _AS_ECHO_LOG([$acx_tmp])
-                    _AS_ECHO([$acx_tmp])
-                    for acx_tmp in $acx_subdir_fns; do
-                      eval "$acx_tmp"
+                [_MKH_SUBDIR_RUN_YESNO_VAR([$mkh_subdir_builddir])], [yes],
+                [mkh_subdir_run_any=yes
+                 AS_VAR_COPY([mkh_subdir_fns],
+                   [_MKH_SUBDIR_RUN_BEFORE_VAR([$mkh_subdir_builddir])])
+                 AS_IF([test -n "$mkh_subdir_fns"],
+                   [mkh_tmp=dnl
+"=== running extra commands before configuring $mkh_subdir_builddir"
+                    _AS_ECHO_LOG([$mkh_tmp])
+                    _AS_ECHO([$mkh_tmp])
+                    for mkh_tmp in $mkh_subdir_fns; do
+                      eval "$mkh_tmp"
                     done])
-                 acx_tmp=dnl
-"=== configuring $acx_subdir_builddir"
-                 _AS_ECHO_LOG([$acx_tmp])
-                 _AS_ECHO([$acx_tmp])
-                 AS_MKDIR_P(["$acx_subdir_builddir"])
-                 MKH_SUBDIR_GET_RUN_CMD([acx_subdir_run_cmd],
-                   [$acx_subdir_builddir])
-                 acx_subdir_run_cmd=dnl
-"( cd '$acx_subdir_builddir' && $acx_subdir_run_cmd $acx_subdir_silent_arg)"
-                 AC_MSG_NOTICE([running $acx_subdir_run_cmd])
-                 eval "$acx_subdir_run_cmd" || dnl
-AC_MSG_ERROR([configuration of $acx_subdir_builddir failed])
-                 AS_VAR_COPY([acx_subdir_fns],
-                   [_MKH_SUBDIR_RUN_AFTER_VAR([$acx_subdir_builddir])])
-                 AS_IF([test -n "$acx_subdir_fns"],
-                   [acx_tmp=dnl
-"=== running extra commands after configuring $acx_subdir_builddir"
-                    _AS_ECHO_LOG([$acx_tmp])
-                    _AS_ECHO([$acx_tmp])
-                    for acx_tmp in $acx_subdir_fns; do
-                      eval "$acx_tmp"
+                 mkh_tmp=dnl
+"=== configuring $mkh_subdir_builddir"
+                 _AS_ECHO_LOG([$mkh_tmp])
+                 _AS_ECHO([$mkh_tmp])
+                 AS_MKDIR_P(["$mkh_subdir_builddir"])
+                 MKH_SUBDIR_GET_RUN_CMD([mkh_subdir_run_cmd],
+                   [$mkh_subdir_builddir])
+                 mkh_subdir_run_cmd=dnl
+"( cd '$mkh_subdir_builddir' && $mkh_subdir_run_cmd $mkh_subdir_silent_arg)"
+                 AC_MSG_NOTICE([running $mkh_subdir_run_cmd])
+                 eval "$mkh_subdir_run_cmd" || dnl
+AC_MSG_ERROR([configuration of $mkh_subdir_builddir failed])
+                 AS_VAR_COPY([mkh_subdir_fns],
+                   [_MKH_SUBDIR_RUN_AFTER_VAR([$mkh_subdir_builddir])])
+                 AS_IF([test -n "$mkh_subdir_fns"],
+                   [mkh_tmp=dnl
+"=== running extra commands after configuring $mkh_subdir_builddir"
+                    _AS_ECHO_LOG([$mkh_tmp])
+                    _AS_ECHO([$mkh_tmp])
+                    for mkh_tmp in $mkh_subdir_fns; do
+                      eval "$mkh_tmp"
                     done])])
                done
-               AS_VAR_IF([acx_subdir_run_any], [yes],
+               AS_VAR_IF([mkh_subdir_run_any], [yes],
                  [_AS_ECHO([===])
                   _AS_ECHO_LOG([===])])])])dnl
       m4_define([_MKH_SUBDIR_COMMANDS_PRE_DEFINED])])])
@@ -844,8 +844,8 @@ m4_define([_MKH_SUBDIR_REMOVE_ARGS],
   [eval "set dummy AS_VAR_GET([$1])"; shift
    AS_VAR_SET([$1])
    while test $[]# != 0; do
-     acx_tmp=$[]1
-     AS_CASE([$acx_tmp],
+     mkh_tmp=$[]1
+     AS_CASE([$mkh_tmp],
        m4_foreach([pattern], m4_cdr($@),
          [m4_ifnblank(m4_car(pattern),
             [m4_quote(m4_car(pattern)),
@@ -854,8 +854,8 @@ m4_define([_MKH_SUBDIR_REMOVE_ARGS],
                  [0], [],
                  [m4_for([], [1], m4_argn(2, pattern), [1],
                     [test 2 -gt $[]@%:@ || shift; ])])),])])dnl
-       [MKH_ESCAPE_SINGLE_QUOTE([acx_tmp])
-        AS_VAR_APPEND([$1], [" '$acx_tmp'"])])
+       [MKH_ESCAPE_SINGLE_QUOTE([mkh_tmp])
+        AS_VAR_APPEND([$1], [" '$mkh_tmp'"])])
      shift
    done])
 
@@ -867,9 +867,9 @@ m4_define([_MKH_SUBDIR_REMOVE_ARGS],
 #
 m4_define([_MKH_SUBDIR_APPEND_ARGS],
   [set dummy[]m4_foreach([arg], m4_cdr($@), [ arg]); shift
-   for acx_tmp; do
-     MKH_ESCAPE_SINGLE_QUOTE([acx_tmp])
-     AS_VAR_APPEND([$1], [" '$acx_tmp'"])
+   for mkh_tmp; do
+     MKH_ESCAPE_SINGLE_QUOTE([mkh_tmp])
+     AS_VAR_APPEND([$1], [" '$mkh_tmp'"])
    done])
 
 # _MKH_SUBDIR_RUN_EXTRA(VARIABLE,
@@ -879,18 +879,18 @@ m4_define([_MKH_SUBDIR_APPEND_ARGS],
 # to the shell variable VARIABLE.
 #
 m4_define([_MKH_SUBDIR_RUN_EXTRA],
-  [m4_pushdef([acx_subdir_extra_run_idx])dnl
+  [m4_pushdef([mkh_subdir_extra_run_idx])dnl
    m4_ifdef([_MKH_SUBDIR_RUN_EXTRA_COUNT],
-     [m4_define([acx_subdir_extra_run_idx], _MKH_SUBDIR_RUN_EXTRA_COUNT)],
-     [m4_define([acx_subdir_extra_run_idx], 0)])dnl
+     [m4_define([mkh_subdir_extra_run_idx], _MKH_SUBDIR_RUN_EXTRA_COUNT)],
+     [m4_define([mkh_subdir_extra_run_idx], 0)])dnl
    m4_define([_MKH_SUBDIR_RUN_EXTRA_COUNT],
-     m4_incr(acx_subdir_extra_run_idx))dnl
-   m4_pushdef([acx_subdir_extra_run_name],
-     [acx_subdir_extra_run_[]acx_subdir_extra_run_idx])dnl
-   AC_REQUIRE_SHELL_FN(acx_subdir_extra_run_name, [], [$2])dnl
-   AS_VAR_APPEND([$1], [' acx_subdir_extra_run_name'])dnl
-   m4_popdef([acx_subdir_extra_run_name])dnl
-   m4_popdef([acx_subdir_extra_run_idx])])
+     m4_incr(mkh_subdir_extra_run_idx))dnl
+   m4_pushdef([mkh_subdir_extra_run_name],
+     [mkh_subdir_extra_run_[]mkh_subdir_extra_run_idx])dnl
+   AC_REQUIRE_SHELL_FN(mkh_subdir_extra_run_name, [], [$2])dnl
+   AS_VAR_APPEND([$1], [' mkh_subdir_extra_run_name'])dnl
+   m4_popdef([mkh_subdir_extra_run_name])dnl
+   m4_popdef([mkh_subdir_extra_run_idx])])
 
 # _MKH_SUBDIR_RUN_YESNO_VAR(BUILD-SUBDIR)
 # -----------------------------------------------------------------------------
@@ -898,7 +898,7 @@ m4_define([_MKH_SUBDIR_RUN_EXTRA],
 # 'no') of whether the configure script runs the configuration command for
 # directory BUILD-SUBDIR.
 #
-m4_define([_MKH_SUBDIR_RUN_YESNO_VAR], [acx_subdir_run_[]AS_TR_SH([$1])])
+m4_define([_MKH_SUBDIR_RUN_YESNO_VAR], [mkh_subdir_run_[]AS_TR_SH([$1])])
 
 # _MKH_SUBDIR_RUN_BEFORE_VAR(BUILD-SUBDIR)
 # -----------------------------------------------------------------------------
@@ -906,14 +906,14 @@ m4_define([_MKH_SUBDIR_RUN_YESNO_VAR], [acx_subdir_run_[]AS_TR_SH([$1])])
 # must be run before configuring in directory BUILD-SUBDIR.
 #
 m4_define([_MKH_SUBDIR_RUN_BEFORE_VAR],
-  [acx_subdir_run_before_[]AS_TR_SH([$1])])
+  [mkh_subdir_run_before_[]AS_TR_SH([$1])])
 
 # _MKH_SUBDIR_RUN_AFTER_VAR(BUILD-SUBDIR)
 # -----------------------------------------------------------------------------
 # Expands to the name of shell variable that holds names of the functions that
 # must be run after configuring in directory BUILD-SUBDIR.
 #
-m4_define([_MKH_SUBDIR_RUN_AFTER_VAR], [acx_subdir_run_after_[]AS_TR_SH([$1])])
+m4_define([_MKH_SUBDIR_RUN_AFTER_VAR], [mkh_subdir_run_after_[]AS_TR_SH([$1])])
 
 # _MKH_SUBDIR_BUILD_TYPE_VAR(BUILD-SUBDIR)
 # -----------------------------------------------------------------------------
@@ -921,14 +921,14 @@ m4_define([_MKH_SUBDIR_RUN_AFTER_VAR], [acx_subdir_run_after_[]AS_TR_SH([$1])])
 # of the build directory BUILD-SUBDIR.
 #
 m4_define([_MKH_SUBDIR_BUILD_TYPE_VAR],
-  [acx_subdir_build_type_[]AS_TR_SH([$1])])
+  [mkh_subdir_build_type_[]AS_TR_SH([$1])])
 
 # _MKH_SUBDIR_RUN_CMD_VAR(BUILD-SUBDIR)
 # -----------------------------------------------------------------------------
 # Expands to the name of shell variable that holds the command (without the
 # arguments) that configures directory BUILD-SUBDIR.
 #
-m4_define([_MKH_SUBDIR_RUN_CMD_VAR], [acx_subdir_run_cmd_[]AS_TR_SH([$1])])
+m4_define([_MKH_SUBDIR_RUN_CMD_VAR], [mkh_subdir_run_cmd_[]AS_TR_SH([$1])])
 
 # _MKH_SUBDIR_RUN_DEFAULT_ARG_VAR(BUILD-SUBDIR)
 # -----------------------------------------------------------------------------
@@ -936,11 +936,11 @@ m4_define([_MKH_SUBDIR_RUN_CMD_VAR], [acx_subdir_run_cmd_[]AS_TR_SH([$1])])
 # command that configures directory BUILD-SUBDIR.
 #
 m4_define([_MKH_SUBDIR_RUN_DEFAULT_ARG_VAR],
-  [acx_subdir_run_default_args_[]AS_TR_SH([$1])])
+  [mkh_subdir_run_default_args_[]AS_TR_SH([$1])])
 
 # _MKH_SUBDIR_RUN_ARG_VAR(BUILD-SUBDIR)
 # -----------------------------------------------------------------------------
 # Expands to the name of shell variable that holds arguments of the command
 # that configures directory BUILD-SUBDIR.
 #
-m4_define([_MKH_SUBDIR_RUN_ARG_VAR], [acx_subdir_run_args_[]AS_TR_SH([$1])])
+m4_define([_MKH_SUBDIR_RUN_ARG_VAR], [mkh_subdir_run_args_[]AS_TR_SH([$1])])

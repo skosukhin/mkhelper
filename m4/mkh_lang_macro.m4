@@ -36,16 +36,16 @@
 # If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
 # (defaults to failing with an error message).
 #
-# The flag is cached in the acx_cv_[]_AC_LANG_ABBREV[]_macro_flag variable.
+# The flag is cached in the mkh_cv_[]_AC_LANG_ABBREV[]_macro_flag variable.
 #
 # See _MKH_LANG_KNOWN_MACRO_FLAGS for the known flags.
 #
 AC_DEFUN([MKH_LANG_MACRO_FLAG],
-  [m4_pushdef([acx_cache_var], [acx_cv_[]_AC_LANG_ABBREV[]_macro_flag])dnl
+  [m4_pushdef([mkh_cache_var], [mkh_cv_[]_AC_LANG_ABBREV[]_macro_flag])dnl
    AC_CACHE_CHECK([for _AC_LANG compiler flag needed to define a dnl
 preprocessor macro],
-     [acx_cache_var],
-     [acx_cache_var=unknown
+     [mkh_cache_var],
+     [mkh_cache_var=unknown
       AC_LANG_CONFTEST(
         [AC_LANG_PROGRAM([],
 [[#ifndef CONFTEST_ONE
@@ -54,19 +54,19 @@ preprocessor macro],
 #if CONFTEST_TWO != 42
       choke me
 #endif]])])
-      acx_save_[]_AC_LANG_PREFIX[]FLAGS=$[]_AC_LANG_PREFIX[]FLAGS
-      for acx_lang_macro_flag in _MKH_LANG_KNOWN_MACRO_FLAGS; do
-        _AC_LANG_PREFIX[]FLAGS="${acx_save_[]_AC_LANG_PREFIX[]FLAGS} dnl
-${acx_lang_macro_flag}CONFTEST_ONE ${acx_lang_macro_flag}CONFTEST_TWO=42"
-        AC_COMPILE_IFELSE([], [acx_cache_var=$acx_lang_macro_flag])
-        test "x$acx_cache_var" != xunknown && break
+      mkh_save_[]_AC_LANG_PREFIX[]FLAGS=$[]_AC_LANG_PREFIX[]FLAGS
+      for mkh_lang_macro_flag in _MKH_LANG_KNOWN_MACRO_FLAGS; do
+        _AC_LANG_PREFIX[]FLAGS="${mkh_save_[]_AC_LANG_PREFIX[]FLAGS} dnl
+${mkh_lang_macro_flag}CONFTEST_ONE ${mkh_lang_macro_flag}CONFTEST_TWO=42"
+        AC_COMPILE_IFELSE([], [mkh_cache_var=$mkh_lang_macro_flag])
+        test "x$mkh_cache_var" != xunknown && break
       done
       rm -f conftest.$ac_ext
-      _AC_LANG_PREFIX[]FLAGS=$acx_save_[]_AC_LANG_PREFIX[]FLAGS])
-   AS_VAR_IF([acx_cache_var], [unknown], [m4_default([$2],
+      _AC_LANG_PREFIX[]FLAGS=$mkh_save_[]_AC_LANG_PREFIX[]FLAGS])
+   AS_VAR_IF([mkh_cache_var], [unknown], [m4_default([$2],
      [AC_MSG_FAILURE([unable to detect _AC_LANG compiler flag needed to dnl
 define a preprocessor macro])])], [$1])
-   m4_popdef([acx_cache_var])])
+   m4_popdef([mkh_cache_var])])
 
 # MKH_LANG_MACRO_CHECK_DEFINED_SILENT(MACRO-NAME,
 #                                     [INCLUDES])
@@ -76,22 +76,22 @@ define a preprocessor macro])])], [$1])
 # current language does not support preprocessor directives or the INCLUDE
 # directives lead to a compilation error).
 #
-# The result is stored in the acx_macro_defined variable.
+# The result is stored in the mkh_macro_defined variable.
 #
 AC_DEFUN([MKH_LANG_MACRO_CHECK_DEFINED_SILENT],
   [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([$2], [[#ifdef $1
 #else
       choke me
 #endif]])],
-     [AS_VAR_SET([acx_macro_defined], [yes])],
+     [AS_VAR_SET([mkh_macro_defined], [yes])],
      [m4_bmatch(_AC_LANG, [^C\|C++\|CUDA\|HIP$],
-       [AS_VAR_SET([acx_macro_defined], [no])],
+       [AS_VAR_SET([mkh_macro_defined], [no])],
        [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([$2], [[#ifndef $1
 #else
       choke me
 #endif]])],
-          [AS_VAR_SET([acx_macro_defined], [no])],
-          [AS_VAR_SET([acx_macro_defined], [unsupported])])])])])
+          [AS_VAR_SET([mkh_macro_defined], [no])],
+          [AS_VAR_SET([mkh_macro_defined], [unsupported])])])])])
 
 # MKH_LANG_MACRO_CHECK_DEFINED(MACRO-NAME,
 #                              [INCLUDES])
@@ -100,17 +100,17 @@ AC_DEFUN([MKH_LANG_MACRO_CHECK_DEFINED_SILENT],
 # and caches the result.
 #
 # The result is cached in the
-# acx_cv_[]_AC_LANG_ABBREV[]_macro_[]AS_TR_SH(MACRO-NAME)_defined variable.
+# mkh_cv_[]_AC_LANG_ABBREV[]_macro_[]AS_TR_SH(MACRO-NAME)_defined variable.
 #
 AC_DEFUN([MKH_LANG_MACRO_CHECK_DEFINED],
-  [m4_pushdef([acx_cache_var],
-     [acx_cv_[]_AC_LANG_ABBREV[]_macro_[]AS_TR_SH([$1])_defined])dnl
+  [m4_pushdef([mkh_cache_var],
+     [mkh_cv_[]_AC_LANG_ABBREV[]_macro_[]AS_TR_SH([$1])_defined])dnl
    AC_CACHE_CHECK([whether the _AC_LANG preprocessor macro $1 is defined],
-     [acx_cache_var],
+     [mkh_cache_var],
      [MKH_LANG_MACRO_CHECK_DEFINED_SILENT($@)
-      AS_VAR_COPY([acx_cache_var], [acx_macro_defined])])
-   AS_VAR_COPY([acx_macro_defined], [acx_cache_var])
-   m4_popdef([acx_cache_var])])
+      AS_VAR_COPY([mkh_cache_var], [mkh_macro_defined])])
+   AS_VAR_COPY([mkh_macro_defined], [mkh_cache_var])
+   m4_popdef([mkh_cache_var])])
 
 # MKH_LANG_MACRO_CHECK_VALUE_SILENT(MACRO-NAME,
 #                                   [KNOWN-INTEGER-VALUES],
@@ -124,24 +124,24 @@ AC_DEFUN([MKH_LANG_MACRO_CHECK_DEFINED],
 # checks whether MACRO-NAME expands to one of them. The result is either
 # "unknown" or the actual value of the macro.
 #
-# The result is stored in the acx_macro_value variable.
+# The result is stored in the mkh_macro_value variable.
 #
 AC_DEFUN([MKH_LANG_MACRO_CHECK_VALUE_SILENT],
-  [acx_macro_value=unknown
+  [mkh_macro_value=unknown
    AS_VAR_IF([cross_compiling], [no],
      [AC_LINK_IFELSE([_MKH_LANG_MACRO_PRINT_PROGRAM([$1], [$3])],
-        [acx_exec_result=`./conftest$ac_exeext 2>&AS_MESSAGE_LOG_FD`
+        [mkh_exec_result=`./conftest$ac_exeext 2>&AS_MESSAGE_LOG_FD`
          AS_IF([test $? -eq 0],
-           [acx_macro_value=$acx_exec_result])])])
+           [mkh_macro_value=$mkh_exec_result])])])
    m4_ifnblank([$2],
-     [AS_VAR_IF([acx_macro_value], [unknown],
-        [for acx_tmp in $2; do
+     [AS_VAR_IF([mkh_macro_value], [unknown],
+        [for mkh_tmp in $2; do
            AC_COMPILE_IFELSE([AC_LANG_PROGRAM([$3],
-[[#if $1 == _CONFTEST_UNDEFINED_OR_EMPTY || $1 != $acx_tmp
+[[#if $1 == _CONFTEST_UNDEFINED_OR_EMPTY || $1 != $mkh_tmp
       choke me
 #endif]])],
-             [acx_macro_value=$acx_tmp])
-           test "x$acx_macro_value" = xunknown || break
+             [mkh_macro_value=$mkh_tmp])
+           test "x$mkh_macro_value" = xunknown || break
          done])])])
 
 # MKH_LANG_MACRO_CHECK_VALUE(MACRO-NAME,
@@ -152,17 +152,17 @@ AC_DEFUN([MKH_LANG_MACRO_CHECK_VALUE_SILENT],
 # caches the result.
 #
 # The result is cached in the
-# acx_cv_[]_AC_LANG_ABBREV[]_macro_[]AS_TR_SH(MACRO-NAME)_value variable.
+# mkh_cv_[]_AC_LANG_ABBREV[]_macro_[]AS_TR_SH(MACRO-NAME)_value variable.
 #
 AC_DEFUN([MKH_LANG_MACRO_CHECK_VALUE],
-  [m4_pushdef([acx_cache_var],
-     [acx_cv_[]_AC_LANG_ABBREV[]_macro_[]AS_TR_SH([$1])_value])dnl
+  [m4_pushdef([mkh_cache_var],
+     [mkh_cv_[]_AC_LANG_ABBREV[]_macro_[]AS_TR_SH([$1])_value])dnl
    AC_CACHE_CHECK([for the value of the _AC_LANG preprocessor macro $1],
-     [acx_cache_var],
+     [mkh_cache_var],
      [MKH_LANG_MACRO_CHECK_VALUE_SILENT($@)
-      AS_VAR_COPY([acx_cache_var], [acx_macro_value])])
-   AS_VAR_COPY([acx_macro_value], [acx_cache_var])
-   m4_popdef([acx_cache_var])])
+      AS_VAR_COPY([mkh_cache_var], [mkh_macro_value])])
+   AS_VAR_COPY([mkh_macro_value], [mkh_cache_var])
+   m4_popdef([mkh_cache_var])])
 
 # _MKH_LANG_KNOWN_MACRO_FLAGS()
 # -----------------------------------------------------------------------------

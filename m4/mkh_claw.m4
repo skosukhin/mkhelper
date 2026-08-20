@@ -10,7 +10,7 @@
 # are ignored.
 #
 # Checks whether the preprocessor can actually produce Fortran source code. The
-# result is either "yes" or "no" and is cached in the acx_cv_prog_claw_works
+# result is either "yes" or "no" and is cached in the mkh_cv_prog_claw_works
 # variable.
 #
 AC_DEFUN([MKH_PROG_CLAW],
@@ -21,10 +21,10 @@ AC_DEFUN([MKH_PROG_CLAW],
      [AC_CHECK_PROGS([CLAW], [m4_default([$1], [clawfc])])])
    _AS_ECHO_LOG([checking for CLAW preprocessor version])
    set dummy $CLAW
-   acx_tmp=$[2]
-   _AC_DO_LIMIT([$acx_tmp --version >&AS_MESSAGE_LOG_FD])
-   AC_CACHE_VAL([acx_cv_prog_clawfc_works],
-     [acx_cv_prog_clawfc_works=no
+   mkh_tmp=$[2]
+   _AC_DO_LIMIT([$mkh_tmp --version >&AS_MESSAGE_LOG_FD])
+   AC_CACHE_VAL([mkh_cv_prog_clawfc_works],
+     [mkh_cv_prog_clawfc_works=no
       AS_MKDIR_P([conftest.dir])
       cd conftest.dir
       AC_MSG_CHECKING([whether the CLAW preprocessor works])
@@ -41,7 +41,7 @@ AC_DEFUN([MKH_PROG_CLAW],
          mv conftest.claw.$ac_ext conftest.$ac_ext
          AC_COMPILE_IFELSE([],
            [AC_MSG_RESULT([yes])
-            acx_cv_prog_clawfc_works=yes],
+            mkh_cv_prog_clawfc_works=yes],
            [AC_MSG_RESULT([no])])],
         [AC_MSG_RESULT([no])])
       AC_LANG_PUSH([Fortran])
@@ -56,7 +56,7 @@ AC_DEFUN([MKH_PROG_CLAW],
 # If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
 # (defaults to failing with an error message).
 #
-# The flag is cached in the acx_cv_claw_module_out_flag variable, which may
+# The flag is cached in the mkh_cv_claw_module_out_flag variable, which may
 # contain a significant trailing whitespace.
 #
 # Known flags:
@@ -67,8 +67,8 @@ AC_DEFUN([MKH_CLAW_MODULE_OUT_FLAG],
   [AC_REQUIRE([MKH_PROG_CLAW])dnl
    AC_LANG_ASSERT([Fortran])dnl
    AC_CACHE_CHECK([for CLAW preprocessor flag needed to specify output path dnl
-for module files], [acx_cv_claw_module_out_flag],
-     [acx_cv_claw_module_out_flag=unknown
+for module files], [mkh_cv_claw_module_out_flag],
+     [mkh_cv_claw_module_out_flag=unknown
       AS_MKDIR_P([conftest.dir/sub])
       cd conftest.dir
       AC_LANG_CONFTEST([AC_LANG_SOURCE(
@@ -79,18 +79,18 @@ for module files], [acx_cv_claw_module_out_flag],
       subroutine conftest_routine
       end subroutine
       end module]])])
-      for acx_flag in '-MO ' -J; do
+      for mkh_flag in '-MO ' -J; do
         AC_TRY_COMMAND(
-        [$CLAW -f -o conftest.claw.$ac_ext ${acx_flag}sub $CLAWFLAGS dnl
+        [$CLAW -f -o conftest.claw.$ac_ext ${mkh_flag}sub $CLAWFLAGS dnl
 conftest.$ac_ext >&AS_MESSAGE_LOG_FD])
         AC_TRY_COMMAND([test -f sub/conftest_module.xmod])
         AS_IF([test $ac_status -eq 0],
-          [acx_cv_claw_module_out_flag=$acx_flag
+          [mkh_cv_claw_module_out_flag=$mkh_flag
            break])
       done
       cd ..
       rm -rf conftest.dir])
-   AS_VAR_IF([acx_cv_claw_module_out_flag], [unknown], [m4_default([$2],
+   AS_VAR_IF([mkh_cv_claw_module_out_flag], [unknown], [m4_default([$2],
      [AC_MSG_FAILURE([unable to detect CLAW preprocessor flag needed to dnl
 specify output path for module files])])], [$1])])
 
@@ -102,7 +102,7 @@ specify output path for module files])])], [$1])])
 # If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
 # (defaults to failing with an error message).
 #
-# The flag is cached in the acx_cv_claw_module_in_flag variable, which may
+# The flag is cached in the mkh_cv_claw_module_in_flag variable, which may
 # contain a significant trailing whitespace.
 #
 # Known flags:
@@ -116,8 +116,8 @@ dnl to store them:
    AC_REQUIRE([MKH_CLAW_MODULE_OUT_FLAG])dnl
    AC_LANG_ASSERT([Fortran])dnl
    AC_CACHE_CHECK([for CLAW preprocessor flag needed to specify search paths dnl
-for module files], [acx_cv_claw_module_in_flag],
-     [acx_cv_claw_module_in_flag=unknown
+for module files], [mkh_cv_claw_module_in_flag],
+     [mkh_cv_claw_module_in_flag=unknown
       AS_MKDIR_P([conftest.dir/sub])
       cd conftest.dir
       AC_LANG_CONFTEST([AC_LANG_SOURCE(
@@ -129,7 +129,7 @@ for module files], [acx_cv_claw_module_in_flag],
       end subroutine
       end module]])])
       AC_TRY_COMMAND(
-        [$CLAW -f -o conftest.claw.$ac_ext ${acx_cv_claw_module_out_flag}sub dnl
+        [$CLAW -f -o conftest.claw.$ac_ext ${mkh_cv_claw_module_out_flag}sub dnl
 $CLAWFLAGS conftest.$ac_ext >&AS_MESSAGE_LOG_FD])
       AS_IF([test $ac_status -eq 0],
         [rm -f conftest.claw.$ac_ext
@@ -139,18 +139,18 @@ $CLAWFLAGS conftest.$ac_ext >&AS_MESSAGE_LOG_FD])
       implicit none
       call conftest_routine()
       end]])])
-         for acx_flag in -M -I; do
+         for mkh_flag in -M -I; do
            AC_TRY_COMMAND([$CLAW -f --no-dep -o conftest.claw.$ac_ext dnl
 dnl Add the flag twice to make sure that we can specify it multiple times.
-${acx_flag}sub ${acx_flag}sub $CLAWFLAGS conftest.$ac_ext >&AS_MESSAGE_LOG_FD])
+${mkh_flag}sub ${mkh_flag}sub $CLAWFLAGS conftest.$ac_ext >&AS_MESSAGE_LOG_FD])
            AS_IF([test $ac_status -eq 0 && dnl
 test -n "`cat conftest.claw.$ac_ext`"],
-             [acx_cv_claw_module_in_flag=$acx_flag
+             [mkh_cv_claw_module_in_flag=$mkh_flag
               break])
          done])
       cd ..
       rm -rf conftest.dir])
-   AS_VAR_IF([acx_cv_claw_module_in_flag], [unknown], [m4_default([$2],
+   AS_VAR_IF([mkh_cv_claw_module_in_flag], [unknown], [m4_default([$2],
      [AC_MSG_FAILURE([unable to detect CLAW preprocessor flag needed to dnl
 specify search paths for module files])])], [$1])])
 
@@ -164,15 +164,15 @@ specify search paths for module files])])], [$1])])
 # If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
 # (defaults to failing with an error message).
 #
-# The result is cached in the acx_cv_claw_supports_module_gen variable.
+# The result is cached in the mkh_cv_claw_supports_module_gen variable.
 #
 AC_DEFUN([MKH_CLAW_MODULE_GEN],
   [AC_REQUIRE([MKH_PROG_CLAW])dnl
    AC_REQUIRE([MKH_CLAW_MODULE_OUT_FLAG])dnl
    AC_LANG_ASSERT([Fortran])dnl
    AC_CACHE_CHECK([whether the CLAW preprocessor supports the explicit dnl
-module file extraction], [acx_cv_claw_supports_module_gen],
-     [acx_cv_claw_supports_module_gen=no
+module file extraction], [mkh_cv_claw_supports_module_gen],
+     [mkh_cv_claw_supports_module_gen=no
       AS_MKDIR_P([conftest.dir/sub])
       cd conftest.dir
       AC_LANG_CONFTEST([AC_LANG_SOURCE(
@@ -189,12 +189,12 @@ module file extraction], [acx_cv_claw_supports_module_gen],
       end module]])])
       AC_TRY_COMMAND(
         [$CLAW -f -o conftest.claw.$ac_ext --gen-mod-files dnl
-${acx_cv_claw_module_out_flag}sub $CLAWFLAGS conftest.$ac_ext dnl
+${mkh_cv_claw_module_out_flag}sub $CLAWFLAGS conftest.$ac_ext dnl
 >&AS_MESSAGE_LOG_FD && test -f sub/conftest_module.xmod])
-      AS_IF([test $ac_status -eq 0], [acx_cv_claw_supports_module_gen=yes])
+      AS_IF([test $ac_status -eq 0], [mkh_cv_claw_supports_module_gen=yes])
       cd ..
       rm -rf conftest.dir])
-   AS_VAR_IF([acx_cv_claw_supports_module_gen], [yes], [$1],
+   AS_VAR_IF([mkh_cv_claw_supports_module_gen], [yes], [$1],
      [m4_default([$2],
         [AC_MSG_FAILURE([CLAW preprocessor does not support the explicit dnl
 module file extractions])])])])
@@ -210,7 +210,7 @@ module file extractions])])])])
 # If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
 # (defaults to failing with an error message).
 #
-# The result is stored in the acx_claw_accepts variable and optionally cached
+# The result is stored in the mkh_claw_accepts variable and optionally cached
 # in the CACHE-VAR variable (no caching by default).
 #
 AC_DEFUN([MKH_CLAW_ACCEPTS],
@@ -220,11 +220,11 @@ AC_DEFUN([MKH_CLAW_ACCEPTS],
    m4_ifnblank([$4],
      [AC_CACHE_VAL([$4],
         [_MKH_CLAW_ACCEPTS([$1])
-         AS_VAR_COPY([$4], [acx_claw_accepts])])
-      AS_VAR_COPY([acx_claw_accepts], [$4])],
+         AS_VAR_COPY([$4], [mkh_claw_accepts])])
+      AS_VAR_COPY([mkh_claw_accepts], [$4])],
      [_MKH_CLAW_ACCEPTS([$1])])
-   AC_MSG_RESULT([$acx_claw_accepts])
-   AS_VAR_IF([acx_claw_accepts], [yes], [$2],
+   AC_MSG_RESULT([$mkh_claw_accepts])
+   AS_VAR_IF([mkh_claw_accepts], [yes], [$2],
      [m4_default([$3],
         [AC_MSG_FAILURE(
         [CLAW preprocessor does not accept $1])])])])
@@ -234,15 +234,15 @@ AC_DEFUN([MKH_CLAW_ACCEPTS],
 # Checks whether the CLAW preprocessor accepts CLAWFLAGS. The result is either
 # "yes" or "no".
 #
-# The result is stored in the acx_claw_accepts variable.
+# The result is stored in the mkh_claw_accepts variable.
 #
 m4_define([_MKH_CLAW_ACCEPTS],
-  [acx_claw_accepts=no
+  [mkh_claw_accepts=no
    AS_MKDIR_P([conftest.dir])
    cd conftest.dir
    AC_LANG_CONFTEST([AC_LANG_PROGRAM])
    AC_TRY_COMMAND([$CLAW -f -o conftest.claw.$ac_ext $CLAWFLAGS $1 dnl
 conftest.$ac_ext >&AS_MESSAGE_LOG_FD])
-   AS_IF([test $ac_status -eq 0], [acx_claw_accepts=yes])
+   AS_IF([test $ac_status -eq 0], [mkh_claw_accepts=yes])
    cd ..
    rm -rf conftest.dir])

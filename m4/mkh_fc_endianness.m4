@@ -50,13 +50,13 @@
 # If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
 # (defaults to failing with an error message).
 #
-# The result is cached in the acx_cv_fc_endianness_real variable.
+# The result is cached in the mkh_cv_fc_endianness_real variable.
 #
 AC_DEFUN([MKH_FC_ENDIANNESS_REAL],
   [AC_LANG_ASSERT([Fortran])dnl
    AC_MSG_CHECKING([for endianness of the target system])
-   AC_CACHE_VAL([acx_cv_fc_endianness_real],
-     [acx_cv_fc_endianness_real=unknown
+   AC_CACHE_VAL([mkh_cv_fc_endianness_real],
+     [mkh_cv_fc_endianness_real=unknown
       free_fmt='
       real(dp) :: b(2) = (/11436526043186408342932917319490312838905855&
       &2118841611962449784525241959417255606719874468829884522246508686&
@@ -69,30 +69,30 @@ AC_DEFUN([MKH_FC_ENDIANNESS_REAL],
      + 0799336906947500199989578974774280030598291952243399484779227378
      + 5162269613202128034599963034475950452228997847642131801671155898
      + 01738240.0_dp,0.0_dp/)'
-     for acx_tmp in "$free_fmt" "$fixed_fmt"; do
+     for mkh_tmp in "$free_fmt" "$fixed_fmt"; do
        AC_COMPILE_IFELSE([AC_LANG_SOURCE([[      subroutine conftest(i, a)
       implicit none
       integer, parameter :: dp = ]m4_default([$1], [[KIND(1.d0)]])[
       integer :: i
       real(dp) :: a
-$acx_tmp
+$mkh_tmp
       a = b(i)
       end subroutine]])],
-         [for acx_tmp in mkhElper replEhkm lpermkhE; do
-            AS_IF([grep "$acx_tmp" conftest.$ac_objext >/dev/null],
-              [AS_VAR_IF([acx_cv_fc_endianness_real], [unknown],
-                 [acx_cv_fc_endianness_real=$acx_tmp],
-                 [acx_cv_fc_endianness_real=unknown
+         [for mkh_tmp in mkhElper replEhkm lpermkhE; do
+            AS_IF([grep "$mkh_tmp" conftest.$ac_objext >/dev/null],
+              [AS_VAR_IF([mkh_cv_fc_endianness_real], [unknown],
+                 [mkh_cv_fc_endianness_real=$mkh_tmp],
+                 [mkh_cv_fc_endianness_real=unknown
                   break])])
           done])
        test 0 -eq "$ac_retval" && break
      done
      ])
-   acx_tmp=unknown
-   AS_CASE([$acx_cv_fc_endianness_real],
-     [mkhElper], [acx_tmp='little-endian'],
-     [replEhkm], [acx_tmp='big-endian'],
-     [lpermkhE], [acx_tmp='half little-endian, half big-endian'])
-   AC_MSG_RESULT([$acx_tmp])
-   AS_VAR_IF([acx_tmp], [unknown], [m4_default([$3], [AC_MSG_FAILURE(
+   mkh_tmp=unknown
+   AS_CASE([$mkh_cv_fc_endianness_real],
+     [mkhElper], [mkh_tmp='little-endian'],
+     [replEhkm], [mkh_tmp='big-endian'],
+     [lpermkhE], [mkh_tmp='half little-endian, half big-endian'])
+   AC_MSG_RESULT([$mkh_tmp])
+   AS_VAR_IF([mkh_tmp], [unknown], [m4_default([$3], [AC_MSG_FAILURE(
      [unable to detect the endianness of the target system])])], [$2])])

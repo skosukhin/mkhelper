@@ -39,7 +39,7 @@ AC_LANG_DEFINE([HIP], [hip], [HIP], [HIPCXX], [C++],
 [ac_ext=cc
 ac_compile='$HIPCXX -c $HIPFLAGS conftest.$ac_ext >&AS_MESSAGE_LOG_FD'
 ac_link='$HIPCXX -o conftest$ac_exeext $HIPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&AS_MESSAGE_LOG_FD'
-ac_compiler_gnu=$acx_cv_hip_compiler_gnu
+ac_compiler_gnu=$mkh_cv_hip_compiler_gnu
 ])
 dnl Avoid mixing macro definitions that are relevant for C or C++ compiler and
 dnl might be irrelevant for HIP:
@@ -71,15 +71,15 @@ AC_DEFUN([MKH_LANG_POP_HIP], [AC_LANG_POP([HIP])])
 #
 # Checks whether the compiler supports an ISO C++ standard and/or whether it
 # can compile a basic HIP program. The result of the check is stored in the
-# shell variable acx_prog_hipcxx_works, which can be either "cxx14", (ISO C++
+# shell variable mkh_prog_hipcxx_works, which can be either "cxx14", (ISO C++
 # 2014, ISO C++ 2011 and the basic HIP features are supported), "cxx11" (ISO
 # C++ 2011 and the basic HIP features are supported), "basic" (only the basic
 # HIP features are supported) and "no" (the compiler cannot compile even the
 # basic HIP program). If the compiler supports the C++ standard, the flag that
 # is required to enable it is cached in the
-# acx_cv_prog_hipcxx_${acx_prog_hipcxx_works}_flag variable. The users are
+# mkh_cv_prog_hipcxx_${mkh_prog_hipcxx_works}_flag variable. The users are
 # expected to either append the flag to HIPCXX or prepended it to HIPFLAGS
-# based on the value of the acx_prog_hipcxx_works shell variable.
+# based on the value of the mkh_prog_hipcxx_works shell variable.
 #
 AC_DEFUN_ONCE([MKH_PROG_HIPCXX],
   [AC_LANG_PUSH([HIP])dnl
@@ -96,32 +96,32 @@ AC_DEFUN_ONCE([MKH_PROG_HIPCXX],
    m4_expand_once([_AC_COMPILER_EXEEXT])[]dnl
    m4_expand_once([_AC_COMPILER_OBJEXT])[]dnl
    _AC_LANG_COMPILER_GNU
-   acx_test_HIPFLAGS=${HIPFLAGS+set}
-   acx_save_HIPFLAGS=$HIPFLAGS
-   AC_CACHE_CHECK([whether $HIPCXX accepts -g], [acx_cv_prog_hipc_g],
-     [acx_save_hip_werror_flag=$ac_hip_werror_flag
+   mkh_test_HIPFLAGS=${HIPFLAGS+set}
+   mkh_save_HIPFLAGS=$HIPFLAGS
+   AC_CACHE_CHECK([whether $HIPCXX accepts -g], [mkh_cv_prog_hipc_g],
+     [mkh_save_hip_werror_flag=$ac_hip_werror_flag
       ac_hip_werror_flag=yes
-      acx_cv_prog_hipc_g=no
+      mkh_cv_prog_hipc_g=no
       HIPFLAGS='-g'
       _AC_COMPILE_IFELSE([AC_LANG_PROGRAM],
-        [acx_cv_prog_hipc_g=yes],
+        [mkh_cv_prog_hipc_g=yes],
         [HIPFLAGS=''
          _AC_COMPILE_IFELSE([AC_LANG_PROGRAM],
            [],
-           [ac_hip_werror_flag=$acx_save_hip_werror_flag
+           [ac_hip_werror_flag=$mkh_save_hip_werror_flag
             HIPFLAGS='-g'
             _AC_COMPILE_IFELSE([AC_LANG_PROGRAM],
-              [acx_cv_prog_hipc_g=yes])])])
-      ac_hip_werror_flag=$acx_save_hip_werror_flag])
+              [mkh_cv_prog_hipc_g=yes])])])
+      ac_hip_werror_flag=$mkh_save_hip_werror_flag])
    AS_IF(
-     [test "$acx_test_HIPFLAGS" = set],
-     [HIPFLAGS=$acx_save_HIPFLAGS],
-     [test "$acx_cv_prog_hipc_g" = yes],
+     [test "$mkh_test_HIPFLAGS" = set],
+     [HIPFLAGS=$mkh_save_HIPFLAGS],
+     [test "$mkh_cv_prog_hipc_g" = yes],
      [AS_VAR_IF([ac_cv_hip_compiler_gnu], [yes],
         [HIPFLAGS='-g -O2'], [HIPFLAGS='-g'])],
      [AS_VAR_IF([ac_cv_hip_compiler_gnu], [yes],
         [HIPFLAGS='-O2'], [HIPFLAGS=''])])
-   acx_prog_hipcxx_works=no
+   mkh_prog_hipcxx_works=no
    m4_map_sep([_MKH_HIP_CXX_TEST], [
 ], [[14],[11]])
    _MKH_HIP_BASIC_TEST
@@ -133,61 +133,61 @@ AC_DEFUN_ONCE([MKH_PROG_HIPCXX],
 # checks for ISO C++ 2014 and ISO C++ 2011 are currently supported) and can
 # compile a basic HIP program. The value of STANDARD is expected to be the last
 # two digits of the standard's year (e.g. 11). The check is skipped if the
-# acx_prog_hipcxx_works shell variable is set to a value other than "no" (in a
+# mkh_prog_hipcxx_works shell variable is set to a value other than "no" (in a
 # normal scenario that means that a more recent ISO C++ standard is supported).
 #
-# If successful, sets the shell variable acx_prog_hipcxx_works to
+# If successful, sets the shell variable mkh_prog_hipcxx_works to
 # "cxx[]STANDARD" (e.g. "cxx11") and the cache variable
-# acx_cv_prog_hipcxx_cxx[]STANDARD[]_flag to the flag that is required to
+# mkh_cv_prog_hipcxx_cxx[]STANDARD[]_flag to the flag that is required to
 # enable the standard.
 #
 AC_DEFUN([_MKH_HIP_CXX_TEST],
   [AC_LANG_ASSERT([HIP])dnl
    AC_REQUIRE([_MKH_HIP_CXX$1_TEST_PROGRAM])dnl
-   AS_VAR_IF([acx_prog_hipcxx_works], [no],
+   AS_VAR_IF([mkh_prog_hipcxx_works], [no],
      [AC_MSG_CHECKING([for $HIPCXX option to enable C++$1 features])
-      m4_pushdef([acx_cache_var], [acx_cv_prog_hipcxx_cxx$1_flag])dnl
-      AC_CACHE_VAL([acx_cache_var],
-        [acx_cache_var=unsupported
-         AC_LANG_CONFTEST([$acx_hip_conftest_cxx$1_program])
-         acx_save_HIPFLAGS=$HIPFLAGS
-         for acx_flag in '' m4_normalize(m4_defn([_MKH_HIP_CXX$1_OPTIONS]))
+      m4_pushdef([mkh_cache_var], [mkh_cv_prog_hipcxx_cxx$1_flag])dnl
+      AC_CACHE_VAL([mkh_cache_var],
+        [mkh_cache_var=unsupported
+         AC_LANG_CONFTEST([$mkh_hip_conftest_cxx$1_program])
+         mkh_save_HIPFLAGS=$HIPFLAGS
+         for mkh_flag in '' m4_normalize(m4_defn([_MKH_HIP_CXX$1_OPTIONS]))
          do
-           HIPFLAGS="$acx_flag $acx_save_HIPFLAGS"
-           _AC_COMPILE_IFELSE([], [acx_cache_var=$acx_flag])
-           test "x$acx_cache_var" != xunsupported && break
+           HIPFLAGS="$mkh_flag $mkh_save_HIPFLAGS"
+           _AC_COMPILE_IFELSE([], [mkh_cache_var=$mkh_flag])
+           test "x$mkh_cache_var" != xunsupported && break
          done
-         HIPFLAGS=$acx_save_HIPFLAGS
+         HIPFLAGS=$mkh_save_HIPFLAGS
          rm -f conftest.$ac_ext])
-      AS_IF([test -n "$acx_cache_var"],
-        [AC_MSG_RESULT([$acx_cache_var])],
+      AS_IF([test -n "$mkh_cache_var"],
+        [AC_MSG_RESULT([$mkh_cache_var])],
         [AC_MSG_RESULT([none needed])])
-      AS_IF([test "x$acx_cache_var" != xunsupported],
-        [acx_prog_hipcxx_works=cxx$1])
-      m4_popdef([acx_cache_var])])])
+      AS_IF([test "x$mkh_cache_var" != xunsupported],
+        [mkh_prog_hipcxx_works=cxx$1])
+      m4_popdef([mkh_cache_var])])])
 
 # _MKH_HIP_BASIC_TEST()
 # -----------------------------------------------------------------------------
 # Checks whether the HIP C++ compiler can compile a basic HIP program. The
-# check is skipped if the acx_prog_hipcxx_works shell variable is set to a
+# check is skipped if the mkh_prog_hipcxx_works shell variable is set to a
 # value other than "no" (in a normal scenario that means that the compiler
 # supports an ISO C++ standard, as well as the basic HIP features).
 #
-# If successful, sets the shell variable acx_prog_hipcxx_works to "basic".
+# If successful, sets the shell variable mkh_prog_hipcxx_works to "basic".
 #
-# The result is cached in the acx_cv_prog_hipxx_basic variable.
+# The result is cached in the mkh_cv_prog_hipxx_basic variable.
 #
 AC_DEFUN([_MKH_HIP_BASIC_TEST],
   [AC_LANG_ASSERT([HIP])dnl
    AC_REQUIRE([_MKH_HIP_BASIC_TEST_PROGRAM])dnl
-   AS_VAR_IF([acx_prog_hipcxx_works], [no],
+   AS_VAR_IF([mkh_prog_hipcxx_works], [no],
      [AC_CACHE_CHECK([whether $HIPCXX can compile basic HIP code],
-        [acx_cv_prog_hipxx_basic],
-        [_AC_COMPILE_IFELSE([$acx_hip_conftest_basic_program],
-           [acx_cv_prog_hipxx_basic=yes],
-           [acx_cv_prog_hipxx_basic=no])])
-      AS_VAR_IF([acx_cv_prog_hipxx_basic], [yes],
-        [acx_prog_hipcxx_works=basic])])])
+        [mkh_cv_prog_hipxx_basic],
+        [_AC_COMPILE_IFELSE([$mkh_hip_conftest_basic_program],
+           [mkh_cv_prog_hipxx_basic=yes],
+           [mkh_cv_prog_hipxx_basic=no])])
+      AS_VAR_IF([mkh_cv_prog_hipxx_basic], [yes],
+        [mkh_prog_hipcxx_works=basic])])])
 
 # _MKH_HIP_BASIC_TEST_GLOBALS()
 # _MKH_HIP_BASIC_TEST_MAIN()
@@ -207,14 +207,14 @@ AC_DEFUN([_MKH_HIP_BASIC_TEST],
 AC_DEFUN([_MKH_HIP_BASIC_TEST_GLOBALS],
   [m4_divert_once([INIT_PREPARE],
 [[# Basic HIP test code (global declarations):
-acx_hip_conftest_basic_globals='#include <hip/hip_runtime.h>
+mkh_hip_conftest_basic_globals='#include <hip/hip_runtime.h>
 __global__ void conftest_foo() {}'
 ]])])
 
 AC_DEFUN([_MKH_HIP_BASIC_TEST_MAIN],
   [m4_divert_once([INIT_PREPARE],
 [[# Basic HIP test code (body of main):
-acx_hip_conftest_basic_main='conftest_foo<<<1, 1>>>();'
+mkh_hip_conftest_basic_main='conftest_foo<<<1, 1>>>();'
 ]])])
 
 AC_DEFUN([_MKH_HIP_BASIC_TEST_PROGRAM],
@@ -222,10 +222,10 @@ AC_DEFUN([_MKH_HIP_BASIC_TEST_PROGRAM],
    AC_REQUIRE([_MKH_HIP_BASIC_TEST_MAIN])dnl
    m4_divert_once([INIT_PREPARE],
 [[# Basic HIP test code (complete):
-acx_hip_conftest_basic_program="$acx_hip_conftest_basic_globals
+mkh_hip_conftest_basic_program="$mkh_hip_conftest_basic_globals
 int main (int argc, char **argv)
 {
-  $acx_hip_conftest_basic_main
+  $mkh_hip_conftest_basic_main
   return 0;
 }
 "
@@ -234,7 +234,7 @@ int main (int argc, char **argv)
 AC_DEFUN([_MKH_HIP_CXX11_TEST_GLOBALS],
   [m4_divert_once([INIT_PREPARE],
 [[# C++11 HIP test code (global declarations):
-acx_hip_conftest_cxx11_globals='
+mkh_hip_conftest_cxx11_globals='
 #if !defined __cplusplus || __cplusplus < 201103L
 # error "Compiler does not advertise C++11 conformance"
 #endif
@@ -251,7 +251,7 @@ namespace cxx11test {
 AC_DEFUN([_MKH_HIP_CXX11_TEST_MAIN],
   [m4_divert_once([INIT_PREPARE],
 [[# C++11 HIP test code (body of main):
-acx_hip_conftest_cxx11_main='
+mkh_hip_conftest_cxx11_main='
 int* pcxx11 = nullptr;
 cxx11test::ConftestClassCXX11<int> some_class =
   cxx11test::ConftestClassCXX11<int>();
@@ -267,12 +267,12 @@ AC_DEFUN([_MKH_HIP_CXX11_TEST_PROGRAM],
    AC_REQUIRE([_MKH_HIP_CXX11_TEST_MAIN])dnl
    m4_divert_once([INIT_PREPARE],
 [[# C++11 HIP test code (complete):
-acx_hip_conftest_cxx11_program="$acx_hip_conftest_basic_globals
-$acx_hip_conftest_cxx11_globals
+mkh_hip_conftest_cxx11_program="$mkh_hip_conftest_basic_globals
+$mkh_hip_conftest_cxx11_globals
 int main (int argc, char **argv)
 {
-  $acx_hip_conftest_basic_main
-  $acx_hip_conftest_cxx11_main
+  $mkh_hip_conftest_basic_main
+  $mkh_hip_conftest_cxx11_main
   return 0;
 }
 "
@@ -281,7 +281,7 @@ int main (int argc, char **argv)
 AC_DEFUN([_MKH_HIP_CXX14_TEST_GLOBALS],
   [m4_divert_once([INIT_PREPARE],
 [[# C++14 HIP test code (global declarations):
-acx_hip_conftest_cxx14_globals='
+mkh_hip_conftest_cxx14_globals='
 #if !defined __cplusplus || __cplusplus < 201402L
 # error "Compiler does not advertise C++14 conformance"
 #endif
@@ -291,7 +291,7 @@ acx_hip_conftest_cxx14_globals='
 AC_DEFUN([_MKH_HIP_CXX14_TEST_MAIN],
   [m4_divert_once([INIT_PREPARE],
 [[# C++14 HIP test code (body of main):
-acx_hip_conftest_cxx14_main=''
+mkh_hip_conftest_cxx14_main=''
 ]])])
 
 AC_DEFUN([_MKH_HIP_CXX14_TEST_PROGRAM],
@@ -303,14 +303,14 @@ AC_DEFUN([_MKH_HIP_CXX14_TEST_PROGRAM],
    AC_REQUIRE([_MKH_HIP_CXX14_TEST_MAIN])dnl
    m4_divert_once([INIT_PREPARE],
 [[# C++14 HIP test code (complete):
-acx_hip_conftest_cxx14_program="$acx_hip_conftest_basic_globals
-$acx_hip_conftest_cxx11_globals
-$acx_hip_conftest_cxx14_globals
+mkh_hip_conftest_cxx14_program="$mkh_hip_conftest_basic_globals
+$mkh_hip_conftest_cxx11_globals
+$mkh_hip_conftest_cxx14_globals
 int main (int argc, char **argv)
 {
-  $acx_hip_conftest_basic_main
-  $acx_hip_conftest_cxx11_main
-  $acx_hip_conftest_cxx14_main
+  $mkh_hip_conftest_basic_main
+  $mkh_hip_conftest_cxx11_main
+  $mkh_hip_conftest_cxx14_main
   return 0;
 }
 "

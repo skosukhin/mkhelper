@@ -41,15 +41,15 @@ $ resulting object into a Fortran program with the Fortran compiler.
 # If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
 # (defaults to failing with an error message).
 #
-# The result is cached in the acx_cv_fc_c_compatible variable.
+# The result is cached in the mkh_cv_fc_c_compatible variable.
 #
 AC_DEFUN([MKH_FC_C_COMPATIBLE],
   [AC_CACHE_CHECK(
      [whether Fortran compiler can link objects compiled with C compiler],
-     [acx_cv_fc_c_compatible],
+     [mkh_cv_fc_c_compatible],
      [_MKH_FC_C_COMPATIBLE
-      acx_cv_fc_c_compatible=$acx_fc_c_compatiable])
-   AS_VAR_IF([acx_cv_fc_c_compatible], [yes], [$1],
+      mkh_cv_fc_c_compatible=$mkh_fc_c_compatiable])
+   AS_VAR_IF([mkh_cv_fc_c_compatible], [yes], [$1],
      [m4_default([$2],
         [AC_MSG_FAILURE([Fortran compiler cannot link objects compiled with dnl
 C compiler])])])])
@@ -72,12 +72,12 @@ C compiler])])])])
 # If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
 # (defaults to failing with an error message).
 #
-# The result is cached in the acx_cv_fc_c_compatible_mpi variable.
+# The result is cached in the mkh_cv_fc_c_compatible_mpi variable.
 #
 AC_DEFUN([MKH_FC_C_COMPATIBLE_MPI],
   [AC_CACHE_CHECK([whether Fortran and C MPI libraries are compatible],
-     [acx_cv_fc_c_compatible_mpi],
-     [acx_cv_fc_c_compatible_mpi=no
+     [mkh_cv_fc_c_compatible_mpi],
+     [mkh_cv_fc_c_compatible_mpi=no
       _MKH_FC_C_COMPATIBLE(
         [[#include <mpi.h>]],
         [[int world_size, world_rank, name_len;
@@ -89,8 +89,8 @@ MPI_Get_processor_name(processor_name, &name_len);
 MPI_Finalize()]],
         [AC_TRY_COMMAND([m4_default([$1], [true]) -n 1 ./conftest$ac_exeext dnl
 >&AS_MESSAGE_LOG_FD])])
-      acx_cv_fc_c_compatible_mpi=$acx_fc_c_compatiable])
-   AS_VAR_IF([acx_cv_fc_c_compatible_mpi], [yes], [$2],
+      mkh_cv_fc_c_compatible_mpi=$mkh_fc_c_compatiable])
+   AS_VAR_IF([mkh_cv_fc_c_compatible_mpi], [yes], [$2],
      [m4_default([$3],
         [AC_MSG_FAILURE([Fortran and C MPI libraries are not compatible])])])])
 
@@ -107,15 +107,15 @@ MPI_Finalize()]],
 # If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
 # (defaults to failing with an error message).
 #
-# The result is cached in the acx_cv_fc_c_compatible_openmp variable.
+# The result is cached in the mkh_cv_fc_c_compatible_openmp variable.
 #
 AC_DEFUN([MKH_FC_C_COMPATIBLE_OPENMP],
   [AC_CACHE_CHECK(
      [whether Fortran compiler can link C code that uses OpenMP],
-     [acx_cv_fc_c_compatible_openmp],
+     [mkh_cv_fc_c_compatible_openmp],
      [_MKH_FC_C_COMPATIBLE([[#include <omp.h>]], [[omp_get_num_threads()]])
-      acx_cv_fc_c_compatible_openmp=$acx_fc_c_compatiable])
-   AS_VAR_IF([acx_cv_fc_c_compatible_openmp], [yes], [$1],
+      mkh_cv_fc_c_compatible_openmp=$mkh_fc_c_compatiable])
+   AS_VAR_IF([mkh_cv_fc_c_compatible_openmp], [yes], [$1],
      [m4_default([$2],
         [AC_MSG_FAILURE(
            [Fortran compiler cannot link C code that uses OpenMP])])])])
@@ -133,15 +133,15 @@ AC_DEFUN([MKH_FC_C_COMPATIBLE_OPENMP],
 # If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
 # (defaults to failing with an error message).
 #
-# The result is cached in the acx_cv_fc_c_compatible_python variable.
+# The result is cached in the mkh_cv_fc_c_compatible_python variable.
 #
 AC_DEFUN([MKH_FC_C_COMPATIBLE_PYTHON],
   [AC_CACHE_CHECK(
      [whether Fortran compiler can link C code that uses Python API],
-     [acx_cv_fc_c_compatible_python],
+     [mkh_cv_fc_c_compatible_python],
      [_MKH_FC_C_COMPATIBLE([[#include <Python.h>]], [[Py_Initialize()]])
-      acx_cv_fc_c_compatible_python=$acx_fc_c_compatiable])
-   AS_VAR_IF([acx_cv_fc_c_compatible_python], [yes], [$1],
+      mkh_cv_fc_c_compatible_python=$mkh_fc_c_compatiable])
+   AS_VAR_IF([mkh_cv_fc_c_compatible_python], [yes], [$1],
      [m4_default([$2],
         [AC_MSG_FAILURE(
            [Fortran compiler cannot link C code that uses Python API])])])])
@@ -162,19 +162,19 @@ AC_DEFUN([MKH_FC_C_COMPATIBLE_PYTHON],
 # argument. In that case the result of the macro will be "yes" only if the exit
 # code of the last command listed in EXTRA-ACTIONS is zero.
 #
-# The result is stored in the acx_fc_c_compatiable variable.
+# The result is stored in the mkh_fc_c_compatiable variable.
 #
 AC_DEFUN([_MKH_FC_C_COMPATIBLE],
   [AC_LANG_ASSERT([Fortran])dnl
    AC_REQUIRE([AC_PROG_CC])dnl
    AC_LANG_PUSH([C])
-   acx_fc_c_compatiable=no
+   mkh_fc_c_compatiable=no
    AC_COMPILE_IFELSE([AC_LANG_SOURCE(
      [m4_default([$1], [])
 [void conftest_foo(){]m4_default([$2], [])[;}]])],
      [AC_LANG_POP([C])
       mv ./conftest.$ac_objext ./conftest_c.$ac_objext
-      acx_save_LIBS=$LIBS; LIBS="./conftest_c.$ac_objext $LIBS"
+      mkh_save_LIBS=$LIBS; LIBS="./conftest_c.$ac_objext $LIBS"
       AC_LINK_IFELSE(
         [AC_LANG_SOURCE(
 [[      program conftest
@@ -187,9 +187,9 @@ AC_DEFUN([_MKH_FC_C_COMPATIBLE],
       end program]])],
         [m4_ifval([$3],
            [$3
-            AS_IF([test $? -eq 0], [acx_fc_c_compatiable=yes])],
-           [acx_fc_c_compatiable=yes])])
-      LIBS=$acx_save_LIBS
+            AS_IF([test $? -eq 0], [mkh_fc_c_compatiable=yes])],
+           [mkh_fc_c_compatiable=yes])])
+      LIBS=$mkh_save_LIBS
       rm -f conftest_c.$ac_objext
       AC_LANG_PUSH([C])])
    AC_LANG_POP([C])])

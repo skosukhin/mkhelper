@@ -12,7 +12,7 @@
 # Detects the vendor of the Fortran compiler. The result is "unknown" or one of
 # the vendor IDs (see _MKH_COMPILER_KNOWN_VENDORS(Fortran)).
 #
-# The result is cached in the acx_cv_fc_compiler_vendor variable.
+# The result is cached in the mkh_cv_fc_compiler_vendor variable.
 #
 AC_DEFUN([MKH_COMPILER_FC_VENDOR],
   [AC_LANG_ASSERT([Fortran])dnl
@@ -20,11 +20,11 @@ AC_DEFUN([MKH_COMPILER_FC_VENDOR],
      [m4_warn([syntax],
         [MKH_COMPILER_FC_VENDOR requires calling the Fortran compiler with ]dnl
 [a preprocessor but no call to AC_FC_PP_SRCEXT is detected])])dnl
-   AC_CACHE_CHECK([for Fortran compiler vendor], [acx_cv_fc_compiler_vendor],
+   AC_CACHE_CHECK([for Fortran compiler vendor], [mkh_cv_fc_compiler_vendor],
      [AS_IF(
         [AS_VAR_GET([_AC_CC]) --version 2>&1 | dnl
 grep '^AMD clang version' >/dev/null 2>&1],
-        [acx_cv_fc_compiler_vendor=amd],
+        [mkh_cv_fc_compiler_vendor=amd],
         [_MKH_COMPILER_VENDOR])])])
 
 # MKH_COMPILER_CC_VENDOR()
@@ -32,18 +32,18 @@ grep '^AMD clang version' >/dev/null 2>&1],
 # Detects the vendor of the C compiler. The result is "unknown" or one of
 # the vendor IDs (see _MKH_COMPILER_KNOWN_VENDORS(C)).
 #
-# The result is cached in the acx_cv_c_compiler_vendor variable.
+# The result is cached in the mkh_cv_c_compiler_vendor variable.
 #
 AC_DEFUN([MKH_COMPILER_CC_VENDOR],
   [AC_LANG_ASSERT([C])dnl
-   AC_CACHE_CHECK([for C compiler vendor], [acx_cv_c_compiler_vendor],
+   AC_CACHE_CHECK([for C compiler vendor], [mkh_cv_c_compiler_vendor],
      [AS_IF(
         [AS_VAR_GET([_AC_CC]) -V 2>&1 | dnl
 grep '^NAG Fortran Compiler Release' >/dev/null 2>&1],
-        [acx_cv_c_compiler_vendor=nag],
+        [mkh_cv_c_compiler_vendor=nag],
         [AS_VAR_GET([_AC_CC]) --version 2>&1 | dnl
 grep '^AMD clang version' >/dev/null 2>&1],
-        [acx_cv_c_compiler_vendor=amd],
+        [mkh_cv_c_compiler_vendor=amd],
         [_MKH_COMPILER_VENDOR])])])
 
 # MKH_COMPILER_CXX_VENDOR()
@@ -51,15 +51,15 @@ grep '^AMD clang version' >/dev/null 2>&1],
 # Detects the vendor of the C++ compiler. The result is "unknown" or one of
 # the vendor IDs (see _MKH_COMPILER_KNOWN_VENDORS(C)).
 #
-# The result is cached in the acx_cv_cxx_compiler_vendor variable.
+# The result is cached in the mkh_cv_cxx_compiler_vendor variable.
 #
 AC_DEFUN([MKH_COMPILER_CXX_VENDOR],
   [AC_LANG_ASSERT([C++])dnl
-   AC_CACHE_CHECK([for C++ compiler vendor], [acx_cv_cxx_compiler_vendor],
+   AC_CACHE_CHECK([for C++ compiler vendor], [mkh_cv_cxx_compiler_vendor],
      [AS_IF(
         [AS_VAR_GET([_AC_CC]) --version 2>&1 | dnl
 grep '^AMD clang version' >/dev/null 2>&1],
-        [acx_cv_cxx_compiler_vendor=amd],
+        [mkh_cv_cxx_compiler_vendor=amd],
         [_MKH_COMPILER_VENDOR])])])
 
 # _MKH_COMPILER_KNOWN_VENDORS()
@@ -137,28 +137,28 @@ m4_copy([_MKH_COMPILER_KNOWN_VENDORS(C)], [_MKH_COMPILER_KNOWN_VENDORS(C++)])
 # macro. The result is "unknown" or one of the vendor IDs
 # (see _MKH_COMPILER_KNOWN_VENDORS).
 #
-# The result is stored in the acx_cv_[]_AC_LANG_ABBREV[]_compiler_vendor
+# The result is stored in the mkh_cv_[]_AC_LANG_ABBREV[]_compiler_vendor
 # variable.
 #
 m4_define([_MKH_COMPILER_VENDOR],
-  [acx_compiler_vendor_options=dnl
+  [mkh_compiler_vendor_options=dnl
 "m4_foreach([pair], _MKH_COMPILER_KNOWN_VENDORS,
     [m4_ifnblank(m4_quote(m4_shift(pair)), m4_n(m4_car(pair): m4_cdr(pair)))])dnl
 unknown: CHOKEME"
-      acx_success=no
-      for acx_compiler_vendor_test in $acx_compiler_vendor_options; do
-        AS_CASE([$acx_compiler_vendor_test],
-          [*:], [acx_compiler_vendor_candidate=$acx_compiler_vendor_test
+      mkh_success=no
+      for mkh_compiler_vendor_test in $mkh_compiler_vendor_options; do
+        AS_CASE([$mkh_compiler_vendor_test],
+          [*:], [mkh_compiler_vendor_candidate=$mkh_compiler_vendor_test
                  continue],
-          [acx_compiler_vendor_macro_defs=dnl
-"defined("`echo $acx_compiler_vendor_test | sed 's%,%) || defined(%g'`")"])
+          [mkh_compiler_vendor_macro_defs=dnl
+"defined("`echo $mkh_compiler_vendor_test | sed 's%,%) || defined(%g'`")"])
         AC_COMPILE_IFELSE(
           [AC_LANG_PROGRAM([],
-[[#if !($acx_compiler_vendor_macro_defs)
+[[#if !($mkh_compiler_vendor_macro_defs)
       choke me
 #endif]])],
-          [acx_success=yes])
-        test "x$acx_success" = xyes && break
+          [mkh_success=yes])
+        test "x$mkh_success" = xyes && break
       done
-      AS_VAR_SET([acx_cv_[]_AC_LANG_ABBREV[]_compiler_vendor],
-        [`echo $acx_compiler_vendor_candidate | cut -d: -f1`])])
+      AS_VAR_SET([mkh_cv_[]_AC_LANG_ABBREV[]_compiler_vendor],
+        [`echo $mkh_compiler_vendor_candidate | cut -d: -f1`])])
