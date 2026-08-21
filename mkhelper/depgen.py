@@ -93,6 +93,12 @@ def parse_args():
         return None
 
     parser.add_argument(
+        "--version",
+        "-V",
+        action="store_true",
+        help="show the version and exit",
+    )
+    parser.add_argument(
         "--input",
         "-i",
         metavar="INPUT",
@@ -359,6 +365,17 @@ def parse_args():
         unknown = sys.argv[sep_idx + 1 :]
     except ValueError:
         args = parser.parse_args()
+
+    if args.version:
+        try:
+            # noinspection PyUnresolvedReferences
+            from __init__ import __version__
+        except ImportError:
+            parser.exit(
+                2, "{0}: version information not found\n".format(parser.prog)
+            )
+        # noinspection PyUnboundLocalVariable
+        parser.exit(0, "{0}: {1}\n".format(parser.prog, __version__))
 
     if not args.input:
         args.input = (None,)
