@@ -95,6 +95,12 @@ def parse_args():
     )
 
     parser.add_argument(
+        "--version",
+        "-V",
+        action="store_true",
+        help="show the version and exit",
+    )
+    parser.add_argument(
         "-d", "--debug-file", help="dump debug information to DEBUG_FILE"
     )
     parser.add_argument(
@@ -202,6 +208,18 @@ def parse_args():
     )
 
     args = parser.parse_args()
+
+    if args.version:
+        try:
+            sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+            # noinspection PyUnresolvedReferences
+            from __init__ import __version__
+        except ImportError:
+            parser.exit(
+                2, "{0}: version information not found\n".format(parser.prog)
+            )
+        # noinspection PyUnboundLocalVariable
+        parser.exit(0, "{0}: {1}\n".format(parser.prog, __version__))
 
     if args.target is not None and args.prereq is not None:
         parser.error(
