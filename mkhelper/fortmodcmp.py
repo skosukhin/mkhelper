@@ -247,24 +247,31 @@ def mods_differ(filename1, filename2, compiler_name=None):
                 return _mods_differ_default(stream1, stream2)
 
 
-# We try to make this as fast as possible, therefore we do not parse arguments
-# properly:
-if len(sys.argv) == 2 and sys.argv[1] in ("-V", "--version"):
-    import os
+def main():
+    # We try to make this as fast as possible, therefore we do not parse
+    # arguments properly:
+    if len(sys.argv) == 2 and sys.argv[1] in ("-V", "--version"):
+        import os
 
-    prog = os.path.basename(sys.argv[0])
-    try:
-        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-        from __init__ import __version__
-    except ImportError:
-        sys.stderr.write("{0}: version information not found\n".format(prog))
-        sys.exit(2)
-    sys.stdout.write("{0}: {1}\n".format(prog, __version__))
-else:
-    sys.exit(
-        mods_differ(
-            sys.argv[1],
-            sys.argv[2],
-            sys.argv[3].lower() if len(sys.argv) > 3 else None,
+        prog = os.path.basename(sys.argv[0])
+        try:
+            sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+            from __init__ import __version__
+        except ImportError:
+            sys.stderr.write(
+                "{0}: version information not found\n".format(prog)
+            )
+            sys.exit(2)
+        sys.stdout.write("{0}: {1}\n".format(prog, __version__))
+    else:
+        sys.exit(
+            mods_differ(
+                sys.argv[1],
+                sys.argv[2],
+                sys.argv[3].lower() if len(sys.argv) > 3 else None,
+            )
         )
-    )
+
+
+if __name__ == "__main__":
+    main()
