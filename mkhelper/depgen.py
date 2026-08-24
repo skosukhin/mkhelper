@@ -49,7 +49,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from depgen import exhaust, map23, open23, zip_longest23  # noqa: E402
 
 
-class ArgumentParser(argparse.ArgumentParser):
+class __ArgumentParser(argparse.ArgumentParser):
     def convert_arg_line_to_args(self, arg_line):
         try:
             # Drop everything after the first occurrence of #:
@@ -68,8 +68,8 @@ class ArgumentParser(argparse.ArgumentParser):
         return result
 
 
-def parse_args():
-    parser = ArgumentParser(
+def __parse_args():
+    parser = __ArgumentParser(
         fromfile_prefix_chars="@",
         description="Generates OUTPUT makefile containing dependency rules for "
         "the INPUT source file. Recognizes preprocessor `#include`, `#if` and "
@@ -502,7 +502,7 @@ def parse_args():
 
 
 def main():
-    args = parse_args()
+    args = __parse_args()
 
     included_files = set()
 
@@ -622,14 +622,14 @@ def main():
 
         not in_stream_close or in_stream.close()
 
-        out_lines = gen_lc_deps(src_name, lc_files)
+        out_lines = __gen_lc_deps(src_name, lc_files)
 
         include_targets = [obj_name, dep_name]
         if obj_name != mod_stamp_name:
             include_targets.append(mod_stamp_name)
 
         out_lines.extend(
-            gen_include_deps(include_targets, src_name, included_files)
+            __gen_include_deps(include_targets, src_name, included_files)
         )
 
         if (
@@ -639,7 +639,7 @@ def main():
             or required_submodules
         ):
             out_lines.extend(
-                gen_module_deps(
+                __gen_module_deps(
                     obj_name,
                     mod_stamp_name,
                     provided_modules,
@@ -693,14 +693,14 @@ def main():
         required_submodules.clear()
 
 
-def gen_lc_deps(src_name, lc_files):
+def __gen_lc_deps(src_name, lc_files):
     result = []
     if src_name and lc_files:
         result.append("{0}: {1}\n".format(src_name, " ".join(lc_files)))
     return result
 
 
-def gen_include_deps(include_targets, src_name, included_files):
+def __gen_include_deps(include_targets, src_name, included_files):
     result = []
     targets = " ".join(filter(None, include_targets))
     if targets:
@@ -710,7 +710,7 @@ def gen_include_deps(include_targets, src_name, included_files):
     return result
 
 
-def gen_module_deps(
+def __gen_module_deps(
     obj_name,
     mod_stamp_name,
     provided_modules,
@@ -728,10 +728,12 @@ def gen_module_deps(
     mod_stamp_name = mod_stamp_name or obj_name
     if mod_stamp_name:
         targets = list(
-            modules_to_filenames(provided_modules, mod_dir, mod_upper, mod_ext)
+            __modules_to_filenames(
+                provided_modules, mod_dir, mod_upper, mod_ext
+            )
         )
         targets.extend(
-            submodules_to_filenames(
+            __submodules_to_filenames(
                 provided_submodules, mod_dir, mod_upper, smod_infix, smod_ext
             )
         )
@@ -742,7 +744,7 @@ def gen_module_deps(
             )
 
         prereqs = list(
-            modules_to_filenames(
+            __modules_to_filenames(
                 # Do not depend on the provided modules:
                 [m for m in required_modules if m not in provided_modules],
                 mod_dir,
@@ -752,7 +754,7 @@ def gen_module_deps(
         )
 
         prereqs.extend(
-            submodules_to_filenames(
+            __submodules_to_filenames(
                 # Do not depend on the provided submodules:
                 [
                     m
@@ -776,7 +778,7 @@ def gen_module_deps(
 
     if obj_name:
         targets = list(
-            modules_to_filenames(
+            __modules_to_filenames(
                 set(
                     module
                     for module, _ in provided_submodules
@@ -800,7 +802,7 @@ def gen_module_deps(
     return result
 
 
-def modules_to_filenames(modules, directory, upprecase, extension):
+def __modules_to_filenames(modules, directory, upprecase, extension):
     result = modules
     if upprecase:
         result = map(lambda s: s.upper(), result)
@@ -811,8 +813,10 @@ def modules_to_filenames(modules, directory, upprecase, extension):
     return result
 
 
-def submodules_to_filenames(submodules, directory, uppercase, infix, extension):
-    result = modules_to_filenames(
+def __submodules_to_filenames(
+    submodules, directory, uppercase, infix, extension
+):
+    result = __modules_to_filenames(
         map(
             lambda module_submodule: (
                 "{1}{0}{2}".format(infix, *module_submodule)
