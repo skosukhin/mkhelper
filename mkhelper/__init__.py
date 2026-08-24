@@ -29,3 +29,5 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 __version__ = "1.0.0"
+
+VERSION_INFO = "mkhelper: {0}".format(__version__)

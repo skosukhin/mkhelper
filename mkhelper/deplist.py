@@ -213,13 +213,14 @@ def parse_args():
         try:
             sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
             # noinspection PyUnresolvedReferences
-            from __init__ import __version__
+            from __init__ import VERSION_INFO
         except ImportError:
             parser.exit(
                 2, "{0}: version information not found\n".format(parser.prog)
             )
         # noinspection PyUnboundLocalVariable
-        parser.exit(0, "{0}: {1}\n".format(parser.prog, __version__))
+        sys.stdout.write("{0}\n".format(VERSION_INFO))
+        sys.exit(0)
 
     if args.target is not None and args.prereq is not None:
         parser.error(

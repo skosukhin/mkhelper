@@ -699,13 +699,14 @@ def __parse_args():
     if args.version:
         try:
             # noinspection PyUnresolvedReferences
-            from .. import __version__
+            from .. import VERSION_INFO
         except ImportError:
             parser.exit(
                 2, "{0}: version information not found\n".format(parser.prog)
             )
         # noinspection PyUnboundLocalVariable
-        parser.exit(0, "{0}: {1}\n".format(parser.prog, __version__))
+        sys.stdout.write("{0}\n".format(VERSION_INFO))
+        sys.exit(0)
 
     if not args.input:
         args.input = (None,)

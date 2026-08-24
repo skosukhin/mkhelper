@@ -250,19 +250,21 @@ def mods_differ(filename1, filename2, compiler_name=None):
 def main():
     # We try to make this as fast as possible, therefore we do not parse
     # arguments properly:
-    if len(sys.argv) == 2 and sys.argv[1] in ("-V", "--version"):
+    if set(sys.argv) & {"-V", "--version"}:
         import os
 
-        prog = os.path.basename(sys.argv[0])
         try:
             sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-            from __init__ import __version__
+            from __init__ import VERSION_INFO
         except ImportError:
             sys.stderr.write(
-                "{0}: version information not found\n".format(prog)
+                "{0}: version information not found\n".format(
+                    os.path.basename(sys.argv[0])
+                )
             )
             sys.exit(2)
-        sys.stdout.write("{0}: {1}\n".format(prog, __version__))
+        sys.stdout.write("{0}\n".format(VERSION_INFO))
+        sys.exit(0)
     else:
         sys.exit(
             mods_differ(
