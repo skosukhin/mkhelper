@@ -342,6 +342,9 @@ class MacroHandler(object):
         r"(([a-zA-Z_]\w*)\s*(\(\s*(?:\w+(?:\s*,\s*\w+)*\s*)?\))?)"
     )
 
+    # matches "!" but does not match "!="
+    _re_not = re.compile(r"!(?!=)")
+
     __slots__ = ["_macros"]
 
     def __init__(self, predefined_macros=None):
@@ -413,7 +416,7 @@ class MacroHandler(object):
 
         expr = expr.replace("||", " or ")
         expr = expr.replace("&&", " and ")
-        expr = expr.replace("!", "not ")
+        expr = MacroHandler._re_not.sub("not ", expr)
 
         try:
             result = bool(eval(expr, {"__builtins__": None}))
