@@ -3807,7 +3807,7 @@ else
   acx_tmp="conftest_module.$acx_cv_fc_module_naming_ext"
 fi
       acx_save_FCFLAGS=$FCFLAGS
-      for acx_flag in '-syntax-only' '-fsyntax-only' '-Msyntax-only' '-dB -M2179' '-M' '-otype=mod'; do
+      for acx_flag in '-syntax-only' '-fsyntax-only' '-Msyntax-only' '-M2179 -dB' '-M' '-otype=mod'; do
         FCFLAGS="$acx_save_FCFLAGS $acx_flag"
         if { { ac_try="$ac_compile"
 case "(($ac_try" in

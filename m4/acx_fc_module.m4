@@ -404,7 +404,7 @@ module 'AS_TR_CPP([$1])' is not available])])])
 # NEC: -fsyntax-only
 # PGI/NVIDIA: -Msyntax-only
 # NAG: -M or -otype=mod
-# Cray: '-dB -M2179' (the second flag suppresses an excessive warning)
+# Cray: '-M2179 -dB' (the first flag suppresses an excessive warning)
 #       or -otype=mod (undocumented and slow)
 #
 AC_DEFUN([ACX_FC_MODULE_ONLY_FLAG],
@@ -425,7 +425,7 @@ object files],
         [acx_tmp="conftest_module.$acx_cv_fc_module_naming_ext"])
       acx_save_FCFLAGS=$FCFLAGS
       for acx_flag in '-syntax-only' '-fsyntax-only' '-Msyntax-only' dnl
-'-dB -M2179' '-M' '-otype=mod'; do
+'-M2179 -dB' '-M' '-otype=mod'; do
         FCFLAGS="$acx_save_FCFLAGS $acx_flag"
         AS_IF([_AC_DO_VAR([ac_compile]) && dnl
 test -f $acx_tmp && test ! -f conftest.$ac_objext],
