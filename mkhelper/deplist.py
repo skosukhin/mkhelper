@@ -92,6 +92,19 @@ def parse_args():
         description="Reads a set of MAKEFILEs and prints a topologically "
         "sorted list of TARGETs (PREREQuisites) together with their "
         "dependencies (dependents).",
+        prog=(
+            "{0} -m {1}.{2}".format(
+                sys.executable,
+                __package__,
+                os.path.splitext(os.path.basename(__file__))[0],
+            )
+            if __package__
+            and (
+                sys.argv[0] == "-c"
+                or os.path.basename(sys.argv[0]) == os.path.basename(__file__)
+            )
+            else None
+        ),
     )
 
     parser.add_argument(

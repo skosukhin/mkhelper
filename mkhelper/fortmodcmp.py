@@ -260,10 +260,24 @@ def main():
         )
 
     import argparse
+    import os
 
     parser = argparse.ArgumentParser(
         description="Determines whether two Fortran module files differ "
         "semantically, based on compiler-specific implementation details.",
+        prog=(
+            "{0} -m {1}.{2}".format(
+                sys.executable,
+                __package__,
+                os.path.splitext(os.path.basename(__file__))[0],
+            )
+            if __package__
+            and (
+                sys.argv[0] == "-c"
+                or os.path.basename(sys.argv[0]) == os.path.basename(__file__)
+            )
+            else None
+        ),
     )
 
     parser.add_argument(
@@ -284,8 +298,6 @@ def main():
     args = set(sys.argv[1:])
 
     if {"-V", "--version"} & args and not {"-h", "--help"} & args:
-        import os
-
         try:
             if __package__:
                 # noinspection PyUnresolvedReferences

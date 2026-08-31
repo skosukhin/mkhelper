@@ -405,6 +405,11 @@ def __parse_args():
         "the INPUT source file. Recognizes preprocessor `#include`, `#if` and "
         "associated directives as well as Fortran `INCLUDE`, `USE` and "
         "`MODULE` statements.",
+        prog=(
+            "{0} -m {1}".format(sys.executable, __package__)
+            if os.path.basename(sys.argv[0]) in ("__main__.py", "-c")
+            else None
+        ),
     )
 
     def comma_splitter(s):
