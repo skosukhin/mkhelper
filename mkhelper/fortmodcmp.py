@@ -250,25 +250,7 @@ def mods_differ(filename1, filename2, compiler_name=None):
 def main():
     # We try to make this as fast as possible, therefore we do not parse
     # arguments properly:
-    if set(sys.argv) & {"-V", "--version"}:
-        import os
-
-        try:
-            if __package__:
-                from . import VERSION_INFO
-            else:
-                sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-                from __init__ import VERSION_INFO
-        except ImportError:
-            sys.stderr.write(
-                "{0}: version information not found\n".format(
-                    os.path.basename(sys.argv[0])
-                )
-            )
-            sys.exit(2)
-        sys.stdout.write("{0}\n".format(VERSION_INFO))
-        sys.exit(0)
-    else:
+    if {"-h", "--help", "-V", "--version"}.isdisjoint(sys.argv):
         sys.exit(
             mods_differ(
                 sys.argv[1],
@@ -276,6 +258,52 @@ def main():
                 sys.argv[3].lower() if len(sys.argv) > 3 else None,
             )
         )
+
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        description="Determines whether two Fortran module files differ "
+        "semantically, based on compiler-specific implementation details.",
+    )
+
+    parser.add_argument(
+        "--version",
+        "-V",
+        action="store_true",
+        help="show the version and exit",
+    )
+    parser.add_argument("FILE1", help="path to the first module file")
+    parser.add_argument("FILE2", help="path to the second module file")
+    parser.add_argument(
+        "compiler",
+        nargs="?",
+        choices=["intel", "gnu", "portland", "amd", "flang", "omni"],
+        help="optional Fortran compiler name",
+    )
+
+    args = set(sys.argv[1:])
+
+    if {"-V", "--version"} & args and not {"-h", "--help"} & args:
+        import os
+
+        try:
+            if __package__:
+                # noinspection PyUnresolvedReferences
+                from . import VERSION_INFO
+            else:
+                sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+                # noinspection PyUnresolvedReferences
+                from __init__ import VERSION_INFO
+        except ImportError:
+            parser.exit(
+                2, "{0}: version information not found\n".format(parser.prog)
+            )
+
+        # noinspection PyUnboundLocalVariable
+        sys.stdout.write("{0}\n".format(VERSION_INFO))
+        sys.exit(0)
+
+    parser.parse_args()
 
 
 if __name__ == "__main__":
