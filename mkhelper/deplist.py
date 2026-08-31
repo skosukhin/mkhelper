@@ -211,9 +211,13 @@ def parse_args():
 
     if args.version:
         try:
-            sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-            # noinspection PyUnresolvedReferences
-            from __init__ import VERSION_INFO
+            if __package__:
+                # noinspection PyUnresolvedReferences
+                from . import VERSION_INFO
+            else:
+                sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+                # noinspection PyUnresolvedReferences
+                from __init__ import VERSION_INFO
         except ImportError:
             parser.exit(
                 2, "{0}: version information not found\n".format(parser.prog)

@@ -254,8 +254,11 @@ def main():
         import os
 
         try:
-            sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-            from __init__ import VERSION_INFO
+            if __package__:
+                from . import VERSION_INFO
+            else:
+                sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+                from __init__ import VERSION_INFO
         except ImportError:
             sys.stderr.write(
                 "{0}: version information not found\n".format(
