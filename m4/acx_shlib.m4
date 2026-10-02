@@ -213,6 +213,67 @@ AC_DEFUN([ACX_SHLIB_CC_EXPORT_DYNAMIC_FLAG],
 AC_DEFUN([ACX_SHLIB_CXX_EXPORT_DYNAMIC_FLAG],
   [AC_REQUIRE([ACX_COMPILER_CXX_VENDOR])_ACX_SHLIB_EXPORT_DYNAMIC_FLAG($@)])
 
+# ACX_SHLIB_DYNAMIC_LIST_FORMAT
+# -----------------------------------------------------------------------------
+# Sets the result to the dynamic symbol list format. The result is either
+# "unknown" or one of the following:
+#
+#   elf     GNU-style dynamic symbol list
+#   darwin  Darwin exported-symbols list
+#
+# The result is cached in the acx_cv_shlib_dynamic_list_format variable.
+#
+AC_DEFUN([ACX_SHLIB_DYNAMIC_LIST_FORMAT],
+  [AC_REQUIRE([AC_CANONICAL_HOST])dnl
+   AC_CACHE_CHECK([for dynamic symbol list format],
+     [acx_cv_shlib_dynamic_list_format],
+     [AS_CASE([$host_os],
+        [darwin*], [acx_cv_shlib_dynamic_list_format=darwin],
+        [linux*],  [acx_cv_shlib_dynamic_list_format=elf],
+        [acx_cv_shlib_dynamic_list_format=unknown])])])
+
+# ACX_SHLIB_FC_DYNAMIC_LIST_FLAG([ACTION-IF-SUCCESS],
+#                                [ACTION-IF-FAILURE = FAILURE])
+# -----------------------------------------------------------------------------
+# Sets the result to the Fortran compiler flag needed to specify a dynamic
+# symbol list.
+#
+# If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
+# (defaults to failing with an error message).
+#
+# The result is cached in the acx_cv_fc_dynamic_list_flag variable.
+#
+AC_DEFUN([ACX_SHLIB_FC_DYNAMIC_LIST_FLAG],
+  [AC_REQUIRE([ACX_COMPILER_FC_VENDOR])_ACX_SHLIB_DYNAMIC_LIST_FLAG($@)])
+
+# ACX_SHLIB_CC_DYNAMIC_LIST_FLAG([ACTION-IF-SUCCESS],
+#                                [ACTION-IF-FAILURE = FAILURE])
+# -----------------------------------------------------------------------------
+# Sets the result to the C compiler flag needed to specify a dynamic symbol
+# list.
+#
+# If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
+# (defaults to failing with an error message).
+#
+# The result is cached in the acx_cv_c_dynamic_list_flag variable.
+#
+AC_DEFUN([ACX_SHLIB_CC_DYNAMIC_LIST_FLAG],
+  [AC_REQUIRE([ACX_COMPILER_CC_VENDOR])_ACX_SHLIB_DYNAMIC_LIST_FLAG($@)])
+
+# ACX_SHLIB_CXX_DYNAMIC_LIST_FLAG([ACTION-IF-SUCCESS],
+#                                 [ACTION-IF-FAILURE = FAILURE])
+# -----------------------------------------------------------------------------
+# Sets the result to the C++ compiler flag needed to specify a dynamic symbol
+# list.
+#
+# If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
+# (defaults to failing with an error message).
+#
+# The result is cached in the acx_cv_cxx_dynamic_list_flag variable.
+#
+AC_DEFUN([ACX_SHLIB_CXX_DYNAMIC_LIST_FLAG],
+  [AC_REQUIRE([ACX_COMPILER_CXX_VENDOR])_ACX_SHLIB_DYNAMIC_LIST_FLAG($@)])
+
 # _ACX_SHLIB_RPATH_FLAG()
 # -----------------------------------------------------------------------------
 # Sets the result to the compiler flag needed to add a directory to the runtime
@@ -286,4 +347,49 @@ the dynamic symbol table])
    AS_VAR_IF([acx_cache_var], [unknown], [m4_default([$2],
      [AC_MSG_FAILURE([unable to detect _AC_LANG compiler flag needed to dnl
 add all symbols to the dynamic symbol table])])], [$1])
+   m4_popdef([acx_cache_var])])
+
+# _ACX_SHLIB_DYNAMIC_LIST_FLAG([ACTION-IF-SUCCESS],
+#                              [ACTION-IF-FAILURE = FAILURE])
+# -----------------------------------------------------------------------------
+# Finds the compiler flag needed to specify a dynamic symbol list. The result
+# is either "unknown", or the actual compiler flag required to specify a dynamic
+# symbol list (the filename must be appended directly to the returned flag).
+#
+# If successful, runs ACTION-IF-SUCCESS, otherwise runs ACTION-IF-FAILURE
+# (defaults to failing with an error message).
+#
+# The flag is cached in the acx_cv_[]_AC_LANG_ABBREV[]_dynamic_list_flag
+# variable.
+#
+m4_define([_ACX_SHLIB_DYNAMIC_LIST_FLAG],
+  [AC_REQUIRE([ACX_SHLIB_DYNAMIC_LIST_FORMAT])dnl
+   m4_pushdef([acx_cache_var],
+     [acx_cv_[]_AC_LANG_ABBREV[]_dynamic_list_flag])dnl
+   AC_CACHE_CHECK(
+     [for _AC_LANG compiler flag needed to specify a dynamic symbol list],
+     [acx_cache_var],
+     [acx_cache_var=unknown
+      AS_VAR_IF([acx_cv_shlib_dynamic_list_format], [unknown],
+        [],
+        [acx_tmp=conftest.syms
+         AS_CASE([$acx_cv_shlib_dynamic_list_format],
+           [darwin],
+           [AS_ECHO(['*']) >"$acx_tmp"
+            AS_CASE([AS_VAR_GET([acx_cv_[]_AC_LANG_ABBREV[]_compiler_vendor])],
+              [nag], [acx_cache_var='-Wl,-Wl,,-exported_symbols_list,,'],
+              [acx_cache_var='-Wl,-exported_symbols_list,'])],
+           [elf],
+           [AS_ECHO(['{ *; };']) >"$acx_tmp"
+            AS_CASE([AS_VAR_GET([acx_cv_[]_AC_LANG_ABBREV[]_compiler_vendor])],
+              [nag], [acx_cache_var='-Wl,-Wl,,--dynamic-list='],
+              [acx_cache_var='-Wl,--dynamic-list='])])
+         acx_save_LDFLAGS=$LDFLAGS
+         LDFLAGS="$acx_cache_var$acx_tmp $LDFLAGS"
+         AC_LINK_IFELSE([AC_LANG_PROGRAM], [], [acx_cache_var=unknown])
+         LDFLAGS=$acx_save_LDFLAGS
+         rm -f "$acx_tmp"])])
+   AS_VAR_IF([acx_cache_var], [unknown], [m4_default([$2],
+     [AC_MSG_FAILURE([unable to detect _AC_LANG compiler flag needed to dnl
+specify a dynamic symbol list])])], [$1])
    m4_popdef([acx_cache_var])])

@@ -49,6 +49,7 @@ AS_VAR_IF([enable_rpaths], [yes],
    eval export $acx_cv_shlib_path_var])
 
 ACX_SHLIB_EXT
+ACX_SHLIB_FC_DYNAMIC_LIST_FLAG
 ACX_SHLIB_FC_EXPORT_DYNAMIC_FLAG
 
 ACX_COMPILER_CROSS_CHECK_NOW

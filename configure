@@ -3243,6 +3243,79 @@ esac
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_shlib_ext" >&5
 $as_echo "$acx_cv_shlib_ext" >&6; }
+   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for dynamic symbol list format" >&5
+$as_echo_n "checking for dynamic symbol list format... " >&6; }
+if ${acx_cv_shlib_dynamic_list_format+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  case $host_os in #(
+  darwin*) :
+    acx_cv_shlib_dynamic_list_format=darwin ;; #(
+  linux*) :
+    acx_cv_shlib_dynamic_list_format=elf ;; #(
+  *) :
+    acx_cv_shlib_dynamic_list_format=unknown ;;
+esac
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_shlib_dynamic_list_format" >&5
+$as_echo "$acx_cv_shlib_dynamic_list_format" >&6; }
+      { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler flag needed to specify a dynamic symbol list" >&5
+$as_echo_n "checking for Fortran compiler flag needed to specify a dynamic symbol list... " >&6; }
+if ${acx_cv_fc_dynamic_list_flag+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  acx_cv_fc_dynamic_list_flag=unknown
+      if test "x$acx_cv_shlib_dynamic_list_format" = xunknown; then :
+
+else
+  acx_tmp=conftest.syms
+         case $acx_cv_shlib_dynamic_list_format in #(
+  darwin) :
+    $as_echo '*' >"$acx_tmp"
+            case $acx_cv_fc_compiler_vendor in #(
+  nag) :
+    acx_cv_fc_dynamic_list_flag='-Wl,-Wl,,-exported_symbols_list,,' ;; #(
+  *) :
+    acx_cv_fc_dynamic_list_flag='-Wl,-exported_symbols_list,' ;;
+esac ;; #(
+  elf) :
+    $as_echo '{ *; };' >"$acx_tmp"
+            case $acx_cv_fc_compiler_vendor in #(
+  nag) :
+    acx_cv_fc_dynamic_list_flag='-Wl,-Wl,,--dynamic-list=' ;; #(
+  *) :
+    acx_cv_fc_dynamic_list_flag='-Wl,--dynamic-list=' ;;
+esac ;; #(
+  *) :
+     ;;
+esac
+         acx_save_LDFLAGS=$LDFLAGS
+         LDFLAGS="$acx_cv_fc_dynamic_list_flag$acx_tmp $LDFLAGS"
+         cat > conftest.$ac_ext <<_ACEOF
+      program main
+
+      end
+_ACEOF
+if ac_fn_fc_try_link "$LINENO"; then :
+
+else
+  acx_cv_fc_dynamic_list_flag=unknown
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+         LDFLAGS=$acx_save_LDFLAGS
+         rm -f "$acx_tmp"
+fi
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fc_dynamic_list_flag" >&5
+$as_echo "$acx_cv_fc_dynamic_list_flag" >&6; }
+   if test "x$acx_cv_fc_dynamic_list_flag" = xunknown; then :
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "unable to detect Fortran compiler flag needed to specify a dynamic symbol list
+See \`config.log' for more details" "$LINENO" 5; }
+fi
+
       { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Fortran compiler flag needed to add all symbols to the dynamic symbol table" >&5
 $as_echo_n "checking for Fortran compiler flag needed to add all symbols to the dynamic symbol table... " >&6; }
    if ${acx_cv_fc_export_dynamic_flag+:} false; then :
