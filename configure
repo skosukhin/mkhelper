@@ -1840,7 +1840,7 @@ for as_dir in $PATH
 do
   IFS=$as_save_IFS
   test -z "$as_dir" && as_dir=.
-    if as_fn_executable_p "$as_dir/$acx_prog_exec"; then :
+                              if as_fn_executable_p "$as_dir/$acx_prog_exec"; then :
   acx_prog_search_abspath="$as_dir/$acx_prog_exec"
                              break
 fi
