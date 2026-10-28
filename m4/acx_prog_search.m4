@@ -107,8 +107,13 @@ AC_DEFUN([ACX_PROG_SEARCH_ABSPATH],
         [AS_IF([AS_EXECUTABLE_P([$acx_prog_exec])],
            [acx_prog_search_abspath=$acx_prog_exec])],
         [_AS_PATH_WALK([$4],
-           [AS_IF([AS_EXECUTABLE_P(["$as_dir/$acx_prog_exec"])],
-              [acx_prog_search_abspath="$as_dir/$acx_prog_exec"; break])])])
+           [m4_pushdef([acx_as_dir_slash],
+              [m4_if(m4_version_compare(AC_AUTOCONF_VERSION, [2.70]), [-1],
+                 [as_dir/], [as_dir])])dnl
+            AS_IF([AS_EXECUTABLE_P(["$acx_as_dir_slash$acx_prog_exec"])],
+              [acx_prog_search_abspath=dnl
+"$acx_as_dir_slash$acx_prog_exec"; break])dnl
+            m4_popdef([acx_as_dir_slash])])])
 dnl If acx_prog_search_abspath is not "unknown", it is a path to an executable
 dnl (without arguments).
       AS_CASE([$acx_prog_search_abspath],
